@@ -1,5 +1,8 @@
 # PixelForge — specyfikacja techniczna i funkcjonalna
 
+> **Uwaga z 13 listopada 2026:** to specyfikacja historycznych fundamentów PixelForge. Jej wytyczne o pierwszej platformówce, demie forest-demo, Winobraniu i małych mapach zostały zastąpione przez [bieżącą roadmapę](./ROADMAP.md). Nie rozwijaj tych gier. Nowy priorytet to mapy od 4096 × 4096 pikseli, obsługa myszą i aktualizator według [UPDATER-SPEC.md](./UPDATER-SPEC.md). Zachowaj ogólne kontrakty i użyteczne serwisy.
+
+
 **Status:** dokument bazowy dla Codexa. **Repozytorium:** ankelmarek/PixelForge. **Wersja założeń:** 0.1.
 
 ## 1. Wizja produktu
