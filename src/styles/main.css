@@ -1,0 +1,149 @@
+:root {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  color: #e9eddf;
+  background: #101e27;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: radial-gradient(ellipse at 75% 15%, #213b3b55, transparent 60%);
+}
+header,
+main,
+footer {
+  max-width: 1120px;
+  margin: auto;
+}
+header {
+  padding: 32px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #354c4e;
+}
+.brand {
+  color: #e9eddf;
+  text-decoration: none;
+  letter-spacing: 2px;
+  font-size: 22px;
+  font-weight: 700;
+}
+.brand span,
+em {
+  color: #b7cf84;
+}
+.phase,
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #b7cf84;
+}
+main {
+  padding: 74px 0;
+}
+h1 {
+  font-family: system-ui, sans-serif;
+  font-size: clamp(38px, 5vw, 64px);
+  line-height: 1.1;
+  margin: 20px 0;
+}
+em {
+  font-style: normal;
+}
+.lead {
+  max-width: 650px;
+  line-height: 1.8;
+  color: #a8bcbb;
+  font-size: 15px;
+}
+section {
+  margin-top: 52px;
+}
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.section-heading span {
+  font-size: 12px;
+  color: #8da6a4;
+}
+h2 {
+  font-size: 18px;
+}
+.empty-state {
+  border: 1px solid #48615d;
+  background: #1b3035;
+  padding: 38px;
+  text-align: center;
+  box-shadow: 8px 8px #0c1720;
+}
+.empty-icon {
+  font-size: 36px;
+  color: #b7cf84;
+}
+h3 {
+  font-size: 16px;
+}
+.empty-state p,
+.modules p {
+  color: #a8bcbb;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.modules {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 44px;
+}
+.modules article {
+  border-top: 1px solid #354c4e;
+  padding-top: 20px;
+}
+.modules span {
+  color: #b7cf84;
+  font-size: 11px;
+}
+footer {
+  border-top: 1px solid #354c4e;
+  padding: 26px 0;
+  color: #8da6a4;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+a:focus-visible {
+  outline: 2px solid #b7cf84;
+  outline-offset: 6px;
+}
+@media (max-width: 1180px) {
+  header,
+  main,
+  footer {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+}
+@media (max-width: 600px) {
+  header {
+    gap: 15px;
+    align-items: flex-start;
+  }
+  .phase {
+    max-width: 90px;
+    line-height: 1.6;
+  }
+  main {
+    padding: 42px 0;
+  }
+  .modules {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .empty-state {
+    padding: 28px 15px;
+  }
+}

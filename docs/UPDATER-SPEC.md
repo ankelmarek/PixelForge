@@ -46,7 +46,11 @@ Pakiet zawiera pliki statycznej dystrybucji oraz maszynowo sprawdzalny manifest,
   "engineSchemaVersion": 1,
   "files": [
     { "path": "index.html", "size": 1234, "sha256": "<64 hex chars>" },
-    { "path": "assets/index-1234.js", "size": 45678, "sha256": "<64 hex chars>" }
+    {
+      "path": "assets/index-1234.js",
+      "size": 45678,
+      "sha256": "<64 hex chars>"
+    }
   ],
   "deletions": []
 }
