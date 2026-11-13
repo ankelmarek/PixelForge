@@ -1,5 +1,7 @@
 # Raport U0 — pełne paczki ZIP i walidacja offline
 
+Aktualne wydanie: [poprawka 0.6.1](HOTFIX-0.6.1.md). Poniżej zachowano wynik U0 0.6.0.
+
 Data: 2026-11-13. Gałąź `feature/p2-u0-packages`, baza P1 `c884fdf` / PR #6,
 wersja wydania **0.6.0**. Osobny PR do main zależny od P1 i P0; bez merge
 oraz bez wdrożenia na hosting.

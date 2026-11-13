@@ -30,3 +30,25 @@ it('pełny widok wymaga cache i świata mieszczących maksymalny viewport', () =
     validateSimulationLevel(smallCache, undefined, expandedViewport),
   ).toThrow(/cache/);
 });
+
+it('kamera zachowuje fazę pikseli i granice przy zoomie 0.5, także dla nieparzystego viewportu', async () => {
+  const { pixelAlignedScroll } =
+    await import('../../src/engine/simulation/camera');
+  for (const viewport of [180, 250, 319, 412, 839]) {
+    for (const scroll of [-100, 0, 127.25, 2001.75, 4096, 5000]) {
+      const result = pixelAlignedScroll(scroll, viewport, 4096, 0.5);
+      const left = result + viewport / 2 - viewport;
+      expect(left).toBeGreaterThanOrEqual(0);
+      expect(left + viewport * 2).toBeLessThanOrEqual(4096);
+      expect(Number.isInteger(left * 0.5)).toBe(true);
+      expect(pixelAlignedScroll(result, viewport, 4096, 0.5)).toBe(result);
+    }
+    for (const zoom of [0.5, 1 / 1.2, 1 / 1.2 ** 2]) {
+      const maximum = 4096 - viewport / (2 * zoom) - viewport / 2;
+      expect(pixelAlignedScroll(maximum, viewport, 4096, zoom)).toBeCloseTo(
+        maximum,
+        8,
+      );
+    }
+  }
+});

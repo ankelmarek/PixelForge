@@ -403,3 +403,80 @@ test('pełne okno, proporcje, obrót i trafianie po zmianie rozmiaru', async ({
   ).not.toBe('hidden');
   expect(errors).toEqual([]);
 });
+
+for (const worldSize of [4096, 8192])
+  test(`${worldSize}: najdrobniejsze detale nie migają podczas panoramowania przy zoomie 0.5`, async ({
+    page,
+  }) => {
+    // One-pixel checkerboard makes a changing nearest-neighbor sampling phase
+    // observable across the entire terrain, even when no sector is missing.
+    await page.goto('/?diagnostics=1');
+    const atlas = await page.evaluate(() => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 16;
+      const context = canvas.getContext('2d')!;
+      for (let y = 0; y < 16; y++)
+        for (let x = 0; x < 256; x++) {
+          context.fillStyle = (x + y) % 2 ? '#e3bb64' : '#244c47';
+          context.fillRect(x, y, 1, 1);
+        }
+      return canvas.toDataURL().split(',')[1];
+    });
+    await page.route('**/tiles.png', (route) =>
+      route.fulfill({
+        contentType: 'image/png',
+        body: Buffer.from(atlas, 'base64'),
+      }),
+    );
+    await page.locator(`[data-world="${worldSize}"]`).click();
+    await page.locator('#start').click();
+    for (let i = 0; i < 6; i++) await page.locator('#zoom-out').click();
+    await mapPoint(page, 0.5, 0.5);
+    expect((await state(page)).camera!.zoom).toBe(0.5);
+    const canvas = page.locator('#stage canvas');
+    const bounds = (await canvas.boundingBox())!;
+    const readPixels = () =>
+      canvas.evaluate(
+        (element: HTMLCanvasElement) =>
+          new Promise<number[]>((resolve) =>
+            requestAnimationFrame(() => {
+              const gl = (element.getContext('webgl2') ??
+                element.getContext('webgl'))!;
+              const pixel = new Uint8Array(4);
+              gl.readPixels(
+                Math.floor(element.width / 2),
+                Math.floor(element.height / 2),
+                1,
+                1,
+                gl.RGBA,
+                gl.UNSIGNED_BYTE,
+                pixel,
+              );
+              resolve([...pixel]);
+            }),
+          ),
+      );
+    // Fractional logical moves arise on desktop through integer CSS scaling,
+    // and on phones from subpixel mouse/touch coordinates. Exercise both axes.
+    const colors = new Set<string>();
+    for (const axis of ['x', 'y'] as const) {
+      const x = bounds.width * 0.5,
+        y = bounds.height * 0.55;
+      await page.mouse.move(x, y);
+      await page.mouse.down();
+      for (let step = 0; step < 16; step++) {
+        const delta = 20 + step * 0.5;
+        await page.mouse.move(
+          x + (axis === 'x' ? delta : 0),
+          y + (axis === 'y' ? delta : 0),
+        );
+        colors.add((await readPixels()).join(','));
+      }
+      await page.mouse.up();
+    }
+    expect(colors.size).toBe(1);
+    expect(['227,187,100,255', '36,76,71,255']).toContain([...colors][0]);
+    expect((await state(page)).world!.missing).toBe(0);
+    await expect(page.locator('#error')).toBeEmpty();
+  });

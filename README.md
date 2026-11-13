@@ -32,12 +32,14 @@ Funkcje silnika powstały w historycznych gałęziach M0–M3 i powiązanych PR,
 
 ## Gotowa paczka na hosting
 
-[Pobierz PixelForge 0.6.0 — pełny ZIP na serwer statyczny](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u0-packages/downloads/pixelforge-0.6.0-full.zip).
+[Pobierz PixelForge 0.6.1 — pełny ZIP na serwer statyczny](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u0-packages/downloads/pixelforge-0.6.1-full.zip).
 Rozpakuj i wgraj `index.html`, cały katalog `assets/` oraz `manifest.json` do
 katalogu strony, np. `public_html/pixelforge/`. Otwórz potem
 `https://twoja-domena.pl/pixelforge/`. Na hostingu nie potrzebujesz Node.js,
 Pythona ani PHP. [Pełna instrukcja](downloads/README.md).
 Atlas zajmuje całe okno przeglądarki, także po obrocie telefonu.
+Wydanie 0.6.1 poprawia migotanie przy maksymalnym oddaleniu i daty plików ZIP
+wpływające na cache przeglądarki. [Raport poprawki](docs/HOTFIX-0.6.1.md).
 
 Generator i walidator offline **P2/U0** są gotowe; instalator i panel U1/U2
 pozostają osobnymi etapami. Paczka nie wdraża się samodzielnie.
@@ -89,7 +91,7 @@ aktualizatora.
 
 ```bash
 npm run package:release
-npm run package:validate -- downloads/pixelforge-0.6.0-full.zip
+npm run package:validate -- downloads/pixelforge-0.6.1-full.zip
 npm run test:packages
 ```
 

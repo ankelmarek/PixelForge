@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { SimulationLevel } from './types';
+import { pixelAlignedScroll } from './camera';
 export class PointerInputService {
   private down?: {
     x: number;
@@ -108,20 +109,21 @@ export class PointerInputService {
     }
   }
   private clamp() {
-    const c = this.scene.cameras.main,
-      halfW = c.width / (2 * c.zoom),
-      halfH = c.height / (2 * c.zoom);
-    const x = Phaser.Math.Clamp(
-      c.scrollX + c.width / 2,
-      halfW,
-      this.level.width * this.level.tileSize - halfW,
+    const c = this.scene.cameras.main;
+    c.setScroll(
+      pixelAlignedScroll(
+        c.scrollX,
+        c.width,
+        this.level.width * this.level.tileSize,
+        c.zoom,
+      ),
+      pixelAlignedScroll(
+        c.scrollY,
+        c.height,
+        this.level.height * this.level.tileSize,
+        c.zoom,
+      ),
     );
-    const y = Phaser.Math.Clamp(
-      c.scrollY + c.height / 2,
-      halfH,
-      this.level.height * this.level.tileSize - halfH,
-    );
-    c.setScroll(x - c.width / 2, y - c.height / 2);
   }
   reset() {
     const camera = this.scene.cameras.main;

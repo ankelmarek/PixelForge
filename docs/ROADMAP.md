@@ -175,3 +175,18 @@ Każdy tytuł ma własną specyfikację i gałąź oraz wykorzystuje wspólny si
   statyczny runtime co 0.5.1, z manifestem aktualizatora.
 - Zaktualizowano testy i instrukcje. Brak merge, wdrożenia i nowych usług.
   Następny osobny zakres to U1 po poznaniu hostingu.
+
+### 2026-11-13 — poprawka 0.6.1 po teście hostingu
+
+- Odtworzono migotanie terenu przy zoomie 0.5 na desktopowym Chromium:
+  skalowany canvas pozwalał na ułamkowe przesunięcia próbkowanego obrazu.
+  Kamera wyrównuje teraz początek widoku do siatki pikseli ekranu, również
+  przy ułamkowym zoomie, resize i wznowieniu. Granice świata pozostają zachowane.
+- Test obrazu z drobnym wzorem wykrywa błąd na obu mapach w 0.6.0 i przechodzi
+  po poprawce. Sprawdzono także emulację Pixel 7.
+- Paczki mają zapisany czas wydania (`releaseEpoch`), zamiast roku 1980,
+  żeby hosting nie podawał błędnej informacji „niezmieniony” o nowszym HTML.
+  Powtarzalność ZIP pozostaje zachowana; format manifestu i zapisów bez zmian.
+- Kontrole: 48 Vitest, 15 Python, E2E 28 PASS + 2 SKIP; build/lint/typecheck PASS.
+  ZIP 0.6.1 i [raport poprawki](HOTFIX-0.6.1.md) w aktywnym PR #7.
+  U1–U3 i gry P3 pozostają poza zakresem.

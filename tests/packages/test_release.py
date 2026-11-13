@@ -2,6 +2,13 @@
 
 import copy
 import hashlib
+from datetime import datetime, timezone
+from email.utils import formatdate
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+import os
+import threading
+import urllib.request
 import importlib.util
 import io
 import json
@@ -106,11 +113,18 @@ class Packages(unittest.TestCase):
             (source / "assets").mkdir(parents=True)
             (source / "index.html").write_text("<html>Atlas</html>")
             (source / "assets/data.json").write_bytes(b"0" * 50000)
-            first = release.package_release(source, base / "a", "0.6.0")
-            second = release.package_release(source, base / "b", "0.6.0")
+            first = release.package_release(
+                source, base / "a", "0.6.0", release_epoch=1794484800
+            )
+            second = release.package_release(
+                source, base / "b", "0.6.0", release_epoch=1794484800
+            )
             self.assertEqual(first["sha256"], second["sha256"])
             self.assertEqual(
-                first, release.package_release(source, base / "a", "0.6.0")
+                first,
+                release.package_release(
+                    source, base / "a", "0.6.0", release_epoch=1794484800
+                ),
             )
             with zipfile.ZipFile(first["archive"]) as archive:
                 # Highly compressible legitimate content is stored, not emitted as a bomb.
@@ -121,12 +135,60 @@ class Packages(unittest.TestCase):
                 self.assertEqual(archive.read("assets/data.json"), b"0" * 50000)
             (source / "index.html").write_text("changed")
             with self.assertRaisesRegex(release.PackageError, "OUTPUT"):
-                release.package_release(source, base / "a", "0.6.0")
+                release.package_release(
+                    source, base / "a", "0.6.0", release_epoch=1794484800
+                )
             self.assertEqual(
                 hashlib.sha256(Path(first["archive"]).read_bytes()).hexdigest(),
                 first["sha256"],
             )
             self.assertFalse(list((base / "a").glob(".pixelforge-*")))
+
+    def test_new_release_is_not_http_304_when_extraction_preserves_zip_dates(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "dist"
+            source.mkdir()
+            (source / "index.html").write_bytes(b"new release")
+            old_epoch, epoch = 1794484800, 1794571200
+            result = release.package_release(
+                source, base / "out", "0.6.1", release_epoch=epoch
+            )
+            site = base / "site"
+            with zipfile.ZipFile(result["archive"]) as archive:
+                archive.extractall(site)
+                for info in archive.infolist():
+                    mtime = datetime(*info.date_time, tzinfo=timezone.utc).timestamp()
+                    self.assertEqual(mtime, epoch)
+                    os.utime(site / info.filename, (mtime, mtime))
+
+            class QuietHandler(SimpleHTTPRequestHandler):
+                def log_message(self, *_args):
+                    pass
+
+            server = ThreadingHTTPServer(
+                ("127.0.0.1", 0), partial(QuietHandler, directory=str(site))
+            )
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            try:
+                request = urllib.request.Request(
+                    f"http://127.0.0.1:{server.server_port}/index.html",
+                    headers={"If-Modified-Since": formatdate(old_epoch, usegmt=True)},
+                )
+                with urllib.request.urlopen(request, timeout=5) as response:
+                    self.assertEqual(response.status, 200)
+                    self.assertEqual(response.read(), b"new release")
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join(timeout=5)
+
+    def test_release_epoch_must_be_explicit_and_fit_zip_dates(self):
+        for epoch in [None, True, 0, 4354819199, "1794571200", 1794571200.5]:
+            with self.subTest(epoch=epoch):
+                with self.assertRaisesRegex(release.PackageError, "RELEASE_EPOCH"):
+                    release.release_timestamp(epoch)
 
     def test_missing_manifest_index_and_inventory_mismatch(self):
         self.reject(fixture(files={"assets/app.js": b"ok"}), "MANIFEST")
@@ -350,17 +412,23 @@ class Packages(unittest.TestCase):
                 path.parent.mkdir(exist_ok=True)
                 path.write_text("must not ship")
                 with self.assertRaises(release.PackageError):
-                    release.package_release(source, output, "0.6.0")
+                    release.package_release(
+                        source, output, "0.6.0", release_epoch=1794484800
+                    )
                 path.unlink()
             (source / "assets").mkdir()
             link = source / "assets/link.js"
             link.symlink_to(source / "index.html")
             with self.assertRaises(release.PackageError):
-                release.package_release(source, output, "0.6.0")
+                release.package_release(
+                    source, output, "0.6.0", release_epoch=1794484800
+                )
             link.unlink()
             link.symlink_to(source, target_is_directory=True)
             with self.assertRaises(release.PackageError):
-                release.package_release(source, output, "0.6.0")
+                release.package_release(
+                    source, output, "0.6.0", release_epoch=1794484800
+                )
             self.assertFalse(output.exists())
 
 

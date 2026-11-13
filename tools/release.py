@@ -6,6 +6,7 @@ No extraction, execution, network access, or installation is performed.
 """
 
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import io
 import json
@@ -432,9 +433,20 @@ def validate_file(path, overrides=None, expected_version=None):
     return validate_bytes(raw, limits, expected_version)
 
 
-def package_release(source, destination, release_version, overrides=None):
+def release_timestamp(epoch):
+    require(
+        type(epoch) is int and 315532800 <= epoch <= 4354819198,
+        "RELEASE_EPOCH: set package.json releaseEpoch or --epoch (UTC seconds, years 1980–2107)",
+    )
+    return datetime.fromtimestamp(epoch, timezone.utc).timetuple()[:6]
+
+
+def package_release(
+    source, destination, release_version, overrides=None, *, release_epoch
+):
     limits = limits_from(overrides)
     version(release_version)
+    timestamp = release_timestamp(release_epoch)
     source, destination = Path(source), Path(destination)
     require(
         source.is_dir() and not source.is_symlink(),
@@ -482,7 +494,7 @@ def package_release(source, destination, release_version, overrides=None):
         with zipfile.ZipFile(temporary, "w", allowZip64=False) as archive:
 
             def write(path, data):
-                info = zipfile.ZipInfo(path, (1980, 1, 1, 0, 0, 0))
+                info = zipfile.ZipInfo(path, timestamp)
                 info.create_system = 3
                 info.external_attr = (stat.S_IFREG | 0o644) << 16
                 compressor = zlib.compressobj(9, zlib.DEFLATED, -15)
@@ -551,6 +563,11 @@ def main():
     pack.add_argument("--source", default="dist")
     pack.add_argument("--output", default="downloads")
     pack.add_argument("--version")
+    pack.add_argument(
+        "--epoch",
+        type=int,
+        help="Fixed release timestamp in UTC seconds; defaults to package.json releaseEpoch",
+    )
     check = commands.add_parser(
         "validate", help="Read-only integrity and compatibility check"
     )
@@ -565,10 +582,18 @@ def main():
         limits = parse_json(Path(args.limits).read_bytes()) if args.limits else None
         require(limits is None or type(limits) is dict, "LIMIT_CONFIG: object required")
         if args.command == "pack":
-            release = (
-                args.version or parse_json(Path("package.json").read_bytes())["version"]
+            metadata = (
+                parse_json(Path("package.json").read_bytes())
+                if args.version is None or args.epoch is None
+                else {}
             )
-            result = package_release(args.source, args.output, release, limits)
+            release = args.version or metadata["version"]
+            epoch = (
+                args.epoch if args.epoch is not None else metadata.get("releaseEpoch")
+            )
+            result = package_release(
+                args.source, args.output, release, limits, release_epoch=epoch
+            )
         else:
             result = validate_file(args.archive, limits, args.expect_version)
         print(json.dumps(result, indent=2))

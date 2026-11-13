@@ -1,6 +1,6 @@
-# PixelForge 0.6.0 — gotowe pliki na serwer statyczny
+# PixelForge 0.6.1 — gotowe pliki na serwer statyczny
 
-[Pobierz ZIP](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u0-packages/downloads/pixelforge-0.6.0-full.zip)
+[Pobierz ZIP](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u0-packages/downloads/pixelforge-0.6.1-full.zip)
 
 Archiwum zawiera produkcyjny Atlas w pełnym oknie oraz manifest U0.
 Utworzono je przez `npm run package:release`: 272 pliki buildu (`index.html`
@@ -27,8 +27,9 @@ public_html/pixelforge/
 Możesz też wgrać te pliki bezpośrednio do `public_html/`, aby działały pod głównym
 adresem domeny. Wtedy `index.html` ma być bezpośrednio w `public_html/`.
 Nie potrzeba Node.js, npm, PHP ani bazy danych na hostingu. Serwer ma udostępniać
-pliki HTML, JS, CSS, JSON i PNG przez HTTP(S). Po aktualizacji odśwież stronę
-z pominięciem pamięci podręcznej przeglądarki.
+pliki HTML, JS, CSS, JSON i PNG przez HTTP(S). Po aktualizacji otwórz `https://twoja-domena.pl/pixelforge/index.html?v=0.6.1`
+i odśwież stronę z pominięciem pamięci podręcznej przeglądarki. To istotne przy
+przejściu z 0.6.0: zapamiętany HTML mógł wskazywać stare, usunięte pliki JS/CSS.
 
 Zwykły ZIP źródeł z przycisku GitHub „Code → Download ZIP” nie zastępuje tej
 paczki. Gotowe archiwum zawiera zawartość `dist/` bez dodatkowego katalogu
@@ -42,9 +43,9 @@ Nie zawiera panelu ani instalatora U1/U2. Rozpakowane archiwum sprawdzono pod
 Opcjonalna kontrola lokalna z repozytorium:
 
 ```bash
-npm run package:validate -- downloads/pixelforge-0.6.0-full.zip
+npm run package:validate -- downloads/pixelforge-0.6.1-full.zip
 ```
 
 Wynik poprawnej kontroli ma `valid: true`. Szczegóły i limity:
 [RELEASE-PACKAGES.md](../docs/RELEASE-PACKAGES.md).
-Poprzednie paczki P1 0.5.0/0.5.1 zachowano jako archiwum; bieżąca to **0.6.0-full**.
+Poprzednie paczki P1 0.5.0/0.5.1 i U0 0.6.0 zachowano jako archiwum; bieżąca to **0.6.1-full**.

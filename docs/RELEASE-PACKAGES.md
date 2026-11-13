@@ -12,8 +12,8 @@ standardowa, bez pip). Na serwer statyczny trafiają tylko pliki gotowego ZIP-a.
 ```bash
 npm ci
 npm run package:release
-npm run package:validate -- downloads/pixelforge-0.6.0-full.zip
-npm run package:validate -- downloads/pixelforge-0.6.0-full.zip --expect-version 0.6.0
+npm run package:validate -- downloads/pixelforge-0.6.1-full.zip
+npm run package:validate -- downloads/pixelforge-0.6.1-full.zip --expect-version 0.6.1
 npm run test:packages
 ```
 
@@ -25,17 +25,26 @@ są `index.html` i `assets/`, bez nadrzędnego `dist/`. ZIP można też rozpakow
 ręcznie i wgrać te trzy elementy na hosting; manifest jest zwykłym JSON-em.
 
 Generator weryfikuje własny wynik przed udostępnieniem pliku. Te same bajty
-buildu, wersja, limity i wersja zlib dają identyczny ZIP: kolejność wpisów,
-uprawnienia i czas są stałe (1980-01-01). Paczka o tej samej wersji i innych
+buildu, wersja, `releaseEpoch`, limity i wersja zlib dają identyczny ZIP.
+Kolejność wpisów i uprawnienia są stałe, a czas pochodzi z `releaseEpoch`
+w package.json (sekundy UTC, rozdzielczość ZIP to 2 sekundy). Przy nowym wydaniu
+aktualizuj razem `version` i `releaseEpoch` do czasu tego wydania.
+Nie cofamy czasu plików do 1980 roku: hosting zachowujący daty ZIP mógł wtedy
+odpowiadać HTTP 304 na żądanie starego index.html mimo zmienionej zawartości. Paczka o tej samej wersji i innych
 bajtach jest odrzucana — zwiększ wersję wydania. Ponowienie identycznego
 pakowania jest dozwolone. Plik tymczasowy jest usuwany również po błędzie.
 
 Bezpośrednie polecenie dla już sprawdzonego buildu:
 
 ```bash
-python3 tools/release.py pack --source dist --output downloads --version 0.6.0
-python3 tools/release.py validate downloads/pixelforge-0.6.0-full.zip
+python3 tools/release.py pack --source dist --output downloads --version 0.6.1 --epoch 1794578584
+python3 tools/release.py validate downloads/pixelforge-0.6.1-full.zip
 ```
+
+Bez podanego `--epoch` generator czyta `releaseEpoch` z package.json.
+Poza repozytorium podaj zarówno `--version`, jak i `--epoch`. Nie ma domyślnego
+czasu 1980 ani czasu zmienianego przy każdym pakowaniu. Format manifestu i
+walidacja wcześniejszych paczek pozostają zgodne.
 
 Walidator zwraca JSON z wersją, liczbą plików, rozmiarem i SHA-256 całego ZIP-a.
 Sukces ma kod 0; odrzucenie paczki kod 2 i krótki komunikat na stderr. Nie

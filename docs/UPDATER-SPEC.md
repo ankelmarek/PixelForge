@@ -104,7 +104,7 @@ Zapis gier w localStorage/IndexedDB nie jest aktualizowany przez serwerowy ZIP, 
 - [x] Testy jednostkowe i fixture z poprawnym oraz celowo uszkodzonym archiwum.
 
 Implementacja: [format i CLI](RELEASE-PACKAGES.md), [raport U0](U0-REPORT.md).
-Wersja wydania 0.6.0; manifest v1, kontrakt silnika 2, narzędzie 1.0.0.
+Wersja wydania 0.6.1; manifest v1, kontrakt silnika 2, narzędzie 1.0.0.
 
 ### U1: bezpieczny mechanizm instalacji i rollback
 
