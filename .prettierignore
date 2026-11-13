@@ -1,0 +1,8 @@
+node_modules
+dist
+work
+package-lock.json
+playwright-report
+test-results
+
+docs/ROADMAP-ARCHIVE-2026-11.md

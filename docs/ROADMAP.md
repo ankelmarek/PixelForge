@@ -16,12 +16,12 @@
 
 `main` zawiera przede wszystkim dokumentację. Implementacje etapów są w gałęziach i PR:
 
-| Etap historyczny | Istniejący kod | Postępowanie |
-|---|---|---|
-| M0 | PR [#1](https://github.com/ankelmarek/PixelForge/pull/1) | Zachować działający fundament silnika, nie rozwijać gry demonstracyjnej |
-| M1 | PR [#2](https://github.com/ankelmarek/PixelForge/pull/2) | Rozważyć włączenie generycznych usług, zachować testy |
-| M2 | PR [#3](https://github.com/ankelmarek/PixelForge/pull/3) | **Zamrozić** platformówkę i jej rozwój; nie uznawać jej za przyszły produkt |
-| M3 | PR [#4](https://github.com/ankelmarek/PixelForge/pull/4) | **Nie rozwijać Winobrania**; odzyskać generyczny TopDown Simulator, A*, zadania, audio, zapis i model zasobów |
+| Etap historyczny | Istniejący kod                                           | Postępowanie                                                                                                  |
+| ---------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| M0               | PR [#1](https://github.com/ankelmarek/PixelForge/pull/1) | Zachować działający fundament silnika, nie rozwijać gry demonstracyjnej                                       |
+| M1               | PR [#2](https://github.com/ankelmarek/PixelForge/pull/2) | Rozważyć włączenie generycznych usług, zachować testy                                                         |
+| M2               | PR [#3](https://github.com/ankelmarek/PixelForge/pull/3) | **Zamrozić** platformówkę i jej rozwój; nie uznawać jej za przyszły produkt                                   |
+| M3               | PR [#4](https://github.com/ankelmarek/PixelForge/pull/4) | **Nie rozwijać Winobrania**; odzyskać generyczny TopDown Simulator, A*, zadania, audio, zapis i model zasobów |
 
 Kod M3 był technicznie testowany, ale **produkt nie został zaakceptowany pod względem grywalności**. Raporty dawnych etapów pozostają materiałem historycznym. **Nie scalać mechanicznie całego stosu PR #1–#4**, jeśli oznaczałoby to przywrócenie porzuconych tytułów jako aktywnych gier. Najpierw przegląd i uporządkowanie integracji; nie usuwać wartościowego kodu ani historii Git.
 
@@ -29,14 +29,23 @@ Kod M3 był technicznie testowany, ale **produkt nie został zaakceptowany pod w
 
 ### P0. Inwentaryzacja i bezpieczne wydzielenie rdzenia
 
-**Status: TODO.**
+**Status: DONE (implementacja i testy).** Gałąź `feature/p0-core-extraction`, osobny PR do `main`; bez samodzielnego scalenia.
 
-- [ ] Przeanalizować `feature/m3-winobranie` i wcześniejsze gałęzie. Wskazać moduły wspólne oraz zależności od konkretnych gier.
-- [ ] Utworzyć nową gałąź roboczą z czytelną historią zależności i planem integracji bez utraty dotychczasowego kodu.
-- [ ] Zachować `EngineHost`, system scen, walidację, audio, zapis, InputService, obsługę myszy, model symulacji, A* i transport zasobów, gdy są rzeczywiście niezależne od gry.
-- [ ] W nowym aktywnym katalogu gier **nie oferować Winobrania ani Leśnego sygnału**. Historyczne zasoby mogą pozostać w Git/archiwum; żadnych nowych funkcji gry i niepotrzebnych migracji.
-- [ ] Dodać niezależne testy generycznych modułów, aby nie potrzebowały aktywnego `winobranie` albo `forest-demo` do zaliczenia.
-- [ ] Przygotować PR, wyniki testów i opis odzyskanych modułów. **Nie scalać bez zgody użytkownika.**
+- [x] Przeanalizować `feature/m3-winobranie` i wcześniejsze gałęzie. Wskazać moduły wspólne oraz zależności od konkretnych gier.
+- [x] Utworzyć nową gałąź roboczą z czytelną historią zależności i planem integracji bez utraty dotychczasowego kodu.
+- [x] Zachować `EngineHost`, system scen, walidację, audio, zapis, InputService, obsługę myszy, model symulacji, A* i transport zasobów, gdy są rzeczywiście niezależne od gry.
+- [x] W nowym aktywnym katalogu gier **nie oferować Winobrania ani Leśnego sygnału**. Historyczne zasoby mogą pozostać w Git/archiwum; żadnych nowych funkcji gry i niepotrzebnych migracji.
+- [x] Dodać niezależne testy generycznych modułów, aby nie potrzebowały aktywnego `winobranie` albo `forest-demo` do zaliczenia.
+- [x] Przygotować PR, wyniki testów i opis odzyskanych modułów. **Nie scalać bez zgody użytkownika.**
+
+Odzyskano 21 modułów silnika z przypiętego M3 `96b9e73`, bez importowania
+produktów ani scalania PR #1–#4. Katalog aktywnych gier jest pusty.
+Testy: lint/typecheck/build PASS, 25 jednostkowych PASS, E2E 11 PASS + 1 SKIP.
+Build sprawdzono pod `/` i `/PixelForge/`, desktop i emulacja Pixel 7.
+Raport: [P0-REPORT.md](P0-REPORT.md), inwentaryzacja:
+[CORE-INVENTORY.md](CORE-INVENTORY.md), dalszy podział:
+[IMPLEMENTATION-PLAN.md](IMPLEMENTATION-PLAN.md).
+P1 i P2 pozostają niezrealizowane; nie wybrano tytułu P3 ani hostingu.
 
 ### P1. Duże mapy i kamera 2D
 
@@ -89,3 +98,16 @@ Każdy tytuł ma własną specyfikację i gałąź oraz wykorzystuje wspólny si
 ## 5. Pierwsze zadanie dla Codexa po tej decyzji
 
 > Przeczytaj `AGENTS.md`, bieżącą `docs/ROADMAP.md` i `docs/UPDATER-SPEC.md`. Poprzednia roadmapa jest archiwum. Nie rozwijaj „Winobrania” ani platformówki „Leśny sygnał”. Przeprowadź przegląd gałęzi/PR #1–#4, zaproponuj sposób odzyskania wspólnego rdzenia bez automatycznego scalania, a następnie przygotuj plan modułu dużych map i aktualizatora ZIP zgodny z nowymi priorytetami. Wdrażaj etapami i na osobnych gałęziach. Bez samodzielnego merge i publikacji.
+
+## 6. Rejestr realizacji
+
+### 2026-11-13 — P0: wydzielenie rdzenia
+
+- Baza `main` / `ead7666`, gałąź `feature/p0-core-extraction`.
+- Odczytano PR #1–#4; wszystkie otwarte, bez merge. Selektywny import wspólnych
+  plików, bez aktywnych produktów i bez zmian historycznych gałęzi.
+- Syntetyczne fixture'y zastąpiły zależności testów od gier; brak migracji zapisów.
+- Kontrole i wyniki: raport P0. Fizyczne urządzenia i inne silniki przeglądarek
+  nie zostały sprawdzone. Duże mapy i aktualizator są dopiero zaplanowane.
+- Następny krok: przegląd P0, następnie osobny zakres P1. Bez automatycznego merge,
+  wdrożenia, rozpoczęcia P3 lub przywracania zakończonych produktów.

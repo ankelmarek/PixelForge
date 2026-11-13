@@ -2,7 +2,6 @@
 
 > **Aktualizacja kierunku, 13.11.2026:** nie rozwijamy już **Winobrania** ani platformówki **Leśny sygnał**. PixelForge pozostaje aktywnym, współdzielonym silnikiem dla nowych gier 2D z góry. Priorytety: **duże mapy** i **aktualizator ZIP**. Bieżący plan: [ROADMAP.md](docs/ROADMAP.md), opis aktualizatora: [UPDATER-SPEC.md](docs/UPDATER-SPEC.md). Stary plan zachowano w [archiwum](docs/ROADMAP-ARCHIVE-2026-11.md).
 
-
 **PixelForge** to uniwersalna, przeglądarkowa platforma do tworzenia małych gier 2D w estetyce pixel art. Docelowo każda gra ma oferować około **20–35 minut rozgrywki** i mieć własny początek, rozwinięcie oraz zakończenie.
 
 Projekt powstaje z myślą o wielokrotnym wykorzystaniu gotowego silnika i produkowaniu kolejnych, niezależnych tytułów, zamiast pisania całych gier od zera.
@@ -33,16 +32,34 @@ Funkcje silnika powstały w historycznych gałęziach M0–M3 i powiązanych PR,
 
 ## Uruchamianie
 
-Po bezpiecznym włączeniu rdzenia Codex musi zachować standardowe polecenia:
+Gałąź `feature/p0-core-extraction` zawiera odzyskany rdzeń i niezależne testy.
+Katalog aktywnych gier jest pusty — to oczekiwany stan P0. Oba zamknięte produkty
+pozostają wyłącznie w historycznych gałęziach. Nie scalono PR #1–#4.
+
+Wymagane Node.js **24 LTS** i npm 11. Po przełączeniu na gałąź P0:
 
 ```bash
 npm install
 npm run dev
 npm run build
 npm run lint
+npm run typecheck
 npm run test
 npm run test:e2e
 ```
+
+`npm run dev` podaje lokalny adres Vite. `npm run build` tworzy statyczny `dist/`
+z ekranem rdzenia, bez aktywnych tytułów, testów i fixture'ów. Build działa także
+z podkatalogu dzięki `base: './'`. `npm run preview` służy do jego sprawdzenia.
+
+Przed pierwszym E2E: `npx playwright install chromium`, następnie `npm run test:e2e`.
+Playwright uruchamia własny Vite na porcie 4190 i testuje prawdziwy EngineHost
+przez syntetyczny harness poza katalogiem produkcyjnym. Testy nie importują
+dawnych gier. PNG testowe odtwarza `python3 tools/generate-test-assets.py`.
+
+[Inwentaryzacja i pochodzenie modułów](docs/CORE-INVENTORY.md),
+[raport P0](docs/P0-REPORT.md),
+[plan dużych map i aktualizatora](docs/IMPLEMENTATION-PLAN.md).
 
 Aktualizuj ten opis po każdej zmianie publicznego sposobu uruchamiania. Nie oznaczaj projektu jako ukończonego przed przejściem kryteriów odbioru z roadmapy.
 
