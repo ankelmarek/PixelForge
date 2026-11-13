@@ -1,4 +1,4 @@
-"""Package the isolated U1 tool; never include it in a static game release."""
+"""Package the isolated U2 tool; never include it in a static game release."""
 
 import hashlib
 import io
@@ -20,6 +20,14 @@ FILES = [
     "src/Support.php",
     "src/Package.php",
     "src/Updater.php",
+    "src/PanelConfig.php",
+    "src/PanelAuth.php",
+    "src/Panel.php",
+    "src/PanelView.php",
+    "panel-setup.php",
+    "panel-password.php",
+    "web/panel.css",
+    "web/panel.js",
 ]
 
 
@@ -52,7 +60,7 @@ def main():
     digest = hashlib.sha256(raw).hexdigest()
     destination = ROOT / "downloads"
     destination.mkdir(exist_ok=True)
-    path = destination / f"pixelforge-updater-u1-{metadata['version']}.zip"
+    path = destination / f"pixelforge-updater-u2-{metadata['version']}.zip"
     checksum = path.with_suffix(".zip.sha256")
     for target, data in [(path, raw), (checksum, f"{digest}  {path.name}\n".encode())]:
         if target.is_symlink() or (target.exists() and target.read_bytes() != data):

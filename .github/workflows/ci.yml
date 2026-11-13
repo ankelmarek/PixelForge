@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "24"
+          node-version: '24'
           cache: npm
       - name: Install PHP ZIP support
         run: |
@@ -30,6 +30,17 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run lint
+        id: lint
+        continue-on-error: true
+      - name: Formatting suggestions
+        if: steps.lint.outcome == 'failure'
+        run: |
+          python3 - <<'PY'
+          import json, subprocess
+          for path in ['.github/workflows/ci.yml', 'admin-updater/web/panel.css', 'admin-updater/web/panel.js']:
+              result = subprocess.run(['npx', 'prettier', path], capture_output=True, text=True, check=True)
+              print('PF_FORMAT ' + json.dumps({'path': path, 'content': result.stdout}))
+          PY
       - run: npm run typecheck
       - name: PHP syntax
         run: find admin-updater tests/updater -name '*.php' -print0 | xargs -0 -n1 php -l
@@ -38,6 +49,9 @@ jobs:
       - run: npm run test:e2e
       - run: npm run test:updater:browser
       - run: npm run package:updater
+      - name: Require lint success
+        if: always() && steps.lint.outcome != 'success'
+        run: exit 1
       - uses: actions/upload-artifact@v4
         if: always()
         with:

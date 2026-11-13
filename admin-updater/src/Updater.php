@@ -365,6 +365,65 @@ final class Updater
         });
     }
 
+    /** A web GET must never recover or switch the public installation. */
+    public function inspect(): array
+    {
+        return $this->locked(function (): array {
+            $pending = file_exists($this->root . '/transaction.json');
+            $state = file_exists($this->root . '/state.json') ? $this->state() : null;
+            $healthy = false;
+            if ($state !== null && !$pending) {
+                try {
+                    $this->verify($this->target, $state['active']);
+                    $healthy = true;
+                } catch (UpdateError $error) {
+                    // The panel reports damage without exposing filesystem paths.
+                }
+            }
+            $plans = array_values(array_filter(
+                scandir($this->root . '/staging'),
+                fn($name) => preg_match('/\A[0-9a-f]{32}\z/D', $name) === 1,
+            ));
+            $last = null;
+            if ($state !== null && $state['lastOperation'] !== null && !$pending) {
+                $last = $this->metadata($this->root . '/logs/' . $state['lastOperation'] . '.json');
+            }
+            return compact('state', 'pending', 'healthy', 'plans', 'last');
+        }, false);
+    }
+
+    /** Revalidate a plan for display; apply still performs its own checks under lock. */
+    public function preview(string $id): array
+    {
+        return $this->locked(function () use ($id): array {
+            $this->id($id);
+            ensure(!file_exists($this->root . '/transaction.json'), 'RECOVERY: recover first');
+            $state = $this->state();
+            $stage = $this->root . '/staging/' . $id;
+            $plan = $this->metadata($stage . '/plan.json');
+            ensure(
+                array_keys($plan) === ['formatVersion', 'id', 'base', 'candidate', 'packageHash', 'createdAt', 'diff']
+                && $plan['formatVersion'] === 1 && $plan['id'] === $id
+                && $plan['base'] === $state['active'],
+                'PLAN: invalid or stale plan',
+            );
+            $this->checkDescriptor($plan['candidate']);
+            $package = new Package($stage . '/package.zip', $this->limits);
+            $after = $this->verify($stage . '/release', $plan['candidate']);
+            $before = $this->verify($this->target, $state['active']);
+            ensure(
+                $plan['packageHash'] === $package->hash
+                && $after['id'] === $package->manifestHash
+                && $plan['diff'] === $this->diff($before, $after),
+                'HASH: prepared files changed',
+            );
+            return $plan + [
+                'archiveBytes' => filesize($stage . '/package.zip'),
+                'engineSchemaVersion' => $package->manifest->engineSchemaVersion,
+            ];
+        }, false);
+    }
+
     public function status(): array
     {
         return $this->locked(function (): array {
