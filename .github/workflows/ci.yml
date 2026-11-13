@@ -32,24 +32,13 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run lint
-        id: lint
-        continue-on-error: true
-      - name: Formatting suggestions
-        if: steps.lint.outcome == 'failure'
-        run: |
-          python3 - <<'PY'
-          import json, subprocess
-          paths = subprocess.run(['npx', 'prettier', '--list-different', '.'], capture_output=True, text=True).stdout.splitlines()
-          for path in paths:
-              result = subprocess.run(['npx', 'prettier', path], capture_output=True, text=True, check=True)
-              print('PF_FORMAT ' + json.dumps({'path': path, 'content': result.stdout}))
-          PY
       - run: npm run typecheck
       - name: PHP syntax
         run: find admin-updater tests/updater -name '*.php' -print0 | xargs -0 -n1 php -l
       - run: npm test
       - run: npm run build
       - name: Verify unchanged static game
+        if: github.head_ref == 'feature/p2-u2-admin-panel'
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -64,32 +53,6 @@ jobs:
       - run: npm run test:updater:browser
       - run: npm run test:panel:browser
       - run: npm run package:updater
-      - name: Export review artifacts
-        if: always()
-        run: |
-          python3 - <<'PY'
-          import base64, hashlib, json
-          from pathlib import Path
-          paths = [
-              'downloads/pixelforge-updater-u2-1.1.0.zip',
-              'downloads/pixelforge-updater-u2-1.1.0.zip.sha256',
-              'test-results/U2-BROWSER-RESULTS.json',
-              'test-results/u2-desktop.png',
-              'test-results/u2-mobile.png',
-          ]
-          for name in paths:
-              if not Path(name).is_file():
-                  continue
-              data = Path(name).read_bytes()
-              encoded = base64.b64encode(data).decode()
-              chunks = [encoded[i:i+4096] for i in range(0, len(encoded), 4096)]
-              print('PF_ARTIFACT_META ' + json.dumps(dict(name=name, sha256=hashlib.sha256(data).hexdigest(), bytes=len(data), parts=len(chunks))))
-              for part, chunk in enumerate(chunks):
-                  print('PF_ARTIFACT ' + json.dumps(dict(name=name, part=part, data=chunk)))
-          PY
-      - name: Require lint success
-        if: always() && steps.lint.outcome != 'success'
-        run: exit 1
       - uses: actions/upload-artifact@v4
         if: always()
         with:

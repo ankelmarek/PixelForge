@@ -237,9 +237,9 @@ class WebPanel(unittest.TestCase):
             self.assertEqual(list((app.site.private / "staging").iterdir()), [])
 
     def test_distribution_zip_is_complete_and_panel_runs_after_extraction(self):
-        subprocess.run(["python3", str(core.ROOT / "tools/package-updater.py")],
-                       check=True, capture_output=True, timeout=30)
-        path = core.ROOT / "downloads/pixelforge-updater-u2-1.1.0.zip"
+        packaged = subprocess.run(["python3", str(core.ROOT / "tools/package-updater.py")],
+                                  check=True, capture_output=True, text=True, timeout=30)
+        path = core.ROOT / json.loads(packaged.stdout)["archive"]
         before = path.read_bytes()
         subprocess.run(["python3", str(core.ROOT / "tools/package-updater.py")],
                        check=True, capture_output=True, timeout=30)

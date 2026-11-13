@@ -1,6 +1,6 @@
 # PixelForge — projekt aktualizatora ZIP
 
-**Status:** U0 i U1 zaimplementowane; U2–U3 zaplanowane, bez wdrożenia na hosting. **Data decyzji:** 2026-11-13.
+**Status:** U0–U2 zaimplementowane; U3 zaplanowane, bez wdrożenia na hosting. **Data decyzji:** 2026-11-13.
 
 ## 1. Cel
 
@@ -114,7 +114,7 @@ Wersja wydania 0.6.1; manifest v1, kontrakt silnika 2, narzędzie 1.0.0.
 - [x] Zależnie od hostingu: adapter PHP z `ZipArchive` albo narzędzie CLI.
 
 Implementacja: PHP 8.2+ / ZipArchive, lokalna komenda administratora oraz
-biblioteka dla przyszłego panelu. Publiczna strona rozumisie.pl zgłasza PHP
+biblioteka wykorzystywana przez panel U2. Publiczna strona rozumisie.pl zgłasza PHP
 8.5.12; wybór PHP nie oznacza potwierdzenia rozszerzeń ani praw konkretnego konta.
 `doctor` sprawdza środowisko przed instalacją. U1 nie udostępnia HTTP uploadu.
 
@@ -125,9 +125,15 @@ jest `recover`. Stan i prywatna poprzednia wersja umożliwiają odzyskanie.
 
 ### U2: panel WWW do uploadu
 
-- [ ] Logowanie, HTTPS, CSRF, kontrola uprawnień.
-- [ ] Upload, analiza, podgląd plików, osobne zatwierdzenie instalacji, wynik i rollback.
-- [ ] Panel pozostaje niezależny od statycznego buildu PixelForge.
+- [x] Logowanie, HTTPS, CSRF, kontrola uprawnień.
+- [x] Upload, analiza, podgląd plików, osobne zatwierdzenie instalacji, wynik i rollback.
+- [x] Panel pozostaje niezależny od statycznego buildu PixelForge.
+
+Implementacja: panel PHP 8.2+ z prywatną konfiguracją, HTTPS, sesją, CSRF
+oraz limitem logowania. Jednorazowy setup przez CLI, codzienna obsługa przez WWW.
+Podgląd GET nie uruchamia recovery; wszystkie zmiany wymagają zatwierdzonego POST.
+[Instrukcja](../admin-updater/README.md), [raport U2](U2-REPORT.md).
+Nie wdrożono panelu na publiczny hosting.
 
 ### U3: paczki delta i testy regresji
 
@@ -141,5 +147,5 @@ Administrator potrafi zainstalować pełną paczkę ZIP bez FTP i bez ręcznego 
 
 **Uwaga realizacyjna:** wybrano adapter PHP z wejściem CLI dla U1. Wdrożenie na
 konkretnym koncie wymaga poprawnych ścieżek i pozytywnego wyniku `doctor`.
-Panel WWW pozostaje U2. Nie zmieniaj statycznego runtime gry tylko po to,
-aby umożliwić upload na serwer.
+Panel WWW U2 jest gotowy na osobnej gałęzi / PR #9. Statyczny runtime gry
+pozostaje niezależny. U3 nie zostało rozpoczęte.

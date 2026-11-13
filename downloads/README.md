@@ -50,10 +50,15 @@ Wynik poprawnej kontroli ma `valid: true`. Szczegóły i limity:
 [RELEASE-PACKAGES.md](../docs/RELEASE-PACKAGES.md).
 Poprzednie paczki P1 0.5.0/0.5.1 i U0 0.6.0 zachowano jako archiwum; bieżąca to **0.6.1-full**.
 
-## Osobne narzędzie aktualizacji U1
+## Osobny panel aktualizacji U2
 
-[Pobierz instalator PHP U1 1.0.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u1-installer/downloads/pixelforge-updater-u1-1.0.0.zip).
-Ten ZIP rozpakowuje się **poza public_html** i uruchamia przez SSH.
-Nie wgrywa się go do katalogu gry ani do walidatora paczek full.
-[Instrukcja konfiguracji i poleceń](../admin-updater/README.md).
-Panel w przeglądarce będzie osobnym etapem U2.
+[Pobierz panel PHP U2 1.1.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u2-admin-panel/downloads/pixelforge-updater-u2-1.1.0.zip).
+Ten ZIP rozpakowuje się **poza public_html**. Jednorazowy konfigurator CLI
+ustawia własne hasło i tworzy publiczny plik panelu. Kolejne pełne ZIP-y gry
+wgrywa się już przez przeglądarkę: logowanie, podgląd, osobne zatwierdzenie.
+
+Nie wgrywaj ZIP-a panelu do katalogu gry ani do formularza paczek full.
+Wymagane PHP 8.2+, ZipArchive i HTTPS. Gra pozostaje statyczna w wersji 0.6.1.
+[Instrukcja konfiguracji i obsługi](../admin-updater/README.md),
+[raport U2](../docs/U2-REPORT.md).
+Poprzedni ZIP U1 1.0.0 zachowano jako archiwum narzędzia CLI.

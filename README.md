@@ -41,8 +41,8 @@ Atlas zajmuje całe okno przeglądarki, także po obrocie telefonu.
 Wydanie 0.6.1 poprawia migotanie przy maksymalnym oddaleniu i daty plików ZIP
 wpływające na cache przeglądarki. [Raport poprawki](docs/HOTFIX-0.6.1.md).
 
-Generator U0 i instalator U1 są gotowe. Panel WWW **U2** jest realizowany
-na osobnej gałęzi / PR #9. [Instrukcja](admin-updater/README.md) opisuje
+Generator U0 i instalator U1 są gotowe. Panel WWW **U2** jest gotowy
+na osobnej gałęzi / [PR #9](https://github.com/ankelmarek/PixelForge/pull/9). [Instrukcja](admin-updater/README.md) opisuje
 jednorazową konfigurację oraz upload, podgląd, instalację i rollback w przeglądarce.
 Paczka gry nie wdraża się samodzielnie.
 
@@ -101,8 +101,8 @@ npm run test:packages
 
 Pierwsze polecenie buduje projekt i dopiero po sukcesie tworzy wersjonowany ZIP,
 manifest oraz plik sumy SHA-256. Drugie sprawdza paczkę bez instalacji i bez
-rozpakowywania. `npm test` obejmuje Vitest i testy paczek w Pythonie (biblioteka
-standardowa, bez pip). [Format, limity i polecenia](docs/RELEASE-PACKAGES.md),
+rozpakowywania. `npm test` obejmuje Vitest oraz testy paczek i aktualizatora
+w Pythonie/PHP (biblioteka standardowa, bez pip). [Format, limity i polecenia](docs/RELEASE-PACKAGES.md),
 [raport U0](docs/U0-REPORT.md).
 
 ## Panel U2 i instalator U1

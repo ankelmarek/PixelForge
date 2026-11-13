@@ -88,12 +88,12 @@ Kolejny zakres: **P2/U0: generator paczek full i walidator offline**.
 
 ### P2. Aktualizator plikowy ZIP
 
-**Status: U0 i U1 DONE (implementacja i testy), U2 IN PROGRESS, U3 TODO. Priorytet: wysoki. Szczegółowe zadania U0–U3:** [UPDATER-SPEC.md](./UPDATER-SPEC.md).
+**Status: U0–U2 DONE (implementacja i testy), U3 TODO. Priorytet: wysoki. Szczegółowe zadania U0–U3:** [UPDATER-SPEC.md](./UPDATER-SPEC.md).
 
 - [ ] Wprowadzamy wersjonowane paczki `full` i docelowo `delta`, z manifestem, sumami SHA-256 i kompatybilnością wersji.
 - [x] Rozwijamy walidator, katalog staging, bezpieczny rollback i log aktualizacji.
-- [ ] Administrator dostaje panel pozwalający przesłać ZIP, zobaczyć zakres zmian i zatwierdzić instalację.
-- [ ] Panel ma niezależne uwierzytelnianie i nie jest częścią statycznej gry. Wybór PHP lub CLI zależy od wybranego hostingu.
+- [x] Administrator dostaje panel pozwalający przesłać ZIP, zobaczyć zakres zmian i zatwierdzić instalację.
+- [x] Panel ma niezależne uwierzytelnianie i nie jest częścią statycznej gry. Wybrano PHP 8.2+ / ZipArchive.
 - [x] Testy uszkodzonych ZIP, zip-slip, limitów rozpakowania, niezgodnych wersji, przerwania instalacji i przywracania poprzedniej.
 - [ ] Nie uruchamiać publicznego panelu, nie otwierać uprawnień serwera i nie instalować nowych usług przed osobnym poleceniem.
 
@@ -127,7 +127,19 @@ z zachowaniem zapisu, pod / oraz /PixelForge/, desktop i emulacja Pixel 7.
 [Raport U1](U1-REPORT.md), [instrukcja](../admin-updater/README.md).
 Publiczna strona zgłasza PHP 8.5.12; rozszerzenia i prawa konkretnego konta
 sprawdza doctor przed instalacją. Nie wdrażano narzędzia na hosting użytkownika.
-Następny osobny zakres: U2 — uwierzytelniony panel WWW.
+**U2 wykonane na `feature/p2-u2-admin-panel` / PR #9**, baza U1 / PR #8.
+Panel PHP z własnym logowaniem, HTTPS, CSRF, prywatną sesją i limitem prób.
+Upload przygotowuje plan; osobny przycisk zatwierdza instalację. Podgląd
+pokazuje pliki i wersje. Dostępne są rollback, recovery i sprzątanie.
+Jednorazowa konfiguracja CLI, późniejsze aktualizacje przez przeglądarkę.
+Kod PHP i dane administracyjne pozostają poza statycznym buildem.
+
+Weryfikacja: 48 Vitest + 15 Python U0 + 22 U1 + 14 U2 PASS; pełny Playwright
+28 PASS + 2 SKIP, U1 browser 8/8. Panel przez HTTPS: desktop i emulacja Pixel 7,
+instalacja/rollback z zachowaniem zapisu Atlasu, dodatkowo upload bez JavaScript.
+272 pliki buildu gry zgodne bajt w bajt z 0.6.1. Osobny ZIP panelu 1.1.0.
+[Raport U2](U2-REPORT.md), [uruchomienie](../admin-updater/README.md).
+Bez merge i wdrożenia na hosting. Następny zakres U3 wymaga osobnego zlecenia.
 
 ### P3. Pierwsza nowa gra na dużej mapie
 
@@ -230,8 +242,10 @@ Każdy tytuł ma własną specyfikację i gałąź oraz wykorzystuje wspólny si
 
 ### 2026-11-13 — U2: panel WWW
 
-- Osobna gałąź `feature/p2-u2-admin-panel` / PR #9, baza U1 `95f310e` / PR #8.
-- Logowanie, HTTPS, sesja, CSRF, limity prób, prywatny upload i osobne zatwierdzenie.
-- Terminal środowiska sesji jest niedostępny; dodano GitHub Actions z testami
-  i artefaktami. Wyniki i ograniczenia będą zapisane w raporcie U2.
-- Bez merge, wdrożenia, paczek delta i gier P3.
+- Gałąź `feature/p2-u2-admin-panel` / PR #9, baza U1 `95f310e` / PR #8.
+- Zaimplementowano uwierzytelniony panel oraz jednorazowy konfigurator i reset
+  hasła. Podgląd GET nie odzyskuje ani nie przełącza instalacji.
+- Testy PHP/HTTPS, przeglądarkowe i rozpakowanej paczki przeszły w GitHub Actions.
+  Terminal środowiska sesji był niedostępny; nie deklarujemy testów na tym terminalu.
+- Wydano osobny ZIP narzędzia U2 1.1.0. Gra i zapisy pozostają w kontrakcie 0.6.1.
+- Raport zawiera wyniki i ograniczenia. Bez merge, wdrożenia, U3 i gier P3.
