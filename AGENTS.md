@@ -59,6 +59,7 @@ Nowym zadaniem infrastrukturalnym jest **bezpieczny aktualizator ZIP** z podglą
 **Obowiązuje wszystkie gry i demo PixelForge od M0.** Gracz nie dostaje żadnych tekstowych instrukcji sterowania, samouczków, dymków typu „Naciśnij Shift”, opisów zagadek, strzałek z podpisami ani pop-upów objaśniających mechanikę. Nie dodawaj także ekranu z listą klawiszy. Mechanikę poznaje przez układ poziomu, animację, reakcję świata, dźwięk i obrazowe symbole. Krótkie nazwy menu i tytuł gry są dopuszczalne, ale nie mogą być instrukcją ani warunkiem rozwiązania zagadki.
 
 **Wspólny schemat klawiszy na desktopie:**
+
 - `←/→` lub `A/D`: ruch poziomy; `↑/↓` lub `W/S`: ruch pionowy tylko w gatunkach, które go wymagają.
 - `Spacja`: skok podczas platformówki; na ekranie startu/wyniku potwierdzenie lub ponowne rozpoczęcie, gdy nie ma skakania.
 - `Shift`: jedna kontekstowa akcja, np. użyj, podnieś, pociągnij lub włącz/wyłącz przełącznik. **Krótkie naciśnięcie**, a nie przytrzymywanie, jeśli akcja ma zmienić stan. Brak konieczności używania osobnego przycisku dla każdej zagadki.
