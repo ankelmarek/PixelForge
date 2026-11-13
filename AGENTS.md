@@ -16,6 +16,8 @@ Nowym zadaniem infrastrukturalnym jest **bezpieczny aktualizator ZIP** z podglą
 
 **Bieżąca dokumentacja:** `docs/ROADMAP.md` (wersja 0.2) i `docs/UPDATER-SPEC.md`. Stara `docs/ROADMAP-ARCHIVE-2026-11.md` jest archiwum. Wszelkie sprzeczne dawne polecenia dotyczące M0/M2/M3/Winobrania czy platformówki są uchylone.
 
+**Zmiana koncepcji „Życia Dżdżownicy” na polecenie użytkownika (2026-11-13):** ta gra pokazuje pionowy przekrój gleby z boku, a nie widok z góry. Rośliny rosną na powierzchni, pod nimi są korzenie, pędraki i larwy. Bohater porusza się w obu osiach, drąży i użyźnia glebę. Głębiej rośnie trudność; deszcz przenika od powierzchni w dół. Punkty i stopniowy rozwój prowadzą do dorosłości. Poprzedni pomysł czterech ogrodów i odrodzenia centralnego drzewa jest zastąpiony tą koncepcją. Pozostały rdzeń i laboratorium dużego świata pozostają niezależne od perspektywy tej gry.
+
 ## Gałęzie i pull requesty
 
 - `main` jest gałęzią stabilną. Dokumentacja bazowa może w niej pozostać, ale **implementacja kodu każdego etapu musi być wykonywana na osobnej gałęzi roboczej**.
@@ -59,6 +61,7 @@ Nowym zadaniem infrastrukturalnym jest **bezpieczny aktualizator ZIP** z podglą
 **Obowiązuje wszystkie gry i demo PixelForge od M0.** Gracz nie dostaje żadnych tekstowych instrukcji sterowania, samouczków, dymków typu „Naciśnij Shift”, opisów zagadek, strzałek z podpisami ani pop-upów objaśniających mechanikę. Nie dodawaj także ekranu z listą klawiszy. Mechanikę poznaje przez układ poziomu, animację, reakcję świata, dźwięk i obrazowe symbole. Krótkie nazwy menu i tytuł gry są dopuszczalne, ale nie mogą być instrukcją ani warunkiem rozwiązania zagadki.
 
 **Wspólny schemat klawiszy na desktopie:**
+
 - `←/→` lub `A/D`: ruch poziomy; `↑/↓` lub `W/S`: ruch pionowy tylko w gatunkach, które go wymagają.
 - `Spacja`: skok podczas platformówki; na ekranie startu/wyniku potwierdzenie lub ponowne rozpoczęcie, gdy nie ma skakania.
 - `Shift`: jedna kontekstowa akcja, np. użyj, podnieś, pociągnij lub włącz/wyłącz przełącznik. **Krótkie naciśnięcie**, a nie przytrzymywanie, jeśli akcja ma zmienić stan. Brak konieczności używania osobnego przycisku dla każdej zagadki.

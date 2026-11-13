@@ -1,0 +1,74 @@
+PIXELFORGE — WSZYSTKO W PUBLIC_HTML
+Gra 0.8.0 (Życie Dżdżownicy + Atlas), instalator i aktualizator 1.2.0.
+
+WYMAGANIA
+Apache 2.4 lub zgodny LiteSpeed z aktywnymi regułami .htaccess, HTTPS,
+PHP 8.2+ 64 bit na Unix, ZipArchive, OpenSSL, allow_url_fopen, pamięć 256M,
+prawo zapisu i rename w public_html. Do późniejszych aktualizacji grafiki:
+upload_max_filesize=16M, post_max_size=17M lub więcej (ustawienia PHP hostingu). PHP musi łączyć się z własną domeną
+przez HTTPS z poprawnym certyfikatem. Nie wymaga SSH, Node.js ani bazy SQL.
+
+PIERWSZA INSTALACJA
+1. Rozpakuj ZAWARTOŚĆ ZIP-a w public_html, łącznie z ukrytymi .htaccess.
+   Obok siebie mają być: PixelForge/, pixelforge-admin/, _pixelforge/,
+   setup.php, pixelforge.php i ten plik. Ukryty .htaccess jest w _pixelforge/.
+   Nie wgrywaj samego ZIP-a. Jeśli katalog PixelForge już istnieje, zachowaj
+   jego kopię i zastąp kompletnym nowym katalogiem, bez starych assetów.
+2. Otwórz https://TWOJA-DOMENA/setup.php.
+3. Kliknij „Pobierz konfigurację”. Wgraj pobrany install-settings.php
+   do public_html/_pixelforge/, zastępując pusty wzór. Ten krok potwierdza
+   dostęp właściciela do hostingu. Nie przesyłaj klucza w adresie URL.
+4. Odśwież instalator. Wpisz klucz setupKey z pobranego pliku, własny login
+   i hasło (16–72 bajty). Kliknij „Sprawdź i zainstaluj”.
+5. Zaloguj się na https://TWOJA-DOMENA/pixelforge-admin/index.php.
+   Gra: https://TWOJA-DOMENA/PixelForge/index.html lub /pixelforge.php.
+
+Instalator sprawdza rzeczywisty HTTP 403 dla _pixelforge przez HTTPS,
+integralność gry i zapis plików. Po sukcesie zamyka konfigurację konta
+i usuwa serwerowy plik z jednorazowym kluczem. Możesz usunąć setup.php
+oraz pobrany lokalnie install-settings.php; panel działa niezależnie.
+Bez JavaScript można ręcznie edytować pusty wzór: origin = adres HTTPS
+bez ukośnika na końcu; setupKey = własne losowe 64 małe znaki hex.
+
+KOLEJNE AKTUALIZACJE
+W panelu wybierz pixelforge-WERSJA-full.zip, kliknij „Sprawdź pakiet”,
+obejrzyj zmiany, osobno potwierdź instalację. Możesz przywrócić poprzednie
+wydanie. ZIP pierwszej instalacji i ZIP narzędzia nie są paczkami gry.
+Panel ich nie przyjmie. Aktualizacja gry nie wymienia kodu aktualizatora.
+
+KATALOGI
+PixelForge/             — publiczna gra, wymieniana przy aktualizacji
+pixelforge-admin/       — wejście do panelu i niesekretny plik kontrolny
+_pixelforge/tool/       — kod aktualizatora
+_pixelforge/data/       — konfiguracja, sesje, staging, kopie i dzienniki
+_pixelforge/.htaccess   — obowiązkowa blokada HTTP całego katalogu
+
+Nie kasuj _pixelforge ani jego .htaccess. Nie przenoś go do katalogu gry.
+Sam chmod 0700 nie zastępuje blokady HTTP. Panel ponawia kontrolę ochrony
+przy żądaniach i blokuje operacje, gdy nie potwierdzi zabezpieczenia.
+Usunięcie/wyłączenie .htaccess może ujawnić już istniejące pliki; należy
+natychmiast przywrócić reguły i zmienić hasło administratora. Nie zmieniaj
+serwera na Nginx bez osobnej konfiguracji blokady; ten instalator wspiera
+wyłącznie sprawdzany wariant Apache/LiteSpeed. Systemowy katalog upload_tmp
+PHP może być poza public_html — to część hostingu, nie instalacji projektu.
+
+ISTNIEJĄCA STRONA
+Paczka zachowuje główny index.php/index.html i .htaccess domeny, aby istniejąca
+strona (np. Rozumisie) nadal działała. Na pustej domenie można opcjonalnie
+zmienić nazwę pixelforge.php na index.php, żeby otwierać grę z głównego adresu.
+Zrób kopię przed zastąpieniem starego katalogu PixelForge. Jeśli panel już
+działa, używaj aktualizacji przez panel; nie rozpakowuj ponownie paczki
+startowej na skonfigurowane _pixelforge/data. Zachowaj domenę, HTTPS
+i /PixelForge/, aby przeglądarka korzystała z dotychczasowych zapisów.
+
+GDY INSTALACJA SIĘ ZATRZYMA
+Wgraj ukryte .htaccess. Sprawdź wymagania PHP i uprawnienia z hostingiem.
+Nie wyłączaj weryfikacji TLS ani kontroli ochrony. Popraw błąd i ponów
+setup.php z tym samym kluczem. Gotowe konto blokuje ponowną konfigurację.
+Zmiana domeny lub katalogu po konfiguracji wymaga świadomej edycji lokalnej
+konfiguracji. Zmiana hasła: panel-password.php przez CLI, jak w instrukcji
+narzędzia. Nie ma publicznego resetu hasła ani domyślnego administratora.
+
+Aktualizacja używa dwóch rename: może wystąpić krótkie okno HTTP 404.
+Po przerwaniu operacji użyj „Odzyskaj przerwaną operację” w panelu.
+Wszystkie pliki projektu i jego kopie pozostają pod public_html.
