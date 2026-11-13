@@ -6,6 +6,14 @@ Zbuduj **PixelForge**, modułowy silnik przeglądarkowych gier 2D w pixel art, u
 
 Przed zmianami przeczytaj `README.md`, `docs/SPECIFICATION.md` i `docs/ROADMAP.md`. Decyzje w tych plikach są obowiązujące, dopóki użytkownik ich nie zmieni.
 
+## Gałęzie i pull requesty
+
+- `main` jest gałęzią stabilną. Dokumentacja bazowa może w niej pozostać, ale **implementacja kodu każdego etapu musi być wykonywana na osobnej gałęzi roboczej**.
+- Pierwszy etap M0 realizuj na istniejącej gałęzi `feature/m0-engine-foundation`. Nie commituj kodu bezpośrednio do `main`.
+- Kolejne etapy otrzymują oddzielne gałęzie `feature/m1-runtime`, `feature/m2-forest-demo` itd., tworzone z aktualnego `main` po zatwierdzeniu poprzedniego etapu.
+- Na koniec etapu przygotuj pull request do `main` z podsumowaniem zmian, testami i kryteriami odbioru. Nie scalaj samodzielnie PR bez wyraźnej zgody użytkownika.
+- Poprawki do aktywnego etapu dopisuj do jego gałęzi, bez tworzenia kolejnego PR na każdą drobną zmianę.
+
 ## Sposób pracy
 
 1. Zacznij od etapu **M0** roadmapy. W jednym zadaniu realizuj tylko bieżący, niezamknięty etap lub wyraźnie wskazany zakres.
