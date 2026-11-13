@@ -1,0 +1,43 @@
+{
+  "name": "pixelforge",
+  "version": "0.6.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run && npm run test:packages && npm run test:updater",
+    "test:e2e": "playwright test",
+    "assets:world": "python3 tools/generate-world-demo.py",
+    "measure:world": "node tools/measure-world.mjs",
+    "package:release": "npm run build && python3 tools/release.py pack",
+    "package:validate": "python3 tools/release.py validate",
+    "test:packages": "python3 -m unittest discover -s tests/packages -v",
+    "test:updater": "python3 -m unittest discover -s tests/updater -v",
+    "test:updater:browser": "node tests/updater/browser.mjs",
+    "package:updater": "python3 tools/package-updater.py",
+    "test:panel:browser": "node tests/updater/panel-browser.mjs"
+  },
+  "dependencies": {
+    "phaser": "4.2.1"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vite": "^7.2.2",
+    "vitest": "^4.0.9",
+    "eslint": "^9.39.1",
+    "@eslint/js": "^9.39.1",
+    "typescript-eslint": "^8.46.4",
+    "prettier": "^3.6.2",
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.10.0"
+  },
+  "releaseEpoch": 1794578584
+}
