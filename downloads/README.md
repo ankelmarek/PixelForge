@@ -1,10 +1,10 @@
-# PixelForge P1 — gotowe pliki na serwer statyczny
+# PixelForge 0.6.0 — gotowe pliki na serwer statyczny
 
-[Pobierz ZIP](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p1-large-worlds/downloads/pixelforge-p1-0.5.1-static.zip)
+[Pobierz ZIP](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u0-packages/downloads/pixelforge-0.6.0-full.zip)
 
-Archiwum zawiera produkcyjny build P1 / Atlas 0.5.1 z poprawką pełnego okna,
-zbudowany przez `npm run build`.
-Zawiera 272 pliki: `index.html` oraz `assets/`. Suma SHA-256 jest obok ZIP-a.
+Archiwum zawiera produkcyjny Atlas w pełnym oknie oraz manifest U0.
+Utworzono je przez `npm run package:release`: 272 pliki buildu (`index.html`
+i `assets/`) oraz `manifest.json`, łącznie 273 wpisy ZIP. Suma SHA-256 jest obok ZIP-a.
 
 1. Pobierz i rozpakuj ZIP na komputerze albo w menedżerze plików hostingu.
 2. Wgraj **całą rozpakowaną zawartość** do katalogu strony, np.
@@ -16,6 +16,7 @@ Po wgraniu układ ma wyglądać tak:
 ```text
 public_html/pixelforge/
 ├── index.html
+├── manifest.json
 └── assets/
     ├── index-....css
     ├── index-....js
@@ -33,6 +34,17 @@ Zwykły ZIP źródeł z przycisku GitHub „Code → Download ZIP” nie zastęp
 paczki. Gotowe archiwum zawiera zawartość `dist/` bez dodatkowego katalogu
 nadrzędnego. Repozytorium, `src/`, `node_modules/` i testy nie trafiają na hosting.
 
-Jest to paczka do **ręcznego wgrania**. Nie zawiera panelu ani manifestu przyszłego
-aktualizatora U0; nie oznacza wdrożenia P2. Rozpakowane archiwum sprawdzono pod
+Paczka `full` nadaje się do **ręcznego wgrania** i do walidacji offline U0.
+`manifest.json` jest zwykłym plikiem danych; nie wymaga serwera aplikacyjnego.
+Nie zawiera panelu ani instalatora U1/U2. Rozpakowane archiwum sprawdzono pod
 `/` i `/PixelForge/` w Chromium na desktopie i w emulacji Pixel 7.
+
+Opcjonalna kontrola lokalna z repozytorium:
+
+```bash
+npm run package:validate -- downloads/pixelforge-0.6.0-full.zip
+```
+
+Wynik poprawnej kontroli ma `valid: true`. Szczegóły i limity:
+[RELEASE-PACKAGES.md](../docs/RELEASE-PACKAGES.md).
+Poprzednie paczki P1 0.5.0/0.5.1 zachowano jako archiwum; bieżąca to **0.6.0-full**.

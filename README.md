@@ -32,25 +32,30 @@ Funkcje silnika powstały w historycznych gałęziach M0–M3 i powiązanych PR,
 
 ## Gotowa paczka na hosting
 
-[Pobierz PixelForge P1 — ZIP na serwer statyczny](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p1-large-worlds/downloads/pixelforge-p1-0.5.1-static.zip).
-Rozpakuj i wgraj `index.html` oraz cały katalog `assets/` do katalogu strony,
-np. `public_html/pixelforge/`. Otwórz potem `https://twoja-domena.pl/pixelforge/`.
-Na hostingu nie potrzebujesz Node.js ani PHP. [Pełna instrukcja](downloads/README.md).
-Atlas wypełnia całe okno przeglądarki, także po obrocie telefonu.
-Jest to gotowy build P1 0.5.1 do ręcznego wgrania; aktualizator P2 pozostaje osobnym etapem.
+[Pobierz PixelForge 0.6.0 — pełny ZIP na serwer statyczny](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u0-packages/downloads/pixelforge-0.6.0-full.zip).
+Rozpakuj i wgraj `index.html`, cały katalog `assets/` oraz `manifest.json` do
+katalogu strony, np. `public_html/pixelforge/`. Otwórz potem
+`https://twoja-domena.pl/pixelforge/`. Na hostingu nie potrzebujesz Node.js,
+Pythona ani PHP. [Pełna instrukcja](downloads/README.md).
+Atlas zajmuje całe okno przeglądarki, także po obrocie telefonu.
+
+Generator i walidator offline **P2/U0** są gotowe; instalator i panel U1/U2
+pozostają osobnymi etapami. Paczka nie wdraża się samodzielnie.
 
 ## Uruchamianie
 
-Gałąź `feature/p1-large-worlds` zawiera rdzeń P0 i demonstrację **Atlas**.
+Gałąź `feature/p2-u0-packages` zawiera rdzeń P0, demonstrację **Atlas** z P1
+i narzędzia U0. Opiera się na P1 `c884fdf` / PR #6, zależnym od PR #5.
 Na ekranie głównym wybierz **Otwórz 4096 × 4096** albo **8192 × 8192**, następnie
 **Nowa sesja** lub **Wznów**. Katalog produktów pozostaje pusty — demonstracja
 techniczna jest poza `src/games/`. P1 zależy od PR #5; żaden PR nie został scalony
 automatycznie. Dawne gry pozostają w historycznych gałęziach.
 
-Wymagane Node.js **24 LTS** i npm 11. Po przełączeniu na gałąź P1:
+Wymagane Node.js **24 LTS**, npm 11 oraz Python **3.11+** do testów i paczek U0.
+Po przełączeniu na gałąź U0:
 
 ```bash
-git clone --branch feature/p1-large-worlds https://github.com/ankelmarek/PixelForge.git
+git clone --branch feature/p2-u0-packages https://github.com/ankelmarek/PixelForge.git
 cd PixelForge
 npm ci
 npm run dev
@@ -78,7 +83,21 @@ dawnych gier. PNG testowe odtwarza `python3 tools/generate-test-assets.py`.
 Grafikę i sektory Atlasu odtwarza `npm run assets:world` (Python 3 bez bibliotek).
 Pomiary: `npm run preview -- --port 4194`, w drugim terminalu `npm run measure:world`.
 `?diagnostics=1` w adresie włącza lokalne liczniki techniczne. Nie jest to panel
-aktualizatora. P2/U0 — generator bezpiecznych paczek ZIP — pozostaje następnym etapem.
+aktualizatora.
+
+## Paczki wydania U0
+
+```bash
+npm run package:release
+npm run package:validate -- downloads/pixelforge-0.6.0-full.zip
+npm run test:packages
+```
+
+Pierwsze polecenie buduje projekt i dopiero po sukcesie tworzy wersjonowany ZIP,
+manifest oraz plik sumy SHA-256. Drugie sprawdza paczkę bez instalacji i bez
+rozpakowywania. `npm test` obejmuje Vitest i testy paczek w Pythonie (biblioteka
+standardowa, bez pip). [Format, limity i polecenia](docs/RELEASE-PACKAGES.md),
+[raport U0](docs/U0-REPORT.md). Następny etap U1 wymaga ustalenia możliwości hostingu.
 
 Aktualizuj ten opis po każdej zmianie publicznego sposobu uruchamiania. Nie oznaczaj projektu jako ukończonego przed przejściem kryteriów odbioru z roadmapy.
 

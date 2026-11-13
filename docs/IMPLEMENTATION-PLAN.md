@@ -1,7 +1,7 @@
 # Plan po P0 — duże światy i aktualizator ZIP
 
 Zakres wynika z roadmapy 0.2 i `UPDATER-SPEC.md`. P1A–P1D zrealizowano na gałęzi `feature/p1-large-worlds` —
-[raport P1](P1-REPORT.md), [kontrakt świata](LARGE-WORLDS.md). P2/U0–U3 pozostaje
+[raport P1](P1-REPORT.md), [kontrakt świata](LARGE-WORLDS.md). P2/U0 zrealizowano w osobnym PR — [raport U0](U0-REPORT.md). U1–U3 pozostają
 planem. Nie wybrano hostingu ani nie rozpoczęto którejkolwiek gry.
 
 ## P1 — duże mapy
@@ -15,7 +15,7 @@ planem. Nie wybrano hostingu ani nie rozpoczęto którejkolwiek gry.
 
 P1 wykorzystuje osobną demonstrację techniczną, niezwiązaną z dawnymi produktami.
 Nie budować pojedynczego PNG świata. Nie podnosić jedynie limitu 128 komórek:
-obecny renderer i pełne A* nie spełniają wymagań. Model zasobów pozostaje
+dawny renderer i pełne A* nie spełniały tych wymagań; P1 zastąpił je sektorami i nawigacją regionalną. Model zasobów pozostaje
 niezależny od widoczności i czasu klatek. Próg świata i rozmiar sektora są danymi,
 nie warunkami po `gameId`. Nie zmieniać istniejących kluczy zapisów produktów.
 
@@ -28,7 +28,9 @@ nie warunkami po `gameId`. Nie zmieniać istniejących kluczy zapisów produktó
 | U2   | Oddzielny panel administratora, poza paczką gry; logowanie, HTTPS, CSRF, ograniczenia prób, upload i podgląd | Brak dostępu bez logowania, odrzucenie CSRF, brak automatycznej instalacji po uploadzie, osobna zgoda po pokazaniu zmian, niepubliczne staging/logi                      |
 | U3   | Delta z obowiązkowym dokładnym `baseVersion`; składanie pełnego wydania w staging, jawne usunięcia           | Zła baza, podwójne i równoległe próby, przerwany transfer, zakazane usunięcia i pełna kontrola sum po złożeniu                                                           |
 
-U0 można oprzeć na obecnym statycznym buildzie bez oczekiwania na wybór gry.
+U0 oparto na statycznym buildzie P1, bez oczekiwania na wybór gry.
+Generator i walidator: `tools/release.py`, Python 3.11+ bez dodatkowych pakietów.
+Kontrakt i komendy: [RELEASE-PACKAGES.md](RELEASE-PACKAGES.md).
 Wersja pakietu, schematu silnika i aktualizatora są odrębnymi polami.
 Manifest nie może zlecać wykonania skryptu, migracji ani komend powłoki.
 `admin-updater/`, prywatne katalogi, konfiguracja serwera i dane administratora

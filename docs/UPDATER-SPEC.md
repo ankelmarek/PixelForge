@@ -1,6 +1,6 @@
 # PixelForge — projekt aktualizatora ZIP
 
-**Status:** zatwierdzony kierunek do przyszłej implementacji, bez wdrożenia. **Data decyzji:** 2026-11-13.
+**Status:** U0 zaimplementowane; U1–U3 zaplanowane, bez wdrożenia. **Data decyzji:** 2026-11-13.
 
 ## 1. Cel
 
@@ -99,9 +99,12 @@ Zapis gier w localStorage/IndexedDB nie jest aktualizowany przez serwerowy ZIP, 
 
 ### U0: format paczki i walidator offline
 
-- [ ] Generowanie `full` ZIP z manifestem i kontrolą SHA-256.
-- [ ] Walidator, który odrzuca naruszenia formatu, wersji, ścieżek, limitów i sum.
-- [ ] Testy jednostkowe i fixture z poprawnym oraz celowo uszkodzonym archiwum.
+- [x] Generowanie `full` ZIP z manifestem i kontrolą SHA-256.
+- [x] Walidator, który odrzuca naruszenia formatu, wersji, ścieżek, limitów i sum.
+- [x] Testy jednostkowe i fixture z poprawnym oraz celowo uszkodzonym archiwum.
+
+Implementacja: [format i CLI](RELEASE-PACKAGES.md), [raport U0](U0-REPORT.md).
+Wersja wydania 0.6.0; manifest v1, kontrakt silnika 2, narzędzie 1.0.0.
 
 ### U1: bezpieczny mechanizm instalacji i rollback
 

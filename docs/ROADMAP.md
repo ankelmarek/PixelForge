@@ -88,7 +88,7 @@ Kolejny zakres: **P2/U0: generator paczek full i walidator offline**.
 
 ### P2. Aktualizator plikowy ZIP
 
-**Status: TODO. Priorytet: wysoki. Szczegółowe zadania U0–U3:** [UPDATER-SPEC.md](./UPDATER-SPEC.md).
+**Status: U0 DONE, U1–U3 TODO. Priorytet: wysoki. Szczegółowe zadania U0–U3:** [UPDATER-SPEC.md](./UPDATER-SPEC.md).
 
 - [ ] Wprowadzamy wersjonowane paczki `full` i docelowo `delta`, z manifestem, sumami SHA-256 i kompatybilnością wersji.
 - [ ] Rozwijamy walidator, katalog staging, bezpieczny rollback i log aktualizacji.
@@ -96,6 +96,23 @@ Kolejny zakres: **P2/U0: generator paczek full i walidator offline**.
 - [ ] Panel ma niezależne uwierzytelnianie i nie jest częścią statycznej gry. Wybór PHP lub CLI zależy od wybranego hostingu.
 - [ ] Testy uszkodzonych ZIP, zip-slip, limitów rozpakowania, niezgodnych wersji, przerwania instalacji i przywracania poprzedniej.
 - [ ] Nie uruchamiać publicznego panelu, nie otwierać uprawnień serwera i nie instalować nowych usług przed osobnym poleceniem.
+
+**U0 wykonane na `feature/p2-u0-packages`**, osobny PR zależny od P1 / PR #6.
+Generator `npm run package:release` tworzy full ZIP po udanym buildzie;
+`package:validate` sprawdza manifest, wersje, ścieżki, limity, CRC i SHA-256
+bez rozpakowania i instalacji. Python 3.11+ standard library, brak nowych
+zależności runtime. Paczka 0.6.0 zawiera 272 pliki buildu + manifest v1.
+
+- [x] Full ZIP z wersją, manifestem i sumami.
+- [x] Walidator offline oraz testy poprawnych i złośliwych/uszkodzonych archiwów.
+- [x] Instrukcja i gotowa paczka do ręcznego wgrania.
+
+Weryfikacja: 47 Vitest + 13 testów Python (z wariantami ataków), E2E 24 PASS
+
+- 2 SKIP, lint/typecheck/build PASS, rozpakowany full ZIP 8/8 PASS.
+  [Raport U0](U0-REPORT.md), [format paczki i CLI](RELEASE-PACKAGES.md).
+  Przed U1 trzeba ustalić możliwości hostingu: PHP 8 + ZipArchive, SSH/CLI lub
+  wyłącznie statyczne pliki. Nie rozpoczęto U1/U2/U3, nie wdrożono panelu ani gry P3.
 
 ### P3. Pierwsza nowa gra na dużej mapie
 
@@ -148,3 +165,13 @@ Każdy tytuł ma własną specyfikację i gałąź oraz wykorzystuje wspólny si
   przetestowano obie mapy, desktop i emulację Pixel 7. Fizyczny telefon i inne
   silniki przeglądarek wymagają osobnego sprawdzenia.
 - P2/U0 to kolejny zakres. Aktualizator, hosting, P3 i P4 pozostają poza P1.
+
+### 2026-11-13 — poprawka P1 i U0
+
+- Poprawkę pełnego okna, skalowania, nakładki i dotyku dopisano do PR #6;
+  wydano sprawdzony ręczny ZIP 0.5.1.
+- U0 ma osobną gałąź opartą na P1 `c884fdf`: pełne paczki, manifest,
+  sumy oraz niezależny walidator offline. Wydanie 0.6.0 zawiera ten sam
+  statyczny runtime co 0.5.1, z manifestem aktualizatora.
+- Zaktualizowano testy i instrukcje. Brak merge, wdrożenia i nowych usług.
+  Następny osobny zakres to U1 po poznaniu hostingu.

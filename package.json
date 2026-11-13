@@ -1,6 +1,6 @@
 {
   "name": "pixelforge",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -13,10 +13,13 @@
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run && npm run test:packages",
     "test:e2e": "playwright test",
     "assets:world": "python3 tools/generate-world-demo.py",
-    "measure:world": "node tools/measure-world.mjs"
+    "measure:world": "node tools/measure-world.mjs",
+    "package:release": "npm run build && python3 tools/release.py pack",
+    "package:validate": "python3 tools/release.py validate",
+    "test:packages": "python3 -m unittest discover -s tests/packages -v"
   },
   "dependencies": {
     "phaser": "4.2.1"
