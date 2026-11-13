@@ -19,6 +19,9 @@ a {
   color: var(--accent);
   text-underline-offset: 4px;
 }
+code {
+  overflow-wrap: anywhere;
+}
 button,
 input {
   font: inherit;

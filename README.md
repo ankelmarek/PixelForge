@@ -32,6 +32,21 @@ Funkcje silnika powstały w historycznych gałęziach M0–M3 i powiązanych PR,
 
 ## Gotowa paczka na hosting
 
+[Pobierz wszystko do public_html — gra 0.7.0 + instalator i aktualizator 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/u2-public-html-bundle/downloads/pixelforge-public-html-0.7.0-installer-1.2.0.zip).
+
+Rozpakuj **zawartość** w `public_html`, razem z ukrytymi `.htaccess`, i otwórz
+`https://twoja-domena.pl/setup.php`. Pobierz z instalatora plik konfiguracji,
+wgraj go do wskazanego podkatalogu i utwórz własne konto. Nie potrzeba SSH,
+Node.js ani bazy danych. Hosting wymaga PHP 8.2+ / ZipArchive, HTTPS oraz
+Apache 2.4 lub zgodnego LiteSpeed z działającą blokadą `.htaccess`.
+Gra działa pod `/PixelForge/`, panel pod `/pixelforge-admin/`, a chroniony
+`_pixelforge/` mieści cały kod narzędzia, konfigurację, staging i kopie.
+[Instrukcja krok po kroku](docs/PUBLIC-HTML-INSTALL.txt), [raport](docs/PUBLIC-HTML-REPORT.md).
+Paczka zachowuje stronę główną domeny i jej `.htaccess`; dodatkowy skrót do gry
+to `/pixelforge.php`. Przy zastępowaniu starej gry wgraj nowy katalog `PixelForge`
+w całości, bez pozostawiania starych assetów. Zachowaj wcześniejszą kopię.
+
+**Do kolejnych aktualizacji gry albo samego hostingu statycznego:**
 [Pobierz PixelForge 0.7.0 — Życie Dżdżownicy + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p3-earthworm/downloads/pixelforge-0.7.0-full.zip).
 W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.7.0**.
 Po instalacji otwórz stronę gry i wybierz **Zagraj** przy Życiu Dżdżownicy.
@@ -52,8 +67,9 @@ Paczka gry nie wdraża się samodzielnie.
 
 ## Uruchamianie
 
-Gałąź `feature/p3-earthworm` zawiera grę **Życie Dżdżownicy**, rdzeń P0/P1,
-demonstrację **Atlas** i narzędzia U0/U1/U2. Bazuje na U2 / PR #9;
+Gałąź `feature/u2-public-html-bundle` dodaje instalację wszystkiego w `public_html`
+do P3 / PR #10. Zawiera grę **Życie Dżdżownicy**, rdzeń P0/P1,
+demonstrację **Atlas** i narzędzia U0/U1/U2;
 wcześniejsze PR pozostają zależnościami, bez automatycznego merge.
 Wybierz **Zagraj**, następnie **Nowa gra** lub **Wznów**. Atlas pozostaje
 dostępny pod przyciskami **Otwórz 4096 × 4096** / **8192 × 8192**.
@@ -63,10 +79,10 @@ Gra ma własne mechaniki i zapis, poza kodem silnika.
 Wymagane Node.js **24 LTS**, npm 11 oraz Python **3.11+** do testów i paczek U0.
 Pełny zestaw testów obejmuje także PHP **8.2+**, ZipArchive i system Unix/Linux
 (na Windows można użyć WSL). PHP służy aktualizatorowi, nie statycznej grze.
-Po przełączeniu na gałąź P3:
+Po przełączeniu na bieżącą gałąź:
 
 ```bash
-git clone --branch feature/p3-earthworm https://github.com/ankelmarek/PixelForge.git
+git clone --branch feature/u2-public-html-bundle https://github.com/ankelmarek/PixelForge.git
 cd PixelForge
 npm ci
 npm run dev
@@ -112,7 +128,7 @@ w Pythonie/PHP (biblioteka standardowa, bez pip). [Format, limity i polecenia](d
 
 ## Panel U2 i instalator U1
 
-[Osobny ZIP narzędzia PHP](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u2-admin-panel/downloads/pixelforge-updater-u2-1.1.0.zip)
+[Osobny ZIP narzędzia PHP 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/u2-public-html-bundle/downloads/pixelforge-updater-u2-1.2.0.zip)
 rozpakowuje się poza katalogiem publicznym. Nie jest paczką gry do wgrania
 do PixelForge. Aktualizacja gry 0.7.0 zachowuje zapisy Atlasu z 0.6.1.
 
@@ -122,6 +138,9 @@ npm run test:updater:browser
 npm run test:panel:browser
 npm run test:release:browser
 npm run package:updater
+npm run package:hosting
+npm run test:hosting
+npm run test:hosting:browser
 php admin-updater/cli.php help
 ```
 
@@ -133,6 +152,10 @@ wyłącznie jako fixture. Sprawdza instalację, rollback i zachowanie zapisu.
 [raport U2](docs/U2-REPORT.md). Test panelu używa lokalnego HTTPS i własnego
 CA dodawanego na czas testu do NSS; wymaga OpenSSL oraz certutil (libnss3-tools).
 Weryfikacja TLS pozostaje włączona.
+Testy `hosting` wymagają dodatkowo Apache i modułu PHP (`apache2`,
+`libapache2-mod-php` na Debianie/Ubuntu). Sprawdzają prawdziwe `.htaccess`,
+konfigurację przez WWW, odrzucenie braku ochrony/TLS, SIGKILL, instalację
+i rollback. Zmienne dla niestandardowych binarek opisuje [raport](docs/PUBLIC-HTML-REPORT.md).
 `test:release:browser` używa rzeczywistego ZIP-a 0.7.0: instaluje go nad 0.6.1,
 uruchamia Dżdżownicę, cofa wydanie, instaluje ponownie i wznawia zachowany zapis.
 `npm run assets:earthworm` odtwarza autorską grafikę i mapę nowej gry.

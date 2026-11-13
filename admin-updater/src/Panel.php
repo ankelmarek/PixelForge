@@ -48,6 +48,7 @@ final class Panel
                     'HASH', 'ZIP', 'PATH', 'MANIFEST', 'FORMAT', 'CRC', 'LIMIT', 'JSON', 'PROJECT' =>
                         'Paczka lub pliki nie przeszły kontroli. Instalacja została zatrzymana.',
                     'INVENTORY' => 'Katalog gry zawiera obce lub zmienione pliki. Wymaga sprawdzenia przez administratora.',
+                    'PROTECTION' => 'Nie udało się potwierdzić ochrony _pixelforge. Sprawdź .htaccess, HTTPS i możliwość połączenia PHP z własną domeną. Panel został zablokowany.',
                     default => 'Operacja nie została ukończona. Sprawdź stan panelu; w razie potrzeby użyj diagnostyki CLI.',
                 };
                 error_log('PixelForge panel: ' . $code);

@@ -141,6 +141,16 @@ instalacja/rollback z zachowaniem zapisu Atlasu, dodatkowo upload bez JavaScript
 [Raport U2](U2-REPORT.md), [uruchomienie](../admin-updater/README.md).
 Bez merge i wdrożenia na hosting. Następny zakres U3 wymaga osobnego zlecenia.
 
+**Dodatkowe zlecenie U2 — całość w `public_html`: DONE (implementacja).**
+Gałąź `feature/u2-public-html-bundle`, baza P3 / PR #10. Jedna paczka
+z niezmienioną grą 0.7.0 i narzędziem 1.2.0. Setup WWW z dowodem dostępu
+do hostingu, własnym kontem i zamknięciem konfiguracji po sukcesie.
+Panel, kod, sesje, staging, kopie i logi mieszczą się pod `public_html`.
+Chroniony podkatalog `_pixelforge/` wymaga Apache/LiteSpeed i weryfikowanego
+HTTP 403. Dotychczasowy tryb z prywatnym katalogiem poza WWW pozostaje dostępny.
+[Instrukcja instalacji](PUBLIC-HTML-INSTALL.txt), [raport weryfikacji](PUBLIC-HTML-REPORT.md).
+To zmiana sposobu instalacji zlecona przez użytkownika, bez rozpoczęcia U3.
+
 ### P3. Pierwsza nowa gra na dużej mapie
 
 **Status: pierwsza grywalna wersja „Życia Dżdżownicy” DONE (implementacja i testy),
@@ -278,3 +288,18 @@ Każdy następny tytuł wymaga osobnego wyboru i polecenia użytkownika.
   Raport P3 dokumentuje pomiary, ograniczenia i wymagany odbiór grywalności.
 - Bez merge i wdrożenia. Następny krok: uwagi do tej gry, bez automatycznego U3,
   Studio, innego tytułu ani rozbudowy porzuconych produktów.
+
+### 2026-11-13 — instalacja całego PixelForge w public_html
+
+- Użytkownik wybrał jedną paczkę z grą i aktualizatorem w public_html.
+  Dodano jawny wariant chronionego katalogu zamiast zmieniać bezwarunkowo
+  dotychczasowe wymaganie prywatnego katalogu poza WWW.
+- Konfigurator w przeglądarce, potwierdzenie własności plikiem z losowym
+  kluczem, kontrola HTTPS i rzeczywistej blokady HTTP, zachowany panel U2.
+- Gra 0.7.0 pozostaje identyczna bajt w bajt; nowe archiwa pierwszej instalacji
+  i narzędzia 1.2.0. Stare paczki pozostają niezmienione.
+- Osobne testy na rzeczywistym Apache/mod_php: instalacja, brak ochrony,
+  błędne dane, TLS, rollback i odzyskanie po SIGKILL. Wyniki pozostałych
+  kontroli oraz przeglądarek zawiera raport.
+- Bez wdrożenia na konto użytkownika i bez merge. Następny krok: wgranie
+  paczki i odbiór na docelowym hostingu, bez automatycznego U3.

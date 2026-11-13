@@ -28,13 +28,7 @@ final class PanelConfig
 
     public static function origin(string $value): string
     {
-        ensure(
-            preg_match('~\Ahttps://(?:[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?)(?::[1-9][0-9]{0,4})?\z~D', $value) === 1,
-            'CONFIG: canonical HTTPS origin required',
-        );
-        $port = parse_url($value, PHP_URL_PORT);
-        ensure($port === null || ($port <= 65535 && $port !== 443), 'CONFIG: use canonical HTTPS port');
-        return $value;
+        return ProtectedStorage::origin($value);
     }
 
     public static function password(string $password): string
@@ -62,7 +56,12 @@ final class PanelConfig
         new Updater($this->updater);
         $public = $this->updater['documentRoot'];
         foreach ([$path, $data['updaterConfig'], dirname(__DIR__)] as $private) {
-            self::outside($private, $public);
+            if (isset($this->updater['publicStorage'])) {
+                ProtectedStorage::contains($private, $this->updater);
+                ensure($data['origin'] === $this->updater['publicStorage']['origin'], 'CONFIG: inconsistent origin');
+            } else {
+                self::outside($private, $public);
+            }
         }
         $panel = $public . rtrim($data['panelPath'], '/');
         ensure($panel !== $this->updater['target'], 'CONFIG: panel must be outside the game');

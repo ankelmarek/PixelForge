@@ -26,7 +26,7 @@ jobs:
       - name: Install PHP ZIP support
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y php-cli php-zip libnss3-tools
+          sudo apt-get install -y php-cli php-zip libnss3-tools apache2 libapache2-mod-php
           php -v
           php -r 'exit(class_exists("ZipArchive") ? 0 : 1);'
       - run: npm ci
@@ -36,6 +36,7 @@ jobs:
       - name: PHP syntax
         run: find admin-updater tests/updater -name '*.php' -print0 | xargs -0 -n1 php -l
       - run: npm test
+      - run: npm run test:hosting
       - run: npm run build
       - name: Verify unchanged static game
         if: github.head_ref == 'feature/p2-u2-admin-panel'
@@ -56,6 +57,8 @@ jobs:
       - run: npm run test:game:browser
       - run: npm run test:release:browser
       - run: npm run package:updater
+      - run: npm run package:hosting
+      - run: npm run test:hosting:browser
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -67,5 +70,7 @@ jobs:
             downloads/pixelforge-updater-*.sha256
             downloads/pixelforge-0.7.0-full.zip
             downloads/pixelforge-0.7.0-full.zip.sha256
+            downloads/pixelforge-public-html-*.zip
+            downloads/pixelforge-public-html-*.sha256
           if-no-files-found: ignore
           retention-days: 14

@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace PixelForge\Updater;
 
 require_once __DIR__ . '/Package.php';
+require_once __DIR__ . '/ProtectedStorage.php';
 
 /**
- * Local PHP adapter. All mutable administrative data is outside documentRoot.
+ * Local PHP adapter. Private data is outside documentRoot by default; an explicit
+ * protected public_html layout verifies its HTTP denial before opening storage.
  * Directory rename fallback deliberately does NOT promise continuous HTTP access.
  * The optional checkpoint is dependency injection for tests, never package input.
  */
@@ -42,6 +44,9 @@ final class Updater
             'reserveBytes',
             'limits',
         ];
+        if (array_key_exists('publicStorage', $config)) {
+            $keys[] = 'publicStorage';
+        }
         ensure(
             array_diff(array_keys($config), $keys) === [] &&
                 array_diff($keys, array_keys($config)) === [],
@@ -66,13 +71,17 @@ final class Updater
             ),
             'CONFIG: protected target',
         );
-        ensure(
-            is_dir(dirname($this->root)) &&
-                $this->root !== $documentRoot &&
-                !str_starts_with($this->root . '/', $documentRoot . '/') &&
-                !str_starts_with($documentRoot . '/', $this->root . '/'),
-            'CONFIG: privateRoot must be separate and outside documentRoot',
-        );
+        if (array_key_exists('publicStorage', $config)) {
+            ProtectedStorage::check($config);
+        } else {
+            ensure(
+                is_dir(dirname($this->root)) &&
+                    $this->root !== $documentRoot &&
+                    !str_starts_with($this->root . '/', $documentRoot . '/') &&
+                    !str_starts_with($documentRoot . '/', $this->root . '/'),
+                'CONFIG: privateRoot must be separate and outside documentRoot',
+            );
+        }
         ensure(
             stat(dirname($this->root))['dev'] === stat($documentRoot)['dev'],
             'ENVIRONMENT: one filesystem required for rename',

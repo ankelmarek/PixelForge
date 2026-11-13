@@ -2,18 +2,77 @@
 
 Panel PHP instaluje pełne ZIP-y PixelForge po logowaniu i osobnym zatwierdzeniu.
 Kod panelu, konfiguracja, sesje i kopie są oddzielone od statycznej gry.
-Wydanie narzędzia: **1.1.0**; kontrakt walidatora paczek nadal U0/1.0.0.
+Wydanie narzędzia: **1.2.0**; kontrakt walidatora paczek nadal U0/1.0.0.
 Wymagania i polecenia CLI U1 znajdują się dalej w tym pliku.
 
-## Co wgrać na hosting
+## Jedna paczka w public_html — konfiguracja bez SSH
 
-- **Gra:** `pixelforge-0.6.1-full.zip` do dotychczasowego katalogu PixelForge.
-- **Panel:** `pixelforge-updater-u2-1.1.0.zip` rozpakuj **poza public_html**,
+Na wyraźne życzenie użytkownika dodano wariant mieszczący cały projekt
+w `public_html`. Pobierz **pixelforge-public-html-0.7.0-installer-1.2.0.zip**
+z katalogu downloads na gałęzi `feature/u2-public-html-bundle`. To paczka
+pierwszej instalacji, odrębna od pełnego ZIP-a gry i ZIP-a samego narzędzia.
+
+1. Rozpakuj zawartość w `public_html`, razem z ukrytymi plikami `.htaccess`.
+2. Otwórz `https://twoja-domena.pl/setup.php` i pobierz konfigurację.
+3. W menedżerze plików hostingu wgraj pobrany `install-settings.php` do
+   `public_html/_pixelforge/`, zastępując pusty wzór. To dowód dostępu
+   właściciela do hostingu; sama wizyta na stronie nie pozwala założyć konta.
+4. Odśwież instalator, podaj klucz `setupKey` z pobranego pliku i ustaw
+   własny login oraz hasło. Po sprawdzeniu ochrony i gry instalator zamyka
+   konfigurację konta i usuwa jednorazowy klucz z serwera.
+5. Gra: `/PixelForge/index.html`; panel: `/pixelforge-admin/index.php`.
+   Dodatkowy skrót do gry: `/pixelforge.php`. Możesz usunąć `setup.php`.
+
+Wymagane Apache 2.4 lub zgodny LiteSpeed, reguły `Require all denied`
+i `Options -Indexes` w `.htaccess`, HTTPS oraz PHP 8.2+ 64 bit z ZipArchive,
+OpenSSL, sesjami, `allow_url_fopen` i pamięcią 256M. PHP musi łączyć się
+z własną domeną przez HTTPS, z poprawnym certyfikatem i bez przekierowania
+na inny adres. Nie wyłączaj walidacji TLS. Nie potrzeba Node.js ani bazy SQL.
+
+`_pixelforge/tool/` zawiera kod, `_pixelforge/data/` konfigurację, sesje,
+uploady, staging, wydania i logi. Wszystko chroni nadrzędny `.htaccess`.
+Pliki 0600 i katalogi danych 0700 nie zastępują blokady serwera HTTP.
+Każde żądanie panelu ponownie sprawdza lokalne reguły i przez HTTPS
+publiczny losowy znacznik (200 + dokładna treść) oraz prywatny znacznik (403).
+Origin pochodzi z pliku wgranego przez właściciela, nigdy z formularza,
+ZIP-a, nagłówka Host ani X-Forwarded-Host. Brak potwierdzenia blokuje operacje.
+
+Usunięcie lub wyłączenie ochrony HTTP może ujawnić istniejące dane zanim
+panel wykryje problem: należy przywrócić reguły i zmienić hasło. Nie usuwaj
+`_pixelforge/.htaccess`; test połączenia nie zastępuje konfiguracji serwera.
+Ten wariant nie wspiera Nginx ani hostingu wyłącznie statycznego.
+Systemowy `upload_tmp_dir` PHP pozostaje poza katalogiem WWW; nie jest
+dodatkowym katalogiem projektu wymagającym ręcznej instalacji.
+
+Nie rozpakowuj ponownie paczki startowej na skonfigurowany panel. Aktualizacje
+gry wgrywaj jako `pixelforge-WERSJA-full.zip` przez panel; nie zmieniają PHP,
+ochrony ani konta. Kod aktualizatora aktualizuje administrator osobno.
+Paczka zachowuje główny `index.php`/`index.html` i `.htaccess` domeny, co
+pozwala pozostawić istniejącą stronę Rozumisie. Jeśli katalog `PixelForge`
+już istnieje, zachowaj kopię i zastąp go kompletnym nowym katalogiem, bez
+pozostawiania starych assetów. Obce pliki blokują rejestrację gry.
+Na pustej domenie można opcjonalnie zmienić `pixelforge.php` na `index.php`,
+aby główny adres otwierał grę. Zabezpieczenie `_pixelforge/.htaccess` pozostaje obowiązkowe.
+
+Bez JavaScript edytuj pusty wzór `install-settings.php`: wpisz kanoniczny
+origin HTTPS bez końcowego ukośnika i losowy klucz (64 małe znaki hex).
+Formularze setupu i panelu działają bez JS. Przerwanie przed zapisaniem
+konta pozwala powtórzyć setup z tym samym kluczem; istniejącego konta
+nie można zmienić przez setup. Reset hasła pozostaje komendą CLI opisaną niżej;
+w tym wariancie ścieżki są pod `public_html/_pixelforge/tool/` oraz
+`public_html/_pixelforge/data/panel/config.json`.
+
+Skrócona instrukcja jest również w `INSTALACJA.txt` w ZIP-ie.
+
+## Wariant z prywatnym katalogiem poza public_html — CLI
+
+- **Gra:** `pixelforge-0.7.0-full.zip` do dotychczasowego katalogu PixelForge.
+- **Panel:** `pixelforge-updater-u2-1.2.0.zip` rozpakuj **poza public_html**,
   np. w `/home/ACCOUNT/pixelforge-tools/`. Zachowaj `admin-updater/`.
 - Nie wgrywaj całego narzędzia do katalogu gry. Jedyny publiczny plik panelu
   (`pixelforge-admin/index.php`) tworzy jednorazowe polecenie konfiguracji.
 
-Pierwsza konfiguracja wymaga SSH/terminala hostingu. Kolejne wydania gry
+W tym wariancie pierwsza konfiguracja wymaga SSH/terminala hostingu. Kolejne wydania gry
 instalujesz już w przeglądarce. Sam ZIP gry nie tworzy panelu.
 
 ## Jednorazowe uruchomienie panelu

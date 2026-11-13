@@ -1,5 +1,28 @@
 # PixelForge 0.7.0 — Życie Dżdżownicy + Atlas
 
+## Pierwsza instalacja wszystkiego w public_html
+
+[Pobierz jeden ZIP: PixelForge + instalator + aktualizator](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/u2-public-html-bundle/downloads/pixelforge-public-html-0.7.0-installer-1.2.0.zip).
+
+1. Rozpakuj zawartość w `public_html`, także ukryte pliki `.htaccess`.
+2. Otwórz `https://twoja-domena.pl/setup.php`.
+3. Pobierz konfigurację z instalatora i wgraj ją jako
+   `public_html/_pixelforge/install-settings.php`, zastępując pusty wzór.
+4. Odśwież instalator, podaj `setupKey` z pliku, własny login i hasło.
+5. Gra: `/PixelForge/index.html`; panel: `/pixelforge-admin/index.php`.
+
+Wszystkie pliki projektu, kopie i dane panelu pozostają pod `public_html`.
+Wymagane PHP 8.2+ / ZipArchive, HTTPS i Apache 2.4 lub zgodny LiteSpeed.
+Nie wymaga SSH. Instalator sprawdza ochronę prywatnego podkatalogu przez HTTPS.
+Paczka jest przeznaczona do pierwszej instalacji panelu. Zachowuje stronę główną
+domeny i jej `.htaccess`; skrót do gry to `/pixelforge.php`. Stary katalog
+`PixelForge` zachowaj w kopii i zastąp kompletnym nowym, bez mieszania assetów.
+Nie rozpakowuj paczki startowej ponownie na skonfigurowany panel.
+[Pełna instrukcja i wymagania](../docs/PUBLIC-HTML-INSTALL.txt),
+[raport testów](../docs/PUBLIC-HTML-REPORT.md).
+
+## Paczka samej gry do aktualizatora
+
 [Pobierz gotowy ZIP gry](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p3-earthworm/downloads/pixelforge-0.7.0-full.zip).
 
 **Do instalatora wgrywasz `pixelforge-0.7.0-full.zip` w całości, bez rozpakowywania.**
@@ -88,9 +111,9 @@ Wynik poprawnej kontroli ma `valid: true`. Szczegóły i limity:
 [RELEASE-PACKAGES.md](../docs/RELEASE-PACKAGES.md).
 Paczki P1 0.5.0/0.5.1 i U0 0.6.0/0.6.1 zachowano jako archiwum; bieżąca to **0.7.0-full**.
 
-## Osobny panel aktualizacji U2
+## Osobny panel aktualizacji U2 — wariant prywatny poza public_html
 
-[Pobierz panel PHP U2 1.1.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u2-admin-panel/downloads/pixelforge-updater-u2-1.1.0.zip).
+[Pobierz panel PHP U2 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/u2-public-html-bundle/downloads/pixelforge-updater-u2-1.2.0.zip).
 Ten ZIP rozpakowuje się **poza public_html**. Jednorazowy konfigurator CLI
 ustawia własne hasło i tworzy publiczny plik panelu. Kolejne pełne ZIP-y gry
 wgrywa się już przez przeglądarkę: logowanie, podgląd, osobne zatwierdzenie.
@@ -99,4 +122,4 @@ Nie wgrywaj ZIP-a panelu do katalogu gry ani do formularza paczek full.
 Wymagane PHP 8.2+, ZipArchive i HTTPS. Gra pozostaje statyczna; bieżące wydanie to 0.7.0.
 [Instrukcja konfiguracji i obsługi](../admin-updater/README.md),
 [raport U2](../docs/U2-REPORT.md).
-Poprzedni ZIP U1 1.0.0 zachowano jako archiwum narzędzia CLI.
+Poprzednie ZIP-y U1 1.0.0 i U2 1.1.0 zachowano bez zmiany bajtów.

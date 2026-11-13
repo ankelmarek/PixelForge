@@ -24,6 +24,9 @@
     "test:updater": "python3 -m unittest discover -s tests/updater -v",
     "test:updater:browser": "node tests/updater/browser.mjs",
     "package:updater": "python3 tools/package-updater.py",
+    "package:hosting": "python3 tools/package-hosting.py",
+    "test:hosting": "python3 -m unittest discover -s tests/hosting -v",
+    "test:hosting:browser": "node tests/hosting/browser.mjs",
     "test:panel:browser": "node tests/updater/panel-browser.mjs",
     "test:release:browser": "node tests/updater/panel-browser.mjs --release",
     "test:game:browser": "node tests/packages/game-browser.mjs"

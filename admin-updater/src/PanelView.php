@@ -34,7 +34,7 @@ final class PanelView
             . '<body><a class="skip" href="#main">Przejdź do treści</a><header class="topbar">'
             . '<a class="brand" href="./index.php"><span class="mark" aria-hidden="true"></span>PixelForge<span class="badge">Aktualizacje</span></a>'
             . $navigation . '</header><main id="main">' . $body . '</main>'
-            . '<footer>Panel administracyjny · U2 1.1.0</footer></body></html>';
+            . '<footer>Panel administracyjny · U2 1.2.0</footer></body></html>';
     }
 
     public static function error(string $message): void

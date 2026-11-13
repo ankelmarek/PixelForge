@@ -1,6 +1,6 @@
 # PixelForge — projekt aktualizatora ZIP
 
-**Status:** U0–U2 zaimplementowane; U3 zaplanowane, bez wdrożenia na hosting. **Data decyzji:** 2026-11-13.
+**Status:** U0–U2 oraz dodatkowy wariant instalacji całego projektu w `public_html` zaimplementowane; U3 zaplanowane, bez wdrożenia na hosting. **Data decyzji:** 2026-11-13.
 
 ## 1. Cel
 
@@ -73,7 +73,7 @@ Rodzaje wydań:
 - Przyjmuj wyłącznie pliki z listy dozwolonych ścieżek i rozszerzeń **statycznego buildu**. Nigdy nie nadpisuj `admin-updater/`, `storage/`, `backups/`, plików konfiguracji serwera, .env, .htaccess, .user.ini ani wykonywalnych skryptów serwerowych.
 - Nie wykonuj skryptów z ZIP-a, komend powłoki ani migracji bazy zadeklarowanych przez paczkę.
 - Sprawdzaj SHA-256 każdego pliku, wersję, identyfikator projektu i zgodność formatu. Sumy kontrolne wykrywają uszkodzenie, ale nie dowodzą autentyczności; w razie zdalnego dystrybuowania paczek rozważ podpisy cyfrowe oraz zaufany klucz publiczny.
-- Upload przechowuj poza publicznym katalogiem WWW; usuń pliki tymczasowe także po błędach i nie udostępniaj logów publicznie.
+- Domyślnie upload przechowuj poza publicznym katalogiem WWW. Na wyraźne polecenie użytkownika z 13.11.2026 dopuszczono odrębny wariant `public_html/_pixelforge`: cały podkatalog blokowany przez `.htaccess` Apache/LiteSpeed, z aktywnym sprawdzeniem HTTP 403 przez HTTPS przed konfiguracją konta i przy żądaniach panelu. Brak ochrony zatrzymuje pracę; samo chmod nie wystarcza. Usuń pliki tymczasowe także po błędach i nie udostępniaj logów publicznie.
 - Nie udzielaj uprawnień zapisu do całego hostingu. Proces aktualizatora może zapisywać tylko wskazany katalog wydań i prywatne katalogi robocze.
 
 ## 6. Przebieg instalacji
@@ -134,6 +134,15 @@ oraz limitem logowania. Jednorazowy setup przez CLI, codzienna obsługa przez WW
 Podgląd GET nie uruchamia recovery; wszystkie zmiany wymagają zatwierdzonego POST.
 [Instrukcja](../admin-updater/README.md), [raport U2](U2-REPORT.md).
 Nie wdrożono panelu na publiczny hosting.
+
+**Rozszerzenie U2, odrębne polecenie:** jedna paczka pierwszej instalacji
+z grą 0.7.0 i narzędziem 1.2.0. Konfiguracja WWW bez SSH, z potwierdzeniem
+własności przez plik z losowym kluczem. Konto bez domyślnego hasła,
+setup zamykany po sukcesie. Wszystkie dane w chronionym `_pixelforge/`
+pod `public_html`; gra w niezależnym `/PixelForge/`. Domyślny wariant z danymi
+poza documentRoot nadal działa. Paczka startowa nie jest paczką aktualizacji
+gry i nie jest akceptowana przez formularz `full`.
+[Instrukcja](PUBLIC-HTML-INSTALL.txt), [raport](PUBLIC-HTML-REPORT.md).
 
 ### U3: paczki delta i testy regresji
 
