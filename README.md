@@ -5,6 +5,12 @@ Silnik nie zna nazw ani fabuły gier. M0 dostarcza uruchamialny fundament i jedn
 krótką platformówkę **Leśny sygnał** (`forest-demo`). To prototyp jednego poziomu,
 nie docelowa demonstracja 5–8 minut ani ukończony silnik MVP.
 
+## Gotowa paczka na serwer statyczny
+
+[Pobierz ZIP M0](downloads/PixelForge-M0-static.zip?raw=true). Rozpakuj i wgraj
+`index.html` oraz cały katalog `assets/` do katalogu strony na serwerze HTTP(S).
+Nie potrzebujesz Node.js, npm ani PHP. [Szczegóły i suma kontrolna](downloads/README.md).
+
 ## Uruchomienie
 
 Wymagany **Node.js 24 LTS** (`.nvmrc`, `engines`) i npm 11.
