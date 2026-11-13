@@ -256,7 +256,10 @@ class WebPanel(unittest.TestCase):
             server = fixtures.PanelServer(site, self.certs, tool_root=tool_root)
             try:
                 server.login()
-                self.assertEqual(server.request(path="/pixelforge-admin/index.php?asset=css")[0], 200)
+                for extension, expected in (("css", "text/css"), ("js", "text/javascript")):
+                    response = server.request(path="/pixelforge-admin/index.php?asset=" + extension)
+                    self.assertEqual(response[0], 200, response[2])
+                    self.assertIn(expected, response[1]["Content-Type"])
                 plan = server.plan()
                 self.assertEqual(server.post("apply", {"plan": plan["id"], "hash": plan["packageHash"]})[0], 303)
                 state = site.call("status")["state"]

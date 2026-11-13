@@ -17,6 +17,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -46,12 +48,13 @@ jobs:
       - name: PHP syntax
         run: find admin-updater tests/updater -name '*.php' -print0 | xargs -0 -n1 php -l
       - run: npm test
+      - run: npm run test:panel:browser
       - run: npm run build
       - run: npm run test:e2e
       - run: npm run test:updater:browser
-      - run: npm run test:panel:browser
       - run: npm run package:updater
       - name: Export review artifacts
+        if: always()
         run: |
           python3 - <<'PY'
           import base64, hashlib, json
@@ -64,6 +67,8 @@ jobs:
               'test-results/u2-mobile.png',
           ]
           for name in paths:
+              if not Path(name).is_file():
+                  continue
               data = Path(name).read_bytes()
               encoded = base64.b64encode(data).decode()
               chunks = [encoded[i:i+4096] for i in range(0, len(encoded), 4096)]

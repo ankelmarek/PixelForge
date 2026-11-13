@@ -156,7 +156,7 @@ final class Panel
             }
             $extension = $_GET['asset'];
             header('Content-Type: ' . ($extension === 'css' ? 'text/css' : 'text/javascript') . '; charset=utf-8');
-            echo readBounded(__DIR__ . '/../web/panel.' . $extension, 65536);
+            echo readBounded(dirname(__DIR__) . '/web/panel.' . $extension, 65536);
             return;
         }
         $this->auth->start();
