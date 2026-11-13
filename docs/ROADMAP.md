@@ -80,25 +80,48 @@ Kryteria odbioru:
 - [ ] Playtest z nową osobą potwierdza, że niezbędne akcje są odkrywalne bez instrukcji i bez pisanych podpowiedzi.
 - [ ] Raport zawiera faktyczny wynik playtestu, przybliżony czas gry i znane ograniczenia.
 
-### M3. Test uniwersalności: druga, niezależna gra
+### M3. Rozszerzenie silnika TopDown Simulator i pierwszy prototyp „Winobranie”
 
-**Status: TODO. Priorytet: P1.**
+**Status: TODO. Priorytet: P1. Realizować dopiero po akceptacji M0–M2 i na osobnej gałęzi.**
 
-Zakres:
+**Cel architektoniczny:** „Winobranie” jest **grą uruchamianą we wspólnym silniku PixelForge**, nie osobnym silnikiem ani samodzielną implementacją Phasera. Testujemy w praktyce obsługę innego gatunku niż platformówka, zachowując wspólny host, sceny, ładowanie zasobów, zapis, audio, rejestr gier i podstawowe UI.
 
-- Zbuduj drugą krótką grę z widokiem `topdown` (3–5 minut), w innym katalogu `src/games/<slug>`.
-- Wykorzystaj ten sam launcher, UI, audio, zapis, progres, loader i RuleSystem.
-- Dodaj tylko rzeczywiście konieczne rozszerzenia silnika (np. model ruchu topdown) przez mały publiczny kontrakt.
-- Oznacz w raporcie wszystkie miejsca, w których musiano zmieniać istniejący engine i uzasadnij je.
-- Dodaj testy izolacji zapisów między grami i przełączania tytułów w jednej sesji.
+#### M3A. Wielokrotnego użytku moduł TopDown Simulator (engine)
 
-Kryteria odbioru:
+- Dodaj wariant świata **2D z góry w rzucie 3/4**, z układaniem sprite'ów wg pozycji Y, kamerą przesuwaną myszą i zoomem kółkiem. Gra docelowo na desktopie, bez wymagania klawiatury.
+- Wspólny **PointerInputService**: kliknięcie zaznacza, kliknięcie celu wydaje polecenie, przeciągnięcie pustego terenu przesuwa kamerę, kółko zmienia zoom, prawy przycisk może anulować zaznaczenie (nie jest wymagany). Unikaj konfliktów między kliknięciem i przeciąganiem.
+- Ogólny system **nawigacji po siatce i A***, omijanie przeszkód, ograniczenia ruchu pojazdów do alejek i punktów manewrowych; trasa prezentowana subtelnym wskaźnikiem wizualnym.
+- Uniwersalne encje sterowane zadaniami i prostymi maszynami stanów: oczekuje, idzie/jedzie, pracuje, transportuje, przekazuje ładunek. Zlecenia mają kolejkę, postęp, możliwość anulowania i reakcję na niedostępny cel.
+- Uniwersalny przepływ zasobów: źródło → zebranie → załadunek → przewóz → przyjęcie → przetworzenie → magazyn. Parametry zasobów, pojemności, czasów pracy i receptur muszą być danymi gry, nie kodem na sztywno wpisanym do silnika.
+- Obsługa wielu pracowników równolegle, aktualizacja symulacji przez delta time, pauza, kolejność wykonywania zadań i zapis/wznowienie (również stanu pracowników, pojazdów i produkcji).
+- Adapter myszy jest **opcją gatunku**, nie może wymusić zmian istniejącego sterowania platformówek. Wspólna abstrakcja akcji jest zachowana.
+- Sygnały interakcji **bez pisanych wskazówek**: obrysy zaznaczenia, podświetlenie dostępnych obiektów, animacje, symbole, dźwięki i zmiany stanów. Etykiety w menu technicznym mogą pozostać, ale w trakcie gry nie ma tutoriali tekstowych.
 
-- [ ] Obie gry uruchamiają się z launchera.
-- [ ] Żaden plik pierwszej gry nie jest kopiowany do drugiej w charakterze „silnika”.
-- [ ] Zapis stanu jednej gry nie zmienia stanu drugiej.
-- [ ] Główne systemy (menu, save, audio, sceny) są wspólne.
-- [ ] Pomyślne testy regresji obu gier.
+#### M3B. Gra testowa „Winobranie” (zawartość gry)
+
+- Robocza nazwa tytułu: **Winobranie**, slug \`winobranie\`. Własny katalog w \`src/games/winobranie/\` oraz osobne assety. Rejestracja w katalogu PixelForge.
+- Jedna spójna mapa winnicy, z co najmniej **12 rzędami winorośli**, alejkami technicznymi, punktem składowania i budynkiem winiarni z prasą.
+- Trzech pracowników zbierających owoce do skrzynek i **mały traktor z przyczepą**, który porusza się wyłącznie możliwymi do przejechania alejkami.
+- Gracz **wyłącznie myszą** przydziela rzędy do zbioru, wskazuje odbiór i miejsce dostarczenia plonu, uruchamia prasę w winiarni i nadzoruje transport. Bez konieczności sterowania ciągnikiem klawiszami.
+- Pełen cykl gry: dojrzałe grona → zbiór → pełne skrzynki → załadunek przyczepy → przejazd do winiarni → rozładunek → animowane tłoczenie → zbiornik z sokiem.
+- Czytelne stany: owoce na krzakach znikają po zbiorze, pracownik niesie skrzynkę, przyczepa zapełnia się wizualnie, prasa pracuje, zbiornik się napełnia. Nie zastępuj tych zmian samymi licznikami.
+- Pixel art, estetyka przyjaznego symulatora, animowani ludzie, traktor i urządzenia. Współdzielone usługi silnika, a logika winorośli, traktora, winiarni, zbiorów i tłoczenia **wyłącznie w grze**.
+- Prototyp 5–10 minut: celem jest zebrać określony obszar i wyprodukować pierwszą partię soku. Bez rozbudowanej ekonomii, pór roku, pogody, fermentacji i systemów rynkowych w tym etapie.
+
+#### Kryteria odbioru M3
+
+- [ ] „Winobranie” działa w launcherze PixelForge jako drugi, niezależny tytuł i ma odrębny zapis.
+- [ ] Cały prototyp można ukończyć **wyłącznie myszką** (bez użycia klawiatury), bez tekstowych instrukcji.
+- [ ] Pracownicy potrafią samodzielnie dotrzeć do rzędów i zbierać owoce; traktor nie przejeżdża przez winorośle i budynki.
+- [ ] Przejście od zbioru do tłoczenia faktycznie przenosi ilości zasobów; nie ma ich powielania ani ujemnych stanów magazynowych.
+- [ ] Równoległe zadania, pauza, zapis i wznowienie działają bez utraty postępu i bez blokowania symulacji.
+- [ ] Implementacja specyficzna dla winnicy nie trafia do \`src/engine\`; wspólne mechanizmy nie zawierają wyjątków po nazwie gry.
+- [ ] Platformówka demo nie traci żadnej działającej funkcji; testy regresji obu gier przechodzą.
+- [ ] Istnieje dokumentacja dodania **innego** symulatora (np. tartak) przez konfigurację i nowe assety, bez kopiowania implementacji „Winobrania”.
+- [ ] Ukończony moduł i prototyp otrzymują raport oraz Pull Request. Bez automatycznego scalenia do \`main\`.
+
+**Ważne:** M3A jest modułem silnika, M3B jest pierwszą grą wykorzystującą moduł. Nie twórz drugiego projektu technologicznego ani drugiej instancji autorskiego silnika.
+
 
 ### M4. PixelForge Studio Lite
 
@@ -126,7 +149,8 @@ Zakres:
 
 - Przygotuj wzorzec produkcyjny: koncepcja -> mechaniki -> 4–6 etapów -> grafika/dźwięk -> playtest -> publikacja.
 - Dodaj skrypt inicjalizacji nowej gry lub prosty kreator, korzystający z gotowego szablonu.
-- Stwórz jedną niezależną grę około 30 minut opartą na wspólnym silniku (osobne zadanie projektowe).
+- Rozbuduj **„Winobranie”** z prototypu M3 do pełnej gry o czasie ukończenia około **20–35 minut**: kolejne sektory winnicy, zarządzanie zbiorem, transport, przepustowość prasy i finał sezonu. Zachowaj prostotę obsługi myszą oraz brak pisanych podpowiedzi.
+- Wyodrębnij z tej produkcji wzorzec tworzenia innych małych symulatorów na PixelForge. Pozostałe gatunki i tytuły mogą powstawać później bez przepisywania rdzenia.
 - Zbieraj czas ukończenia z dobrowolnych playtestów lokalnych, bez analityki sieciowej.
 
 Kryteria odbioru:
