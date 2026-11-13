@@ -22,7 +22,8 @@
     "test:packages": "python3 -m unittest discover -s tests/packages -v",
     "test:updater": "python3 -m unittest discover -s tests/updater -v",
     "test:updater:browser": "node tests/updater/browser.mjs",
-    "package:updater": "python3 tools/package-updater.py"
+    "package:updater": "python3 tools/package-updater.py",
+    "test:panel:browser": "node tests/updater/panel-browser.mjs"
   },
   "dependencies": {
     "phaser": "4.2.1"

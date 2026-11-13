@@ -97,7 +97,8 @@ final class PanelAuth
     /** Persistent, locked budget: five attempts/IP and twenty globally per 15 minutes. */
     private function attempts(bool $clear = false): void
     {
-        $path = $this->config->directory . '/login-attempts.json';
+        $path = $this->config->directory . '/login.lock';
+        $attemptsPath = $this->config->directory . '/login-attempts.json';
         if (file_exists($path) || is_link($path)) {
             regularFile($path);
         }
@@ -106,9 +107,9 @@ final class PanelAuth
         try {
             ensure(flock($stream, LOCK_EX), 'AUTH: rate limit lock');
             chmod($path, 0600);
-            $raw = stream_get_contents($stream, 16385);
-            ensure($raw !== false && strlen($raw) <= 16384, 'AUTH: rate limit size');
-            $entries = $raw === '' ? [] : json_decode($raw, true, 16, JSON_THROW_ON_ERROR);
+            $raw = file_exists($attemptsPath) ? readBounded($attemptsPath, 16384) : '[]';
+            jsonDocument($raw);
+            $entries = json_decode($raw, true, 16, JSON_THROW_ON_ERROR);
             ensure(is_array($entries) && count($entries) <= 20, 'AUTH: invalid rate limit');
             $now = time();
             $ip = hash_hmac('sha256', $_SERVER['REMOTE_ADDR'] ?? 'unknown', $this->config->data['instanceKey']);
@@ -124,9 +125,7 @@ final class PanelAuth
                 // Reserve before password_verify, including interrupted requests.
                 $entries[] = ['time' => $now, 'ip' => $ip];
             }
-            $encoded = json_encode($entries, JSON_THROW_ON_ERROR);
-            ensure(ftruncate($stream, 0) && rewind($stream), 'AUTH: cannot reset rate limit');
-            ensure(fwrite($stream, $encoded) === strlen($encoded) && fflush($stream) && fsync($stream), 'AUTH: cannot save rate limit');
+            atomicJson($attemptsPath, $entries);
         } finally {
             flock($stream, LOCK_UN);
             fclose($stream);

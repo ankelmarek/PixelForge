@@ -47,7 +47,7 @@ def free_port():
 
 
 class PanelServer:
-    def __init__(self, site, certs, *, production=False):
+    def __init__(self, site, certs, *, production=False, tool_root=None):
         self.site = site
         self.password = secrets.token_urlsafe(24)
         self.username = "administrator"
@@ -110,7 +110,7 @@ class PanelServer:
             site.initial = site.call("init")
         self.panel_config = site.private / "panel/config.json"
         result = subprocess.run(
-            [PHP, str(ROOT / "admin-updater/panel-setup.php"), str(site.config_path), self.origin, self.username],
+            [PHP, str((tool_root or ROOT / "admin-updater") / "panel-setup.php"), str(site.config_path), self.origin, self.username],
             input=self.password, capture_output=True, text=True, timeout=30,
         )
         assert result.returncode == 0, result.stderr

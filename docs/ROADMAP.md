@@ -88,7 +88,7 @@ Kolejny zakres: **P2/U0: generator paczek full i walidator offline**.
 
 ### P2. Aktualizator plikowy ZIP
 
-**Status: U0 i U1 DONE (implementacja i testy), U2–U3 TODO. Priorytet: wysoki. Szczegółowe zadania U0–U3:** [UPDATER-SPEC.md](./UPDATER-SPEC.md).
+**Status: U0 i U1 DONE (implementacja i testy), U2 IN PROGRESS, U3 TODO. Priorytet: wysoki. Szczegółowe zadania U0–U3:** [UPDATER-SPEC.md](./UPDATER-SPEC.md).
 
 - [ ] Wprowadzamy wersjonowane paczki `full` i docelowo `delta`, z manifestem, sumami SHA-256 i kompatybilnością wersji.
 - [x] Rozwijamy walidator, katalog staging, bezpieczny rollback i log aktualizacji.
@@ -227,3 +227,11 @@ Każdy tytuł ma własną specyfikację i gałąź oraz wykorzystuje wspólny si
 - Osobny ZIP narzędzia U1 1.0.0; paczka gry pozostaje 0.6.1. Testowa wersja
   0.6.2 istnieje wyłącznie w tymczasowych fixture'ach, nie jest wydaniem gry.
 - Zaktualizowano PR #8. Bez merge i wdrożenia; U2/U3 i gry P3 nie rozpoczęte.
+
+### 2026-11-13 — U2: panel WWW
+
+- Osobna gałąź `feature/p2-u2-admin-panel` / PR #9, baza U1 `95f310e` / PR #8.
+- Logowanie, HTTPS, sesja, CSRF, limity prób, prywatny upload i osobne zatwierdzenie.
+- Terminal środowiska sesji jest niedostępny; dodano GitHub Actions z testami
+  i artefaktami. Wyniki i ograniczenia będą zapisane w raporcie U2.
+- Bez merge, wdrożenia, paczek delta i gier P3.

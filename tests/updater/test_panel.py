@@ -2,6 +2,8 @@
 
 from http.cookies import SimpleCookie
 import json
+import hashlib
+import zipfile
 from pathlib import Path
 import secrets
 import subprocess
@@ -233,3 +235,34 @@ class WebPanel(unittest.TestCase):
             self.assertIn("Ta sama wersja", app.request()[2])
             self.assertEqual(app.site.active()["version"], "0.6.0")
             self.assertEqual(list((app.site.private / "staging").iterdir()), [])
+
+    def test_distribution_zip_is_complete_and_panel_runs_after_extraction(self):
+        subprocess.run(["python3", str(core.ROOT / "tools/package-updater.py")],
+                       check=True, capture_output=True, timeout=30)
+        path = core.ROOT / "downloads/pixelforge-updater-u2-1.1.0.zip"
+        before = path.read_bytes()
+        subprocess.run(["python3", str(core.ROOT / "tools/package-updater.py")],
+                       check=True, capture_output=True, timeout=30)
+        self.assertEqual(path.read_bytes(), before)
+        with core.Site() as site:
+            extracted = site.root / "tools"
+            with zipfile.ZipFile(path) as archive:
+                self.assertIsNone(archive.testzip())
+                archive.extractall(extracted)
+            tool_root = extracted / "admin-updater"
+            for line in (tool_root / "MANIFEST.sha256").read_text().splitlines():
+                digest, name = line.split("  ", 1)
+                self.assertEqual(hashlib.sha256((tool_root / name).read_bytes()).hexdigest(), digest)
+            server = fixtures.PanelServer(site, self.certs, tool_root=tool_root)
+            try:
+                server.login()
+                self.assertEqual(server.request(path="/pixelforge-admin/index.php?asset=css")[0], 200)
+                plan = server.plan()
+                self.assertEqual(server.post("apply", {"plan": plan["id"], "hash": plan["packageHash"]})[0], 303)
+                state = site.call("status")["state"]
+                self.assertEqual(state["active"]["version"], "0.6.1")
+                self.assertEqual(server.post("rollback", {"active": state["active"]["id"], "previous": state["previous"]["id"]})[0], 303)
+                self.assertEqual(site.active()["version"], "0.6.0")
+                self.assertIn(str(tool_root), (site.public / "pixelforge-admin/index.php").read_text())
+            finally:
+                server.close()
