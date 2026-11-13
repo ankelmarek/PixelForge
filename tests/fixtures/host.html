@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pl">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  /><title>Engine test harness</title
+  ><style>
+    body {
+      margin: 8px;
+      background: #101e27;
+      color: white;
+    }
+    #stage {
+      width: min(640px, 95vw);
+      aspect-ratio: 16/9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    canvas {
+      image-rendering: pixelated;
+    }
+    button {
+      min-height: 44px;
+      min-width: 44px;
+      margin: 2px;
+    }
+    #error {
+      color: #ffa0a0;
+    }
+  </style>
+  <body>
+    <div id="stage"></div>
+    <div id="telemetry" hidden></div>
+    <p id="error" role="status"></p>
+    <button id="start" disabled>Start</button
+    ><button id="resume" disabled>Resume</button
+    ><button id="pause">Pause</button><button id="restart">Restart</button
+    ><button id="mute">Mute</button><button id="cancel">×</button
+    ><button id="zoom">+</button><button id="reset">⊙</button
+    ><button id="dispose">Dispose</button>
+    <script type="module" src="./host.ts"></script>
+  </body>
+</html>
