@@ -108,6 +108,21 @@ try {
     );
 
     await panel.locator('#package').setInputFiles(configuration.package);
+    if (device === 'desktop') {
+      const transfer = await panel.locator('#package').evaluateHandle((element) => {
+        const data = new globalThis.DataTransfer();
+        data.items.add(element.files[0]);
+        element.value = '';
+        return data;
+      });
+      await panel.locator('[data-drop]').dispatchEvent('drop', {
+        dataTransfer: transfer,
+      });
+      expect(
+        await panel.locator('#package').evaluate((element) => element.files.length),
+      ).toBe(1);
+      await transfer.dispose();
+    }
     await panel
       .getByRole('button', { name: 'Sprawdź pakiet', exact: true })
       .click();

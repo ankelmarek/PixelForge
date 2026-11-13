@@ -45,6 +45,7 @@ final class PanelConfig
 
     public function __construct(string $path)
     {
+        ensure(function_exists('session_start') && function_exists('password_hash'), 'ENVIRONMENT: PHP sessions and password hashing required');
         $data = self::read($path);
         $keys = ['formatVersion', 'updaterConfig', 'origin', 'panelPath', 'username', 'passwordHash', 'instanceKey'];
         ensure(array_diff(array_keys($data), $keys) === [] && array_diff($keys, array_keys($data)) === [], 'CONFIG: panel fields');

@@ -47,16 +47,24 @@ final class PanelAuth
 
     public function start(): void
     {
-        ini_set('session.use_strict_mode', '1');
-        ini_set('session.use_only_cookies', '1');
-        ini_set('session.use_trans_sid', '0');
-        ini_set('session.gc_maxlifetime', '28800');
-        ini_set('session.gc_probability', '1');
-        ini_set('session.gc_divisor', '100');
-        ini_set('session.serialize_handler', 'php_serialize');
-        session_save_path($this->config->directory . '/sessions');
-        session_name($this->cookie);
-        session_set_cookie_params($this->cookieOptions);
+        $options = [
+            'session.save_handler' => 'files',
+            'session.use_strict_mode' => '1',
+            'session.use_only_cookies' => '1',
+            'session.use_trans_sid' => '0',
+            'session.gc_maxlifetime' => '28800',
+            'session.gc_probability' => '1',
+            'session.gc_divisor' => '100',
+            'session.serialize_handler' => 'php_serialize',
+        ];
+        foreach ($options as $name => $value) {
+            ini_set($name, $value);
+            ensure(ini_get($name) === $value, 'SESSION: required session setting unavailable');
+        }
+        $directory = $this->config->directory . '/sessions';
+        ensure(session_save_path($directory) !== false && session_save_path() === $directory, 'SESSION: private session path unavailable');
+        ensure(session_name($this->cookie) !== false, 'SESSION: cannot set cookie name');
+        ensure(session_set_cookie_params($this->cookieOptions), 'SESSION: cannot set secure cookie');
         ensure(session_start(), 'SESSION: cannot start');
         if (!isset($_SESSION['csrf'])) {
             $_SESSION['csrf'] = bin2hex(random_bytes(32));

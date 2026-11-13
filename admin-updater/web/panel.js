@@ -1,7 +1,7 @@
-const document = globalThis.document;
-const form = document.querySelector('[data-upload]');
-const input = document.querySelector('#package');
-const drop = document.querySelector('[data-drop]');
+const panelDocument = globalThis.document;
+const form = panelDocument.querySelector('[data-upload]');
+const input = panelDocument.querySelector('#package');
+const drop = panelDocument.querySelector('[data-drop]');
 if (form && input && drop) {
   for (const type of ['dragenter', 'dragover']) {
     drop.addEventListener(type, (event) => {
