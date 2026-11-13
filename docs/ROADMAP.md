@@ -190,3 +190,13 @@ Każdy tytuł ma własną specyfikację i gałąź oraz wykorzystuje wspólny si
 - Kontrole: 48 Vitest, 15 Python, E2E 28 PASS + 2 SKIP; build/lint/typecheck PASS.
   ZIP 0.6.1 i [raport poprawki](HOTFIX-0.6.1.md) w aktywnym PR #7.
   U1–U3 i gry P3 pozostają poza zakresem.
+
+### 2026-11-13 — odbiór 0.6.1 i przygotowanie U1
+
+- Użytkownik potwierdził działanie poprawki 0.6.1 na swoim hostingu i zlecił
+  dalsze prace zgodnie z roadmapą.
+- Następny zakres to U1. Przygotowano [plan instalacji i macierz testów awarii](U1-INSTALLATION-PLAN.md)
+  na osobnej gałęzi `feature/p2-u1-installer`, opartej na `da66565` / PR #7.
+- Wybór adaptera pozostaje otwarty do ustalenia możliwości hostingu:
+  PHP 8 z ZipArchive albo SSH/CLI. Nie uznajemy działania statycznego Atlasu
+  za potwierdzenie tych możliwości. U1 nie jest jeszcze zaimplementowane.

@@ -4,6 +4,10 @@ Zakres wynika z roadmapy 0.2 i `UPDATER-SPEC.md`. P1A–P1D zrealizowano na gał
 [raport P1](P1-REPORT.md), [kontrakt świata](LARGE-WORLDS.md). P2/U0 zrealizowano w osobnym PR — [raport U0](U0-REPORT.md). U1–U3 pozostają
 planem. Nie wybrano hostingu ani nie rozpoczęto którejkolwiek gry.
 
+Po odbiorze 0.6.1 rozpoczęto przygotowanie U1:
+[operacje instalatora i macierz testów awarii](U1-INSTALLATION-PLAN.md).
+Implementacja adaptera czeka na potwierdzenie możliwości docelowego hostingu.
+
 ## P1 — duże mapy
 
 | Krok / osobny zakres recenzji | Implementacja                                                                                                                                      | Kryterium weryfikacji                                                                                                    |
