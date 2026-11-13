@@ -3,13 +3,14 @@ import { readFileSync } from 'node:fs';
 import type { Snapshot } from '../../src/engine/api/types';
 import { WormModel } from '../../src/games/earthworm/model';
 import { validateWorld } from '../../src/games/earthworm/world';
+import { PLUG, AIR_POCKETS } from '../../src/games/earthworm/adventure';
 
-const key = 'pixelforge:client:v1:earthworm';
+const key = 'pixelforge:client:v3:earthworm';
 const world = validateWorld(
   JSON.parse(
     readFileSync(
       new URL(
-        '../../public/assets/games/earthworm/world.json',
+        '../../public/assets/games/earthworm/soil-world.json',
         import.meta.url,
       ),
       'utf8',
@@ -62,9 +63,11 @@ test('dżdżownica: mysz/dotyk, pokarm, korzeń, pauza i odtworzenie tuneli', as
   page.on('pageerror', (e) => errors.push(e.message));
   await open(page);
   for (const f of raw.food.slice(0, 3)) await move(page, f.x, f.y, isMobile);
-  expect((await state(page)).stats?.nutrients).toBe(3);
+  expect(Number((await state(page)).stats?.nutrients)).toBeGreaterThanOrEqual(
+    3,
+  );
   await move(page, raw.roots[0].x, raw.roots[0].y, isMobile);
-  await expect.poll(async () => (await state(page)).collected).toBe(1);
+  await expect.poll(async () => (await state(page)).stats?.blooms).toBe(1);
   await page.locator('#interact').click();
   await expect(page.locator('#interact')).toHaveAttribute(
     'aria-pressed',
@@ -78,7 +81,7 @@ test('dżdżownica: mysz/dotyk, pokarm, korzeń, pauza i odtworzenie tuneli', as
   await page.locator('[data-game="earthworm"]').click();
   await page.locator('#resume').click();
   const after = await state(page);
-  expect(after.collected).toBe(1);
+  expect(after.stats?.blooms).toBe(1);
   expect(after.stats?.tunnels).toBe(before.stats?.tunnels);
   expect(after.x).toBeCloseTo(before.x!, 1);
   await page.locator('#pause').click();
@@ -190,18 +193,20 @@ test('dżdżownica: kierunki, Escape, dźwięk i utrata fokusu', async ({
 test('dżdżownica: brak PNG, błędna mapa, uszkodzony zapis i izolacja Atlasu', async ({
   page,
 }) => {
-  await page.route('**/assets/games/earthworm/world.json', (r) =>
+  await page.route('**/assets/games/earthworm/soil-world.json', (r) =>
     r.fulfill({ json: { schemaVersion: 99 } }),
   );
   await page.goto('/');
   await page.locator('[data-game="earthworm"]').click();
   await expect(page.locator('#error')).toContainText('wersja');
-  await page.unroute('**/assets/games/earthworm/world.json');
-  await page.route('**/assets/games/earthworm/creatures.png', (r) => r.abort());
+  await page.unroute('**/assets/games/earthworm/soil-world.json');
+  await page.route('**/assets/games/earthworm/soil-atlas.png', (r) =>
+    r.abort(),
+  );
   await page.locator('#back').click();
   await page.locator('[data-game="earthworm"]').click();
   await expect(page.locator('#error')).toContainText('Brak zasobu');
-  await page.unroute('**/assets/games/earthworm/creatures.png');
+  await page.unroute('**/assets/games/earthworm/soil-atlas.png');
   await page.evaluate(
     ({ key }) => {
       localStorage.setItem(key, '{broken');
@@ -220,29 +225,23 @@ test('dżdżownica: brak PNG, błędna mapa, uszkodzony zapis i izolacja Atlasu'
 });
 test('dżdżownica: wygrana i porażka po wznowieniu, wynik oraz nowa gra', async ({
   page,
-  isMobile,
 }) => {
   // Controlled near-end save checks the actual UI. Full production route is exercised headlessly.
-  const m = new WormModel(world),
-    root = world.roots.at(-1)!;
-  m.state.roots = world.roots.map((r, i) => (i < 11 ? r.need : r.need - 1));
-  m.state.nutrients = 1;
-  m.state.x = root.x - 60;
-  m.state.y = root.y;
-  m.state.checkpoint = 10;
+  const m = new WormModel(world);
+  m.state.adventure.eaten.fill(true);
   await page.goto('/');
   await page.evaluate(
     ({ key, state }) =>
       localStorage.setItem(
         key,
-        JSON.stringify({ schemaVersion: 1, gameId: 'earthworm', state }),
+        JSON.stringify({ schemaVersion: 3, gameId: 'earthworm', state }),
       ),
     { key, state: m.snapshot() },
   );
   await open(page, true);
-  await move(page, root.x, root.y, isMobile);
+  await page.locator('#interact').click();
   await expect(
-    page.getByRole('heading', { name: 'Ogród znów żyje' }),
+    page.getByRole('heading', { name: 'Dorosła dżdżownica' }),
   ).toBeVisible();
   await page.locator('#restart').click();
   await expect.poll(async () => (await state(page)).collected).toBe(0);
@@ -254,7 +253,7 @@ test('dżdżownica: wygrana i porażka po wznowieniu, wynik oraz nowa gra', asyn
     ({ key, state }) =>
       localStorage.setItem(
         key,
-        JSON.stringify({ schemaVersion: 1, gameId: 'earthworm', state }),
+        JSON.stringify({ schemaVersion: 3, gameId: 'earthworm', state }),
       ),
     { key, state: m.snapshot() },
   );
@@ -264,4 +263,75 @@ test('dżdżownica: wygrana i porażka po wznowieniu, wynik oraz nowa gra', asyn
   ).toBeVisible();
   await page.locator('#restart').click();
   await expect.poll(async () => (await state(page)).lives).toBe(3);
+});
+
+test('przekrój gleby: zator, pojedyncza akcja, zapis i osobny stary postęp', async ({
+  page,
+  isMobile,
+}) => {
+  const m = new WormModel(world);
+  m.state.x = PLUG.x;
+  m.state.y = PLUG.y - 64;
+  await page.goto('/');
+  await page.evaluate(
+    ({ key, state }) => {
+      localStorage.setItem('pixelforge:client:v1:earthworm', 'old-garden-save');
+      localStorage.setItem(
+        key,
+        JSON.stringify({ schemaVersion: 3, gameId: 'earthworm', state }),
+      );
+    },
+    { key, state: m.snapshot() },
+  );
+  await open(page, true);
+  const p = await point(page, PLUG.x, PLUG.y);
+  if (isMobile) await page.touchscreen.tap(p.x, p.y);
+  else await page.mouse.click(p.x, p.y);
+  await expect.poll(async () => (await state(page)).stats?.plug).toBe(1);
+  if (isMobile) await page.locator('#interact').click();
+  else {
+    await page.keyboard.down('ShiftLeft');
+    await page.waitForTimeout(400);
+    await page.keyboard.up('ShiftLeft');
+  }
+  await expect.poll(async () => (await state(page)).stats?.plug).toBe(2);
+  await page.locator('#interact').click();
+  await expect.poll(async () => (await state(page)).stats?.plug).toBe(3);
+  await expect.poll(async () => (await state(page)).stats?.wet).toBe(true);
+  await page.locator('#pause').click();
+  await page.reload();
+  await page.locator('[data-game="earthworm"]').click();
+  await page.locator('#resume').click();
+  await expect.poll(async () => (await state(page)).stats?.plug).toBe(3);
+  expect(
+    await page.evaluate(() =>
+      localStorage.getItem('pixelforge:client:v1:earthworm'),
+    ),
+  ).toBe('old-garden-save');
+});
+test('przekrój gleby: zalany tunel i odzyskanie oddechu w kieszeni powietrznej', async ({
+  page,
+  isMobile,
+}) => {
+  const m = new WormModel(world);
+  m.state.x = AIR_POCKETS[0].x;
+  m.state.y = AIR_POCKETS[0].y + 65;
+  m.state.air = 55;
+  await page.goto('/');
+  await page.evaluate(
+    ({ key, state }) =>
+      localStorage.setItem(
+        key,
+        JSON.stringify({ schemaVersion: 3, gameId: 'earthworm', state }),
+      ),
+    { key, state: m.snapshot() },
+  );
+  await open(page, true);
+  await expect(page.getByRole('meter', { name: 'Powietrze' })).toBeVisible();
+  await move(page, AIR_POCKETS[0].x, AIR_POCKETS[0].y, isMobile);
+  await expect
+    .poll(async () => Number((await state(page)).stats?.air))
+    .toBeGreaterThanOrEqual(99);
+  await expect(page.getByRole('meter', { name: 'Powietrze' })).toBeHidden();
+  expect((await state(page)).lives).toBe(3);
 });

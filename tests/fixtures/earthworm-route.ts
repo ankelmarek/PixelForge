@@ -1,5 +1,18 @@
-import { WormModel, type WormState } from '../../src/games/earthworm/model';
+import { WormModel } from '../../src/games/earthworm/model';
 import type { EarthwormWorld, Point } from '../../src/games/earthworm/world';
+
+import {
+  SURFACE,
+  ADULT_XP,
+  NEST,
+  PLUG,
+  BABY,
+  CHAMBER,
+  FUNGI,
+  AIR_POCKETS,
+  FLOOD,
+  gap,
+} from '../../src/games/earthworm/adventure';
 
 /** Test driver only: navigate the real model without teleporting, free resources or time gates. */
 export function playCampaign(world: EarthwormWorld) {
@@ -12,7 +25,7 @@ export function playCampaign(world: EarthwormWorld) {
       y = (Math.floor(i / cols) + 0.5) * size;
     return (
       x < 32 ||
-      y < 32 ||
+      y < SURFACE + 24 ||
       x > world.width - 32 ||
       y > world.height - 32 ||
       world.rocks.some((r) => Math.hypot(r.x - x, r.y - y) < r.radius + 26)
@@ -27,20 +40,12 @@ export function playCampaign(world: EarthwormWorld) {
       );
     if (near()) {
       model.toggleHide();
-      for (let i = 0; i < 300; i++) {
-        model.tick(0.1);
-        if (
-          model.state.predators.every(
-            (p) => Math.hypot(p.x - model.state.x, p.y - model.state.y) > 130,
-          )
-        )
-          break;
-      }
+      for (let i = 0; i < 15; i++) model.tick(0.1);
       model.steer(goal.x, goal.y);
     }
     model.tick(0.1);
   }
-  function path(goal: Point) {
+  function path(goal: Point, water: boolean) {
     const index = (p: Point) =>
       Math.floor(p.y / size) * cols + Math.floor(p.x / size);
     const start = index(model.state),
@@ -67,7 +72,12 @@ export function playCampaign(world: EarthwormWorld) {
           nx >= cols ||
           ny >= rows ||
           parents[next] !== -1 ||
-          blocked[next]
+          blocked[next] ||
+          (!water &&
+            nx * size > FLOOD.x - 32 &&
+            nx * size < FLOOD.x + FLOOD.width + 32 &&
+            ny * size > FLOOD.y - 32 &&
+            ny * size < FLOOD.y + FLOOD.height + 32)
         )
           continue;
         parents[next] = cur;
@@ -83,10 +93,10 @@ export function playCampaign(world: EarthwormWorld) {
       });
     return route;
   }
-  function move(goal: Point) {
+  function move(goal: Point, water = false) {
     for (let attempt = 0; attempt < 4; attempt++) {
       let interrupted = false;
-      for (const p of path(goal)) {
+      for (const p of path(goal, water)) {
         model.steer(p.x, p.y);
         for (
           let i = 0;
@@ -109,32 +119,100 @@ export function playCampaign(world: EarthwormWorld) {
       `Campaign stuck at ${model.state.x},${model.state.y} en route to ${goal.x},${goal.y}`,
     );
   }
-  let beforeFinal: WormState | undefined;
-  for (const [i, root] of world.roots.entries()) {
-    const pool = [...world.pools].sort(
-      (a, b) =>
-        Math.hypot(a.x - root.x, a.y - root.y) -
-        Math.hypot(b.x - root.x, b.y - root.y),
-    )[0];
-    move(pool);
-    for (let j = 0; j < 60; j++) model.tick(0.1);
-    for (const food of world.food.slice(i * 6, i * 6 + 6)) {
-      if (model.state.nutrients >= root.need) break;
+  function wait(seconds: number) {
+    for (let i = 0; i < Math.ceil(seconds / 0.1); i++) safeStep(model.state);
+  }
+  function feedNear(point: Point, wanted = model.capacity) {
+    const candidates = [...world.food].sort(
+      (a, b) => gap(a, point) - gap(b, point),
+    );
+    for (const food of candidates.slice(0, 12)) {
+      if (model.state.nutrients >= wanted) break;
+      if (model.state.food[world.food.indexOf(food)] > 0) continue;
       move(food);
     }
-    if (model.state.nutrients < root.need)
-      throw Error('Insufficient campaign food');
-    if (i === world.roots.length - 1) beforeFinal = model.snapshot();
-    move(root);
-    for (let j = 0; j < 20; j++) safeStep(root);
-    if (model.state.roots[i] !== root.need)
-      throw Error(`Root ${root.id} incomplete`);
   }
-  if (!model.state.completed || !beforeFinal)
-    throw Error('Campaign did not complete');
+  for (const root of world.roots) {
+    const pool = [...world.pools].sort(
+      (a, b) => gap(a, root) - gap(b, root),
+    )[0];
+    move(pool);
+    wait(5);
+    for (
+      let attempt = 0;
+      attempt < 4 && model.state.roots[world.roots.indexOf(root)] < root.need;
+      attempt++
+    ) {
+      feedNear(
+        root,
+        Math.min(
+          model.capacity,
+          root.need - model.state.roots[world.roots.indexOf(root)] + 2,
+        ),
+      );
+      move(root);
+      wait(2.6);
+    }
+    if (model.state.roots[world.roots.indexOf(root)] !== root.need)
+      throw Error(
+        'Unfed root ' +
+          root.id +
+          ' progress=' +
+          model.state.roots[world.roots.indexOf(root)] +
+          ' resources=' +
+          model.state.nutrients +
+          ' time=' +
+          model.state.seconds +
+          ' food=' +
+          world.food
+            .filter((f) => gap(f, root) < 150)
+            .map((f) => model.state.food[world.food.indexOf(f)])
+            .join(','),
+      );
+  }
+  move({ x: PLUG.x, y: PLUG.y - 25 });
+  for (let i = 0; i < 3; i++) model.interact();
+  if (model.state.adventure.plug !== 3) throw Error('Plug not opened');
+  move(BABY);
+  wait(0.2);
+  if (model.state.adventure.baby !== 'following')
+    throw Error('Baby not following');
+  move(NEST);
+  wait(0.2);
+  if (String(model.state.adventure.baby) !== 'home')
+    throw Error('Baby not returned');
+  move({ x: 2512, y: 2432 });
+  move(AIR_POCKETS[0], true);
+  wait(4);
+  move(AIR_POCKETS[1], true);
+  wait(4);
+  move(CHAMBER, true);
+  wait(0.2);
+  move(AIR_POCKETS[1], true);
+  wait(4);
+  move(AIR_POCKETS[0], true);
+  wait(4);
+  move({ x: 2512, y: 2432 }, true);
+  if (!model.state.adventure.chamber) throw Error('Chamber not discovered');
+  for (const fungus of FUNGI) {
+    feedNear(fungus, 3);
+    move({ x: fungus.x, y: fungus.y - 24 });
+    model.interact();
+  }
+  if (!model.state.adventure.fungi.every(Boolean))
+    throw Error('Oasis not restored');
+  if (model.experience < ADULT_XP)
+    throw Error('Not enough XP: ' + model.experience);
+  move(NEST);
+  const beforeFinal = model.snapshot(),
+    experience = model.experience;
+  model.interact();
+  wait(4.2);
+  if (!model.state.completed) throw Error('Adulthood did not complete');
   return {
     beforeFinal,
     result: model.snapshot(),
     tunnelCells: model.terrain.count,
+    experience,
   };
 }

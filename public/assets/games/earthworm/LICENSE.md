@@ -1,11 +1,17 @@
 # Życie Dżdżownicy — zasoby
 
-Wszystkie PNG, projekt świata i paleta powstały dla PixelForge jako oryginalne,
-deterministycznie generowane zasoby. Źródło: `tools/generate-earthworm.py`,
-oparte na lokalnym `tools/pixel_art.py`. Bez zdjęć, płatnych materiałów,
-zewnętrznych fontów ani zasobów cudzych gier. Można używać, modyfikować
-i publikować z PixelForge. Dźwięki generuje współdzielony syntezator Web Audio;
-melodia znajduje się w definicji gry.
+Grafiki `garden-atlas.png`, `worm-atlas.png`, `soil-atlas.png` i `soil-cover.png`
+zostały wygenerowane narzędziem obrazowym OpenAI na potrzeby PixelForge,
+według własnego projektu postaci, roślin i pionowego przekroju gleby.
+Nie wykorzystują załączonych zdjęć, cudzych postaci ani zasobów innych gier.
+Arkusze zachowano w oryginalnej postaci; kadry i ostre filtrowanie tekstur
+opisuje `src/games/earthworm/soil-view.ts`. Nie są generowane podczas builda.
 
-Odtwarzanie: `npm run assets:earthworm` (Python 3, biblioteka standardowa).
-Dokument jest częścią paczki statycznej jako dozwolony plik `assets/**/LICENSE.md`.
+Pozostałe PNG to historyczne, proceduralne zasoby pierwszej wersji 0.7.0;
+nie są ładowane przez nową grę. Ich źródło jest w historii
+`tools/generate-earthworm.py` (commit dc919f58).
+
+Świat jest deterministyczny: `npm run assets:earthworm` odtwarza `soil-world.json`,
+bez nadpisywania ilustracji. Dźwięki pochodzą ze wspólnego syntezatora Web Audio.
+Brak płatnych materiałów, zewnętrznych fontów i pobierania zasobów w runtime.
+Zasoby można wykorzystywać i publikować wraz z PixelForge.

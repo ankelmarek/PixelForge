@@ -10,8 +10,20 @@ import {
   type ClientRuntime,
   type ClientCommand,
 } from '../../engine/api';
-import { WormModel, TILE, CAPACITY } from './model';
+import { WormModel, TILE } from './model';
 import { validateWorld } from './world';
+import { registerSoilArt, paintGround, drawSoil } from './soil-view';
+import {
+  SURFACE,
+  ADULT_XP,
+  NEST,
+  PLUG,
+  BABY,
+  CHAMBER,
+  FUNGI,
+  DEEP_NEST,
+  AMBER,
+} from './adventure';
 
 const phases = {
   dew: { icon: '◒', label: 'Poranna rosa' },
@@ -26,9 +38,10 @@ export function createEarthwormRuntime(
 ): ClientRuntime {
   const world = validateWorld(data),
     model = new WormModel(world);
-  const save = new VersionedSave(definition.id, 1, (value) =>
+  const save = new VersionedSave(definition.id, 3, (value) =>
     model.validateSave(value),
   );
+  const previousSave = new VersionedSave(definition.id, 1, () => true);
   let started = false,
     lastSave = 0,
     active: Gameplay | undefined;
@@ -44,6 +57,7 @@ export function createEarthwormRuntime(
     private sprites = new Map<string, Phaser.GameObjects.Sprite>();
     private body: Phaser.GameObjects.Sprite[] = [];
     private effects!: Phaser.GameObjects.Graphics;
+    private ground!: Phaser.GameObjects.Graphics;
     private emitted = 0;
     private follow = true;
     private drag?: {
@@ -56,6 +70,8 @@ export function createEarthwormRuntime(
     private reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     private trail: { x: number; y: number }[] = [];
     private trailAt = -1;
+    private rewardAt = -10;
+    private previousXP = 0;
     constructor() {
       super('Gameplay');
     }
@@ -68,25 +84,14 @@ export function createEarthwormRuntime(
       this.follow = true;
       this.emitted = 0;
       this.trailAt = -1;
-      const soil = this.textures
-        .get('soil')
-        .getSourceImage() as HTMLImageElement;
+      this.previousXP = model.experience;
+      this.rewardAt = -10;
+      registerSoilArt(this);
       this.terrain = new MutableTerrainRenderer(
         this,
         model.terrain,
         (ctx, value, x, y, lx, ly) => {
-          const variant = ((x * 31) ^ (y * 17)) & 3;
-          ctx.drawImage(
-            soil,
-            ((value === 2 ? 8 : value === 1 ? 4 : 0) + variant) * TILE,
-            0,
-            TILE,
-            TILE,
-            lx,
-            ly,
-            TILE,
-            TILE,
-          );
+          paintGround(ctx, value, x, y, lx, ly);
           if (value === 1) {
             ctx.fillStyle = '#8c6b55';
             if (model.terrain.get(x, y - 1) === 0)
@@ -102,11 +107,12 @@ export function createEarthwormRuntime(
         .setBackgroundColor('#584547');
       this.body = model.segments.map((_, i) =>
         this.add
-          .sprite(0, 0, 'creatures', i === 0 ? 0 : i === 14 ? 2 : 1)
-          .setScale(i === 0 ? 0.7 : 0.56)
+          .sprite(0, 0, 'worm', i === 0 ? 0 : i === 14 ? 2 : 1)
+          .setDisplaySize(i === 0 ? 23 : i === 14 ? 18 : 14, i === 0 ? 14 : 10)
           .setDepth(200 - i),
       );
       this.effects = this.add.graphics().setDepth(300);
+      this.ground = this.add.graphics().setDepth(-15);
       const down = (p: Phaser.Input.Pointer) => {
         this.game.canvas.focus({ preventScroll: true });
         if (model.state.completed || model.state.failed) return;
@@ -123,9 +129,9 @@ export function createEarthwormRuntime(
         }
         const point = c.getWorldPoint(p.x, p.y);
         if (Math.hypot(point.x - model.state.x, point.y - model.state.y) < 14)
-          model.toggleHide();
+          model.interact();
         else {
-          model.steer(point.x, point.y);
+          model.click(point.x, point.y);
           this.follow = true;
         }
       };
@@ -185,7 +191,7 @@ export function createEarthwormRuntime(
       this.emit();
     }
     private defaultZoom() {
-      return matchMedia('(pointer: coarse)').matches ? 1.5 : 1;
+      return matchMedia('(pointer: coarse)').matches ? 1 : 0.8;
     }
     private align() {
       const c = this.cameras.main;
@@ -196,7 +202,7 @@ export function createEarthwormRuntime(
     }
     command(command: ClientCommand) {
       const c = this.cameras.main;
-      if (command.type === 'interact') model.toggleHide();
+      if (command.type === 'interact') model.interact();
       if (command.type === 'focus') {
         this.follow = !command.point;
         const p = command.point ?? model.state;
@@ -221,13 +227,16 @@ export function createEarthwormRuntime(
     }
     update(_time: number, delta: number) {
       const input = context.input;
-      if (input.consume('interact')) model.toggleHide();
+      if (input.consume('interact')) model.interact();
       const direction = {
         x: Number(input.down('right')) - Number(input.down('left')),
         y: Number(input.down('down')) - Number(input.down('up')),
       };
       if (direction.x || direction.y) this.follow = true;
       model.tick(delta / 1000, direction);
+      if (model.experience > this.previousXP)
+        this.rewardAt = model.state.seconds;
+      this.previousXP = model.experience;
       const events = model.events.splice(0);
       for (const event of events) context.audio.play(event);
       if (events.length || model.state.seconds - lastSave >= 10) persist();
@@ -241,12 +250,16 @@ export function createEarthwormRuntime(
     private render() {
       const c = this.cameras.main,
         s = model.state;
-      if (this.follow) c.centerOn(s.x, s.y);
+      if (this.follow)
+        c.centerOn(
+          s.x,
+          s.y - Math.max(0, Math.min(50, (SURFACE + 200 - s.y) / 4)),
+        );
       this.align();
       const view = cameraView(c),
         wanted = new Set<string>();
       this.terrain.update(view);
-      const visible = (x: number, y: number, margin = 90) =>
+      const visible = (x: number, y: number, margin = 150) =>
         x > view.x - margin &&
         y > view.y - margin &&
         x < view.x + view.width + margin &&
@@ -274,118 +287,40 @@ export function createEarthwormRuntime(
           .setAlpha(alpha);
         return image;
       };
-      for (const [i, p] of world.pools.entries()) {
-        const image = sprite(`pool-${i}`, p.x, p.y, 'pool', 0, -10);
-        image?.setScale(p.radius / 48);
-      }
-      for (
-        let y = Math.max(0, Math.floor(view.y / 128) - 1);
-        y <
-        Math.min(
-          world.height / 128,
-          Math.ceil((view.y + view.height) / 128) + 1,
-        );
-        y++
-      )
-        for (
-          let x = Math.max(0, Math.floor(view.x / 128) - 1);
-          x <
-          Math.min(
-            world.width / 128,
-            Math.ceil((view.x + view.width) / 128) + 1,
-          );
-          x++
-        ) {
-          const hash = (x * 71 + y * 149) % 97,
-            px = x * 128 + hash,
-            py = y * 128 + ((hash * 31) % 100);
-          if (
-            model.terrain.get(Math.floor(px / TILE), Math.floor(py / TILE)) ===
-              0 &&
-            !world.roots.some((r) => Math.hypot(r.x - px, r.y - py) < 60) &&
-            !world.pools.some(
-              (p) => Math.hypot(p.x - px, p.y - py) < p.radius + 20,
-            )
-          )
-            sprite(
-              `decor-${x}-${y}`,
-              px,
-              py,
-              'creatures',
-              [5, 6, 7, 10][hash % 4],
-              -5,
-              0.7,
-            );
-        }
       const g = this.effects;
       g.clear();
-      for (const [i, root] of world.roots.entries()) {
-        const done = s.roots[i] === root.need;
-        sprite(
-          root.id,
-          root.x,
-          root.y - 15,
-          'plants',
-          root.garden * 2 + Number(done),
-          root.y > s.y + 10 ? 210 : 10,
-        );
-        if (!visible(root.x, root.y)) continue;
-        if (done) {
-          g.lineStyle(1, 0xa9c985, 0.25);
-          g.strokeCircle(root.x, root.y, 36);
-        } else {
-          for (let n = 0; n < root.need; n++) {
-            g.fillStyle(n < s.roots[i] ? 0xbacf85 : 0x302c35);
-            g.fillCircle(
-              root.x + (n - (root.need - 1) / 2) * 8,
-              root.y + 25,
-              3,
-            );
-            g.lineStyle(1, 0xc2aa80);
-            g.strokeCircle(
-              root.x + (n - (root.need - 1) / 2) * 8,
-              root.y + 25,
-              3,
-            );
-          }
-          if (Math.hypot(root.x - s.x, root.y - s.y) < 70 && s.nutrients > 0) {
-            g.lineStyle(1, s.hydration >= 25 ? 0xe2ca8f : 0x76b9bf, 0.6);
-            g.strokeCircle(
-              root.x,
-              root.y,
-              30 + (this.reduced ? 0 : Math.sin(s.seconds * 4) * 2),
-            );
-          }
-        }
-      }
-      for (const [i, f] of world.food.entries())
-        if (!s.food[i]) {
-          const image = sprite(
-            f.id,
-            f.x,
-            f.y + (this.reduced ? 0 : Math.sin(s.seconds * 2 + i) * 1.5),
-            'creatures',
-            3,
-            12,
+      this.ground.clear();
+      drawSoil(model, sprite, this.ground, g, view, visible, this.reduced);
+      this.ground.lineStyle(10 + model.stage, 0x6c3a42, 0.8).beginPath();
+      model.segments.forEach((p, i) => {
+        if (i === 0) this.ground.moveTo(p.x, p.y + 2);
+        else this.ground.lineTo(p.x, p.y + 2);
+      });
+      if (!s.hiding) this.ground.strokePath();
+      const rewardAge = s.seconds - this.rewardAt;
+      if (!this.reduced && rewardAge >= 0 && rewardAge < 0.7)
+        for (let i = 0; i < 10; i++)
+          g.fillStyle(0xf5d590, 1 - rewardAge).fillRect(
+            s.x + Math.cos(i * 2.4) * (8 + rewardAge * 25),
+            s.y + Math.sin(i * 2.4) * 10 - rewardAge * 25,
+            2,
+            2,
           );
-          image?.setScale(0.85);
-        }
-      for (const [i, p] of s.predators.entries()) {
-        sprite(`mole-${i}`, p.x, p.y, 'creatures', 4, 180);
-        if (p.alert > 0 && visible(p.x, p.y)) {
-          g.lineStyle(1, 0xeaa087, p.alert * 0.7);
-          g.strokeCircle(p.x, p.y, 24 + p.alert * 8);
-          g.fillStyle(0xffc398);
-          g.fillRect(p.x - 1, p.y - 27, 2, 6);
-          g.fillRect(p.x - 1, p.y - 19, 2, 2);
-        }
-      }
+      while (this.body.length < model.segments.length)
+        this.body.push(
+          this.add.sprite(0, 0, 'worm', 1).setDepth(200 - this.body.length),
+        );
       for (const [id, image] of this.sprites)
         if (!wanted.has(id)) {
           image.destroy();
           this.sprites.delete(id);
         }
       for (const [i, b] of this.body.entries()) {
+        b.setFrame(i === 0 ? 0 : i === this.body.length - 1 ? 2 : 1);
+        b.setDisplaySize(
+          i === 0 ? 23 + model.stage : i === this.body.length - 1 ? 18 : 14,
+          i === 0 ? 14 + model.stage : 10 + model.stage * 0.5,
+        );
         const p = model.segments[i],
           previous = model.segments[Math.max(0, i - 1)];
         const coil = s.hiding
@@ -397,6 +332,7 @@ export function createEarthwormRuntime(
         b.setPosition(Math.round(coil.x), Math.round(coil.y)).setRotation(
           i === 0 ? s.heading : Math.atan2(previous.y - p.y, previous.x - p.x),
         );
+        b.setFlipY(Math.cos(b.rotation) < 0);
         b.setAlpha(s.invulnerable > 0 ? 0.55 : 1);
         b.setTint(
           s.hydration < 20
@@ -412,16 +348,21 @@ export function createEarthwormRuntime(
         g.fillStyle(0xe5caa0, 0.7);
         g.fillRect(model.target.x - 1, model.target.y - 1, 2, 2);
       }
-      if (model.weather === 'rain' && !this.reduced) {
-        g.lineStyle(1, 0x87bec3, 0.25);
-        for (let i = 0; i < 24; i++) {
-          const x = view.x + ((i * 91 + s.seconds * 11) % view.width),
-            y = view.y + ((i * 43 + s.seconds * 83) % view.height);
-          g.lineBetween(x, y, x - 2, y + 5);
-        }
-      }
-      // Edge flowers guide exploration without words, also when the next garden is distant.
-      const next = world.roots.find((r, i) => s.roots[i] < r.need);
+      const a = s.adventure;
+      const next =
+        model.experience >= ADULT_XP || a.baby === 'following'
+          ? NEST
+          : model.experience < 40
+            ? world.roots.find((r, i) => s.roots[i] < r.need)
+            : a.plug < 3
+              ? PLUG
+              : a.baby === 'lost'
+                ? BABY
+                : !a.chamber
+                  ? CHAMBER
+                  : (FUNGI.find((_, i) => !a.fungi[i]) ??
+                    AMBER.find((_, i) => !a.amber[i]) ??
+                    world.roots.find((r, i) => s.roots[i] < r.need));
       if (next && !visible(next.x, next.y, 0)) {
         const cx = view.x + view.width / 2,
           cy = view.y + view.height / 2,
@@ -465,13 +406,26 @@ export function createEarthwormRuntime(
         completed: s.completed,
         failed: s.failed,
         paused: false,
-        collected: model.blooms,
-        total: world.roots.length,
+        collected: model.experience,
+        objectiveIcon: '✦',
+        total: ADULT_XP,
         elapsed: s.seconds,
         lives: s.lives,
         activated: s.hiding,
         checkpoint: s.checkpoint < 0 ? null : world.roots[s.checkpoint].id,
         meters: [
+          ...(model.underwater || s.air < 99
+            ? [
+                {
+                  id: 'air',
+                  icon: '◌',
+                  label: 'Powietrze',
+                  value: s.air,
+                  max: 100,
+                  color: '#b0dbe4',
+                },
+              ]
+            : []),
           {
             id: 'water',
             icon: '◆',
@@ -485,7 +439,7 @@ export function createEarthwormRuntime(
             icon: '❧',
             label: 'Pokarm',
             value: s.nutrients,
-            max: CAPACITY,
+            max: model.capacity,
             color: '#d8be7e',
           },
           {
@@ -498,6 +452,34 @@ export function createEarthwormRuntime(
           },
         ],
         phase: phases[model.weather],
+        tokens: [
+          {
+            icon: ['◌', '◔', '◑', '◕', '●'][model.stage],
+            label: 'Dojrzałość',
+            active: model.stage > 0,
+          },
+          {
+            icon: '♧',
+            label: 'Uwolniona woda',
+            active: s.adventure.plug === 3,
+          },
+          {
+            icon: '♡',
+            label: 'Mała dżdżownica w domu',
+            active: s.adventure.baby === 'home',
+          },
+          { icon: '◈', label: 'Zalany skarbiec', active: s.adventure.chamber },
+          {
+            icon: '✧',
+            label: 'Głęboka oaza',
+            active: s.adventure.fungi.every(Boolean),
+          },
+          {
+            icon: '⇣ ' + Math.floor((s.y - SURFACE) / 12) + ' cm',
+            label: 'Głębokość',
+            active: true,
+          },
+        ],
         camera: {
           scrollX: c.scrollX,
           scrollY: c.scrollY,
@@ -509,12 +491,38 @@ export function createEarthwormRuntime(
           width: world.width,
           height: world.height,
           trail: this.trail,
+          regions: [
+            {
+              x: 0,
+              y: 0,
+              width: world.width,
+              height: SURFACE,
+              color: '#b0c9b7',
+            },
+            ...['#896249', '#79503d', '#704a3c', '#51424a', '#383640'].map(
+              (color, i) => ({
+                x: 0,
+                y: SURFACE + i * 720,
+                width: world.width,
+                height: 720,
+                color,
+              }),
+            ),
+          ],
           markers: [
-            ...world.pools.map((p) => ({ ...p, icon: '·', color: '#74b1b6' })),
+            { ...NEST, icon: '⌂', color: '#f2d69b' },
+            ...(s.adventure.fungi.every(Boolean)
+              ? [{ ...DEEP_NEST, icon: '⌂', color: '#93d6dc' }]
+              : []),
+            ...[PLUG, BABY, CHAMBER, ...FUNGI].map((p) => ({
+              ...p,
+              icon: '·',
+              color: '#ead6a0',
+            })),
             ...world.roots.map((r, i) => ({
               ...r,
-              icon: s.roots[i] === r.need ? '✿' : '◇',
-              color: s.roots[i] === r.need ? '#b8ce86' : '#e9c995',
+              icon: s.roots[i] === r.need ? '✿' : '·',
+              color: s.roots[i] === r.need ? '#c3d68a' : '#e2bda0',
             })),
           ],
         },
@@ -526,6 +534,20 @@ export function createEarthwormRuntime(
           weather: model.weather,
           rootProgress: s.roots.join(','),
           hiding: s.hiding,
+          blooms: model.blooms,
+          experience: model.experience,
+          maturity: model.stage,
+          depth: model.depth,
+          air: s.air,
+          wet: model.wet,
+          underwater: model.underwater,
+          plug: s.adventure.plug,
+          baby: s.adventure.baby,
+          chamber: s.adventure.chamber,
+          fungi: s.adventure.fungi.map(Number).join(','),
+          amber: s.adventure.amber.filter(Boolean).length,
+          fertility: s.adventure.fertility,
+          sprites: this.sprites.size + this.body.length,
         },
       });
     }
@@ -539,6 +561,10 @@ export function createEarthwormRuntime(
       const stored = resume ? save.read() : undefined;
       if (stored) model.restore(stored);
       else model.reset();
+      if (resume && !stored && previousSave.read())
+        context.message(
+          'Nowy świat ma osobny zapis. Postęp poprzedniej wersji pozostaje zachowany.',
+        );
       started = true;
       lastSave = model.state.seconds;
     },

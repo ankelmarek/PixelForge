@@ -117,7 +117,7 @@ try {
     await page
       .getByRole('button', { name: 'Zaloguj się', exact: true })
       .click();
-    await expect(page.locator('[data-active]')).toHaveText('0.7.0');
+    await expect(page.locator('[data-active]')).toHaveText('0.8.0');
     let game, save;
     if (site.device !== 'no-js') {
       game = await context.newPage();
@@ -132,10 +132,10 @@ try {
           .locator('#diagnostics')
           .evaluate((element) => JSON.parse(element.dataset.state));
       for (const [x, y] of [
-        [488, 512],
-        [528, 488],
-        [588, 492],
-        [552, 536],
+        [680, 456],
+        [720, 488],
+        [800, 496],
+        [768, 528],
       ]) {
         const c = (await state()).camera,
           r = await game.locator('#stage canvas').boundingBox();
@@ -157,10 +157,10 @@ try {
           })
           .toBeLessThan(4);
       }
-      await expect.poll(async () => (await state()).collected).toBe(1);
+      await expect.poll(async () => (await state()).stats.blooms).toBe(1);
       await game.locator('#pause').click();
       save = await game.evaluate(() =>
-        globalThis.localStorage.getItem('pixelforge:client:v1:earthworm'),
+        globalThis.localStorage.getItem('pixelforge:client:v3:earthworm'),
       );
       expect(save).toBeTruthy();
     }
@@ -169,24 +169,24 @@ try {
       .getByRole('button', { name: 'Sprawdź pakiet', exact: true })
       .click();
     await expect(
-      page.getByRole('heading', { name: '0.7.0 → 0.7.1', exact: true }),
+      page.getByRole('heading', { name: '0.8.0 → 0.8.1', exact: true }),
     ).toBeVisible();
-    await expect(page.locator('[data-active]')).toHaveText('0.7.0');
+    await expect(page.locator('[data-active]')).toHaveText('0.8.0');
     await page
-      .getByRole('button', { name: 'Zainstaluj wydanie 0.7.1', exact: true })
+      .getByRole('button', { name: 'Zainstaluj wydanie 0.8.1', exact: true })
       .click();
-    await expect(page.locator('[data-active]')).toHaveText('0.7.1');
+    await expect(page.locator('[data-active]')).toHaveText('0.8.1');
     await page
       .getByRole('link', { name: 'Przywróć poprzednią wersję', exact: true })
       .click();
     await page
       .getByRole('button', { name: 'Potwierdź przywrócenie', exact: true })
       .click();
-    await expect(page.locator('[data-active]')).toHaveText('0.7.0');
+    await expect(page.locator('[data-active]')).toHaveText('0.8.0');
     if (game) {
       expect(
         await game.evaluate(() =>
-          globalThis.localStorage.getItem('pixelforge:client:v1:earthworm'),
+          globalThis.localStorage.getItem('pixelforge:client:v3:earthworm'),
         ),
       ).toBe(save);
       await game.reload();
@@ -196,7 +196,7 @@ try {
         .poll(async () =>
           game
             .locator('#diagnostics')
-            .evaluate((e) => JSON.parse(e.dataset.state).collected),
+            .evaluate((e) => JSON.parse(e.dataset.state).stats.blooms),
         )
         .toBe(1);
       await game.locator('#pause').click();
@@ -238,7 +238,7 @@ try {
       {
         chromium: browser.version(),
         release:
-          '0.7.1 is a temporary fixture with unchanged 0.7.0 payload, not a game release',
+          '0.8.1 is a temporary fixture with unchanged 0.8.0 payload, not a game release',
         results,
       },
       null,

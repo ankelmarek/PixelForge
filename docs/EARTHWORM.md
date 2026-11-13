@@ -1,80 +1,131 @@
-# Życie Dżdżownicy — P3
+# Życie Dżdżownicy — Pod powierzchnią
 
-Wybór użytkownika: 13 listopada 2026. Pierwsza grywalna wersja, identyfikator
-`earthworm`, własny katalog `src/games/earthworm/`. Opiera się na zaakceptowanej
-koncepcji z archiwalnej roadmapy: sterowanie myszą, drążenie tuneli, pokarm,
-wilgotność, krety i cykl pogodowy. Nie rozwija historycznych gier.
+Aktualna koncepcja, wybrana przez użytkownika 13 listopada 2026: **pionowy przekrój
+gleby z boku**. Zastępuje widok z góry i finał oparty na dwunastu korzeniach
+z wydania 0.7.0. Klient `earthworm` pozostaje oddzielony od silnika.
 
-## Rozgrywka
+## Świat i cel
 
-Świat 4096 × 4096 to widok z góry na glebę pod ogrodem. Segmentowe ciało podąża
-za głową. Przejście zostawia trwały tunel; istniejące korytarze przyspieszają ruch.
-Skały i brzeg świata zatrzymują głowę. Ciało nie koliduje samo ze sobą.
+Świat ma 4096 × 4096 px. Powierzchnia jest na wysokości 384 px. Rośliny rosną
+nad nią, a ich korzenie widać w ziemi. Dżdżownica porusza się w obu osiach,
+dzieląc świat na trwałe tunele. Nie obowiązuje grawitacja platformówki:
+bohater drąży również pionowo. Nie może wyjść w niebo ani przejść przez skałę.
 
-Cztery ogrody zawierają po trzy korzenie. Dżdżownica zbiera ściółkę i przenosi
-materię organiczną do roślin, które rozkwitają. Dwanaście rozkwitów kończy wyprawę
-i tworzy sieć wydrążonych po drodze korytarzy. To pełny przepływ z początkiem,
-rozwojem, wygraną, porażką i powtórzeniem; bez zegara blokującego ukończenie.
+Cel to **300 punktów i osiągnięcie dorosłości w gnieździe**. Samo odżywienie
+korzeni nie kończy gry. Etapy rozwoju przy 80, 160 i 240 punktach wydłużają
+ciało, zwiększają prędkość, pojemność zapasu i tolerancję zanurzenia.
+Dorosła postać ma osobną końcową fazę wzrostu. Po zdobyciu wymaganych punktów
+powrót do pierwszego lub odblokowanego głębokiego gniazda i interakcja
+uruchamia czterosekundowy finał. Podczas finału obrażenia i symulacja zasobów
+są zatrzymane.
 
-Pierwszy korzeń wymaga trzech porcji, dalsze czterech. Plecak mieści sześć porcji.
-Pokarm odrasta po 75 sekundach; pełny plecak nie niszczy przedmiotu. Ruch nad
-pokarmem zbiera go automatycznie, zatrzymanie przy korzeniu zasila roślinę.
-Wilgoć poniżej 25 uniemożliwia zasilanie; barwa reakcji korzenia pokazuje stan.
-Kałuże uzupełniają wilgoć. Rozkwitnięta roślina daje schronienie, wodę i checkpoint.
+| Odkrycie lub działanie                    |            Punkty |
+| ----------------------------------------- | ----------------: |
+| Pierwsze zjedzenie zwykłej larwy          |                 3 |
+| Pierwsze zjedzenie złotej larwy           |                 8 |
+| Odżywienie korzenia                       |                12 |
+| Nowa porcja użyźnionej gleby              | 1, maksymalnie 24 |
+| Pierwsze wejście w kolejną warstwę        |                10 |
+| Odblokowanie glinianego zatoru            |                20 |
+| Odprowadzenie małej dżdżownicy do gniazda |                30 |
+| Odkrycie skarbca w zalanej komorze        |                30 |
+| Odżywienie całej głębokiej grzybni        |                30 |
+| Odnalezienie bursztynu                    |                 8 |
 
-Pogoda wynika z postępu: rosa przy 0–2 rozkwitach, susza przy 3–5, deszcz przy
-6–8 i wieczór przy 9–12. Dzięki temu cykl nie wymaga sztucznego czekania.
-Krety patrolują także poza ekranem. Po pierwszym ogrodzie reagują na zbliżenie,
-sygnalizują zagrożenie, następnie gonią. Zwinięcie ciała chroni przed atakiem
-i ogranicza utratę wilgoci, ale zatrzymuje ruch oraz karmienie roślin.
-Obrażenie lub wyschnięcie zabiera życie i odsyła do ostatniego korzenia.
-Trzy utracone życia oznaczają porażkę. Rozkwit przywraca jedno życie.
+Punkty wynikają ze zwalidowanego postępu. Nie ma licznika, który rośnie za
+samo czekanie. Larwy odnawiają się po 75 sekundach, ale kolejne zjedzenie
+tego samego osobnika odnawia tylko zasoby. Przejazd po istniejącym tunelu
+nie nalicza nowej gleby. Punkty za przygody i bursztyny są jednorazowe.
 
-Pierwsze 30–60 sekund: bezpieczny teren, widoczna ściółka, kałuża, zwiędły korzeń
-z trzema pustymi symbolami. Brak instrukcji, tekstowych zadań i tutoriali.
-Postęp prezentują rośliny, dźwięki, symbole i minimapa. Zrozumiałość bez pomocy
-oraz docelowe 20–35 minut wymagają playtestu człowieka; automatyczny przejazd
-nie jest pomiarem czasu potrzebnego nowemu graczowi.
+## Gleba, woda i zagrożenia
+
+Pięć warstw ma własną paletę. Głębiej drążenie jest wolniejsze, utrata wilgoci
+większa, a drapieżniki wykrywają bohatera z większej odległości. Gotowe tunele
+przyspieszają podróż. Segmenty podążają za głową, bez kolizji ciała z samym sobą.
+
+Na mapie są 112 larw, 12 korzeni, wilgotne kieszenie, dziewięć chrząszczy
+i mrówek oraz osiem bursztynów. Larwa daje dwie porcje pokarmu i trochę
+wilgoci. Początkowy zapas mieści sześć porcji, potem osiem i dziesięć.
+Pełny zapas nie usuwa pokarmu. Przy nowych tunelach dżdżownica okresowo
+zużywa porcję na użyźnienie gleby; blisko korzenia odżywia go co pół sekundy.
+Pierwszy korzeń wymaga trzech porcji, kolejne czterech. Użyźnione komórki
+zachowują swój stan w zapisie. Rośliny na powierzchni reagują wzrostem.
+
+Pogoda ma cykl 180 sekund: rosa, deszcz, słońce i wieczór. Deszcz wsiąka
+z prędkością 35 px/s. Góra może już wyschnąć, gdy wilgoć dopiero dociera
+w głąb. Nie trzeba czekać na pogodę, aby ukończyć wyprawę: dostępne są też
+stałe kieszenie wilgoci, odżywione korzenie i gniazda. To dyskretny model
+wilgoci według głębokości, nie symulacja cieczy w każdym tunelu.
+
+W zalanej komorze spada zapas powietrza. Dwie widoczne kieszenie powietrzne
+pozwalają odetchnąć i zaplanować dalszy ruch. W ostatnim etapie rozwoju
+oddech wystarcza na dłużej. Zwinięcie chroni przed chrząszczem lub mrówką
+i oszczędza wilgoć, ale nie pozwala oddychać pod wodą.
+
+Atak poprzedza widoczny sygnał. Utrata wilgoci, powietrza lub kontakt
+z atakującym drapieżnikiem zabiera życie i przenosi do bezpiecznego punktu.
+Trzy stracone życia oznaczają porażkę. Odżywiony korzeń przywraca jedno życie,
+a odpoczynek w gnieździe uzupełnia zasoby. Eskortowane dziecko po obrażeniu
+wraca do swojej kryjówki, więc obrażenia nie skracają misji eskortowej.
+
+## Cztery przygody
+
+1. **Spragniony korzeń.** Za glinianym zatyczkiem widać wodę. Trzy krótkie
+   interakcje kruszą zator. Otwarta szczelina staje się źródłem wilgoci i ożywia trzeci korzeń.
+2. **Zagubiona mała dżdżownica.** Odnaleziony maluch podąża za końcem ciała.
+   Nagrodę daje bezpieczny powrót do pierwszego gniazda.
+3. **Zalana komora.** Skarbiec leży za wodą. Trzeba wykorzystać kieszenie
+   powietrzne i wrócić na suchą ziemię; skarb nie blokuje dalszej gry.
+4. **Światła w głębi.** Cztery grzybnie potrzebują po jednej porcji pokarmu.
+   Kolejne światła wskazują drogę i otwierają głęboką oazę z nowym punktem
+   powrotu oraz drugim miejscem zakończenia dorastania.
+
+Te opisy są dokumentacją dla autora. W grze nie ma napisanych zadań,
+listy klawiszy ani instrukcji rozwiązań. Odkrycia sygnalizują obrazy, odgłosy,
+pulsowanie obiektów, symbole, zmiana koloru i mapa przekroju. Pierwsza scena
+jest bezpieczna i zawiera gniazdo, larwy, wilgoć oraz widoczny korzeń.
 
 ## Sterowanie i zapis
 
-Dokumentacja dla autora (tych opisów nie ma w rozgrywce):
+- Kliknięcie lub dotknięcie gleby ustawia cel; przeciąganie prowadzi bohatera.
+- Kliknięcie wyróżnionego obiektu prowadzi do niego i wykonuje jedną akcję.
+- WASD/strzałki oraz ikonowy krzyżak sterują kierunkiem.
+- Krótki Shift, przycisk pierścienia lub dotknięcie głowy wykonują akcję
+  pobliskiego obiektu; poza nim przełączają zwinięcie. Przytrzymanie nie powtarza akcji.
+- Kółko i przyciski zmieniają zoom. Prawy/środkowy przycisk przesuwa kamerę.
+  Minimapą można obejrzeć dowolny fragment, a celownik wraca do bohatera.
+- Escape, przycisk pauzy i utrata fokusu zatrzymują grę. Restart jest w menu.
 
-- Kliknięcie/dotknięcie gleby ustawia cel. Przeciąganie prowadzi głowę.
-- WASD/strzałki oraz ikonowy krzyżak na telefonie sterują kierunkiem.
-- Shift, ikona pierścienia lub dotknięcie głowy przełącza zwinięcie.
-- Kółko i przyciski zmieniają zoom. Prawy/środkowy przycisk przesuwa kamerę;
-  minimapa pozwala obejrzeć dowolny fragment także dotykiem. Celownik wraca do bohatera.
-- Escape i ikona pauzy zatrzymują grę. Utrata fokusu także pauzuje. Nowa gra
-  jest dostępna w menu, aby przypadkowy klawisz nie kasował postępu.
+Nowy zapis: **`pixelforge:client:v3:earthworm`**. Zachowuje tunele, użyźnioną glebę,
+zasoby, czas pogody, korzenie, rozwój, przygody, checkpoint i drapieżniki.
+Powstaje przy postępie, pauzie, wyjściu i co dziesięć sekund. Nie nadpisuje
+`pixelforge:client:v1:earthworm` z gry 0.7.0 ani kluczy Atlasu. Poprzednia mapa
+ma inną geometrię i zasady; nowa przygoda zaczyna się od własnego gniazda.
+Rollback pozwala ponownie odczytać stary zapis, a ponowna instalacja 0.8.0 — nowy.
+Uszkodzone dane są odrzucane atomowo. Brak localStorage daje komunikat techniczny.
 
-Zapis `pixelforge:client:v1:earthworm` przechowuje pozycję, tunele, korzenie,
-wilgoć, plecak, życia, czas, checkpoint i stan drapieżników. Powstaje przy zmianach
-postępu, pauzie, wyjściu oraz co 10 sekund. Brak localStorage zgłasza komunikat
-techniczny. Uszkodzone/obce dane są odrzucane bez awarii. Samo otwarcie menu
-nie nadpisuje zapisu. Atlas zachowuje swoje dotychczasowe klucze.
+## Architektura, grafika i wydanie
 
-## Granice silnika
+Cała specyfika gleby i przygód jest w `src/games/earthworm/`. Klient korzysta
+z publicznego kontraktu silnika, wspólnego wejścia, audio, pauzy, scen ładowania,
+`MutableGrid`, `MutableTerrainRenderer` i `VersionedSave`. Mapa, mierniki i symbole
+w aplikacji dostają generyczne dane. Silnik nie rozpoznaje identyfikatora gry.
 
-Nowy publiczny kontrakt `ClientDefinition` rejestruje zaufany moduł TypeScript
-przez `createRuntime`. EngineHost zarządza Phaserem, cyklem życia, wejściem,
-pauzą, audio, skalowaniem i błędami. Klient wykorzystuje wspólny preload i scenę
-tytułową, `VersionedSave`, `MutableGrid`, `MutableTerrainRenderer` oraz wyrównanie
-kamery do siatki pikseli. Wspólny ekran aplikacji obsługuje menu, mierniki i mapę.
-Rdzeń nie importuje gry i nie rozpoznaje jej identyfikatora. JSON nie wykonuje kodu.
+Komórka gleby ma 8 px, sektor 256 px. Renderer trzyma tylko widoczne sektory
+i zwalnia opuszczone. Statyczna siatka kolizji zajmuje 256 KiB przy mapie 4096²;
+nie jest teksturą. Nie ma tekstury całego świata ani pełnego A* w runtime.
+Symulacja pracuje w stałym kroku 50 Hz. Ruch, pogoda i zasoby zatrzymują się przy pauzie.
 
-Gleba używa komórek 8 px i sektorów 256 px. Zapis zawiera tylko zmiany.
-Renderer utrzymuje tekstury sektorów widocznych przez kamerę, unieważnia zmienione
-sektory i ich granice, usuwa tekstury opuszczonego obszaru. Nie ma tekstury
-4096 × 4096 ani wyszukiwania ścieżek całej mapy w runtime. Ruch ma lokalne kolizje;
-symulacja 50 Hz jest niezależna od FPS. Jednostki i zasoby poza kamerą nadal żyją.
-Deterministyczny świat powstaje z lokalnego JSON i procedury gleby, bez sieciowego
-serwisu. Ilustracje odtwarza `npm run assets:earthworm`.
+Nowe ilustracje postaci, roślin i podziemnych mieszkańców są zapisane w atlasach.
+Filtrowanie NEAREST i wyrównanie kamery zachowują ostre krawędzie. Zmniejszony ruch
+ogranicza efekty ozdobne. `npm run assets:earthworm` odtwarza tylko świat JSON;
+nie nadpisuje ilustracji. Pochodzenie grafik opisuje licencja w katalogu zasobów.
 
-## Wydanie
+Wydanie `pixelforge-0.8.0-full.zip` aktualizuje całą aplikację przez istniejący
+panel U2. PHP nie jest częścią samej gry. Pierwsza instalacja ma osobny ZIP
+`pixelforge-public-html-0.8.0-installer-1.2.0.zip`; układ public_html i instalator
+pozostają zgodne z poprzednim wydaniem. [Instrukcja paczek](../downloads/README.md).
 
-`pixelforge-0.7.0-full.zip` zawiera wspólny silnik, grę, Atlas oraz manifest U0.
-To pełna aktualizacja aplikacji zgodna z U1 1.0.0 / U2 1.1.0, a nie ZIP samych
-źródeł ani paczka dodatku do osobnego katalogu. Panel pozostaje poza buildem gry.
-Aktualizator instaluje pliki pod tą samą ścieżką, zapisów przeglądarki nie zmienia.
-Szczegóły dostarczenia: [downloads/README.md](../downloads/README.md).
+Celem projektu nadal jest 20–35 minut pierwszego przejścia. To wymaga pomiaru
+z nowym graczem: automatyczna trasa zna wszystkie położenia, nie ocenia czytelności
+ani przyjemności rozgrywki i nie stanowi pomiaru czasu człowieka.

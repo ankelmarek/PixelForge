@@ -456,7 +456,27 @@ body:has(.lab) {
   font-weight: 700;
 }
 .game-shell {
-  background: #584547;
+  background: #394332;
+}
+#game-tokens {
+  position: absolute;
+  top: calc(var(--edge-top) + 52px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  padding: 5px 12px;
+  background: #3b3029ed;
+  border: 1px solid #a18b6480;
+  border-radius: 3px;
+  pointer-events: none;
+  color: #aaa58b;
+  font-size: 13px;
+  white-space: nowrap;
+}
+#game-tokens .active {
+  color: #f3d992;
+  text-shadow: 0 0 8px #d7c87a66;
 }
 .game-shell button {
   background: #302b35f0;

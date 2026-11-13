@@ -14,6 +14,7 @@ export function mountGame(
     <div id="stage"></div>
     <div class="lab-heading"><button id="back" aria-label="Powrót do katalogu">←</button><span id="game-title"></span></div>
     <div id="game-hud"><div id="meters"></div><output id="goal"></output><span id="weather" role="img"></span></div>
+    <div id="game-tokens" aria-label="Odkrycia"></div>
     <aside class="game-map"><canvas id="minimap" width="144" height="144" aria-label="Mapa świata" role="img"></canvas></aside>
     <div class="toolbar"><div><button id="pause" aria-label="Pauza">Ⅱ</button><button id="mute" aria-label="Wyciszenie" aria-pressed="false">♫</button><button id="interact" aria-pressed="false">◎</button></div>
     <div><button id="focus" aria-label="Śledź bohatera">⌖</button><button id="zoom-out" aria-label="Oddal">−</button><button id="zoom-in" aria-label="Przybliż">+</button></div></div>
@@ -49,6 +50,10 @@ export function mountGame(
     ctx.fillRect(0, 0, 144, 144);
     const fx = 144 / s.map.width,
       fy = 144 / s.map.height;
+    for (const r of s.map.regions ?? []) {
+      ctx.fillStyle = r.color;
+      ctx.fillRect(r.x * fx, r.y * fy, r.width * fx, r.height * fy);
+    }
     ctx.fillStyle = '#93745e';
     for (const p of s.map.trail) ctx.fillRect(p.x * fx, p.y * fy, 1, 1);
     ctx.textAlign = 'center';
@@ -89,7 +94,25 @@ export function mountGame(
       const wasPaused = state?.paused,
         wasOver = state?.completed || state?.failed;
       state = s;
-      get('goal').textContent = `✿ ${s.collected ?? 0} / ${s.total ?? 0}`;
+      get('goal').textContent =
+        `${s.objectiveIcon ?? '✿'} ${s.collected ?? 0} / ${s.total ?? 0}`;
+      const tokens = get('game-tokens');
+      (s.tokens ?? []).forEach((token, index) => {
+        let item = tokens.children[index] as HTMLElement | undefined;
+        if (!item) {
+          item = document.createElement('span');
+          item.setAttribute('role', 'img');
+          tokens.append(item);
+        }
+        item.textContent = token.icon;
+        item.setAttribute(
+          'aria-label',
+          `${token.label}: ${token.active ? 'odkryte' : 'nieodkryte'}`,
+        );
+        item.classList.toggle('active', token.active);
+      });
+      while (tokens.children.length > (s.tokens?.length ?? 0))
+        tokens.lastElementChild!.remove();
       if (s.phase) {
         get('weather').textContent = s.phase.icon;
         get('weather').setAttribute('aria-label', s.phase.label);
@@ -115,6 +138,10 @@ export function mountGame(
         bar.value = meter.value;
         bar.style.setProperty('--meter-color', meter.color);
       }
+      root.querySelectorAll<HTMLElement>('[data-meter]').forEach((element) => {
+        if (!s.meters?.some((m) => m.id === element.dataset.meter))
+          element.remove();
+      });
       get('pause').setAttribute('aria-label', s.paused ? 'Wznów' : 'Pauza');
       get('pause').textContent = s.paused ? '▶' : 'Ⅱ';
       get('interact').setAttribute('aria-pressed', String(!!s.activated));
@@ -127,7 +154,7 @@ export function mountGame(
           ? definition.presentation.failureTitle
           : 'Pauza';
       root.querySelector('.result-art')!.textContent = s.completed
-        ? '✿ ✿ ✿'
+        ? (s.objectiveIcon ?? '✿')
         : s.failed
           ? '◌'
           : '◒';

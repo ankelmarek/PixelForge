@@ -6,7 +6,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import process from 'node:process';
 
 const archive =
-  process.env.PIXELFORGE_TEST_RELEASE ?? 'downloads/pixelforge-0.7.0-full.zip';
+  process.env.PIXELFORGE_TEST_RELEASE ?? 'downloads/pixelforge-0.8.0-full.zip';
 const server = spawn(
   'python3',
   ['-u', 'tests/packages/serve_game.py', archive],
@@ -47,10 +47,10 @@ try {
       await page.locator('[data-game="earthworm"]').click();
       await page.locator('#start').click();
       for (const [x, y] of [
-        [488, 512],
-        [528, 488],
-        [588, 492],
-        [552, 536],
+        [680, 456],
+        [720, 488],
+        [800, 496],
+        [768, 528],
       ]) {
         const c = (await state()).camera,
           r = await page.locator('#stage canvas').boundingBox();
@@ -72,7 +72,7 @@ try {
           })
           .toBeLessThan(4);
       }
-      await expect.poll(async () => (await state()).collected).toBe(1);
+      await expect.poll(async () => (await state()).stats.blooms).toBe(1);
       await page.locator('#pause').click();
       const saved = await state();
       await page.reload();
@@ -82,8 +82,18 @@ try {
       await page.locator('#diagnostics').evaluate((e) => {
         e.style.display = 'none';
       });
-      if (base === '/PixelForge/')
+      if (base === '/PixelForge/') {
+        if (device === 'desktop') {
+          await page.locator('#zoom-out').click();
+          const map = await page.locator('#minimap').boundingBox();
+          await page.mouse.click(
+            map.x + (768 / 4096) * map.width,
+            map.y + (432 / 4096) * map.height,
+          );
+        }
         await page.screenshot({ path: `test-results/p3-${device}.png` });
+        await page.locator('#focus').click();
+      }
       for (let i = 0; i < 8; i++) await page.locator('#zoom-out').click();
       expect((await state()).camera.zoom).toBe(0.5);
       await page.keyboard.down('ArrowRight');

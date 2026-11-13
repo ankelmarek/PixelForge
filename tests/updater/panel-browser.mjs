@@ -12,7 +12,7 @@ const root = resolve(import.meta.dirname, '../..');
 if (process.argv.includes('--release'))
   process.env.PIXELFORGE_TEST_RELEASE = resolve(
     root,
-    'downloads/pixelforge-0.7.0-full.zip',
+    'downloads/pixelforge-0.8.0-full.zip',
   );
 const server = spawn(
   'python3',
@@ -179,10 +179,10 @@ try {
       await game.locator('[data-game="earthworm"]').click();
       await game.locator('#start').click();
       for (const [x, y] of [
-        [488, 512],
-        [528, 488],
-        [588, 492],
-        [552, 536],
+        [680, 456],
+        [720, 488],
+        [800, 496],
+        [768, 528],
       ]) {
         const c = (await state()).camera,
           r = await game.locator('#stage canvas').boundingBox();
@@ -204,7 +204,7 @@ try {
           })
           .toBeLessThan(4);
       }
-      await expect.poll(async () => (await state()).collected).toBe(1);
+      await expect.poll(async () => (await state()).stats.blooms).toBe(1);
       keys = await game.evaluate(() =>
         Object.keys(globalThis.localStorage).sort(),
       );
@@ -216,7 +216,7 @@ try {
       });
       await game.locator('#pause').click();
       wormSave = await game.evaluate(() =>
-        globalThis.localStorage.getItem('pixelforge:client:v1:earthworm'),
+        globalThis.localStorage.getItem('pixelforge:client:v3:earthworm'),
       );
     }
 
@@ -236,7 +236,7 @@ try {
     if (newGame) {
       expect(
         await game.evaluate(() =>
-          globalThis.localStorage.getItem('pixelforge:client:v1:earthworm'),
+          globalThis.localStorage.getItem('pixelforge:client:v3:earthworm'),
         ),
       ).toBe(wormSave);
       await panel.locator('#package').setInputFiles(configuration.package);
@@ -255,7 +255,7 @@ try {
       );
       await game.locator('[data-game="earthworm"]').click();
       await game.locator('#resume').click();
-      await expect.poll(async () => (await state()).collected).toBe(1);
+      await expect.poll(async () => (await state()).stats.blooms).toBe(1);
       expect((await state()).stats.tunnels).toBe(
         JSON.parse(wormSave).state.tunnels.length,
       );

@@ -10,7 +10,8 @@
 4. **Duże mapy:** dotychczasowa mapa Winobrania ma zaledwie 40 × 26 pól przy `tileSize=16`, czyli **640 × 416 pikseli świata**. To zdecydowanie za mało. Dla następnej produkcji jako punkt wyjścia przyjmujemy **minimum 4096 × 4096 pikseli świata**, z możliwością rozbudowy do 8192 × 8192 i map sektorowych. To wymaganie dotyczy rozmiaru świata, nie rozdzielczości ekranu ani jednej ogromnej tekstury.
 5. **Aktualizator plikowy ZIP:** przygotować osobny, bezpieczny moduł pozwalający administratorowi wgrywać wydania z panelu WWW, sprawdzać pliki, instalować i cofać aktualizacje. Szczegóły w [UPDATER-SPEC.md](./UPDATER-SPEC.md). Statyczna gra sama nie może podmieniać plików na hostingu.
 6. **Brak pisanych podpowiedzi w grach** pozostaje obowiązkową regułą. W grach symulacyjnych głównym wejściem jest mysz; instrukcje tekstowe można stosować w dokumentacji i zabezpieczonym panelu administratora.
-7. Wszelka implementacja odbywa się na **osobnych gałęziach i przez Pull Request**, bez samodzielnego scalania do `main` i bez automatycznych wdrożeń.
+7. **Dżdżownica — aktualna koncepcja:** pionowy przekrój gleby, rośliny na powierzchni, larwy i korzenie pod ziemią, trudniejsze głębsze warstwy, przesiąkanie deszczu, punkty i dorosłość. Zastępuje widok z góry dla tej gry; rdzeń pozostaje niezależny od perspektywy.
+8. Wszelka implementacja odbywa się na **osobnych gałęziach i przez Pull Request**, bez samodzielnego scalania do `main` i bez automatycznych wdrożeń.
 
 ## 2. Stan kodu na GitHubie
 
@@ -153,21 +154,26 @@ To zmiana sposobu instalacji zlecona przez użytkownika, bez rozpoczęcia U3.
 
 ### P3. Pierwsza nowa gra na dużej mapie
 
-**Status: pierwsza grywalna wersja „Życia Dżdżownicy” DONE (implementacja i testy),
-odbiór grywalności przez użytkownika pozostaje otwarty.** Gałąź `feature/p3-earthworm`, baza U2 / PR #9.
-Polecenie użytkownika z 13.11.2026 obejmuje grę oraz ZIP do instalatora.
+**Status: 0.8.0 — implementacja i testy wydania DONE; odbiór grywalności otwarty.**
+Gałąź `feature/p3-soil-adventure`, baza `dc919f58` / PR #11. Użytkownik odrzucił
+płytką rozgrywkę pierwszej wersji, a następnie wybrał pionowy przekrój gleby
+z rozwojem do dorosłości. Nie rozwijamy wariantu z czterema ogrodami.
 
-- [x] Osobna specyfikacja i katalog gry, bez zależności silnika od produktu.
-- [x] Świat 4096 × 4096, segmentowy ruch, trwałe tunele, skały, pokarm i wilgoć.
-- [x] Cztery ogrody / 12 korzeni, pogoda, krety, schronienie, wygrana i porażka.
-- [x] Mysz, klawiatura i dotyk; pełne okno, kamera, zoom, pauza, dźwięk i zapis.
-- [x] Niewerbalny początek, autorski pixel art i własne testy gry.
-- [x] Końcowy test pełnego ZIP-a w panelu U2: instalacja, rollback i ponowne wznowienie.
-- [ ] Odbiór przez użytkownika: zrozumiałość pierwszej sceny i pomiar czasu gry.
+- [x] Świat 4096 × 4096 z boku: powierzchnia, rośliny, korzenie i pięć warstw gleby.
+- [x] Drążenie, trwałe użyźnianie, 112 larw, wilgoć, opóźnione przesiąkanie deszczu.
+- [x] Chrząszcze i mrówki, trudniejsza głębia, zalana komora oraz kieszenie powietrzne.
+- [x] Cztery przygody: gliniany zator, eskorta dziecka, skarbiec, głęboka oaza.
+- [x] Rozwój ciała i zdolności, punkty za odkrycia, 300 punktów i finał dorosłości.
+- [x] Nowe ilustracje, pełne okno, mysz/klawiatura/dotyk, pauza i osobny zapis v3.
+- [x] 20 testów logiki gry; pełne przejście realnym ruchem bez teleportów i darmowych zasobów.
+- [x] 14 testów przeglądarkowych gry na desktopie i emulowanym telefonie.
+- [x] Końcowa weryfikacja pełnego ZIP-a i instalacji public_html nowego wydania.
+- [ ] Odbiór przez użytkownika: czytelność bez instrukcji, balans, czas pierwszego przejścia.
 
-[Specyfikacja](EARTHWORM.md), [kontrakt klienta i modyfikowalny teren](CLIENT-API.md),
-[raport](P3-REPORT.md). Docelowe 20–35 minut pozostaje celem do playtestu;
-nie wprowadzono sztucznego limitu czasu. U3 i Studio nie zostały rozpoczęte.
+[Specyfikacja](EARTHWORM.md), [kontrakt klienta](CLIENT-API.md),
+[raport nowej wersji](P3-SOIL-REPORT.md). Archiwalny [raport 0.7.0](P3-REPORT.md)
+opisuje poprzednią koncepcję. Cel 20–35 minut wymaga playtestu człowieka;
+trasa automatyczna nie jest pomiarem jego czasu. U3 i Studio pozostają nierozpoczęte.
 
 Pozostałe koncepcje pozostają odłożone:
 
@@ -303,3 +309,19 @@ Każdy następny tytuł wymaga osobnego wyboru i polecenia użytkownika.
   kontroli oraz przeglądarek zawiera raport.
 - Bez wdrożenia na konto użytkownika i bez merge. Następny krok: wgranie
   paczki i odbiór na docelowym hostingu, bez automatycznego U3.
+
+### 2026-11-13 — P3: Dżdżownica pod powierzchnią, 0.8.0
+
+- Na polecenie użytkownika zastąpiono widok z góry pionowym przekrojem gleby.
+  Rośliny nad ziemią, korzenie, larwy, deszcz przesiąkający w dół, pięć warstw
+  i cztery przygody. Rozwój oraz 300 punktów prowadzą do dorosłości w gnieździe.
+- Osobny zapis v3 zachowuje stare dane v1. Nowe nazwy mapy i okładki zapobiegają
+  użyciu starego świata z pamięci podręcznej. Pełne okno i sektorowy rendering
+  zachowane; wspólny interfejs rozszerzony tylko o generyczne dane HUD i minimapy.
+- Lint/typecheck/build PASS; 69 Vitest, 15 U0, 36 PHP i 12 testów hostingu PASS.
+  E2E: 42 PASS + 2 celowe SKIP. Pełne przejście modelu: 516 punktów i dorosłość.
+- Gotowy ZIP 0.8.0 sprawdzony pod / i /PixelForge/ na desktopie i w emulacji
+  telefonu. Sprawdzone instalacja, rollback, wznowienie zapisów oraz pierwsza
+  instalacja w public_html (także obsługa panelu bez JavaScript).
+- [Raport, pomiary i paczki](P3-SOIL-REPORT.md). Następny krok: odbiór czytelności,
+  balansu i czasu przez człowieka. Bez merge, wdrożenia, U3 ani Studio.

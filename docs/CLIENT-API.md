@@ -17,6 +17,13 @@ Scena klienta czyści własne listenery/tekstury na `SHUTDOWN`.
 Prezentacja tytułu, celu i wyniku pochodzi z definicji. Publiczne komendy klienta
 to focus, zoom i kontekstowa interakcja. JSON nie dostarcza funkcji ani skryptów.
 
+Opcjonalne `objectiveIcon` zmienia symbol postępu także na ekranie wyniku.
+`tokens` to lista `{ icon, label, active }` wyświetlana jako dodatkowy rząd
+wskaźników; etykiety służą dostępności, a widoczne są symbole i wartości.
+`map.regions` zawiera prostokąty `{ x, y, width, height, color }` w jednostkach
+świata, rysowane pod znacznikami minimapy. Klient może w ten sposób pokazać
+warstwy lub obszary dowolnej gry bez zmiany aplikacji i warunków po gameId.
+
 `VersionedSave<T>` izoluje zapis przez gameId i wersję. Walidator `unknown -> T`
 jest obowiązkowy, odczyt obcej wersji zwraca brak zapisu, nieudany zapis zwraca
 `false` i nie usuwa poprzedniego. Klient nie może nadpisywać danych na ekranie tytułowym.

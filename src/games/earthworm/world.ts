@@ -1,3 +1,5 @@
+import { SURFACE } from './adventure';
+
 export interface Point {
   x: number;
   y: number;
@@ -15,6 +17,7 @@ export interface Rock extends Point {
 }
 export interface Food extends Point {
   id: string;
+  kind: number;
 }
 export interface Predator extends Point {
   id: string;
@@ -22,8 +25,8 @@ export interface Predator extends Point {
   speed: number;
 }
 export interface EarthwormWorld {
-  schemaVersion: 1;
-  id: 'under-garden';
+  schemaVersion: 2;
+  id: 'soil-garden';
   width: number;
   height: number;
   spawn: Point;
@@ -50,7 +53,7 @@ function number(value: unknown, min: number, max: number): number {
 }
 export function validateWorld(value: unknown): EarthwormWorld {
   const w = record(value);
-  if (w.schemaVersion !== 1 || w.id !== 'under-garden')
+  if (w.schemaVersion !== 2 || w.id !== 'soil-garden')
     throw Error('Świat: nieobsługiwana wersja lub identyfikator');
   const width = number(w.width, 4096, 8192),
     height = number(w.height, 4096, 8192);
@@ -58,7 +61,10 @@ export function validateWorld(value: unknown): EarthwormWorld {
     throw Error('Świat: wymiary muszą pasować do sektorów');
   const point = (v: unknown) => {
     const p = record(v);
-    return { x: number(p.x, 32, width - 32), y: number(p.y, 32, height - 32) };
+    return {
+      x: number(p.x, 32, width - 32),
+      y: number(p.y, SURFACE + 16, height - 32),
+    };
   };
   const list = <T>(
     key: string,
@@ -103,7 +109,13 @@ export function validateWorld(value: unknown): EarthwormWorld {
     ...point(v),
     radius: number(v.radius, 8, 96),
   }));
-  const food = list('food', 12, 200, (v) => ({ ...point(v), id: id(v) }));
+  const food = list('food', 12, 200, (v) => ({
+    ...point(v),
+    id: id(v),
+    kind: number(v.kind, 0, 3),
+  }));
+  if (food.some((f) => !Number.isInteger(f.kind)))
+    throw Error('Świat: nieprawidłowy pokarm');
   const predators = list('predators', 0, 12, (v) => ({
     ...point(v),
     id: id(v),
@@ -115,8 +127,8 @@ export function validateWorld(value: unknown): EarthwormWorld {
     if (rocks.some((r) => Math.hypot(r.x - p.x, r.y - p.y) < r.radius + 28))
       throw Error('Świat: obiekt zablokowany skałą');
   return {
-    schemaVersion: 1,
-    id: 'under-garden',
+    schemaVersion: 2,
+    id: 'soil-garden',
     width,
     height,
     spawn,

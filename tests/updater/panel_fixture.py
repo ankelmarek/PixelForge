@@ -124,7 +124,7 @@ class PanelServer:
                           + repr(str(site.public / "pixelforge-admin/index.php")) + "; return true; }\nreturn false;\n")
         self.log = open(site.root / "php.log", "wb")
         self.process = subprocess.Popen(
-            [PHP, "-d", "memory_limit=256M", "-d", "upload_max_filesize=2M", "-d", "post_max_size=3M",
+            [PHP, "-d", "memory_limit=256M", "-d", ("upload_max_filesize=16M" if production else "upload_max_filesize=2M"), "-d", ("post_max_size=17M" if production else "post_max_size=3M"),
              "-d", "display_errors=0", "-S", f"127.0.0.1:{self.php_port}", "-t", str(site.public), str(router)],
             stdout=self.log, stderr=self.log,
         )

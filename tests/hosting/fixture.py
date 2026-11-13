@@ -75,7 +75,7 @@ class HostingServer(PanelServer):
             self.ca if trust_self else Path("/etc/ssl/certs/ca-certificates.crt")
         )
         (self.root / "php.ini").write_text(
-            f"extension={zip_module}\nmemory_limit=256M\nupload_max_filesize=8M\npost_max_size=9M\n"
+            f"extension={zip_module}\nmemory_limit=256M\nupload_max_filesize=16M\npost_max_size=17M\n"
             f"openssl.cafile={trusted_ca}\ndisplay_errors=Off\nlog_errors=On\nallow_url_fopen=On\n"
         )
         module_names = [

@@ -1,10 +1,11 @@
 PIXELFORGE — WSZYSTKO W PUBLIC_HTML
-Gra 0.7.0 (Życie Dżdżownicy + Atlas), instalator i aktualizator 1.2.0.
+Gra 0.8.0 (Życie Dżdżownicy + Atlas), instalator i aktualizator 1.2.0.
 
 WYMAGANIA
 Apache 2.4 lub zgodny LiteSpeed z aktywnymi regułami .htaccess, HTTPS,
 PHP 8.2+ 64 bit na Unix, ZipArchive, OpenSSL, allow_url_fopen, pamięć 256M,
-prawo zapisu i rename w public_html. PHP musi łączyć się z własną domeną
+prawo zapisu i rename w public_html. Do późniejszych aktualizacji grafiki:
+upload_max_filesize=16M, post_max_size=17M lub więcej (ustawienia PHP hostingu). PHP musi łączyć się z własną domeną
 przez HTTPS z poprawnym certyfikatem. Nie wymaga SSH, Node.js ani bazy SQL.
 
 PIERWSZA INSTALACJA

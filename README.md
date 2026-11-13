@@ -32,7 +32,7 @@ Funkcje silnika powstały w historycznych gałęziach M0–M3 i powiązanych PR,
 
 ## Gotowa paczka na hosting
 
-[Pobierz wszystko do public_html — gra 0.7.0 + instalator i aktualizator 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/u2-public-html-bundle/downloads/pixelforge-public-html-0.7.0-installer-1.2.0.zip).
+[Pobierz wszystko do public_html — gra 0.8.0 + instalator i aktualizator 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p3-soil-adventure/downloads/pixelforge-public-html-0.8.0-installer-1.2.0.zip).
 
 Rozpakuj **zawartość** w `public_html`, razem z ukrytymi `.htaccess`, i otwórz
 `https://twoja-domena.pl/setup.php`. Pobierz z instalatora plik konfiguracji,
@@ -47,8 +47,8 @@ to `/pixelforge.php`. Przy zastępowaniu starej gry wgraj nowy katalog `PixelFor
 w całości, bez pozostawiania starych assetów. Zachowaj wcześniejszą kopię.
 
 **Do kolejnych aktualizacji gry albo samego hostingu statycznego:**
-[Pobierz PixelForge 0.7.0 — Życie Dżdżownicy + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p3-earthworm/downloads/pixelforge-0.7.0-full.zip).
-W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.7.0**.
+[Pobierz PixelForge 0.8.0 — Życie Dżdżownicy + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p3-soil-adventure/downloads/pixelforge-0.8.0-full.zip).
+W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.8.0**.
 Po instalacji otwórz stronę gry i wybierz **Zagraj** przy Życiu Dżdżownicy.
 Panel trzeba wcześniej jednorazowo skonfigurować; jest osobnym narzędziem PHP.
 Możliwe jest również ręczne wgranie na hosting statyczny:
@@ -67,14 +67,14 @@ Paczka gry nie wdraża się samodzielnie.
 
 ## Uruchamianie
 
-Gałąź `feature/u2-public-html-bundle` dodaje instalację wszystkiego w `public_html`
-do P3 / PR #10. Zawiera grę **Życie Dżdżownicy**, rdzeń P0/P1,
+Gałąź `feature/p3-soil-adventure` rozwija Dżdżownicę w pionowym przekroju gleby
+na bazie instalacji public_html z PR #11. Zawiera grę **Życie Dżdżownicy**, rdzeń P0/P1,
 demonstrację **Atlas** i narzędzia U0/U1/U2;
 wcześniejsze PR pozostają zależnościami, bez automatycznego merge.
 Wybierz **Zagraj**, następnie **Nowa gra** lub **Wznów**. Atlas pozostaje
 dostępny pod przyciskami **Otwórz 4096 × 4096** / **8192 × 8192**.
 Gra ma własne mechaniki i zapis, poza kodem silnika.
-[Specyfikacja gry](docs/EARTHWORM.md), [raport P3](docs/P3-REPORT.md).
+[Specyfikacja gry](docs/EARTHWORM.md), [raport nowej wersji](docs/P3-SOIL-REPORT.md).
 
 Wymagane Node.js **24 LTS**, npm 11 oraz Python **3.11+** do testów i paczek U0.
 Pełny zestaw testów obejmuje także PHP **8.2+**, ZipArchive i system Unix/Linux
@@ -82,7 +82,7 @@ Pełny zestaw testów obejmuje także PHP **8.2+**, ZipArchive i system Unix/Lin
 Po przełączeniu na bieżącą gałąź:
 
 ```bash
-git clone --branch feature/u2-public-html-bundle https://github.com/ankelmarek/PixelForge.git
+git clone --branch feature/p3-soil-adventure https://github.com/ankelmarek/PixelForge.git
 cd PixelForge
 npm ci
 npm run dev
@@ -116,7 +116,7 @@ aktualizatora.
 
 ```bash
 npm run package:release
-npm run package:validate -- downloads/pixelforge-0.7.0-full.zip
+npm run package:validate -- downloads/pixelforge-0.8.0-full.zip
 npm run test:packages
 ```
 
@@ -128,9 +128,9 @@ w Pythonie/PHP (biblioteka standardowa, bez pip). [Format, limity i polecenia](d
 
 ## Panel U2 i instalator U1
 
-[Osobny ZIP narzędzia PHP 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/u2-public-html-bundle/downloads/pixelforge-updater-u2-1.2.0.zip)
+[Osobny ZIP narzędzia PHP 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p3-soil-adventure/downloads/pixelforge-updater-u2-1.2.0.zip)
 rozpakowuje się poza katalogiem publicznym. Nie jest paczką gry do wgrania
-do PixelForge. Aktualizacja gry 0.7.0 zachowuje zapisy Atlasu z 0.6.1.
+do PixelForge. Aktualizacja gry 0.8.0 zachowuje zapisy Atlasu i starej Dżdżownicy. Nowy pionowy świat ma osobny zapis v3; mapa z widokiem z góry pozostaje dostępna po rollbacku do 0.7.0.
 
 ```bash
 npm run test:updater
@@ -156,7 +156,7 @@ Testy `hosting` wymagają dodatkowo Apache i modułu PHP (`apache2`,
 `libapache2-mod-php` na Debianie/Ubuntu). Sprawdzają prawdziwe `.htaccess`,
 konfigurację przez WWW, odrzucenie braku ochrony/TLS, SIGKILL, instalację
 i rollback. Zmienne dla niestandardowych binarek opisuje [raport](docs/PUBLIC-HTML-REPORT.md).
-`test:release:browser` używa rzeczywistego ZIP-a 0.7.0: instaluje go nad 0.6.1,
+`test:release:browser` używa rzeczywistego ZIP-a 0.8.0: instaluje go nad 0.6.1,
 uruchamia Dżdżownicę, cofa wydanie, instaluje ponownie i wznawia zachowany zapis.
 `npm run assets:earthworm` odtwarza autorską grafikę i mapę nowej gry.
 U1 używa dwóch rename katalogów z krótkim oknem HTTP 404; po zabiciu procesu
@@ -167,3 +167,15 @@ Aktualizuj ten opis po każdej zmianie publicznego sposobu uruchamiania. Nie ozn
 ## Zasoby
 
 Grafiki, muzyka i fonty muszą mieć prawa pozwalające na publikację. Domyślnie używaj własnych zasobów lub odpowiednio licencjonowanych materiałów z zapisaną informacją o pochodzeniu.
+
+## Dżdżownica: Pod powierzchnią (0.8.0)
+
+Gra ma teraz pionowy przekrój gleby: rośliny u góry, korzenie i larwy pod ziemią,
+pięć warstw, użyźnianie tuneli oraz deszcz przesiąkający w dół. Cztery przygody
+obejmują gliniany zator, eskortę małej dżdżownicy, zalany skarbiec i głęboką oazę.
+Finał to 300 punktów i dorosłość w gnieździe. [Opis gry](docs/EARTHWORM.md).
+
+Nowa oprawa zawiera większe atlasy: dla aktualizatora zalecane są PHP
+`upload_max_filesize=16M` i `post_max_size=17M` lub większe wartości. Panel pokazuje
+rzeczywisty limit hostingu. Paczka pierwszej instalacji jest rozpakowywana przez
+menedżer plików hostingu, a ZIP `full` wybiera się wewnątrz panelu aktualizacji.

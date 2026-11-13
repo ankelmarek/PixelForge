@@ -97,6 +97,8 @@ export interface GameDefinition {
 export type AnyGameDefinition =
   GameDefinition | SimulationDefinition | import('./client').ClientDefinition;
 export interface Snapshot {
+  objectiveIcon?: string;
+  tokens?: { icon: string; label: string; active: boolean }[];
   mode?: 'simulation' | 'client';
   meters?: {
     id: string;
@@ -108,6 +110,13 @@ export interface Snapshot {
   }[];
   phase?: { icon: string; label: string };
   map?: {
+    regions?: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      color: string;
+    }[];
     width: number;
     height: number;
     markers: { x: number; y: number; icon: string; color: string }[];
