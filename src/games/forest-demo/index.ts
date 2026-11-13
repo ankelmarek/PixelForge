@@ -1,6 +1,13 @@
 import { registerForestRules } from './rules';
 import type { GameDefinition } from '../../engine/api/types';
 export const forestDemo = {
+  catalog: {
+    cover: 'assets/games/forest-demo/background.png',
+    emblem: 'assets/games/forest-demo/beacon.png',
+    launchLabel: 'Odkryj las',
+    badge: 'PLATFORMÓWKA',
+    detail: 'Klawiatura + dotyk · 3 krainy',
+  },
   registerRules: registerForestRules,
   schemaVersion: 1,
   id: 'forest-demo',

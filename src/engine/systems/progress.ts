@@ -1,4 +1,5 @@
 import type { GameDefinition, LevelDefinition } from '../api/types';
+import { StorageService } from './storage';
 import { readProgress } from './save';
 export interface SaveRecord {
   schemaVersion: 2;
@@ -40,7 +41,9 @@ export class SaveService {
     const fresh = this.fresh();
     try {
       const storage = this.storage ?? localStorage;
-      const raw = storage.getItem(`pixelforge:v2:${this.game.id}`);
+      const raw = new StorageService(storage).readRaw(
+        `pixelforge:v2:${this.game.id}`,
+      );
       if (raw === null) {
         const old = readProgress(this.game.id, storage);
         if (old.activated && this.levels.length === 1)
@@ -110,11 +113,10 @@ export class SaveService {
   write(state: SaveRecord): boolean {
     try {
       state.updatedAt = new Date().toISOString();
-      (this.storage ?? localStorage).setItem(
+      return new StorageService(this.storage).write(
         `pixelforge:v2:${this.game.id}`,
-        JSON.stringify(state),
+        state,
       );
-      return true;
     } catch {
       return false;
     }

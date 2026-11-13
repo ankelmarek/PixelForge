@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { createFlowScenes } from './flow';
 import type { GameDefinition, LevelDefinition, Snapshot } from '../api/types';
 import type { Input } from '../systems/input';
 import type { Audio } from '../systems/audio';
@@ -20,51 +21,6 @@ export interface Session {
 }
 export function createScenes(session: Session) {
   const { definition: game, input, audio, progress, rules } = session;
-  class Boot extends Phaser.Scene {
-    constructor() {
-      super('Boot');
-    }
-    create() {
-      this.scene.start('Preload');
-    }
-  }
-  class Preload extends Phaser.Scene {
-    constructor() {
-      super('Preload');
-    }
-    preload() {
-      this.load.on('loaderror', (file: Phaser.Loader.File) =>
-        session.error(
-          `Brak zasobu: ${file.key}. Wróć do katalogu i spróbuj ponownie.`,
-        ),
-      );
-      for (const [key, url] of Object.entries(game.assets)) {
-        const sheet =
-          game.spriteSheets?.[key] ??
-          (key === 'player' ? { frameWidth: 16, frameHeight: 24 } : undefined);
-        if (sheet)
-          this.load.spritesheet(
-            key,
-            new URL(url, document.baseURI).href,
-            sheet,
-          );
-        else this.load.image(key, new URL(url, document.baseURI).href);
-      }
-    }
-    create() {
-      if (Object.keys(game.assets).every((key) => this.textures.exists(key)))
-        this.scene.start('Title');
-    }
-  }
-  class Title extends Phaser.Scene {
-    constructor() {
-      super('Title');
-    }
-    create() {
-      this.add.image(160, 90, 'background');
-      session.ready();
-    }
-  }
   class Gameplay extends Phaser.Scene {
     private player!: Phaser.Physics.Arcade.Sprite;
     private controller!: PlayerController;
@@ -465,5 +421,5 @@ export function createScenes(session: Session) {
       if (!progress.persist()) session.message('Zapis lokalny niedostępny.');
     }
   }
-  return [Boot, Preload, Title, Gameplay];
+  return [...createFlowScenes(game, session.ready, session.error), Gameplay];
 }

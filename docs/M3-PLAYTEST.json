@@ -1,0 +1,389 @@
+{
+  "elapsed": 545,
+  "collected": 96,
+  "produced": 96,
+  "completed": true,
+  "actors": [
+    {
+      "id": "picker-1",
+      "x": 16,
+      "y": 21,
+      "cargo": {
+        "grapes": 0
+      },
+      "queue": [],
+      "current": null,
+      "blocked": false,
+      "kind": "worker",
+      "texture": "worker",
+      "status": "idle"
+    },
+    {
+      "id": "picker-2",
+      "x": 16,
+      "y": 21,
+      "cargo": {
+        "grapes": 0
+      },
+      "queue": [],
+      "current": null,
+      "blocked": false,
+      "kind": "worker",
+      "texture": "worker",
+      "status": "idle"
+    },
+    {
+      "id": "picker-3",
+      "x": 16,
+      "y": 21,
+      "cargo": {
+        "grapes": 0
+      },
+      "queue": [],
+      "current": null,
+      "blocked": false,
+      "kind": "worker",
+      "texture": "worker",
+      "status": "idle"
+    },
+    {
+      "id": "carrier",
+      "x": 21.10009000000001,
+      "y": 24,
+      "cargo": {
+        "grapes": 0
+      },
+      "queue": [
+        {
+          "id": 46,
+          "kind": "deliver",
+          "target": "mill"
+        }
+      ],
+      "current": {
+        "id": 45,
+        "kind": "load",
+        "target": "yard",
+        "phase": "approach",
+        "path": [
+          {
+            "x": 21,
+            "y": 24
+          },
+          {
+            "x": 20,
+            "y": 24
+          },
+          {
+            "x": 19,
+            "y": 24
+          },
+          {
+            "x": 18,
+            "y": 24
+          },
+          {
+            "x": 17,
+            "y": 24
+          },
+          {
+            "x": 16,
+            "y": 24
+          },
+          {
+            "x": 16,
+            "y": 23
+          },
+          {
+            "x": 16,
+            "y": 22
+          },
+          {
+            "x": 16,
+            "y": 21
+          }
+        ],
+        "progress": 0,
+        "waiting": 0,
+        "cancelled": false
+      },
+      "blocked": false,
+      "kind": "vehicle",
+      "texture": "vehicle",
+      "status": "moving"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "row-1",
+      "stock": {
+        "grapes": 0
+      },
+      "enabled": false,
+      "progress": 0
+    },
+    {
+      "id": "row-2",
+      "stock": {
+        "grapes": 0
+      },
+      "enabled": false,
+      "progress": 0
+    },
+    {
+      "id": "row-3",
+      "stock": {
+        "grapes": 0
+      },
+      "enabled": false,
+      "progress": 0
+    },
+    {
+      "id": "row-4",
+      "stock": {
+        "grapes": 0
+      },
+      "enabled": false,
+      "progress": 0
+    },
+    {
+      "id": "row-5",
+      "stock": {
+        "grapes": 0
+      },
+      "enabled": false,
+      "progress": 0
+    },
+    {
+      "id": "row-6",
+      "stock": {
+        "grapes": 0
+      },
+      "enabled": false,
+      "progress": 0
+    },
+    {
+      "id": "row-7",
+      "stock": {
+        "grapes": 0
+      },
+      "enabled": false,
+      "progress": 0
+    },
+    {
+      "id": "row-8",
+      "stock": {
+        "grapes": 0
+      },
+      "enabled": false,
+      "progress": 0
+    },
+    {
+      "id": "row-9",
+      "stock": {
+        "grapes": 0
+      },
+      "enabled": false,
+      "progress": 0
+    },
+    {
+      "id": "row-10",
+      "stock": {
+        "grapes": 0
+      },
+      "enabled": false,
+      "progress": 0
+    },
+    {
+      "id": "row-11",
+      "stock": {
+        "grapes": 0
+      },
+      "enabled": false,
+      "progress": 0
+    },
+    {
+      "id": "row-12",
+      "stock": {
+        "grapes": 0
+      },
+      "enabled": false,
+      "progress": 0
+    },
+    {
+      "id": "yard",
+      "stock": {
+        "grapes": 0
+      },
+      "enabled": false,
+      "progress": 0
+    },
+    {
+      "id": "mill",
+      "stock": {
+        "grapes": 0
+      },
+      "enabled": true,
+      "progress": 0.014630000000102505
+    },
+    {
+      "id": "cistern",
+      "stock": {
+        "juice": 96
+      },
+      "enabled": false,
+      "progress": 0
+    }
+  ],
+  "camera": {
+    "scrollX": 160,
+    "scrollY": 134,
+    "zoom": 0.5,
+    "width": 320,
+    "height": 180
+  },
+  "errors": [],
+  "history": [
+    {
+      "elapsed": 19,
+      "collected": 3,
+      "produced": 0
+    },
+    {
+      "elapsed": 39,
+      "collected": 12,
+      "produced": 0
+    },
+    {
+      "elapsed": 59,
+      "collected": 16,
+      "produced": 0
+    },
+    {
+      "elapsed": 79,
+      "collected": 24,
+      "produced": 12
+    },
+    {
+      "elapsed": 99,
+      "collected": 29,
+      "produced": 16
+    },
+    {
+      "elapsed": 119,
+      "collected": 36,
+      "produced": 24
+    },
+    {
+      "elapsed": 139,
+      "collected": 42,
+      "produced": 28
+    },
+    {
+      "elapsed": 159,
+      "collected": 49,
+      "produced": 36
+    },
+    {
+      "elapsed": 179,
+      "collected": 56,
+      "produced": 40
+    },
+    {
+      "elapsed": 199,
+      "collected": 60,
+      "produced": 48
+    },
+    {
+      "elapsed": 219,
+      "collected": 67,
+      "produced": 52
+    },
+    {
+      "elapsed": 239,
+      "collected": 73,
+      "produced": 60
+    },
+    {
+      "elapsed": 259,
+      "collected": 78,
+      "produced": 64
+    },
+    {
+      "elapsed": 280,
+      "collected": 82,
+      "produced": 72
+    },
+    {
+      "elapsed": 300,
+      "collected": 87,
+      "produced": 80
+    },
+    {
+      "elapsed": 320,
+      "collected": 88,
+      "produced": 84
+    },
+    {
+      "elapsed": 340,
+      "collected": 88,
+      "produced": 88
+    },
+    {
+      "elapsed": 360,
+      "collected": 88,
+      "produced": 88
+    },
+    {
+      "elapsed": 380,
+      "collected": 88,
+      "produced": 88
+    },
+    {
+      "elapsed": 400,
+      "collected": 88,
+      "produced": 88
+    },
+    {
+      "elapsed": 420,
+      "collected": 88,
+      "produced": 88
+    },
+    {
+      "elapsed": 440,
+      "collected": 88,
+      "produced": 88
+    },
+    {
+      "elapsed": 460,
+      "collected": 88,
+      "produced": 88
+    },
+    {
+      "elapsed": 480,
+      "collected": 92,
+      "produced": 88
+    },
+    {
+      "elapsed": 500,
+      "collected": 92,
+      "produced": 88
+    },
+    {
+      "elapsed": 520,
+      "collected": 96,
+      "produced": 92
+    },
+    {
+      "elapsed": 540,
+      "collected": 96,
+      "produced": 92
+    }
+  ],
+  "verification": {
+    "input": "mouse only; DOM telemetry read-only",
+    "timeAcceleration": false,
+    "resourceValue": 96,
+    "note": "An initial click on row-1 was missed by the automated player; it was repeated using the same mouse helper at 443s. No game state was modified. Final runner verifies queued commands."
+  }
+}

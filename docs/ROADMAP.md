@@ -1,6 +1,6 @@
 # PixelForge — roadmapa wdrożenia dla Codexa
 
-**Wersja planu:** 0.1. **Stan bieżący:** M0 ukończony; M1 ukończony; M2 w realizacji na polecenie użytkownika.
+**Wersja planu:** 0.1. **Stan bieżący:** M0 ukończony; M1 ukończony; M2 odebrany funkcjonalnie; M3 zaimplementowany i zweryfikowany, gotowy do przeglądu.
 
 ## Reguła wykonywania
 
@@ -82,7 +82,7 @@ Kryteria odbioru:
 
 ### M3. Rozszerzenie silnika TopDown Simulator i pierwszy prototyp „Winobranie”
 
-**Status: TODO. Priorytet: P1. Realizować dopiero po akceptacji M0–M2 i na osobnej gałęzi.**
+**Status: DONE (implementacja i testy). Priorytet: P1. Gałąź `feature/m3-winobranie`; przegląd PR i test użytkownika przed scaleniem.**
 
 **Cel architektoniczny:** „Winobranie” jest **grą uruchamianą we wspólnym silniku PixelForge**, nie osobnym silnikiem ani samodzielną implementacją Phasera. Testujemy w praktyce obsługę innego gatunku niż platformówka, zachowując wspólny host, sceny, ładowanie zasobów, zapis, audio, rejestr gier i podstawowe UI.
 
@@ -110,15 +110,15 @@ Kryteria odbioru:
 
 #### Kryteria odbioru M3
 
-- [ ] „Winobranie” działa w launcherze PixelForge jako drugi, niezależny tytuł i ma odrębny zapis.
-- [ ] Cały prototyp można ukończyć **wyłącznie myszką** (bez użycia klawiatury), bez tekstowych instrukcji.
-- [ ] Pracownicy potrafią samodzielnie dotrzeć do rzędów i zbierać owoce; traktor nie przejeżdża przez winorośle i budynki.
-- [ ] Przejście od zbioru do tłoczenia faktycznie przenosi ilości zasobów; nie ma ich powielania ani ujemnych stanów magazynowych.
-- [ ] Równoległe zadania, pauza, zapis i wznowienie działają bez utraty postępu i bez blokowania symulacji.
-- [ ] Implementacja specyficzna dla winnicy nie trafia do \`src/engine\`; wspólne mechanizmy nie zawierają wyjątków po nazwie gry.
-- [ ] Platformówka demo nie traci żadnej działającej funkcji; testy regresji obu gier przechodzą.
-- [ ] Istnieje dokumentacja dodania **innego** symulatora (np. tartak) przez konfigurację i nowe assety, bez kopiowania implementacji „Winobrania”.
-- [ ] Ukończony moduł i prototyp otrzymują raport oraz Pull Request. Bez automatycznego scalenia do \`main\`.
+- [x] „Winobranie” działa w launcherze PixelForge jako drugi, niezależny tytuł i ma odrębny zapis.
+- [x] Cały prototyp można ukończyć **wyłącznie myszką** (bez użycia klawiatury), bez tekstowych instrukcji.
+- [x] Pracownicy potrafią samodzielnie dotrzeć do rzędów i zbierać owoce; traktor nie przejeżdża przez winorośle i budynki.
+- [x] Przejście od zbioru do tłoczenia faktycznie przenosi ilości zasobów; nie ma ich powielania ani ujemnych stanów magazynowych.
+- [x] Równoległe zadania, pauza, zapis i wznowienie działają bez utraty postępu i bez blokowania symulacji.
+- [x] Implementacja specyficzna dla winnicy nie trafia do \`src/engine\`; wspólne mechanizmy nie zawierają wyjątków po nazwie gry.
+- [x] Platformówka demo nie traci żadnej działającej funkcji; testy regresji obu gier przechodzą.
+- [x] Istnieje dokumentacja dodania **innego** symulatora (np. tartak) przez konfigurację i nowe assety, bez kopiowania implementacji „Winobrania”.
+- [x] Ukończony moduł i prototyp otrzymują raport oraz Pull Request. Bez automatycznego scalenia do \`main\`.
 
 **Ważne:** M3A jest modułem silnika, M3B jest pierwszą grą wykorzystującą moduł. Nie twórz drugiego projektu technologicznego ani drugiej instancji autorskiego silnika.
 
@@ -175,7 +175,41 @@ Kryteria odbioru:
 - [ ] Aktualizacja silnika nie niszczy istniejących zapisów.
 - [ ] Procedura wydania i przywrócenia poprzedniej wersji jest opisana.
 
+## Kolejka zatwierdzonych koncepcji gier (bez rozpoczęcia implementacji)
+
+**Status: pomysły zaakceptowane przez właściciela projektu; zakres implementacyjny i kolejność wymagają osobnej decyzji.** Wszystkie nowe tytuły mają korzystać z jednego silnika PixelForge i zachowywać zasadę gry bez pisanych podpowiedzi. Dla symulatorów priorytetem jest obsługa myszą i sesja około 20–35 minut.
+
+| Gra                  | Status koncepcji             | Główna pętla rozgrywki                                                                                                 | Planowane moduły                                                                                        |
+| -------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Winobranie**       | Zaplanowane w M3 i M5        | Pracownicy zbierają winogrona, traktor dowozi skrzynki, winiarnia tłoczy sok                                           | TopDown Simulator, zadania, nawigacja, pojazdy, przetwarzanie zasobów                                   |
+| **Miodobranie**      | Zaakceptowana                | Rozmieszczanie uli i obszarów pożytku, praca pszczół, zbiór ramek, wirowanie i pakowanie miodu                         | Autonomiczne owady, obszary pracy, cykle zbioru                                                         |
+| **Stacja Benzynowa** | **Zaakceptowana 2026-11-13** | Samochody podjeżdżają, pracownicy tankują, dostawy cysterną uzupełniają paliwo, sklep i myjnia obsługują klientów      | Kolejki klientów i pojazdów, logistyczne dostawy, zapasy, rozbudowa stacji, prosta ekonomia             |
+| **Życie Dżdżownicy** | **Zaakceptowana 2026-11-13** | Sterowanie kierunkiem dżdżownicy myszą, drążenie tuneli, zbieranie pokarmu, utrzymanie wilgoci i unikanie drapieżników | Ruch segmentowego ciała, modyfikowalna siatka gruntu, wilgotność, prosty ekosystem i pogodowe zdarzenia |
+
+### Założenia nowych tytułów
+
+**Stacja Benzynowa:** mała stacja przy drodze, rosnący ruch, dystrybutory, cysterna, sklep, myjnia i pracownicy. Klientów oraz zadania obsługujemy kliknięciami, bez kierowania samochodami klawiszami. Finałem około 30-minutowej sesji jest obsłużenie wakacyjnego szczytu klientów. Opcjonalne zdarzenia humorystyczne dopiero po podstawowej wersji.
+
+**Życie Dżdżownicy:** widok z góry na podziemny świat, dżdżownica porusza się w stronę kursora, wydrąża tunele, zjada materię organiczną, unika kretów i przesuszenia, reaguje na deszcz i zmienną wilgotność gleby. Grę kończy przeżycie cyklu pogodowego i stworzenie sieci korytarzy. Mechanika zmian terenu powinna być modułem wielokrotnego użytku, bez ryzyka dla pozostałych gier.
+
+**Ważne:** przyjęcie koncepcji NIE oznacza automatycznego zlecenia programowania ani zmiany M0–M6. Każda nowa gra powinna otrzymać własną gałąź, krótką specyfikację produkcyjną i osobny Pull Request. Najpierw stabilizacja współdzielonego silnika i bazowego modułu TopDown Simulator.
+
 ## Rejestr zmian statusów
+
+### 2026-11-13 — M3 DONE: TopDown Simulator + Winobranie
+
+- Osobne polecenie użytkownika po pozytywnym teście funkcjonalnym M2. Jego niezależny
+  test odkrywalności nadal niepotwierdzony; nie zmieniono tego kryterium M2.
+- Gałąź `feature/m3-winobranie`, baza M2 `0ac2eba`; zachowano równoległe koncepcje z `main`.
+- Wspólny host, sceny startowe, loader, audio i storage; ogólny model zadań,
+  A*, mysz, kamera, kolejki, produkcja i pełny wersjonowany zapis.
+- 12 rzędów, 3 pracowników, traktor i prasa; pełne przejście mapy **545 s**,
+  96/96 soku, bilans 96, brak błędów JS. Raport i dane: `docs/M3-REPORT.md`, `docs/M3-PLAYTEST.json`.
+- Lint, typy, build, 25 testów jednostkowych PASS; Playwright 24 PASS, 2 SKIP.
+  ZIP obu gier sprawdzony pod domeną i podkatalogiem. Testy mobilne są emulacją.
+- Dokumentacja innego symulatora: `docs/SIMULATOR-API.md`; paczka w `downloads/`.
+- PR do `main`, bez automatycznego scalenia. Następny krok: przegląd i test użytkownika.
+  **M4/M5 nie rozpoczęto.**
 
 ### 2026-11-13 — pozytywny odbiór funkcjonalny M2
 

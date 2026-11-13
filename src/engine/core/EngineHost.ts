@@ -1,17 +1,24 @@
 import Phaser from 'phaser';
 import type { HostOptions, Snapshot } from '../api/types';
-import { loadLevel, validateGame } from '../api/validation';
+import { loadLevel, validateDefinition } from '../api/validation';
 import { createScenes, type Session } from '../scenes/scenes';
 import { Input, keyActions, type Action } from '../systems/input';
 import { Audio } from '../systems/audio';
 import { ProgressService, SaveService } from '../systems/progress';
 import { RuleSystem } from '../systems/rules';
+import { validateSimulationLevel } from '../simulation/validation';
+import {
+  createSimulationRuntime,
+  type SimulationRuntime,
+} from '../simulation/runtime';
+import type { SimulationCommand } from '../simulation/types';
 export class EngineHost {
   private game?: Phaser.Game;
   private abort = new AbortController();
   private input = new Input();
   private audio = new Audio();
   private session?: Session;
+  private simulation?: SimulationRuntime;
   private paused = false;
   private snapshot?: Snapshot;
   private resize?: ResizeObserver;
@@ -24,7 +31,42 @@ export class EngineHost {
   ) {}
   async load() {
     try {
-      const definition = validateGame(this.options.definition);
+      const definition = validateDefinition(this.options.definition);
+      if (definition.kind === 'simulation') {
+        const response = await fetch(
+          new URL(definition.levelUrl, document.baseURI),
+          { signal: this.abort.signal },
+        );
+        if (!response.ok)
+          throw new Error(`Nie można wczytać mapy (${response.status})`);
+        const level = validateSimulationLevel(await response.json());
+        const keys = new Set(Object.keys(definition.assets));
+        for (const node of level.nodes)
+          for (const texture of [
+            node.texture,
+            node.stockVisual?.texture,
+            node.fillTexture,
+          ])
+            if (texture && !keys.has(texture))
+              throw new Error(`Brak tekstury: ${texture}`);
+        for (const actor of level.actors)
+          for (const texture of [actor.texture, actor.cargoTexture])
+            if (!keys.has(texture))
+              throw new Error(`Brak tekstury: ${texture}`);
+        for (const resource of level.resources)
+          if (!keys.has(resource.icon))
+            throw new Error(`Brak ikony: ${resource.icon}`);
+        if (this.abort.signal.aborted) return;
+        this.simulation = createSimulationRuntime(definition, level, {
+          audio: this.audio,
+          ready: this.options.onReady,
+          error: this.options.onError,
+          message: this.options.onMessage,
+          state: (snapshot) => this.publish(snapshot),
+        });
+        this.boot(this.simulation.scenes, 0);
+        return;
+      }
       const rules = new RuleSystem();
       definition.registerRules?.(rules);
       const levels = await Promise.all(
@@ -65,26 +107,7 @@ export class EngineHost {
           this.options.onState({ ...snapshot, paused: this.paused });
         },
       };
-      this.game = new Phaser.Game({
-        type: Phaser.AUTO,
-        parent: this.options.parent,
-        width: 320,
-        height: 180,
-        pixelArt: true,
-        roundPixels: true,
-        backgroundColor: '#112b32',
-        audio: { noAudio: true },
-        scale: { mode: Phaser.Scale.NONE },
-        physics: {
-          default: 'arcade',
-          arcade: {
-            gravity: { x: 0, y: definition.movement.gravity },
-            fixedStep: true,
-          },
-        },
-        scene: createScenes(this.session),
-        callbacks: { postBoot: () => this.attach() },
-      });
+      this.boot(createScenes(this.session), definition.movement.gravity);
     } catch (error) {
       if (!this.abort.signal.aborted)
         this.options.onError(
@@ -92,18 +115,48 @@ export class EngineHost {
         );
     }
   }
+  private publish(snapshot: Snapshot) {
+    this.snapshot = snapshot;
+    this.options.onState({ ...snapshot, paused: this.paused });
+  }
+  private boot(scenes: (typeof Phaser.Scene)[], gravity: number) {
+    this.game = new Phaser.Game({
+      type: Phaser.AUTO,
+      parent: this.options.parent,
+      width: 320,
+      height: 180,
+      pixelArt: true,
+      roundPixels: true,
+      backgroundColor: '#112b32',
+      audio: { noAudio: true },
+      scale: { mode: Phaser.Scale.NONE },
+      physics: {
+        default: 'arcade',
+        arcade: {
+          gravity: { x: 0, y: gravity },
+          fixedStep: true,
+        },
+      },
+      scene: scenes,
+      callbacks: { postBoot: () => this.attach() },
+    });
+  }
+  command(command: SimulationCommand) {
+    this.simulation?.command(command);
+  }
   private attach() {
     const canvas = this.game!.canvas;
     canvas.tabIndex = 0;
     canvas.setAttribute(
       'aria-label',
-      'Obszar gry. Strzałki: ruch, spacja: skok, Shift: interakcja, Escape: pauza.',
+      this.simulation ? 'Obszar symulatora' : 'Obszar platformówki',
     );
     const key = (pressed: boolean) => (event: KeyboardEvent) => {
       const action = keyActions[event.code];
       if (action) {
         event.preventDefault();
-        if (!this.paused) this.input.set(action, pressed, event.code);
+        if (!this.paused && !this.simulation)
+          this.input.set(action, pressed, event.code);
       }
       if (event.code === 'Escape' && pressed && !event.repeat) {
         event.preventDefault();
@@ -129,6 +182,35 @@ export class EngineHost {
       canvas.removeEventListener('blur', blur);
       document.removeEventListener('visibilitychange', visibility);
     });
+    // CSS integer scaling and layout shifts can precede Phaser's periodic bounds check.
+    // Refresh before native input is transformed so the very first click is accurate.
+    const syncPointerBounds = () => {
+      const scale = this.game!.scale;
+      scale.updateBounds();
+      const bounds = scale.canvasBounds;
+      if (bounds.width > 0 && bounds.height > 0)
+        scale.displayScale.set(320 / bounds.width, 180 / bounds.height);
+    };
+    const pointerEvents = [
+      'mousedown',
+      'mousemove',
+      'mouseup',
+      'touchstart',
+      'touchmove',
+      'touchend',
+      'wheel',
+    ];
+    pointerEvents.forEach((type) =>
+      canvas.addEventListener(type, syncPointerBounds, {
+        capture: true,
+        passive: true,
+      }),
+    );
+    this.cleanups.push(() =>
+      pointerEvents.forEach((type) =>
+        canvas.removeEventListener(type, syncPointerBounds, true),
+      ),
+    );
     this.resize = new ResizeObserver(() => {
       const parent = this.options.parent;
       const ratio = Math.min(
@@ -138,17 +220,21 @@ export class EngineHost {
       const scale = ratio >= 1 ? Math.floor(ratio) : ratio;
       canvas.style.width = `${320 * scale}px`;
       canvas.style.height = `${180 * scale}px`;
+      syncPointerBounds();
     });
     this.resize.observe(this.options.parent);
   }
   start(resume = false) {
-    if (!this.game || !this.session) return;
+    if (!this.game || (!this.session && !this.simulation)) return;
     this.audio.unlock();
-    this.audio.music(this.session.definition.music);
+    this.audio.music(
+      (this.simulation?.definition ?? this.session!.definition).music,
+    );
     this.input.clear();
     this.paused = false;
-    if (!resume) this.session.progress.reset();
-    else this.session.progress.state = this.session.progress.save.read();
+    if (this.simulation) this.simulation.start(resume);
+    else if (!resume) this.session!.progress.reset();
+    else this.session!.progress.state = this.session!.progress.save.read();
     this.game.scene.stop('Title');
     this.game.scene.stop('Gameplay');
     this.game.scene.start('Gameplay');
@@ -169,6 +255,7 @@ export class EngineHost {
     this.input.clear();
     if (paused) {
       this.session?.progress.persist();
+      this.simulation?.persist();
       this.game.scene.pause('Gameplay');
     } else {
       this.game.scene.resume('Gameplay');
@@ -186,6 +273,7 @@ export class EngineHost {
   }
   destroy() {
     this.session?.progress.persist();
+    this.simulation?.persist();
     this.abort.abort();
     this.cleanups.forEach((cleanup) => cleanup());
     this.resize?.disconnect();

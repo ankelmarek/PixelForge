@@ -2,13 +2,14 @@
 
 Modułowy runtime gier 2D w pixel art: **Phaser 4.2.1**, TypeScript `strict`, Vite.
 Silnik nie zna nazw ani fabuły gier. M1 dostarcza współdzielony runtime,
+M3 dodaje konfigurowalny TopDown Simulator i **Winobranie**,
 a M2 — kampanię **Leśny sygnał** (`forest-demo`): trzy mapy, kolekcje, patrole,
 checkpointy i zakończenie. Użytkownik wdrożył i pozytywnie przetestował paczkę M2. Niezależny test
 z nową osobą nieznającą sterowania nie został jeszcze potwierdzony.
 
 ## Gotowa paczka na serwer statyczny
 
-[Pobierz ZIP M2](downloads/PixelForge-M2-static.zip?raw=true). Rozpakuj i wgraj
+[Pobierz ZIP M3 — obie gry](downloads/PixelForge-M3-static.zip?raw=true). Rozpakuj i wgraj
 `index.html` oraz cały katalog `assets/` do katalogu strony na serwerze HTTP(S).
 Nie potrzebujesz Node.js, npm ani PHP. [Szczegóły i suma kontrolna](downloads/README.md).
 
@@ -22,7 +23,7 @@ npm run dev
 ```
 
 Otwórz adres podany przez Vite (domyślnie `http://localhost:5173`).
-Kod M1: `feature/m1-runtime`. Demo M2: `feature/m2-forest-demo`.
+Kod M1: `feature/m1-runtime`. Demo M2: `feature/m2-forest-demo`. Winobranie: `feature/m3-winobranie`.
 Etapy są przekazywane w osobnych PR-ach; `main` może nie zawierać jeszcze implementacji.
 
 W katalogu wybierz **Odkryj las**, potem **Nowa wyprawa** lub **Wznów wyprawę**.
@@ -100,8 +101,23 @@ Demo M2 i ograniczenia odbioru: [M2-REPORT.md](docs/M2-REPORT.md).
 
 Kontrakt M0 i raport: [docs/M0-REPORT.md](docs/M0-REPORT.md).
 Założenia: [AGENTS.md](AGENTS.md), [specyfikacja](docs/SPECIFICATION.md),
-[roadmapa](docs/ROADMAP.md). **Winobranie/M3 pozostaje odłożone do zakończenia odbioru M1/M2 i osobnego polecenia.**
+[roadmapa](docs/ROADMAP.md). M3 rozpoczęto na osobne polecenie użytkownika po pozytywnym teście funkcjonalnym M2.
+Raport: [M3-REPORT.md](docs/M3-REPORT.md), konfiguracja innych symulatorów:
+[SIMULATOR-API.md](docs/SIMULATOR-API.md).
 
 Zasoby są oryginalne; ich pochodzenie i warunki użycia zapisano w
 [licencji assetów](public/assets/games/forest-demo/LICENSE.md). Brak zewnętrznych
 fontów, telemetrii, kont i usług sieciowych w runtime. Projekt nie jest automatycznie publikowany.
+
+## Winobranie M3
+
+W katalogu wybierz **Otwórz winnicę**. Prototyp obsługuje mysz i dotyk:
+wybór jednostki, rzędy do zbioru, plac załadunku, dostawę do winiarni i prasę.
+Kółko powiększa, przeciągnięcie pustego terenu przesuwa kamerę; przyciski ikonowe
+dają alternatywę dla zoomu i anulowania. Sterowanie platformówką pozostaje osobne.
+Zapis obejmuje pozycje, trasy, kolejki, ładunki i postęp produkcji.
+
+Pełny test rzeczywistej mapy: `PLAY_URL=http://localhost:5173 node tools/play-vineyard.mjs`.
+Odtworzenie mapy i własnych grafik: `python3 tools/generate-vineyard.py` oraz
+`python3 tools/generate-vineyard-art.py`. Paczka: `npm run build` i
+`python3 tools/package-static.py`. Projekt pozostaje statyczny, bez backendu.

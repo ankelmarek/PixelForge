@@ -1,3 +1,9 @@
+import type {
+  ActorView,
+  CameraView,
+  NodeState,
+  SimulationDefinition,
+} from '../simulation/types';
 import type { MusicDefinition } from '../systems/audio';
 import type { RuleSystem } from '../systems/rules';
 export interface Rect {
@@ -53,6 +59,7 @@ export interface LevelDefinition {
   theme?: { tint: number; background: string; decoration?: string };
 }
 export interface GameDefinition {
+  kind?: 'platformer';
   schemaVersion: 1;
   id: string;
   title: string;
@@ -78,13 +85,28 @@ export interface GameDefinition {
     acceleration?: number;
   };
   music?: MusicDefinition;
+  catalog?: {
+    cover: string;
+    launchLabel: string;
+    badge: string;
+    detail: string;
+    emblem?: string;
+  };
   registerRules?: (rules: RuleSystem) => void;
 }
+export type AnyGameDefinition = GameDefinition | SimulationDefinition;
 export interface Snapshot {
-  x: number;
-  y: number;
-  grounded: boolean;
-  activated: boolean;
+  mode?: 'simulation';
+  x?: number;
+  y?: number;
+  grounded?: boolean;
+  activated?: boolean;
+  produced?: number;
+  goal?: number;
+  selectedId?: string | null;
+  actors?: ActorView[];
+  nodes?: NodeState[];
+  camera?: CameraView;
   completed: boolean;
   paused: boolean;
   failed?: boolean;
@@ -99,7 +121,7 @@ export interface Snapshot {
 }
 export interface HostOptions {
   parent: HTMLElement;
-  definition: GameDefinition;
+  definition: AnyGameDefinition;
   onReady: () => void;
   onState: (state: Snapshot) => void;
   onError: (message: string) => void;

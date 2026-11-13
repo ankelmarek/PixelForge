@@ -223,3 +223,55 @@ export async function loadLevel(
     throw new Error(`Nie można wczytać poziomu (${response.status})`);
   return validateLevel(await response.json(), rules);
 }
+
+export function validateDefinition(
+  value: unknown,
+): import('./types').AnyGameDefinition {
+  const g = record(value, 'Gra');
+  if (g.kind !== 'simulation') return validateGame(value);
+  if (g.schemaVersion !== 1) throw new Error('Gra: nieobsługiwana wersja');
+  text(g.id, 'id');
+  if (!/^[a-z0-9-]+$/.test(g.id))
+    throw new Error('id: nieprawidłowy identyfikator');
+  for (const key of ['title', 'description', 'version']) text(g[key], key);
+  const viewport = record(g.viewport, 'viewport');
+  if (viewport.width !== 320 || viewport.height !== 180)
+    throw new Error('viewport: wymagane 320 × 180');
+  asset(g.levelUrl, 'levelUrl');
+  const assets = record(g.assets, 'assets');
+  asset(assets.background, 'background');
+  for (const [key, url] of Object.entries(assets)) {
+    text(key, 'asset.key');
+    asset(url, `assets.${key}`);
+  }
+  const catalog = record(g.catalog, 'catalog');
+  asset(catalog.cover, 'catalog.cover');
+  for (const key of ['launchLabel', 'badge', 'detail']) text(catalog[key], key);
+  if (g.spriteSheets !== undefined)
+    for (const [key, raw] of Object.entries(
+      record(g.spriteSheets, 'spriteSheets'),
+    )) {
+      const sheet = record(raw, key);
+      if (!(key in assets)) throw new Error(`Brak tekstury: ${key}`);
+      for (const field of ['frameWidth', 'frameHeight']) {
+        number(sheet[field], field, 1);
+        if (!Number.isInteger(sheet[field]) || (sheet[field] as number) > 256)
+          throw new Error('Nieprawidłowa klatka');
+      }
+    }
+  if (g.music !== undefined) {
+    const music = record(g.music, 'music');
+    if (
+      !Array.isArray(music.notes) ||
+      !music.notes.length ||
+      music.notes.length > 128 ||
+      !music.notes.every((n) => Number.isInteger(n) && n >= 0 && n <= 100)
+    )
+      throw new Error('music.notes: nieprawidłowa melodia');
+    number(music.beatSeconds, 'beatSeconds', 0.1);
+    number(music.volume, 'volume');
+    if ((music.volume as number) > 0.03 || (music.beatSeconds as number) > 3)
+      throw new Error('music: nieprawidłowa głośność/tempo');
+  }
+  return value as import('../simulation/types').SimulationDefinition;
+}

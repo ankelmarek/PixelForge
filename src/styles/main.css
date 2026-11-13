@@ -583,3 +583,76 @@ kbd {
 .game-bottom > div {
   margin-left: auto;
 }
+.game-card + .game-card {
+  margin-top: 28px;
+}
+.simulation-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+#actor-controls,
+.simulation-tools {
+  display: flex;
+  gap: 10px;
+}
+.actor-card {
+  min-width: 64px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  position: relative;
+}
+.actor-icon {
+  display: block;
+  height: 24px;
+  background-repeat: no-repeat;
+  background-size: auto 24px;
+  image-rendering: pixelated;
+}
+.actor-card small {
+  font-size: 10px;
+  color: #b9d78b;
+}
+.actor-card[aria-pressed='true'] {
+  outline: 2px solid #e6cd8c;
+  outline-offset: 2px;
+}
+.actor-card[data-status='working'] {
+  border-color: #b9d78b;
+}
+.actor-card[data-status='blocked'] {
+  border-color: #df9b8b;
+}
+.actor-card[data-status='waiting'] {
+  border-color: #d2b87a;
+}
+.simulation-tools button {
+  font-size: 23px;
+  min-width: 44px;
+  padding: 4px 10px;
+}
+@media (max-width: 650px) {
+  .simulation-controls {
+    justify-content: center;
+  }
+  #actor-controls,
+  .simulation-tools {
+    gap: 7px;
+  }
+  .actor-card {
+    min-width: 58px;
+    padding: 8px;
+  }
+}
+@media (max-height: 540px) and (orientation: landscape) {
+  .simulation-controls {
+    margin-top: 5px;
+  }
+  #play[data-mode='simulation'] #stage {
+    height: calc(100dvh - 140px);
+  }
+}
