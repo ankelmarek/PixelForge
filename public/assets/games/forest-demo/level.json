@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "id": "clearing",
+  "width": 800,
+  "height": 180,
+  "spawn": {
+    "x": 28,
+    "y": 139
+  },
+  "platforms": [
+    {
+      "x": 0,
+      "y": 156,
+      "width": 800,
+      "height": 24
+    },
+    {
+      "x": 112,
+      "y": 128,
+      "width": 80,
+      "height": 16
+    },
+    {
+      "x": 208,
+      "y": 100,
+      "width": 64,
+      "height": 16
+    },
+    {
+      "x": 320,
+      "y": 124,
+      "width": 80,
+      "height": 16
+    },
+    {
+      "x": 448,
+      "y": 112,
+      "width": 64,
+      "height": 16
+    },
+    {
+      "x": 560,
+      "y": 132,
+      "width": 64,
+      "height": 16
+    }
+  ],
+  "interaction": {
+    "x": 240,
+    "y": 100,
+    "action": "activate"
+  },
+  "exit": {
+    "x": 748,
+    "y": 156
+  }
+}

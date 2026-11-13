@@ -1,6 +1,6 @@
 # PixelForge — roadmapa wdrożenia dla Codexa
 
-**Wersja planu:** 0.1. **Stan początkowy:** brak implementacji, dokumentacja przygotowana.
+**Wersja planu:** 0.1. **Stan bieżący:** M0 ukończony; M1 ukończony; M2 odebrany funkcjonalnie; M3 zaimplementowany i zweryfikowany, gotowy do przeglądu.
 
 ## Reguła wykonywania
 
@@ -8,9 +8,10 @@ Codex realizuje etapy **po kolei**, każdy kończy działającym buildem i rapor
 
 ### M0. Fundament uruchamialnego projektu
 
-**Status: TODO. Priorytet: P0. To jest pierwsze zadanie.**
+**Status: DONE. Priorytet: P0. Zweryfikowano 2026-11-13.**
 
 Zakres:
+
 - Utwórz projekt Vite + TypeScript strict + Phaser **4.2.1** z `package-lock.json` i stabilnymi skryptami.
 - Dodaj katalogi `src/app`, `src/engine`, `src/games`, `public/assets/games`, `tests`.
 - Wprowadź `GameDefinition`, `LevelDefinition`, minimalny rejestr gier i loader z walidacją.
@@ -22,21 +23,23 @@ Zakres:
 - Nie implementuj edytora i nie próbuj budować pełnej 30-minutowej gry.
 
 Kryteria odbioru:
-- [ ] `npm install` i `npm run dev` uruchamiają stronę bez błędów.
-- [ ] Launcher uruchamia demonstrację i pozwala z niej wyjść bez przeładowania całej strony.
-- [ ] Bohater reaguje na strzałki/WASD i Spację, używa Shifta do interakcji, nie przenika przez podłoże. W grze nie pojawiają się tekstowe instrukcje.
-- [ ] Silnik nie importuje kodu gry; konfiguracja nie jest na sztywno wpisana w silnik.
-- [ ] Jeden test walidacji konfiguracji i jeden smoke test przechodzą.
-- [ ] `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build` kończą się powodzeniem.
-- [ ] Powstaje raport M0 z ograniczeniami, zrzutami ekranu lub opisem testu wizualnego.
+
+- [x] `npm install` i `npm run dev` uruchamiają stronę bez błędów.
+- [x] Launcher uruchamia demonstrację i pozwala z niej wyjść bez przeładowania całej strony.
+- [x] Bohater reaguje na strzałki/WASD i Spację, używa Shifta do interakcji, nie przenika przez podłoże. W grze nie pojawiają się tekstowe instrukcje.
+- [x] Silnik nie importuje kodu gry; konfiguracja nie jest na sztywno wpisana w silnik.
+- [x] Jeden test walidacji konfiguracji i jeden smoke test przechodzą.
+- [x] `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build` kończą się powodzeniem.
+- [x] Powstaje raport M0 z ograniczeniami, zrzutami ekranu lub opisem testu wizualnego.
 
 **Dopiero po zaliczeniu M0 przejdź do M1 na osobne polecenie.**
 
 ### M1. Współdzielony runtime i kontrakty
 
-**Status: TODO. Priorytet: P0.**
+**Status: DONE. Priorytet: P0. Zweryfikowano 2026-11-13.**
 
 Zakres:
+
 - Wydziel InputService z mapą akcji i adapterem klawiatura/dotyk.
 - Zaimplementuj obsługę kolizji, entity factory i podstawowe behaviors: walk, jump, patrol, damage, collectible, trigger, checkpoint, door.
 - Wydziel State/ProgressService, SaveService (localStorage i wersjonowanie) i AudioService.
@@ -46,18 +49,20 @@ Zakres:
 - Opisz publiczne API silnika i prosty przepis na kolejną grę.
 
 Kryteria odbioru:
-- [ ] Nowy poziom można dodać przez definicję, bez zmiany implementacji scen.
-- [ ] Co najmniej jeden prefab i zachowanie są konfigurowalne.
-- [ ] Zapis i wznowienie działają; uszkodzony zapis nie blokuje gry.
-- [ ] Pauza zatrzymuje gameplay i wznowienie działa prawidłowo.
-- [ ] Automatyczne testy kontraktów, reguł i zapisów przechodzą.
-- [ ] Kontrole build/lint/typecheck/test przechodzą.
+
+- [x] Nowy poziom można dodać przez definicję, bez zmiany implementacji scen.
+- [x] Co najmniej jeden prefab i zachowanie są konfigurowalne.
+- [x] Zapis i wznowienie działają; uszkodzony zapis nie blokuje gry.
+- [x] Pauza zatrzymuje gameplay i wznowienie działa prawidłowo.
+- [x] Automatyczne testy kontraktów, reguł i zapisów przechodzą.
+- [x] Kontrole build/lint/typecheck/test przechodzą.
 
 ### M2. Dopieszczona gra demonstracyjna
 
-**Status: TODO. Priorytet: P0.**
+**Status: IN PROGRESS. Priorytet: P0. Odbiór funkcjonalny użytkownika pozytywny (2026-11-13); niezależny test odkrywalności niepotwierdzony.**
 
 Zakres:
+
 - Zbuduj `forest-demo` jako kompletną grę 5–8 minut z 2–3 małymi poziomami.
 - Dodaj spójną oprawę pixel art: animacje idle/run/jump/hit, tło z paralaksą, dekoracje, efekty zbierania i trafień.
 - Wprowadź prostego przeciwnika, przełącznik, drzwi, przedmiot kolekcjonerski, checkpoint, licznik żyć.
@@ -66,17 +71,18 @@ Zakres:
 - Zmierz wielkość builda i płynność na co najmniej jednym komputerze i urządzeniu mobilnym, jeśli dostępne.
 
 Kryteria odbioru:
-- [ ] Grę da się ukończyć od startu do zakończenia bez konsoli deweloperskiej i bez instrukcji tekstowych.
-- [ ] Zapis i wznowienie działają po odświeżeniu strony.
-- [ ] Menu pauzy, restart, wyciszenie, porażka i zwycięstwo działają.
-- [ ] Wszystkie zasoby mają ustalony status licencji.
-- [ ] Przeglądarkowe smoke e2e i testy logiki przechodzą.
+
+- [x] Grę da się ukończyć od startu do zakończenia bez konsoli deweloperskiej i bez instrukcji tekstowych.
+- [x] Zapis i wznowienie działają po odświeżeniu strony.
+- [x] Menu pauzy, restart, wyciszenie, porażka i zwycięstwo działają.
+- [x] Wszystkie zasoby mają ustalony status licencji.
+- [x] Przeglądarkowe smoke e2e i testy logiki przechodzą.
 - [ ] Playtest z nową osobą potwierdza, że niezbędne akcje są odkrywalne bez instrukcji i bez pisanych podpowiedzi.
-- [ ] Raport zawiera faktyczny wynik playtestu, przybliżony czas gry i znane ograniczenia.
+- [x] Raport zawiera faktyczny wynik playtestu, przybliżony czas gry i znane ograniczenia.
 
 ### M3. Rozszerzenie silnika TopDown Simulator i pierwszy prototyp „Winobranie”
 
-**Status: TODO. Priorytet: P1. Realizować dopiero po akceptacji M0–M2 i na osobnej gałęzi.**
+**Status: DONE (implementacja i testy). Priorytet: P1. Gałąź `feature/m3-winobranie`; przegląd PR i test użytkownika przed scaleniem.**
 
 **Cel architektoniczny:** „Winobranie” jest **grą uruchamianą we wspólnym silniku PixelForge**, nie osobnym silnikiem ani samodzielną implementacją Phasera. Testujemy w praktyce obsługę innego gatunku niż platformówka, zachowując wspólny host, sceny, ładowanie zasobów, zapis, audio, rejestr gier i podstawowe UI.
 
@@ -104,24 +110,24 @@ Kryteria odbioru:
 
 #### Kryteria odbioru M3
 
-- [ ] „Winobranie” działa w launcherze PixelForge jako drugi, niezależny tytuł i ma odrębny zapis.
-- [ ] Cały prototyp można ukończyć **wyłącznie myszką** (bez użycia klawiatury), bez tekstowych instrukcji.
-- [ ] Pracownicy potrafią samodzielnie dotrzeć do rzędów i zbierać owoce; traktor nie przejeżdża przez winorośle i budynki.
-- [ ] Przejście od zbioru do tłoczenia faktycznie przenosi ilości zasobów; nie ma ich powielania ani ujemnych stanów magazynowych.
-- [ ] Równoległe zadania, pauza, zapis i wznowienie działają bez utraty postępu i bez blokowania symulacji.
-- [ ] Implementacja specyficzna dla winnicy nie trafia do \`src/engine\`; wspólne mechanizmy nie zawierają wyjątków po nazwie gry.
-- [ ] Platformówka demo nie traci żadnej działającej funkcji; testy regresji obu gier przechodzą.
-- [ ] Istnieje dokumentacja dodania **innego** symulatora (np. tartak) przez konfigurację i nowe assety, bez kopiowania implementacji „Winobrania”.
-- [ ] Ukończony moduł i prototyp otrzymują raport oraz Pull Request. Bez automatycznego scalenia do \`main\`.
+- [x] „Winobranie” działa w launcherze PixelForge jako drugi, niezależny tytuł i ma odrębny zapis.
+- [x] Cały prototyp można ukończyć **wyłącznie myszką** (bez użycia klawiatury), bez tekstowych instrukcji.
+- [x] Pracownicy potrafią samodzielnie dotrzeć do rzędów i zbierać owoce; traktor nie przejeżdża przez winorośle i budynki.
+- [x] Przejście od zbioru do tłoczenia faktycznie przenosi ilości zasobów; nie ma ich powielania ani ujemnych stanów magazynowych.
+- [x] Równoległe zadania, pauza, zapis i wznowienie działają bez utraty postępu i bez blokowania symulacji.
+- [x] Implementacja specyficzna dla winnicy nie trafia do \`src/engine\`; wspólne mechanizmy nie zawierają wyjątków po nazwie gry.
+- [x] Platformówka demo nie traci żadnej działającej funkcji; testy regresji obu gier przechodzą.
+- [x] Istnieje dokumentacja dodania **innego** symulatora (np. tartak) przez konfigurację i nowe assety, bez kopiowania implementacji „Winobrania”.
+- [x] Ukończony moduł i prototyp otrzymują raport oraz Pull Request. Bez automatycznego scalenia do \`main\`.
 
 **Ważne:** M3A jest modułem silnika, M3B jest pierwszą grą wykorzystującą moduł. Nie twórz drugiego projektu technologicznego ani drugiej instancji autorskiego silnika.
-
 
 ### M4. PixelForge Studio Lite
 
 **Status: TODO. Priorytet: P2. Rozpocznij wyłącznie po M3.**
 
 Zakres:
+
 - Katalog projektów z miniaturą, opisem, czasem rozgrywki i przyciskiem uruchomienia.
 - Podgląd mapy i inspector obiektów, a później proste przeciąganie elementów po siatce.
 - Import/eksport definicji poziomów z walidacją i komunikatami.
@@ -129,6 +135,7 @@ Zakres:
 - Edytor musi używać tego samego parsera i schematu co gra, bez osobnego, niezgodnego modelu danych.
 
 Kryteria odbioru:
+
 - [ ] Da się utworzyć/zmodyfikować mapę i uruchomić ją w trybie testowym.
 - [ ] Eksportowany poziom wczytuje się w silniku bez ręcznych poprawek.
 - [ ] Nie da się zapisać niepoprawnego poziomu bez ostrzeżenia.
@@ -138,6 +145,7 @@ Kryteria odbioru:
 **Status: TODO. Priorytet: P2.**
 
 Zakres:
+
 - Przygotuj wzorzec produkcyjny: koncepcja -> mechaniki -> 4–6 etapów -> grafika/dźwięk -> playtest -> publikacja.
 - Dodaj skrypt inicjalizacji nowej gry lub prosty kreator, korzystający z gotowego szablonu.
 - Rozbuduj **„Winobranie”** z prototypu M3 do pełnej gry o czasie ukończenia około **20–35 minut**: kolejne sektory winnicy, zarządzanie zbiorem, transport, przepustowość prasy i finał sezonu. Zachowaj prostotę obsługi myszą oraz brak pisanych podpowiedzi.
@@ -145,6 +153,7 @@ Zakres:
 - Zbieraj czas ukończenia z dobrowolnych playtestów lokalnych, bez analityki sieciowej.
 
 Kryteria odbioru:
+
 - [ ] Dodanie gry nie wymaga przepisywania silnika.
 - [ ] Nowa gra ma start, 4–6 etapów, kulminację i zakończenie.
 - [ ] Playtesty wykazują rozgrywkę zbliżoną do 20–35 minut, a nie sztuczne odliczanie czasu.
@@ -154,12 +163,14 @@ Kryteria odbioru:
 **Status: TODO. Priorytet: P2.**
 
 Zakres:
+
 - Przygotuj statyczny build pod wybrany hosting i ścieżkę bazową.
 - Uporządkuj wersjonowanie silnika i kompatybilność manifestów, changelog i proces wydawania.
 - Opcjonalnie dołącz PWA, pakiety offline, katalog ukończonych gier i eksport lokalnego stanu.
 - Nie uruchamiaj usług zewnętrznych ani automatycznych wdrożeń bez oddzielnej decyzji.
 
 Kryteria odbioru:
+
 - [ ] Co najmniej dwie gry działają na środowisku docelowym.
 - [ ] Aktualizacja silnika nie niszczy istniejących zapisów.
 - [ ] Procedura wydania i przywrócenia poprzedniej wersji jest opisana.
@@ -168,11 +179,11 @@ Kryteria odbioru:
 
 **Status: pomysły zaakceptowane przez właściciela projektu; zakres implementacyjny i kolejność wymagają osobnej decyzji.** Wszystkie nowe tytuły mają korzystać z jednego silnika PixelForge i zachowywać zasadę gry bez pisanych podpowiedzi. Dla symulatorów priorytetem jest obsługa myszą i sesja około 20–35 minut.
 
-| Gra | Status koncepcji | Główna pętla rozgrywki | Planowane moduły |
-|---|---|---|---|
-| **Winobranie** | Zaplanowane w M3 i M5 | Pracownicy zbierają winogrona, traktor dowozi skrzynki, winiarnia tłoczy sok | TopDown Simulator, zadania, nawigacja, pojazdy, przetwarzanie zasobów |
-| **Miodobranie** | Zaakceptowana | Rozmieszczanie uli i obszarów pożytku, praca pszczół, zbiór ramek, wirowanie i pakowanie miodu | Autonomiczne owady, obszary pracy, cykle zbioru |
-| **Stacja Benzynowa** | **Zaakceptowana 2026-11-13** | Samochody podjeżdżają, pracownicy tankują, dostawy cysterną uzupełniają paliwo, sklep i myjnia obsługują klientów | Kolejki klientów i pojazdów, logistyczne dostawy, zapasy, rozbudowa stacji, prosta ekonomia |
+| Gra                  | Status koncepcji             | Główna pętla rozgrywki                                                                                                 | Planowane moduły                                                                                        |
+| -------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Winobranie**       | Zaplanowane w M3 i M5        | Pracownicy zbierają winogrona, traktor dowozi skrzynki, winiarnia tłoczy sok                                           | TopDown Simulator, zadania, nawigacja, pojazdy, przetwarzanie zasobów                                   |
+| **Miodobranie**      | Zaakceptowana                | Rozmieszczanie uli i obszarów pożytku, praca pszczół, zbiór ramek, wirowanie i pakowanie miodu                         | Autonomiczne owady, obszary pracy, cykle zbioru                                                         |
+| **Stacja Benzynowa** | **Zaakceptowana 2026-11-13** | Samochody podjeżdżają, pracownicy tankują, dostawy cysterną uzupełniają paliwo, sklep i myjnia obsługują klientów      | Kolejki klientów i pojazdów, logistyczne dostawy, zapasy, rozbudowa stacji, prosta ekonomia             |
 | **Życie Dżdżownicy** | **Zaakceptowana 2026-11-13** | Sterowanie kierunkiem dżdżownicy myszą, drążenie tuneli, zbieranie pokarmu, utrzymanie wilgoci i unikanie drapieżników | Ruch segmentowego ciała, modyfikowalna siatka gruntu, wilgotność, prosty ekosystem i pogodowe zdarzenia |
 
 ### Założenia nowych tytułów
@@ -185,7 +196,69 @@ Kryteria odbioru:
 
 ## Rejestr zmian statusów
 
+### 2026-11-13 — M3 DONE: TopDown Simulator + Winobranie
+
+- Osobne polecenie użytkownika po pozytywnym teście funkcjonalnym M2. Jego niezależny
+  test odkrywalności nadal niepotwierdzony; nie zmieniono tego kryterium M2.
+- Gałąź `feature/m3-winobranie`, baza M2 `0ac2eba`; zachowano równoległe koncepcje z `main`.
+- Wspólny host, sceny startowe, loader, audio i storage; ogólny model zadań,
+  A*, mysz, kamera, kolejki, produkcja i pełny wersjonowany zapis.
+- 12 rzędów, 3 pracowników, traktor i prasa; pełne przejście mapy **545 s**,
+  96/96 soku, bilans 96, brak błędów JS. Raport i dane: `docs/M3-REPORT.md`, `docs/M3-PLAYTEST.json`.
+- Lint, typy, build, 25 testów jednostkowych PASS; Playwright 24 PASS, 2 SKIP.
+  ZIP obu gier sprawdzony pod domeną i podkatalogiem. Testy mobilne są emulacją.
+- Dokumentacja innego symulatora: `docs/SIMULATOR-API.md`; paczka w `downloads/`.
+- PR do `main`, bez automatycznego scalenia. Następny krok: przegląd i test użytkownika.
+  **M4/M5 nie rozpoczęto.**
+
+### 2026-11-13 — pozytywny odbiór funkcjonalny M2
+
+- Użytkownik: „ok, wrzuciłem, przetestowałem, wszystko ok”.
+- Potwierdzone wdrożenie i test paczki przez użytkownika; nie zgłoszono problemów.
+- Brak danych o nowej osobie nieznającej sterowania; nie odznaczono tego kryterium.
+- Raport M2 uzupełniony; PR #3 przekazany do przeglądu. Bez automatycznego merge/M3.
+
+### 2026-11-13 — M2 IN PROGRESS
+
+- Gałąź `feature/m2-forest-demo`, baza M1 `a1836e1`; Winobranie/M3 odłożone.
+- Kampania trzech krain, 22 kolekcje, checkpointy, patrole, zagrożenia, finał,
+  własna grafika/animacje/SFX/muzyka i UX bez pisanych samouczków.
+- Kontrole lint/typecheck/test/build OK; Vitest 17, E2E 13 zaliczonych + 1 pominięty na desktopie.
+- Pełne przejście rzeczywistych map zwykłymi klawiszami: 303,337 s, 7/7 żyć, bez błędów JS. To automatyczny gracz, nie nowy człowiek.
+- Raport i ograniczenia: `docs/M2-REPORT.md`; dane `docs/M2-PLAYTEST.json`; gotowy ZIP w `downloads/`.
+- Pozostaje odbiór przez nową osobę, która nie zna sterowania; nie oznaczać
+  M2 jako DONE przed potwierdzeniem tego kryterium.
+
+### 2026-11-13 — M1 DONE
+
+- Polecenie użytkownika: najpierw M1 i M2; Winobranie/M3 odłożone.
+- Gałąź `feature/m1-runtime`, baza M0 `1420b8f`; bez automatycznego scalania.
+- Factory/behaviors, reguły i przykład rozszerzenia gry, progress/save v2, HUD, porażka i wynik.
+- Kontrole lint/typecheck/test/build OK; Vitest 15, E2E 11 zaliczonych + 1 pominięty na desktopie (multitouch wykonany mobilnie).
+- API: `docs/ENGINE-API.md`; raport: `docs/M1-REPORT.md`.
+- Ograniczenia: emulacja mobilna zamiast fizycznego telefonu; pełna zawartość w M2.
+- Następny krok: M2, już zlecony przez użytkownika.
+
 Przy zakończeniu kamienia milowego Codex dopisuje: data, etap, zakres, commit, wyniki testów, ryzyka, następne działanie. Nie oznaczaj etapu jako DONE bez sprawdzenia checklisty.
+
+### 2026-11-13 — M0 DONE
+
+- Zakres: Vite/TS strict/Phaser 4.2.1, host i sceny, walidowane kontrakty,
+  launcher i prototyp `forest-demo` z własnym pixel art, fizyką, kamerą,
+  klawiaturą/dotykiem, jedną interakcją, podstawową pauzą, audio i zapisem flag.
+- Decyzje: jedna mapa JSON; zamknięta akcja `activate`; wspólny runtime bez
+  importów gier; minimalny zapis interakcji jako wymagany smoke przepływu.
+  Pełne behaviors, RuleSystem i usługi pozostają w M1.
+- Testy: instalacja zależności, dev, lint, typecheck, Vitest **11/11**, build;
+  Playwright **9 zaliczonych, 1 świadomie pominięty** (multitouch tylko w projekcie
+  mobilnym). Sprawdzone przejście, kolizje, interakcja, pauza, zapis/wznowienie,
+  restart, wyjście, błędy mapy/assetu/zapisu, dotyk, anulowanie i orientacja.
+  Statyczny build sprawdzony pod `/` oraz `/PixelForge/`.
+- Ograniczenia: krótki prototyp, bez pełnego demo M2; brak testów fizycznego
+  telefonu, Windows i innych silników przeglądarek. Znany duży chunk Phasera.
+- Raport i zrzuty: [M0-REPORT.md](M0-REPORT.md), `docs/screenshots/m0-*.png`.
+- Commit: zmiany robocze na bazie `56ec389`; gałąź `feature/m0-engine-foundation`, przekazanie przez PR.
+- Następny krok: M1 **wyłącznie na osobne polecenie użytkownika**.
 
 ## Polecenie startowe do Codexa
 
