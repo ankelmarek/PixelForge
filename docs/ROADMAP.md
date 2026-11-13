@@ -164,6 +164,25 @@ Kryteria odbioru:
 - [ ] Aktualizacja silnika nie niszczy istniejących zapisów.
 - [ ] Procedura wydania i przywrócenia poprzedniej wersji jest opisana.
 
+## Kolejka zatwierdzonych koncepcji gier (bez rozpoczęcia implementacji)
+
+**Status: pomysły zaakceptowane przez właściciela projektu; zakres implementacyjny i kolejność wymagają osobnej decyzji.** Wszystkie nowe tytuły mają korzystać z jednego silnika PixelForge i zachowywać zasadę gry bez pisanych podpowiedzi. Dla symulatorów priorytetem jest obsługa myszą i sesja około 20–35 minut.
+
+| Gra | Status koncepcji | Główna pętla rozgrywki | Planowane moduły |
+|---|---|---|---|
+| **Winobranie** | Zaplanowane w M3 i M5 | Pracownicy zbierają winogrona, traktor dowozi skrzynki, winiarnia tłoczy sok | TopDown Simulator, zadania, nawigacja, pojazdy, przetwarzanie zasobów |
+| **Miodobranie** | Zaakceptowana | Rozmieszczanie uli i obszarów pożytku, praca pszczół, zbiór ramek, wirowanie i pakowanie miodu | Autonomiczne owady, obszary pracy, cykle zbioru |
+| **Stacja Benzynowa** | **Zaakceptowana 2026-11-13** | Samochody podjeżdżają, pracownicy tankują, dostawy cysterną uzupełniają paliwo, sklep i myjnia obsługują klientów | Kolejki klientów i pojazdów, logistyczne dostawy, zapasy, rozbudowa stacji, prosta ekonomia |
+| **Życie Dżdżownicy** | **Zaakceptowana 2026-11-13** | Sterowanie kierunkiem dżdżownicy myszą, drążenie tuneli, zbieranie pokarmu, utrzymanie wilgoci i unikanie drapieżników | Ruch segmentowego ciała, modyfikowalna siatka gruntu, wilgotność, prosty ekosystem i pogodowe zdarzenia |
+
+### Założenia nowych tytułów
+
+**Stacja Benzynowa:** mała stacja przy drodze, rosnący ruch, dystrybutory, cysterna, sklep, myjnia i pracownicy. Klientów oraz zadania obsługujemy kliknięciami, bez kierowania samochodami klawiszami. Finałem około 30-minutowej sesji jest obsłużenie wakacyjnego szczytu klientów. Opcjonalne zdarzenia humorystyczne dopiero po podstawowej wersji.
+
+**Życie Dżdżownicy:** widok z góry na podziemny świat, dżdżownica porusza się w stronę kursora, wydrąża tunele, zjada materię organiczną, unika kretów i przesuszenia, reaguje na deszcz i zmienną wilgotność gleby. Grę kończy przeżycie cyklu pogodowego i stworzenie sieci korytarzy. Mechanika zmian terenu powinna być modułem wielokrotnego użytku, bez ryzyka dla pozostałych gier.
+
+**Ważne:** przyjęcie koncepcji NIE oznacza automatycznego zlecenia programowania ani zmiany M0–M6. Każda nowa gra powinna otrzymać własną gałąź, krótką specyfikację produkcyjną i osobny Pull Request. Najpierw stabilizacja współdzielonego silnika i bazowego modułu TopDown Simulator.
+
 ## Rejestr zmian statusów
 
 Przy zakończeniu kamienia milowego Codex dopisuje: data, etap, zakres, commit, wyniki testów, ryzyka, następne działanie. Nie oznaczaj etapu jako DONE bez sprawdzenia checklisty.
