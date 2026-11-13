@@ -6,16 +6,25 @@ export class Audio {
     this.context ??= new AudioContext();
     void this.context.resume().catch(() => {});
   }
-  play(kind: 'jump' | 'activate' | 'complete') {
+  play(kind: 'jump' | 'activate' | 'complete' | 'collect' | 'hit') {
     if (!this.context || this.muted || this.context.state !== 'running') return;
     const context = this.context;
     const oscillator = context.createOscillator();
     const gain = context.createGain();
     oscillator.type = 'triangle';
     const time = context.currentTime;
-    oscillator.frequency.setValueAtTime(kind === 'jump' ? 240 : 520, time);
+    oscillator.frequency.setValueAtTime(
+      kind === 'hit'
+        ? 130
+        : kind === 'jump'
+          ? 240
+          : kind === 'collect'
+            ? 880
+            : 520,
+      time,
+    );
     oscillator.frequency.exponentialRampToValueAtTime(
-      kind === 'complete' ? 1040 : 720,
+      kind === 'hit' ? 65 : kind === 'complete' ? 1040 : 720,
       time + 0.12,
     );
     gain.gain.setValueAtTime(0.045, time);

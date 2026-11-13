@@ -38,6 +38,7 @@ export function mountApp(root: HTMLElement) {
     active = true;
     complete = false;
     find('#overlay').hidden = true;
+    find('#hint').textContent = '';
     button('#pause').disabled = false;
     button('#restart').disabled = false;
     host?.start(resume);
@@ -78,12 +79,15 @@ export function mountApp(root: HTMLElement) {
         Object.entries(state).forEach(([key, value]) => {
           stage.dataset[key] = String(value);
         });
-        find('#progress').textContent = state.activated
-          ? 'SYGNAŁ: AKTYWNY'
-          : '◇';
-        if (state.completed && !complete) {
+        find('#progress').textContent =
+          `${'♥'.repeat(state.lives ?? 3)}  ${state.total ? `◆ ${state.collected}/${state.total}  ` : ''}${(state.levelIndex ?? 0) + 1}/${state.levelCount ?? 1}  ${state.activated ? '◈' : '◇'}`;
+        if ((state.completed || state.failed) && !complete) {
           complete = true;
-          showOverlay('SYGNAŁ DOTARŁ DO CELU', 'Ukończono', '');
+          showOverlay(
+            state.failed ? '◇' : '◈',
+            state.failed ? 'Koniec wyprawy' : 'Ukończono',
+            '',
+          );
           button('#start').hidden = false;
           button('#start').textContent = 'Zagraj ponownie →';
           button('#resume').hidden = true;

@@ -1,6 +1,6 @@
 # PixelForge — roadmapa wdrożenia dla Codexa
 
-**Wersja planu:** 0.1. **Stan bieżący:** M0 ukończony; M1 i następne etapy nie rozpoczęte.
+**Wersja planu:** 0.1. **Stan bieżący:** M0 ukończony; M1 ukończony; M2 w realizacji na polecenie użytkownika.
 
 ## Reguła wykonywania
 
@@ -36,7 +36,7 @@ Kryteria odbioru:
 
 ### M1. Współdzielony runtime i kontrakty
 
-**Status: TODO. Priorytet: P0.**
+**Status: DONE. Priorytet: P0. Zweryfikowano 2026-11-13.**
 
 Zakres:
 
@@ -50,12 +50,12 @@ Zakres:
 
 Kryteria odbioru:
 
-- [ ] Nowy poziom można dodać przez definicję, bez zmiany implementacji scen.
-- [ ] Co najmniej jeden prefab i zachowanie są konfigurowalne.
-- [ ] Zapis i wznowienie działają; uszkodzony zapis nie blokuje gry.
-- [ ] Pauza zatrzymuje gameplay i wznowienie działa prawidłowo.
-- [ ] Automatyczne testy kontraktów, reguł i zapisów przechodzą.
-- [ ] Kontrole build/lint/typecheck/test przechodzą.
+- [x] Nowy poziom można dodać przez definicję, bez zmiany implementacji scen.
+- [x] Co najmniej jeden prefab i zachowanie są konfigurowalne.
+- [x] Zapis i wznowienie działają; uszkodzony zapis nie blokuje gry.
+- [x] Pauza zatrzymuje gameplay i wznowienie działa prawidłowo.
+- [x] Automatyczne testy kontraktów, reguł i zapisów przechodzą.
+- [x] Kontrole build/lint/typecheck/test przechodzą.
 
 ### M2. Dopieszczona gra demonstracyjna
 
@@ -122,7 +122,6 @@ Kryteria odbioru:
 
 **Ważne:** M3A jest modułem silnika, M3B jest pierwszą grą wykorzystującą moduł. Nie twórz drugiego projektu technologicznego ani drugiej instancji autorskiego silnika.
 
-
 ### M4. PixelForge Studio Lite
 
 **Status: TODO. Priorytet: P2. Rozpocznij wyłącznie po M3.**
@@ -177,6 +176,16 @@ Kryteria odbioru:
 - [ ] Procedura wydania i przywrócenia poprzedniej wersji jest opisana.
 
 ## Rejestr zmian statusów
+
+### 2026-11-13 — M1 DONE
+
+- Polecenie użytkownika: najpierw M1 i M2; Winobranie/M3 odłożone.
+- Gałąź `feature/m1-runtime`, baza M0 `1420b8f`; bez automatycznego scalania.
+- Factory/behaviors, reguły i przykład rozszerzenia gry, progress/save v2, HUD, porażka i wynik.
+- Kontrole lint/typecheck/test/build OK; Vitest 15, E2E 11 zaliczonych + 1 pominięty na desktopie (multitouch wykonany mobilnie).
+- API: `docs/ENGINE-API.md`; raport: `docs/M1-REPORT.md`.
+- Ograniczenia: emulacja mobilna zamiast fizycznego telefonu; pełna zawartość w M2.
+- Następny krok: M2, już zlecony przez użytkownika.
 
 Przy zakończeniu kamienia milowego Codex dopisuje: data, etap, zakres, commit, wyniki testów, ryzyka, następne działanie. Nie oznaczaj etapu jako DONE bez sprawdzenia checklisty.
 

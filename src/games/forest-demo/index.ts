@@ -1,5 +1,7 @@
+import { registerForestRules } from './rules';
 import type { GameDefinition } from '../../engine/api/types';
 export const forestDemo = {
+  registerRules: registerForestRules,
   schemaVersion: 1,
   id: 'forest-demo',
   title: 'Leśny sygnał',

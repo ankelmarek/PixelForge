@@ -4,7 +4,8 @@ import { loadLevel, validateGame } from '../api/validation';
 import { createScenes, type Session } from '../scenes/scenes';
 import { Input, keyActions, type Action } from '../systems/input';
 import { Audio } from '../systems/audio';
-import { freshProgress, readProgress, writeProgress } from '../systems/save';
+import { ProgressService, SaveService } from '../systems/progress';
+import { RuleSystem } from '../systems/rules';
 export class EngineHost {
   private game?: Phaser.Game;
   private abort = new AbortController();
@@ -24,14 +25,38 @@ export class EngineHost {
   async load() {
     try {
       const definition = validateGame(this.options.definition);
-      const level = await loadLevel(definition.levelUrl, this.abort.signal);
+      const rules = new RuleSystem();
+      definition.registerRules?.(rules);
+      const levels = await Promise.all(
+        (definition.levels ?? [definition.levelUrl]).map((url) =>
+          loadLevel(url, this.abort.signal, rules),
+        ),
+      );
+      if (new Set(levels.map((level) => level.id)).size !== levels.length)
+        throw new Error('Powtórzony identyfikator poziomu');
+      for (const level of levels) {
+        for (const entity of level.entities ?? [])
+          if (entity.texture && !(entity.texture in definition.assets))
+            throw new Error(`Brak tekstury encji: ${entity.texture}`);
+        for (const texture of [
+          level.theme?.background,
+          level.theme?.decoration,
+        ])
+          if (texture && !(texture in definition.assets))
+            throw new Error(`Brak tekstury warstwy: ${texture}`);
+      }
+      const progress = new ProgressService(
+        new SaveService(definition, levels),
+        levels,
+      );
       if (this.abort.signal.aborted) return;
       this.session = {
         definition,
-        level,
+        levels,
+        rules,
         input: this.input,
         audio: this.audio,
-        progress: readProgress(definition.id),
+        progress,
         ready: this.options.onReady,
         error: this.options.onError,
         message: this.options.onMessage,
@@ -121,10 +146,8 @@ export class EngineHost {
     this.audio.unlock();
     this.input.clear();
     this.paused = false;
-    if (!resume) {
-      this.session.progress = freshProgress();
-      writeProgress(this.session.definition.id, this.session.progress);
-    }
+    if (!resume) this.session.progress.reset();
+    else this.session.progress.state = this.session.progress.save.read();
     this.game.scene.stop('Title');
     this.game.scene.stop('Gameplay');
     this.game.scene.start('Gameplay');
@@ -142,8 +165,10 @@ export class EngineHost {
       return;
     this.paused = paused;
     this.input.clear();
-    if (paused) this.game.scene.pause('Gameplay');
-    else {
+    if (paused) {
+      this.session?.progress.persist();
+      this.game.scene.pause('Gameplay');
+    } else {
       this.game.scene.resume('Gameplay');
       this.game.canvas.focus({ preventScroll: true });
     }
@@ -158,6 +183,7 @@ export class EngineHost {
     this.game?.canvas.focus({ preventScroll: true });
   }
   destroy() {
+    this.session?.progress.persist();
     this.abort.abort();
     this.cleanups.forEach((cleanup) => cleanup());
     this.resize?.disconnect();

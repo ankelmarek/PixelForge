@@ -80,6 +80,9 @@ na fizycznym Androidzie/iPhonie. `npm run format` formatuje pliki.
 - `tests/` — Vitest i Playwright.
 - `tools/generate-forest.py` — odtwarzanie własnych PNG (Python 3, bez bibliotek).
 
+API runtime M1: [ENGINE-API.md](docs/ENGINE-API.md),
+[raport M1](docs/M1-REPORT.md).
+
 Kontrakt M0 i raport: [docs/M0-REPORT.md](docs/M0-REPORT.md).
 Założenia: [AGENTS.md](AGENTS.md), [specyfikacja](docs/SPECIFICATION.md),
 [roadmapa](docs/ROADMAP.md). **M1 i kolejne etapy wymagają osobnego polecenia.**
