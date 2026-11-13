@@ -1,10 +1,11 @@
 # U1 — plan instalacji i przywracania wydania
 
-Status: przygotowanie, bez zaimplementowanego instalatora i bez wdrożenia.
+Status: plan zrealizowany w U1; [raport](U1-REPORT.md), [instrukcja](../admin-updater/README.md).
+Nie wdrażano instalatora na hosting użytkownika.
 Baza: zaakceptowana przez użytkownika paczka 0.6.1 (`da66565`, PR #7).
-Gałąź: `feature/p2-u1-installer`. Wybór adaptera wymaga informacji o hostingu
-rozumisie.pl: PHP 8 z ZipArchive, SSH/CLI albo wyłącznie pliki statyczne.
-Nie należy utożsamiać działania statycznej paczki z obsługą PHP lub SSH.
+Gałąź: `feature/p2-u1-installer`. Wybrano PHP 8.2+ z ZipArchive i wejściem CLI.
+Publiczna strona rozumisie.pl zgłasza PHP 8.5.12. Faktyczne rozszerzenia,
+ścieżki i prawa konta są sprawdzane przez `doctor` przed instalacją.
 
 ## Zakres jednego etapu
 
@@ -45,9 +46,9 @@ administratora w ramach porządkowania paczki.
 Preferowane są wersjonowane katalogi i atomowe przełączenie aktywnego
 wskazania. Gdy hosting tego nie umożliwia, fallback musi opisywać okno
 maintenance, punkty przerwania i sposób odzyskania dostępności. Nie nazywamy
-wieloplikowego kopiowania atomowym. Konkretna struktura katalogów i mechanizm
-blokady zostaną wybrane po potwierdzeniu środowiska, bez zgadywania uprawnień
-na serwerze użytkownika.
+wieloplikowego kopiowania atomowym. U1 wykorzystuje prywatne katalogi wydań,
+`flock`, dziennik i dwa rename katalogów. Okno między rename zwraca 404;
+po zabiciu procesu w tym oknie dostępność przywraca `recover`.
 
 Prywatne dane obejmują ZIP, staging, dziennik, blokadę i metadane kopii.
 Limity obejmują także zajętość stagingu i zachowywanych wydań oraz wymagany
@@ -78,6 +79,6 @@ Symulacja awarii musi obejmować rzeczywiste zakończenie procesu, nie tylko
 wyjątki obsługiwane przez `finally`. Przejście testów lokalnych nie jest
 potwierdzeniem możliwości konkretnego hostingu.
 
-Po wyborze adaptera: implementacja, testy z powyższej macierzy, pełne kontrole
-repozytorium, instrukcja konfiguracji, raport U1 i osobny PR do `main`, zależny
-od PR #7. Publikacja narzędzia na GitHubie nie oznacza instalacji na hostingu.
+Implementacja, testy z powyższej macierzy, instrukcja i raport należą do PR #8,
+zależnego od PR #7. Publikacja narzędzia na GitHubie nie oznacza instalacji
+na hostingu. Kolejny osobny zakres to U2 — uwierzytelniony panel WWW.

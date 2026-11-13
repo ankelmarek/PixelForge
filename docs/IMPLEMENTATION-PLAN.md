@@ -1,12 +1,13 @@
 # Plan po P0 — duże światy i aktualizator ZIP
 
 Zakres wynika z roadmapy 0.2 i `UPDATER-SPEC.md`. P1A–P1D zrealizowano na gałęzi `feature/p1-large-worlds` —
-[raport P1](P1-REPORT.md), [kontrakt świata](LARGE-WORLDS.md). P2/U0 zrealizowano w osobnym PR — [raport U0](U0-REPORT.md). U1–U3 pozostają
-planem. Nie wybrano hostingu ani nie rozpoczęto którejkolwiek gry.
+[raport P1](P1-REPORT.md), [kontrakt świata](LARGE-WORLDS.md). P2/U0 zrealizowano w osobnym PR — [raport U0](U0-REPORT.md).
+U1 ma adapter PHP i wejście CLI — [raport U1](U1-REPORT.md). U2–U3 pozostają planem.
+Nie wdrożono aktualizatora na hosting ani nie rozpoczęto którejkolwiek gry.
 
 Po odbiorze 0.6.1 rozpoczęto przygotowanie U1:
 [operacje instalatora i macierz testów awarii](U1-INSTALLATION-PLAN.md).
-Implementacja adaptera czeka na potwierdzenie możliwości docelowego hostingu.
+Implementacja PHP jest gotowa; środowisko konkretnego konta sprawdza `doctor`.
 
 ## P1 — duże mapy
 
@@ -40,8 +41,8 @@ Manifest nie może zlecać wykonania skryptu, migracji ani komend powłoki.
 `admin-updater/`, prywatne katalogi, konfiguracja serwera i dane administratora
 nie wchodzą do paczki i nie mogą być celem instalacji lub usunięcia.
 
-U1 wymaga informacji, czy docelowy serwer obsługuje PHP 8 + ZipArchive,
-CLI/SSH czy jedynie pliki statyczne. Tę decyzję należy podjąć przy U1;
+U1 wybrano dla PHP 8.2+ z ZipArchive. Publiczna strona rozumisie.pl zgłasza PHP
+8.5.12; uprawnienia i rozszerzenia konkretnego konta wymagają lokalnego sprawdzenia.
 P0 nie potrzebuje dostępu do hostingu ani haseł. Panel WWW nie działa na hostingu
 wyłącznie statycznym. Wieloplikowego nadpisywania nie wolno nazywać atomowym.
 

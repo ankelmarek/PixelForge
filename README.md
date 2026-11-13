@@ -41,23 +41,27 @@ Atlas zajmuje całe okno przeglądarki, także po obrocie telefonu.
 Wydanie 0.6.1 poprawia migotanie przy maksymalnym oddaleniu i daty plików ZIP
 wpływające na cache przeglądarki. [Raport poprawki](docs/HOTFIX-0.6.1.md).
 
-Generator i walidator offline **P2/U0** są gotowe; instalator i panel U1/U2
-pozostają osobnymi etapami. Paczka nie wdraża się samodzielnie.
+Generator i walidator offline **P2/U0** oraz instalator PHP **U1** są gotowe.
+[Instrukcja U1](admin-updater/README.md) opisuje instalację przez SSH,
+podgląd zmian, kopię poprzedniej wersji i rollback. Panel WWW jest etapem U2.
+Paczka gry nie wdraża się samodzielnie.
 
 ## Uruchamianie
 
-Gałąź `feature/p2-u0-packages` zawiera rdzeń P0, demonstrację **Atlas** z P1
-i narzędzia U0. Opiera się na P1 `c884fdf` / PR #6, zależnym od PR #5.
+Gałąź `feature/p2-u1-installer` zawiera rdzeń P0, demonstrację **Atlas** z P1
+i narzędzia U0/U1. Opiera się na zaakceptowanym 0.6.1 / PR #7, zależnym od PR #6 i #5.
 Na ekranie głównym wybierz **Otwórz 4096 × 4096** albo **8192 × 8192**, następnie
 **Nowa sesja** lub **Wznów**. Katalog produktów pozostaje pusty — demonstracja
 techniczna jest poza `src/games/`. P1 zależy od PR #5; żaden PR nie został scalony
 automatycznie. Dawne gry pozostają w historycznych gałęziach.
 
 Wymagane Node.js **24 LTS**, npm 11 oraz Python **3.11+** do testów i paczek U0.
-Po przełączeniu na gałąź U0:
+Pełny zestaw testów obejmuje także PHP **8.2+**, ZipArchive i system Unix/Linux
+(na Windows można użyć WSL). PHP służy aktualizatorowi, nie statycznej grze.
+Po przełączeniu na gałąź U1:
 
 ```bash
-git clone --branch feature/p2-u0-packages https://github.com/ankelmarek/PixelForge.git
+git clone --branch feature/p2-u1-installer https://github.com/ankelmarek/PixelForge.git
 cd PixelForge
 npm ci
 npm run dev
@@ -99,7 +103,28 @@ Pierwsze polecenie buduje projekt i dopiero po sukcesie tworzy wersjonowany ZIP,
 manifest oraz plik sumy SHA-256. Drugie sprawdza paczkę bez instalacji i bez
 rozpakowywania. `npm test` obejmuje Vitest i testy paczek w Pythonie (biblioteka
 standardowa, bez pip). [Format, limity i polecenia](docs/RELEASE-PACKAGES.md),
-[raport U0](docs/U0-REPORT.md). Następny etap U1 wymaga ustalenia możliwości hostingu.
+[raport U0](docs/U0-REPORT.md).
+
+## Instalator U1
+
+[Osobny ZIP narzędzia PHP](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u1-installer/downloads/pixelforge-updater-u1-1.0.0.zip)
+rozpakowuje się poza katalogiem publicznym. Nie jest paczką gry do wgrania
+do PixelForge. Działający Atlas pozostaje w wersji 0.6.1.
+
+```bash
+npm run test:updater
+npm run test:updater:browser
+npm run package:updater
+php admin-updater/cli.php help
+```
+
+Domyślnie testy używają `php` z PATH; `PIXELFORGE_PHP` może wskazać inną
+binarkę/wrapper z PHP 8.2+, ZipArchive i memory_limit co najmniej 256M.
+Test przeglądarkowy używa produkcyjnego ZIP-a i tymczasowej wersji 0.6.2
+wyłącznie jako fixture. Sprawdza instalację, rollback i zachowanie zapisu.
+[Konfiguracja i polecenia](admin-updater/README.md), [raport U1](docs/U1-REPORT.md).
+U1 używa dwóch rename katalogów z krótkim oknem HTTP 404; po zabiciu procesu
+w tym oknie potrzebne jest `recover`. Nie obiecuje atomowej podmiany.
 
 Aktualizuj ten opis po każdej zmianie publicznego sposobu uruchamiania. Nie oznaczaj projektu jako ukończonego przed przejściem kryteriów odbioru z roadmapy.
 

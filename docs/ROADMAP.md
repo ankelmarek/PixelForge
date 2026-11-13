@@ -88,13 +88,13 @@ Kolejny zakres: **P2/U0: generator paczek full i walidator offline**.
 
 ### P2. Aktualizator plikowy ZIP
 
-**Status: U0 DONE, U1–U3 TODO. Priorytet: wysoki. Szczegółowe zadania U0–U3:** [UPDATER-SPEC.md](./UPDATER-SPEC.md).
+**Status: U0 i U1 DONE (implementacja i testy), U2–U3 TODO. Priorytet: wysoki. Szczegółowe zadania U0–U3:** [UPDATER-SPEC.md](./UPDATER-SPEC.md).
 
 - [ ] Wprowadzamy wersjonowane paczki `full` i docelowo `delta`, z manifestem, sumami SHA-256 i kompatybilnością wersji.
-- [ ] Rozwijamy walidator, katalog staging, bezpieczny rollback i log aktualizacji.
+- [x] Rozwijamy walidator, katalog staging, bezpieczny rollback i log aktualizacji.
 - [ ] Administrator dostaje panel pozwalający przesłać ZIP, zobaczyć zakres zmian i zatwierdzić instalację.
 - [ ] Panel ma niezależne uwierzytelnianie i nie jest częścią statycznej gry. Wybór PHP lub CLI zależy od wybranego hostingu.
-- [ ] Testy uszkodzonych ZIP, zip-slip, limitów rozpakowania, niezgodnych wersji, przerwania instalacji i przywracania poprzedniej.
+- [x] Testy uszkodzonych ZIP, zip-slip, limitów rozpakowania, niezgodnych wersji, przerwania instalacji i przywracania poprzedniej.
 - [ ] Nie uruchamiać publicznego panelu, nie otwierać uprawnień serwera i nie instalować nowych usług przed osobnym poleceniem.
 
 **U0 wykonane na `feature/p2-u0-packages`**, osobny PR zależny od P1 / PR #6.
@@ -111,8 +111,23 @@ Weryfikacja: 47 Vitest + 13 testów Python (z wariantami ataków), E2E 24 PASS
 
 - 2 SKIP, lint/typecheck/build PASS, rozpakowany full ZIP 8/8 PASS.
   [Raport U0](U0-REPORT.md), [format paczki i CLI](RELEASE-PACKAGES.md).
-  Przed U1 trzeba ustalić możliwości hostingu: PHP 8 + ZipArchive, SSH/CLI lub
-  wyłącznie statyczne pliki. Nie rozpoczęto U1/U2/U3, nie wdrożono panelu ani gry P3.
+  Wynik U1 opisano poniżej. Nie wdrożono panelu ani gry P3.
+
+**U1 wykonane na `feature/p2-u1-installer` / PR #8**, baza 0.6.1 / PR #7.
+Adapter PHP 8.2+ z ZipArchive i wejściem CLI instaluje full ZIP po osobnym
+zatwierdzeniu planu. Prywatny staging, blokada, limity miejsca, dziennik,
+wersjonowane kopie, kontrola zdrowia, rollback i odzyskiwanie po SIGKILL.
+Wariant dwóch rename katalogów ma jawne krótkie okno HTTP 404; przerwanie
+w tym oknie wymaga uruchomienia recover. Nie jest to atomowa podmiana.
+
+Weryfikacja: 48 Vitest, 15 testów Python U0 i 22 testy integracji PHP U1;
+walidator PHP odrzuca 129 niedozwolonych wariantów archiwów U0.
+Przeglądarkowa instalacja i rollback prawdziwego Atlasu: 8/8 PASS
+z zachowaniem zapisu, pod / oraz /PixelForge/, desktop i emulacja Pixel 7.
+[Raport U1](U1-REPORT.md), [instrukcja](../admin-updater/README.md).
+Publiczna strona zgłasza PHP 8.5.12; rozszerzenia i prawa konkretnego konta
+sprawdza doctor przed instalacją. Nie wdrażano narzędzia na hosting użytkownika.
+Następny osobny zakres: U2 — uwierzytelniony panel WWW.
 
 ### P3. Pierwsza nowa gra na dużej mapie
 
@@ -133,7 +148,7 @@ Każdy tytuł ma własną specyfikację i gałąź oraz wykorzystuje wspólny si
 - [x] Silnik uruchamia demonstrację dużego świata niezależną od Winobrania i od platformówki.
 - [x] Obraz mapy jest stabilny podczas przesuwania i przybliżania; nie ma sztucznie małego obszaru działania.
 - [x] Zadania jednostek i zapis działają między sektorami, także poza kamerą.
-- [ ] Aktualizator instaluje paczkę ZIP, wykonuje walidację i w razie błędu wraca do poprzedniej wersji.
+- [x] Aktualizator instaluje paczkę ZIP, wykonuje walidację i w razie błędu wraca do poprzedniej wersji.
 - [x] Przy dalszych pracach nie są rozwijane `winobranie` ani `forest-demo`.
 - [ ] Każdy nowy tytuł posiada osobny zestaw testów i nie duplikuje kodu silnika.
 
@@ -200,3 +215,15 @@ Każdy tytuł ma własną specyfikację i gałąź oraz wykorzystuje wspólny si
 - Wybór adaptera pozostaje otwarty do ustalenia możliwości hostingu:
   PHP 8 z ZipArchive albo SSH/CLI. Nie uznajemy działania statycznego Atlasu
   za potwierdzenie tych możliwości. U1 nie jest jeszcze zaimplementowane.
+
+### 2026-11-13 — U1: instalator PHP i rollback
+
+- Odczyt publicznej strony rozumisie.pl wykazał zgłaszane PHP 8.5.12; DNS
+  wskazuje VH.PL. Wybrano adapter PHP z kontrolą wymagań przed instalacją,
+  bez oczekiwania na niepotrzebne dane dostępowe.
+- Zrealizowano plan U1, dodano lokalne testy awarii procesu i test
+  przeglądarkowy na prawdziwym produkcyjnym ZIP-ie. Raport opisuje wyniki,
+  okno niedostępności fallbacku i ograniczenia sprawdzenia hostingu.
+- Osobny ZIP narzędzia U1 1.0.0; paczka gry pozostaje 0.6.1. Testowa wersja
+  0.6.2 istnieje wyłącznie w tymczasowych fixture'ach, nie jest wydaniem gry.
+- Zaktualizowano PR #8. Bez merge i wdrożenia; U2/U3 i gry P3 nie rozpoczęte.

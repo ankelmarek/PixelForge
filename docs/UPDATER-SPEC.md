@@ -1,6 +1,6 @@
 # PixelForge — projekt aktualizatora ZIP
 
-**Status:** U0 zaimplementowane; U1–U3 zaplanowane, bez wdrożenia. **Data decyzji:** 2026-11-13.
+**Status:** U0 i U1 zaimplementowane; U2–U3 zaplanowane, bez wdrożenia na hosting. **Data decyzji:** 2026-11-13.
 
 ## 1. Cel
 
@@ -108,10 +108,20 @@ Wersja wydania 0.6.1; manifest v1, kontrakt silnika 2, narzędzie 1.0.0.
 
 ### U1: bezpieczny mechanizm instalacji i rollback
 
-- [ ] Prywatny staging, blokada i limit przestrzeni.
-- [ ] Wersjonowane wydania i wskazanie aktywnej wersji lub bezpieczny fallback dla wybranego hostingu.
-- [ ] Test pełnego wdrożenia, przerwanego wdrożenia i przywracania poprzedniej wersji.
-- [ ] Zależnie od hostingu: adapter PHP z `ZipArchive` albo narzędzie CLI.
+- [x] Prywatny staging, blokada i limit przestrzeni.
+- [x] Wersjonowane wydania i wskazanie aktywnej wersji lub bezpieczny fallback dla wybranego hostingu.
+- [x] Test pełnego wdrożenia, przerwanego wdrożenia i przywracania poprzedniej wersji.
+- [x] Zależnie od hostingu: adapter PHP z `ZipArchive` albo narzędzie CLI.
+
+Implementacja: PHP 8.2+ / ZipArchive, lokalna komenda administratora oraz
+biblioteka dla przyszłego panelu. Publiczna strona rozumisie.pl zgłasza PHP
+8.5.12; wybór PHP nie oznacza potwierdzenia rozszerzeń ani praw konkretnego konta.
+`doctor` sprawdza środowisko przed instalacją. U1 nie udostępnia HTTP uploadu.
+
+Fallback używa dwóch rename katalogów na jednym systemie plików: krótkie
+okno niedostępności 404 jest jawne, a po zabiciu procesu w tym oknie wymagane
+jest `recover`. Stan i prywatna poprzednia wersja umożliwiają odzyskanie.
+[Instrukcja](../admin-updater/README.md), [raport i ograniczenia](U1-REPORT.md).
 
 ### U2: panel WWW do uploadu
 
@@ -129,4 +139,7 @@ Wersja wydania 0.6.1; manifest v1, kontrakt silnika 2, narzędzie 1.0.0.
 
 Administrator potrafi zainstalować pełną paczkę ZIP bez FTP i bez ręcznego kopiowania plików, zobaczyć wynik walidacji przed instalacją, a następnie w razie problemu jednym działaniem wrócić do poprzedniej działającej wersji. Gracze nie dostają dostępu do panelu, a ich lokalne zapisy pozostają nienaruszone.
 
-**Uwaga realizacyjna:** wyboru adaptera PHP/CLI dokonamy po potwierdzeniu środowiska docelowego. Nie zmieniaj statycznego runtime gry tylko po to, aby umożliwić upload na serwer.
+**Uwaga realizacyjna:** wybrano adapter PHP z wejściem CLI dla U1. Wdrożenie na
+konkretnym koncie wymaga poprawnych ścieżek i pozytywnego wyniku `doctor`.
+Panel WWW pozostaje U2. Nie zmieniaj statycznego runtime gry tylko po to,
+aby umożliwić upload na serwer.

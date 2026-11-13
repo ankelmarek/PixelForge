@@ -49,3 +49,11 @@ npm run package:validate -- downloads/pixelforge-0.6.1-full.zip
 Wynik poprawnej kontroli ma `valid: true`. Szczegóły i limity:
 [RELEASE-PACKAGES.md](../docs/RELEASE-PACKAGES.md).
 Poprzednie paczki P1 0.5.0/0.5.1 i U0 0.6.0 zachowano jako archiwum; bieżąca to **0.6.1-full**.
+
+## Osobne narzędzie aktualizacji U1
+
+[Pobierz instalator PHP U1 1.0.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u1-installer/downloads/pixelforge-updater-u1-1.0.0.zip).
+Ten ZIP rozpakowuje się **poza public_html** i uruchamia przez SSH.
+Nie wgrywa się go do katalogu gry ani do walidatora paczek full.
+[Instrukcja konfiguracji i poleceń](../admin-updater/README.md).
+Panel w przeglądarce będzie osobnym etapem U2.
