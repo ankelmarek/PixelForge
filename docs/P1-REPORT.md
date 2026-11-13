@@ -121,3 +121,13 @@ To punkt odniesienia dla dalszej optymalizacji, a nie wynik fizycznego telefonu.
   publicznego wdrożenia. U1–U2 wymagają osobnego zakresu zgodnego ze specyfikacją.
 
 Kontrakt i powtarzalny sposób pomiaru: [LARGE-WORLDS.md](LARGE-WORLDS.md).
+
+## Paczka do ręcznego wgrania na hosting
+
+Na prośbę użytkownika dodano `downloads/pixelforge-p1-0.5.0-static.zip`,
+sumę SHA-256 i instrukcję hostingu. Archiwum zawiera wyłącznie 272 pliki
+produkcyjnego `dist/` z kodu `9261443`, bez nadrzędnego folderu. Kontrola CRC
+oraz porównanie SHA-256 każdego wpisu z buildem potwierdzają identyczność.
+Rozpakowany ZIP sprawdzono osobno pod `/` i `/PixelForge/`, na desktopie
+oraz w emulacji Pixel 7. Kod runtime nie został zmieniony. To dystrybucja
+ręczna P1; nie wdrożono generatora/walidatora aktualizatora P2/U0.

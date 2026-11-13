@@ -30,6 +30,14 @@ Projekt powstaje z myślą o wielokrotnym wykorzystaniu gotowego silnika i produ
 
 Funkcje silnika powstały w historycznych gałęziach M0–M3 i powiązanych PR, które pozostają do przeglądu i integracji. **Gałąź main nie jest jeszcze opublikowaną wersją kodu.** Gry Winobranie i Leśny sygnał zostały porzucone jako rozwijane produkty; generyczne moduły pozostają do wykorzystania. Nowe mapy muszą być znacznie większe od historycznej próbki 640 × 416 pikseli.
 
+## Gotowa paczka na hosting
+
+[Pobierz PixelForge P1 — ZIP na serwer statyczny](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p1-large-worlds/downloads/pixelforge-p1-0.5.0-static.zip).
+Rozpakuj i wgraj `index.html` oraz cały katalog `assets/` do katalogu strony,
+np. `public_html/pixelforge/`. Otwórz potem `https://twoja-domena.pl/pixelforge/`.
+Na hostingu nie potrzebujesz Node.js ani PHP. [Pełna instrukcja](downloads/README.md).
+Jest to gotowy build P1 do ręcznego wgrania; aktualizator P2 pozostaje osobnym etapem.
+
 ## Uruchamianie
 
 Gałąź `feature/p1-large-worlds` zawiera rdzeń P0 i demonstrację **Atlas**.
