@@ -6,6 +6,16 @@ Zbuduj **PixelForge**, modułowy silnik przeglądarkowych gier 2D w pixel art, u
 
 Przed zmianami przeczytaj `README.md`, `docs/SPECIFICATION.md` i `docs/ROADMAP.md`. Decyzje w tych plikach są obowiązujące, dopóki użytkownik ich nie zmieni.
 
+## Aktualne decyzje projektowe (2026-11-13, nadrzędne nad dawnymi instrukcjami)
+
+**Zmiana kierunku:** PixelForge pozostaje wspólnym silnikiem, ale rozwój produktów **„Winobranie” i platformówki „Leśny sygnał” / `forest-demo` jest zakończony i nie należy go kontynuować**. Nie twórz kolejnych poziomów, mechanik, grafik ani wydań dla tych gier. Ich kod w starych PR stanowi materiał historyczny, z którego można wyodrębnić generyczne, wielokrotnego użytku mechanizmy. Nie usuwaj ani nie scalaj hurtowo historycznych gałęzi bez polecenia.
+
+Nowym kierunkiem są **duże światy 2D z góry, widok z góry 3/4, sterowanie myszą, przyjazne symulatory i krótkie gry na 20–35 minut**. Docelowy świat nowej gry ma startować od 4096 × 4096 pikseli, z architekturą sektorową/chunkową pozwalającą na większe wymiary. Nie buduj jednej ogromnej tekstury ani nie uruchamiaj pełnego A* na całej mapie przy każdym ruchu.
+
+Nowym zadaniem infrastrukturalnym jest **bezpieczny aktualizator ZIP** z podglądem zmian, kontrolą wersji, stagingiem, kopią poprzedniego wydania i rollbackiem. Sam statyczny frontend nie aktualizuje hostingu. Opcjonalny moduł webowy wymaga osobnego, uwierzytelnionego komponentu serwerowego. Nie uruchamiaj publicznego uploadu bez logowania.
+
+**Bieżąca dokumentacja:** `docs/ROADMAP.md` (wersja 0.2) i `docs/UPDATER-SPEC.md`. Stara `docs/ROADMAP-ARCHIVE-2026-11.md` jest archiwum. Wszelkie sprzeczne dawne polecenia dotyczące M0/M2/M3/Winobrania czy platformówki są uchylone.
+
 ## Gałęzie i pull requesty
 
 - `main` jest gałęzią stabilną. Dokumentacja bazowa może w niej pozostać, ale **implementacja kodu każdego etapu musi być wykonywana na osobnej gałęzi roboczej**.
@@ -16,7 +26,7 @@ Przed zmianami przeczytaj `README.md`, `docs/SPECIFICATION.md` i `docs/ROADMAP.m
 
 ## Sposób pracy
 
-1. Zacznij od etapu **M0** roadmapy. W jednym zadaniu realizuj tylko bieżący, niezamknięty etap lub wyraźnie wskazany zakres.
+1. Zacznij od aktualnego planu P0 w `docs/ROADMAP.md` (wersja 0.2) lub od odrębnie zleconego zadania. W jednym cyklu realizuj tylko wskazany zakres.
 2. Sprawdzaj istniejący kod przed edycją. Nie niszcz działających rozwiązań, nie zastępuj całych modułów bez konieczności.
 3. Wykonuj małe, czytelne zmiany i dodawaj testy. Po każdym etapie uruchamiaj wszystkie dostępne kontrole.
 4. Zakończenie każdego etapu udokumentuj w `docs/ROADMAP.md`: status, istotne decyzje, testy, ograniczenia i następny krok.
@@ -29,7 +39,7 @@ Przed zmianami przeczytaj `README.md`, `docs/SPECIFICATION.md` i `docs/ROADMAP.m
 - Phaser **4.2.1**, TypeScript `strict`, Vite.
 - Vitest do logiki bez przeglądarki, Playwright do krytycznych scenariuszy.
 - Node.js w aktualnej, wspieranej wersji LTS zgodnej z zależnościami. W repozytorium zapisz `engines` i plik blokady zależności.
-- Statyczny build, bez PHP, bazy SQL, logowania i serwera aplikacyjnego.
+- Runtime gry: statyczny build bez PHP, bazy SQL, logowania i serwera aplikacyjnego. **Wyjątek odseparowany od gry:** administracyjny aktualizator ZIP może wymagać niewielkiego, uwierzytelnionego komponentu serwerowego zależnego od hostingu.
 - Minimalna liczba bibliotek. Unikaj Reacta w samym runtime gry, chyba że ma to konkretne uzasadnienie.
 
 ## Nieprzekraczalne granice architektury
@@ -58,13 +68,13 @@ Przed zmianami przeczytaj `README.md`, `docs/SPECIFICATION.md` i `docs/ROADMAP.m
 - InputService expose'uje akcje semantyczne, a nie klawisze; jedna gra może mieć dodatkową akcję, ale tylko wtedy, gdy gracz odkrywa ją intuicyjnie, a podstawowe sterowanie pozostaje niezmienione.
 - Dotyk: przyciski **ikonowe bez podpisów** o tych samych znaczeniach, odpowiednio duże i wygodne; nie używaj wirtualnego przycisku Shift z napisem „Shift”.
 
-Projektuj pierwsze 30–60 sekund każdego tytułu jako **niewerbalną naukę**: bezpieczna przestrzeń, pierwszy niski próg do przeskoczenia, widoczny reagujący obiekt i bezkarna możliwość ponowienia. Element interaktywny wyróżnia się animacją, światłem, ruchem lub dźwiękiem po zbliżeniu. Działanie przełącznika musi dawać natychmiastowy, wyraźny sygnał wizualny i dźwiękowy, również przy jego wyłączeniu. Nie stosuj zagadek polegających na odgadnięciu niepokazanego skrótu.
+Projektuj pierwsze 30–60 sekund każdego tytułu jako **niewerbalną naukę**: bezpieczna przestrzeń, intuicyjne czynności wykonywane myszą, widoczny reagujący obiekt i bezkarna możliwość ponowienia. Dla nowych gier symulacyjnych nie zakładaj skakania. Element interaktywny wyróżnia się animacją, światłem, ruchem lub dźwiękiem po zbliżeniu. Działanie przełącznika musi dawać natychmiastowy, wyraźny sygnał wizualny i dźwiękowy, również przy jego wyłączeniu. Nie stosuj zagadek polegających na odgadnięciu niepokazanego skrótu.
 
 **Kryterium odbioru:** osoba bez instrukcji przechodzi pierwszą scenę i odkrywa niezbędne działania na podstawie zachowania świata. Testuj to w M2 na osobie, która nie zna projektu. Tekst diagnostyczny widoczny wyłącznie podczas developmentu i komunikaty techniczne w razie krytycznego błędu nie są wskazówkami gameplayowymi.
 
 ## Jakość i UX
 
-- Pixel art bez rozmycia, logiczna rozdzielczość startowa **320 x 180**; dopasowanie obrazu do dostępnego ekranu z zachowaniem proporcji.
+- Pixel art bez rozmycia. Rozdzielczość **viewportu** może nadal wynosić 320 × 180, lecz **rozmiar świata** jest niezależny, dla nowych gier minimum 4096 × 4096 z kamerą, chunkami i płynnym zoomem.
 - Pełna obsługa klawiatury i przygotowana abstrakcja pod dotyk/pada. Dotykowe sterowanie podstawowe w MVP.
 - Gry muszą mieć pauzę, restart, wyciszenie, czytelny cel przedstawiony wizualnie i ekran końca. **Nie pokazuj instrukcji sterowania, ekranów tutorialowych ani podpowiedzi pisanych.**
 - Nawet demo powinno wyglądać spójnie: ograniczona paleta barw, animowany bohater, tło, podstawowe efekty i dźwięki. Nie zostawiaj surowych prostokątów debugowych jako finalnej oprawy.
@@ -84,6 +94,6 @@ W MVP NIE BUDUJ edytora drag-and-drop, kont użytkowników, chmury zapisów, mul
 
 Najpierw musi powstać jedna działająca gra demonstracyjna i czytelny interfejs umożliwiający dodanie następnej gry bez modyfikowania rdzenia.
 
-## Pierwsze polecenie do wykonania
+## Następne polecenie dla Codexa
 
-> Zapoznaj się z dokumentacją repozytorium PixelForge. Zrealizuj wyłącznie etap **M0** z `docs/ROADMAP.md`, zachowując separację silnika i danych gry. Utwórz uruchamialny szkielet i prototyp pętli rozgrywki, dodaj skrypty kontroli jakości, uruchom testy i opisz wynik. Nie przechodź automatycznie do M1.
+> Przeczytaj `docs/ROADMAP.md` w wersji 0.2 oraz `docs/UPDATER-SPEC.md`. Nie rozwijaj Leśnego sygnału ani Winobrania. Przeprowadź inwentaryzację gotowego rdzenia z gałęzi M0–M3, wskaż bezpieczną integrację modułów bez nieautoryzowanego merge, a następnie podziel prace nad dużymi mapami i aktualizatorem ZIP zgodnie z nową roadmapą. Bez wdrażania gry lub panelu aktualizacji do publicznego hostingu bez zgody.
