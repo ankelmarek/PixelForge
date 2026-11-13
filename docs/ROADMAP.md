@@ -59,7 +59,7 @@ Kryteria odbioru:
 
 ### M2. Dopieszczona gra demonstracyjna
 
-**Status: IN PROGRESS. Priorytet: P0. Kod demo gotowy; trwa weryfikacja i odbiór.**
+**Status: IN PROGRESS. Priorytet: P0. Odbiór funkcjonalny użytkownika pozytywny (2026-11-13); niezależny test odkrywalności niepotwierdzony.**
 
 Zakres:
 
@@ -176,6 +176,13 @@ Kryteria odbioru:
 - [ ] Procedura wydania i przywrócenia poprzedniej wersji jest opisana.
 
 ## Rejestr zmian statusów
+
+### 2026-11-13 — pozytywny odbiór funkcjonalny M2
+
+- Użytkownik: „ok, wrzuciłem, przetestowałem, wszystko ok”.
+- Potwierdzone wdrożenie i test paczki przez użytkownika; nie zgłoszono problemów.
+- Brak danych o nowej osobie nieznającej sterowania; nie odznaczono tego kryterium.
+- Raport M2 uzupełniony; PR #3 przekazany do przeglądu. Bez automatycznego merge/M3.
 
 ### 2026-11-13 — M2 IN PROGRESS
 

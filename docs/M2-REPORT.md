@@ -1,6 +1,6 @@
 # M2 — pełniejsza demonstracja „Leśny sygnał”
 
-Status: **IN PROGRESS — implementacja gotowa do testów odbiorowych**.
+Status: **IN PROGRESS — odbiór funkcjonalny użytkownika pozytywny; niezależny test odkrywalności niepotwierdzony**.
 Gałąź `feature/m2-forest-demo`, baza M1 `a1836e1` (PR #2), M0 w PR #1.
 Użytkownik polecił najpierw M1 i M2; Winobranie/M3 pozostaje odłożone.
 
@@ -85,6 +85,17 @@ Główne zmiany: definicja/rules gry, trzy JSON-y, generatory map i PNG, assety,
 rozszerzenia wizualne/audio w engine, UI, testy, dokumentacja, narzędzie pełnego
 przejścia oraz skrypt paczkowania. Engine nadal nie importuje gier.
 
+## Odbiór użytkownika — 2026-11-13
+
+Użytkownik potwierdził w rozmowie: „ok, wrzuciłem, przetestowałem, wszystko ok”.
+Paczka została zatem wdrożona przez użytkownika na jego serwer i uzyskała pozytywny
+odbiór funkcjonalny. Nie podano adresu serwera, urządzenia, przeglądarki, czasu
+przejścia ani informacji o udziale nowej osoby nieznającej sterowania. Nie
+przypisujemy temu zgłoszeniu niepotwierdzonych szczegółów testów.
+
+PR #3 można przeglądać jako gotową implementację z pozytywnym odbiorem użytkownika.
+Potwierdzenie nie uruchamia automatycznie scalenia PR ani realizacji M3.
+
 ## Pozostały odbiór i ograniczenia
 
 - **Nie wykonano playtestu z nową osobą nieznającą sterowania.** To jawnie
@@ -99,5 +110,5 @@ przejścia oraz skrypt paczkowania. Engine nadal nie importuje gier.
 - Znany duży chunk Phasera. Bez PWA i gwarancji ponownego wejścia offline.
 - Nie scalano PR-ów i nie publikowano strony automatycznie.
 
-Następny krok: test odbiorowy demo przez nową osobę, ewentualne poprawki M2.
+Następny krok: przegląd PR i potwierdzenie niezależnego testu odkrywalności.
 Nie rozpoczynać Winobrania/M3 automatycznie.

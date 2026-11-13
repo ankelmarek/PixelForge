@@ -3,8 +3,8 @@
 Modułowy runtime gier 2D w pixel art: **Phaser 4.2.1**, TypeScript `strict`, Vite.
 Silnik nie zna nazw ani fabuły gier. M1 dostarcza współdzielony runtime,
 a M2 — kampanię **Leśny sygnał** (`forest-demo`): trzy mapy, kolekcje, patrole,
-checkpointy i zakończenie. Kod M2 jest gotowy do odbioru; test z nową osobą
-nieznającą sterowania pozostaje niezaliczonym kryterium roadmapy.
+checkpointy i zakończenie. Użytkownik wdrożył i pozytywnie przetestował paczkę M2. Niezależny test
+z nową osobą nieznającą sterowania nie został jeszcze potwierdzony.
 
 ## Gotowa paczka na serwer statyczny
 
