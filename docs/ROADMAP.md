@@ -15,7 +15,7 @@ Zakres:
 - Dodaj katalogi `src/app`, `src/engine`, `src/games`, `public/assets/games`, `tests`.
 - Wprowadź `GameDefinition`, `LevelDefinition`, minimalny rejestr gier i loader z walidacją.
 - Stwórz `EngineHost` i sceny `Boot`, `Preload`, `Title`, `Gameplay`.
-- Uruchom mały prototyp platformówki w pixel art: prosty sprite, ruch, skok, grawitacja, podłoga/platformy, kamera i jedna interakcja.
+- Uruchom mały prototyp platformówki w pixel art: prosty sprite, ruch, skok, grawitacja, podłoga/platformy, kamera i jedna interakcja. Od początku użyj wspólnego sterowania: strzałki/WASD, Spacja, Shift i Esc. **Nie dodawaj pisanych wskazówek w grze.**
 - Dodaj launcher z jednym wybieralnym tytułem `forest-demo`; gra ma działać na komputerze i wstępnie na telefonie (przyciski dotykowe).
 - Skonfiguruj ESLint, Prettier, Vitest oraz podstawowy Playwright smoke test.
 - Dodaj README z instrukcją `npm install`, `npm run dev` i `npm run build`.
@@ -24,7 +24,7 @@ Zakres:
 Kryteria odbioru:
 - [ ] `npm install` i `npm run dev` uruchamiają stronę bez błędów.
 - [ ] Launcher uruchamia demonstrację i pozwala z niej wyjść bez przeładowania całej strony.
-- [ ] Bohater reaguje na sterowanie, skacze, nie przenika przez podłoże.
+- [ ] Bohater reaguje na strzałki/WASD i Spację, używa Shifta do interakcji, nie przenika przez podłoże. W grze nie pojawiają się tekstowe instrukcje.
 - [ ] Silnik nie importuje kodu gry; konfiguracja nie jest na sztywno wpisana w silnik.
 - [ ] Jeden test walidacji konfiguracji i jeden smoke test przechodzą.
 - [ ] `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build` kończą się powodzeniem.
@@ -41,7 +41,7 @@ Zakres:
 - Zaimplementuj obsługę kolizji, entity factory i podstawowe behaviors: walk, jump, patrol, damage, collectible, trigger, checkpoint, door.
 - Wydziel State/ProgressService, SaveService (localStorage i wersjonowanie) i AudioService.
 - Dodaj RuleSystem z rejestrowanymi akcjami i warunkami. JSON bez kodu wykonywalnego.
-- Dodaj sceny pauzy, porażki i zwycięstwa; podstawowy HUD i ekran sterowania.
+- Dodaj sceny pauzy, porażki i zwycięstwa oraz podstawowy HUD. **Bez ekranu sterowania i tekstowych samouczków**. Podpowiedzi zastępuj animacją, dźwiękiem i układem poziomu.
 - Dodaj kontrolę nieprawidłowych assetów, błędnej mapy i błędnego zapisu.
 - Opisz publiczne API silnika i prosty przepis na kolejną grę.
 
@@ -61,16 +61,17 @@ Zakres:
 - Zbuduj `forest-demo` jako kompletną grę 5–8 minut z 2–3 małymi poziomami.
 - Dodaj spójną oprawę pixel art: animacje idle/run/jump/hit, tło z paralaksą, dekoracje, efekty zbierania i trafień.
 - Wprowadź prostego przeciwnika, przełącznik, drzwi, przedmiot kolekcjonerski, checkpoint, licznik żyć.
-- Zrób krótki tutorial w samej grze, finał i ekran gratulacji.
+- Zbuduj pierwszy fragment poziomu jako niewerbalną naukę przez bezpieczne przeszkody, reagujące obiekty i natychmiastową informację zwrotną. Bez instrukcji tekstowych. Dodaj finał i ekran gratulacji.
 - Dostosuj doświadczenie do dotyku i małych ekranów; zadbaj o ciszę/audio unlock i o dostępność menu.
 - Zmierz wielkość builda i płynność na co najmniej jednym komputerze i urządzeniu mobilnym, jeśli dostępne.
 
 Kryteria odbioru:
-- [ ] Grę da się ukończyć od startu do zakończenia bez konsoli deweloperskiej.
+- [ ] Grę da się ukończyć od startu do zakończenia bez konsoli deweloperskiej i bez instrukcji tekstowych.
 - [ ] Zapis i wznowienie działają po odświeżeniu strony.
 - [ ] Menu pauzy, restart, wyciszenie, porażka i zwycięstwo działają.
 - [ ] Wszystkie zasoby mają ustalony status licencji.
 - [ ] Przeglądarkowe smoke e2e i testy logiki przechodzą.
+- [ ] Playtest z nową osobą potwierdza, że niezbędne akcje są odkrywalne bez instrukcji i bez pisanych podpowiedzi.
 - [ ] Raport zawiera faktyczny wynik playtestu, przybliżony czas gry i znane ograniczenia.
 
 ### M3. Test uniwersalności: druga, niezależna gra
