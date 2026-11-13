@@ -26,8 +26,14 @@ async function worldPoint(page: Page, x: number, y: number) {
   const b = (await canvas.boundingBox())!,
     c = (await state(page)).camera!;
   return {
-    x: b.x + (((x - c.scrollX - 160) * c.zoom + 160) * b.width) / 320,
-    y: b.y + (((y - c.scrollY - 90) * c.zoom + 90) * b.height) / 180,
+    x:
+      b.x +
+      (((x - c.scrollX - c.width / 2) * c.zoom + c.width / 2) * b.width) /
+        c.width,
+    y:
+      b.y +
+      (((y - c.scrollY - c.height / 2) * c.zoom + c.height / 2) * b.height) /
+        c.height,
   };
 }
 async function clickWorld(page: Page, x: number, y: number) {
@@ -86,14 +92,16 @@ for (const size of [4096, 8192])
       [1, 1],
       [0, 1],
       [0.5, 0.5],
+      [0.25, 0.75],
+      [0.75, 0.25],
     ]) {
       await mapPoint(page, u, v);
       const s = await state(page),
         c = s.camera!,
         w = c.width / c.zoom,
         h = c.height / c.zoom;
-      const left = c.scrollX + 160 - w / 2,
-        top = c.scrollY + 90 - h / 2;
+      const left = c.scrollX + c.width / 2 - w / 2,
+        top = c.scrollY + c.height / 2 - h / 2;
       expect(left).toBeGreaterThanOrEqual(-1);
       expect(top).toBeGreaterThanOrEqual(-1);
       expect(left + w).toBeLessThanOrEqual(size + 1);
@@ -102,8 +110,8 @@ for (const size of [4096, 8192])
       if (v === 0) expect(top).toBeLessThan(2);
       if (u === 1) expect(left + w).toBeGreaterThan(size - 2);
       if (v === 1) expect(top + h).toBeGreaterThan(size - 2);
-      expect(s.world!.resident).toBeLessThanOrEqual(24);
-      expect(s.world!.rendered).toBeLessThanOrEqual(20);
+      expect(s.world!.resident).toBeLessThanOrEqual(48);
+      expect(s.world!.rendered).toBeLessThanOrEqual(42);
       expect(s.world!.actorsRendered).toBe(
         s.actors!.filter(
           (a) =>
@@ -311,5 +319,87 @@ test('ekran tytułowy zachowuje zapis, a szybkie wyjście przerywa ładowanie se
   await expect(
     page.getByRole('heading', { name: 'Brak aktywnych tytułów' }),
   ).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test('pełne okno, proporcje, obrót i trafianie po zmianie rozmiaru', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await open(page);
+  for (const viewport of [
+    { width: 1440, height: 1000 },
+    { width: 320, height: 568 },
+    { width: 844, height: 390 },
+    { width: 412, height: 839 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await expect
+      .poll(async () => page.locator('#stage').evaluate((e) => e.clientHeight))
+      .toBe(viewport.height);
+    await expect
+      .poll(async () => {
+        const c = (await state(page)).camera!;
+        return c.width / c.height;
+      })
+      .toBeCloseTo(viewport.width / viewport.height, 1);
+    await settled(page);
+    const display = await page
+      .locator('#stage canvas')
+      .evaluate((e: HTMLCanvasElement) => {
+        const b = e.getBoundingClientRect();
+        return {
+          x: b.x,
+          y: b.y,
+          width: b.width,
+          height: b.height,
+          sx: b.width / e.width,
+          sy: b.height / e.height,
+        };
+      });
+    expect(display.x).toBe(0);
+    expect(display.y).toBe(0);
+    expect(display.width).toBeGreaterThanOrEqual(viewport.width);
+    expect(display.height).toBeGreaterThanOrEqual(viewport.height);
+    expect(display.width - viewport.width).toBeLessThan(display.sx);
+    expect(display.height - viewport.height).toBeLessThan(display.sy);
+    expect(display.sx).toBe(display.sy);
+    expect(Number.isInteger(display.sx)).toBe(true);
+    for (const button of await page
+      .locator('.toolbar button, .landmarks button, #back')
+      .all()) {
+      const b = (await button.boundingBox())!;
+      expect(b.width).toBeGreaterThanOrEqual(44);
+      expect(b.height).toBeGreaterThanOrEqual(44);
+      expect(b.x).toBeGreaterThanOrEqual(0);
+      expect(b.x + b.width).toBeLessThanOrEqual(viewport.width);
+      expect(b.y + b.height).toBeLessThanOrEqual(viewport.height);
+    }
+    await page.locator('[data-focus="worker-1"]').click();
+    await settled(page);
+    await clickWorld(page, 35.5 * 16, 24.5 * 16 - 10);
+    await expect
+      .poll(async () => (await state(page)).selectedId)
+      .toBe('worker-1');
+    await page.locator('#zoom-out').click();
+    await mapPoint(page, 1, 1);
+    const c = (await state(page)).camera!;
+    expect(c.scrollX + c.width / 2 + c.width / c.zoom / 2).toBeCloseTo(4096, 0);
+    expect(c.scrollY + c.height / 2 + c.height / c.zoom / 2).toBeCloseTo(
+      4096,
+      0,
+    );
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollHeight <= innerHeight,
+      ),
+    ).toBe(true);
+  }
+  await page.locator('#back').click();
+  await expect(page.locator('.demo-card')).toBeVisible();
+  expect(
+    await page.evaluate(() => getComputedStyle(document.body).overflow),
+  ).not.toBe('hidden');
   expect(errors).toEqual([]);
 });

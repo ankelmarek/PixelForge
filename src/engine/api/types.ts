@@ -134,6 +134,8 @@ export interface Snapshot {
   elapsed?: number;
 }
 export interface HostOptions {
+  /** Fill the parent with a bounded, adaptive camera (sector worlds only). */
+  display?: 'fit' | 'fill';
   worldLimits?: import('../world/validation').WorldLimits;
   parent: HTMLElement;
   definition: AnyGameDefinition;

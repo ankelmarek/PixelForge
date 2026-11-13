@@ -26,11 +26,12 @@ function text(value: unknown, name: string) {
 export function validateSimulationLevel(
   raw: unknown,
   limits: WorldLimits = defaultWorldLimits,
+  viewport = { width: 320, height: 180 },
 ): SimulationLevel {
   const data = object(raw, 'Symulacja');
   if (data.schemaVersion !== 1 && data.schemaVersion !== 2)
     throw Error('Symulacja: nieobsługiwana wersja');
-  if (data.schemaVersion === 2) validateWorldTerrain(raw, limits);
+  if (data.schemaVersion === 2) validateWorldTerrain(raw, limits, viewport);
   text(data.id, 'id');
   if (typeof data.title !== 'string' || !data.title)
     throw Error('title: wymagany tekst');

@@ -120,7 +120,13 @@ export function createSimulationRuntime(
         this.cameras.main.setZoom(save.camera.zoom);
         this.pointer.focus(save.camera.x, save.camera.y);
       }
+      const resize = () => {
+        this.render();
+        this.emit();
+      };
+      this.scale.on('resize', resize);
       this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+        this.scale.off('resize', resize);
         this.pointer.destroy();
         this.sectors?.destroy();
         this.sectors = undefined;

@@ -32,11 +32,12 @@ Funkcje silnika powstały w historycznych gałęziach M0–M3 i powiązanych PR,
 
 ## Gotowa paczka na hosting
 
-[Pobierz PixelForge P1 — ZIP na serwer statyczny](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p1-large-worlds/downloads/pixelforge-p1-0.5.0-static.zip).
+[Pobierz PixelForge P1 — ZIP na serwer statyczny](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p1-large-worlds/downloads/pixelforge-p1-0.5.1-static.zip).
 Rozpakuj i wgraj `index.html` oraz cały katalog `assets/` do katalogu strony,
 np. `public_html/pixelforge/`. Otwórz potem `https://twoja-domena.pl/pixelforge/`.
 Na hostingu nie potrzebujesz Node.js ani PHP. [Pełna instrukcja](downloads/README.md).
-Jest to gotowy build P1 do ręcznego wgrania; aktualizator P2 pozostaje osobnym etapem.
+Atlas wypełnia całe okno przeglądarki, także po obrocie telefonu.
+Jest to gotowy build P1 0.5.1 do ręcznego wgrania; aktualizator P2 pozostaje osobnym etapem.
 
 ## Uruchamianie
 

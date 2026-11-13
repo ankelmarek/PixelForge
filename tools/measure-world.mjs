@@ -31,8 +31,14 @@ try {
       const b = await page.locator('#stage canvas').boundingBox(),
         c = (await read()).camera;
       await page.mouse.click(
-        b.x + (((43 * 16 - c.scrollX - 160) * c.zoom + 160) * b.width) / 320,
-        b.y + (((24.5 * 16 - c.scrollY - 90) * c.zoom + 90) * b.height) / 180,
+        b.x +
+          (((43 * 16 - c.scrollX - c.width / 2) * c.zoom + c.width / 2) *
+            b.width) /
+            c.width,
+        b.y +
+          (((24.5 * 16 - c.scrollY - c.height / 2) * c.zoom + c.height / 2) *
+            b.height) /
+            c.height,
       );
       for (let i = 0; i < 5; i++) await page.locator('#zoom-out').click();
       await expect.poll(async () => (await read()).camera.zoom).toBe(0.5);

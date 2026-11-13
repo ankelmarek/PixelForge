@@ -72,17 +72,19 @@ Format świata i sposób pomiaru: [LARGE-WORLDS.md](LARGE-WORLDS.md).
 Następny etap: P2/U0. Nie rozpoczęto U1/U2 ani żadnej gry P3.
 
 **Odbiór użytkownika — 2026-11-13:** bieżąca paczka P1 działa na jego serwerze.
-Pozostaje zgłoszona poprawka prezentacji, do następnej paczki P1:
+Poprawka prezentacji wykonana w paczce P1 0.5.1:
 
-- [ ] Po uruchomieniu Atlas zajmuje cały dostępny obszar okna przeglądarki;
+- [x] Po uruchomieniu Atlas zajmuje cały dostępny obszar okna przeglądarki;
       widok świata wypełnia okno, bez osadzenia w małej karcie strony.
-- [ ] Kontrolki i minimapa są nakładką na świat; zachować ostre piksele,
+- [x] Kontrolki i minimapa są nakładką na świat; zachować ostre piksele,
       poprawne proporcje, wygodny dotyk oraz dopasowanie po zmianie rozmiaru
       i orientacji ekranu.
-- [ ] Sprawdzić ten układ na desktopie i w emulacji telefonu oraz wydać nowy ZIP.
+- [x] Sprawdzić ten układ na desktopie i w emulacji telefonu oraz wydać nowy ZIP.
 
-Ta uwaga nie oznacza, że poprawka jest już wdrożona. Po niej kolejnym zakresem
-roadmapy pozostaje **P2/U0: generator paczek full i walidator offline**.
+Pełne okno oznacza obszar strony, bez wymuszania F11/Fullscreen API.
+Weryfikacja: 47 testów jednostkowych, E2E 24 PASS + 2 SKIP; rozpakowany ZIP
+8/8 PASS. Szczegóły: [raport poprawki](P1-FULL-WINDOW.md).
+Kolejny zakres: **P2/U0: generator paczek full i walidator offline**.
 
 ### P2. Aktualizator plikowy ZIP
 

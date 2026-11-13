@@ -5,17 +5,19 @@ export function mountWorldLab(
   size: 4096 | 8192,
   back: () => void,
 ) {
-  root.innerHTML = `<header><a class="brand" href="./">▧ PIXEL<span>FORGE</span></a><span class="phase">ATLAS / P1</span></header>
-    <main class="lab"><div class="section-heading"><div><p class="eyebrow">LABORATORIUM ŚWIATA</p><h1>Atlas <em>${size}</em></h1></div><button id="back" aria-label="Powrót do katalogu">←</button></div>
-    <div class="lab-layout"><div class="stage-wrap"><div id="stage"></div><div id="menu" class="lab-menu"><span class="eyebrow">${size} × ${size}</span><h2>Atlas</h2><button id="start" disabled>Nowa sesja</button><button id="resume" disabled>Wznów</button></div></div>
-    <aside><canvas id="minimap" width="144" height="144" aria-label="Minimapa świata" role="img"></canvas><div class="landmarks">
+  root.innerHTML = `<main class="lab" aria-label="Atlas ${size}">
+    <div id="stage"></div>
+    <div class="lab-heading"><button id="back" aria-label="Powrót do katalogu">←</button><span>ATLAS <em>${size}</em></span></div>
+    <output id="progress" aria-label="Postęp produkcji">▦ 0 / 48</output>
+    <aside class="world-navigation"><canvas id="minimap" width="144" height="144" aria-label="Minimapa świata" role="img"></canvas><div class="landmarks">
       <button data-focus="worker-1" aria-label="Pracownik"><img src="assets/demos/large-world/worker.png" alt="" class="person-icon"></button>
       <button data-focus="vehicle" aria-label="Pojazd">▰</button><button data-focus="source" aria-label="Źródło">▦</button>
       <button data-focus="depot" aria-label="Skład">⌂</button><button data-focus="processor" aria-label="Przetwórnia">⚙</button><button data-focus="remote-source" aria-label="Odległe źródło">◇</button>
-    </div></aside></div>
+    </div></aside>
     <div class="toolbar"><div><button id="pause" aria-label="Pauza">Ⅱ</button><button id="mute" aria-label="Wyciszenie" aria-pressed="false">♫</button><button id="cancel" aria-label="Anuluj zadania">×</button><button id="focus" aria-label="Zaznaczona jednostka">◎</button></div>
-    <output id="progress" aria-label="Postęp produkcji">▦ 0 / 48</output><div><button id="zoom-out" aria-label="Oddal">−</button><button id="zoom-reset" aria-label="Widok początkowy">⌖</button><button id="zoom-in" aria-label="Przybliż">+</button></div></div>
-    <div id="session-menu" hidden><button id="continue">Wznów</button><button id="restart">Nowa sesja</button></div>
+    <div><button id="zoom-out" aria-label="Oddal">−</button><button id="zoom-reset" aria-label="Widok początkowy">⌖</button><button id="zoom-in" aria-label="Przybliż">+</button></div></div>
+    <div id="menu" class="lab-menu"><span class="eyebrow">${size} × ${size}</span><h2>Atlas</h2><button id="start" disabled>Nowa sesja</button><button id="resume" disabled>Wznów</button></div>
+    <div id="session-menu" class="lab-menu" hidden><button id="continue">Wznów</button><button id="restart">Nowa sesja</button></div>
     <p id="message" role="status"></p><p id="error" role="alert"></p><pre id="diagnostics" hidden></pre></main>`;
   const get = <T extends HTMLElement = HTMLElement>(id: string) =>
     root.querySelector<T>(`#${id}`)!;
@@ -46,8 +48,8 @@ export function mountWorldLab(
       ctx.strokeStyle = '#f0ead6';
       ctx.lineWidth = 1;
       ctx.strokeRect(
-        (c.scrollX + 160 - w / 2) * factor,
-        (c.scrollY + 90 - h / 2) * factor,
+        (c.scrollX + c.width / 2 - w / 2) * factor,
+        (c.scrollY + c.height / 2 - h / 2) * factor,
         w * factor,
         h * factor,
       );
@@ -55,6 +57,7 @@ export function mountWorldLab(
   };
   const host = new EngineHost({
     parent: get('stage'),
+    display: 'fill',
     definition: worldDemo(size),
     onReady() {
       if (dead) return;

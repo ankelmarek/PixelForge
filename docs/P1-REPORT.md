@@ -1,5 +1,8 @@
 # Raport P1 — duże światy
 
+Aktualizacja 0.5.1: [pełne okno, nowe testy i ZIP](P1-FULL-WINDOW.md).
+Poniższe pierwotne pomiary dotyczą wersji 0.5.0.
+
 Data: 2026-11-13. Gałąź: `feature/p1-large-worlds`. Baza: P0 `de1945d`
 ([PR #5](https://github.com/ankelmarek/PixelForge/pull/5)). P1 stanowi oddzielny
 commit i PR do `main`; żaden PR nie został automatycznie scalony ani wdrożony.

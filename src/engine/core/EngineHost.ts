@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { expandedViewport, fillViewport } from './viewport';
 import type { HostOptions, Snapshot } from '../api/types';
 import { loadLevel, validateDefinition } from '../api/validation';
 import { createScenes, type Session } from '../scenes/scenes';
@@ -42,7 +43,10 @@ export class EngineHost {
         const level = validateSimulationLevel(
           await response.json(),
           this.options.worldLimits,
+          this.options.display === 'fill' ? expandedViewport : undefined,
         );
+        if (this.options.display === 'fill' && level.schemaVersion !== 2)
+          throw Error('Pełny widok wymaga świata sektorowego');
         const keys = new Set(Object.keys(definition.assets));
         if (level.schemaVersion === 2) {
           const terrain = level.terrain,
@@ -80,6 +84,8 @@ export class EngineHost {
         this.boot(this.simulation.scenes, 0);
         return;
       }
+      if (this.options.display === 'fill')
+        throw Error('Pełny widok wymaga świata sektorowego');
       const rules = new RuleSystem();
       definition.registerRules?.(rules);
       const levels = await Promise.all(
@@ -202,7 +208,10 @@ export class EngineHost {
       scale.updateBounds();
       const bounds = scale.canvasBounds;
       if (bounds.width > 0 && bounds.height > 0)
-        scale.displayScale.set(320 / bounds.width, 180 / bounds.height);
+        scale.displayScale.set(
+          canvas.width / bounds.width,
+          canvas.height / bounds.height,
+        );
     };
     const pointerEvents = [
       'mousedown',
@@ -226,6 +235,16 @@ export class EngineHost {
     );
     this.resize = new ResizeObserver(() => {
       const parent = this.options.parent;
+      if (this.options.display === 'fill') {
+        const view = fillViewport(parent.clientWidth, parent.clientHeight);
+        if (canvas.width !== view.width || canvas.height !== view.height)
+          this.game!.scale.resize(view.width, view.height);
+        // Exact integer scaling; at most scale - 1 CSS pixels are clipped at an edge.
+        canvas.style.width = `${view.width * view.scale}px`;
+        canvas.style.height = `${view.height * view.scale}px`;
+        syncPointerBounds();
+        return;
+      }
       const ratio = Math.min(
         parent.clientWidth / 320,
         parent.clientHeight / 180,

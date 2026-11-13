@@ -71,6 +71,18 @@ export class PointerInputService {
       this.zoom(dy > 0 ? -1 : 1, p.x, p.y);
     };
     const context = (event: Event) => event.preventDefault();
+    let previousWidth = camera.width,
+      previousHeight = camera.height;
+    const resize = () => {
+      cancel();
+      this.focus(
+        camera.scrollX + previousWidth / 2,
+        camera.scrollY + previousHeight / 2,
+      );
+      previousWidth = camera.width;
+      previousHeight = camera.height;
+    };
+    scene.scale.on('resize', resize);
     scene.input.on('pointerdown', start);
     scene.input.on('pointermove', move);
     scene.input.on('pointerup', end);
@@ -79,6 +91,7 @@ export class PointerInputService {
     scene.input.on('wheel', wheel);
     scene.game.canvas.addEventListener('contextmenu', context);
     this.dispose.push(() => {
+      scene.scale.off('resize', resize);
       scene.input.off('pointerdown', start);
       scene.input.off('pointermove', move);
       scene.input.off('pointerup', end);
@@ -120,7 +133,11 @@ export class PointerInputService {
       );
     this.clamp();
   }
-  zoom(direction: number, x = 160, y = 90) {
+  zoom(
+    direction: number,
+    x = this.scene.cameras.main.width / 2,
+    y = this.scene.cameras.main.height / 2,
+  ) {
     if (direction === 0) {
       this.reset();
       return;

@@ -97,6 +97,7 @@ describe('wersjonowane światy i sektory', () => {
 it('cache ma limit, ewakuuje stare dane i pobiera tylko widoczne regiony z marginesem', async () => {
   const l = world(8192),
     error = vi.fn();
+  l.terrain.cacheSectors = 24;
   const cache = new SectorCache(l, async (r) => sector(l, r), error);
   for (let i = 0; i < 12; i++) {
     const wanted = sectorsInView(l, {

@@ -134,8 +134,8 @@ for cells in [256,512]:
     world=dict(schemaVersion=2,id=f'world-{cells*16}',title=f'Atlas {cells*16}',width=cells,height=cells,tileSize=16,
       roads=[{'x':0,'y':30,'width':cells,'height':5},{'x':34,'y':0,'width':5,'height':cells}],blockers=merged,
       resources=[{'id':'raw','unitValue':1,'icon':'cargo'},{'id':'product','unitValue':1,'icon':'cargo'}],nodes=nodes,actors=actors,
-      goal={'storage':'storage','resource':'product','amount':48},camera={'zoom':1,'minZoom':.5,'maxZoom':2,'center':{'x':35,'y':27}},
-      terrain={'revision':'terrain-1','sectorSize':32,'texture':'tiles','frames':16,'fallbackColor':0x718d58,'cacheSectors':24,
+      goal={'storage':'storage','resource':'product','amount':48},camera={'zoom':1,'minZoom':.5,'maxZoom':2,'center':{'x':38,'y':27}},
+      terrain={'revision':'terrain-1','sectorSize':32,'texture':'tiles','frames':16,'fallbackColor':0x718d58,'cacheSectors':48,
         'sectors':[{'id':f's-{x}-{y}','x':x,'y':y,'url':f'chunks/{x}-{y}.json'} for y in range(cells//32) for x in range(cells//32)]})
     (out/f'world-{cells*16}.json').write_text(json.dumps(world,separators=(',',':'))+'\n')
 print('Generated two worlds, 256 sectors and 9 small PNGs.')

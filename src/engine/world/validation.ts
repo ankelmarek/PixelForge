@@ -25,7 +25,10 @@ const identifier = (v: unknown) =>
 export function validateWorldTerrain(
   raw: unknown,
   limits = defaultWorldLimits,
+  viewport = { width: 320, height: 180 },
 ): void {
+  if (!integer(viewport.width, 1, 8192) || !integer(viewport.height, 1, 8192))
+    throw Error('Świat: błędny viewport');
   const d = record(raw),
     t = record(d.terrain);
   const width = d.width as number,
@@ -84,15 +87,18 @@ export function validateWorldTerrain(
   // Includes one sector of prefetch on each side, with one partial sector at either edge.
   const minZoom = Number(camera.minZoom);
   const needed =
-    Math.min(columns, Math.ceil(320 / minZoom / sectorPixels) + 3) *
-    Math.min(rows, Math.ceil(180 / minZoom / sectorPixels) + 3);
+    Math.min(columns, Math.ceil(viewport.width / minZoom / sectorPixels) + 3) *
+    Math.min(rows, Math.ceil(viewport.height / minZoom / sectorPixels) + 3);
   if (
     !Number.isFinite(minZoom) ||
     minZoom <= 0 ||
     needed > Number(t.cacheSectors)
   )
     throw Error('Świat: cache nie mieści widoku i marginesu');
-  if (width * tile < 320 / minZoom || height * tile < 180 / minZoom)
+  if (
+    width * tile < viewport.width / minZoom ||
+    height * tile < viewport.height / minZoom
+  )
     throw Error('Świat: zoom odsłania obszar poza mapą');
 }
 

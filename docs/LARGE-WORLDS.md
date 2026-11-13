@@ -7,7 +7,7 @@ silnik nie importuje demonstracji. Poziomy v1 i ich klucze zapisu działają nad
 ## Dane i granice
 
 - `width`, `height` i pozycje obiektów są w komórkach. Wymiary w pikselach to
-  `width * tileSize`, `height * tileSize`; viewport ma osobno 320 × 180.
+  `width * tileSize`, `height * tileSize`; viewport jest niezależny (domyślnie 320 × 180).
 - `terrain` zawiera `revision`, `sectorSize` w komórkach, klucz atlasu `texture`,
   liczbę `frames`, kolor tła, `cacheSectors` i kompletny katalog `sectors`.
 - Sektor: stabilne `id`, indeksy `x`, `y` i `url` względem **manifestu**, nie domeny.
@@ -37,7 +37,7 @@ przeszkód i dróg. Dalsze zwiększanie liczby jednostek wymaga osobnych pomiar�
 
 ## Renderer i kamera
 
-Cache danych LRU ma 24 sektory w demonstracji. Loader pobiera maksymalnie cztery
+Cache danych LRU ma 48 sektorów w demonstracji. Loader pobiera maksymalnie cztery
 sektory jednocześnie, zaczyna od środka widoku i dodaje jeden sektor marginesu.
 Szybki skok widoku anuluje nieaktualne żądania. Spóźniona odpowiedź po zmianie
 widoku lub zamknięciu hosta nie przywraca zasobów. Sektor ma limit 256 KiB JSON.
@@ -109,3 +109,19 @@ Pomiar buildu: w pierwszym terminalu `npm run preview -- --port 4194`, w drugim
 Wynik: FPS/rAF, percentyl czasu klatki, pamięć JS CDP i estymacja powierzchni
 tekstur. Emulacja Pixel 7 korzysta z CPU/GPU hosta; nie zastępuje urządzenia.
 Wyniki i rzeczywiste ograniczenia znajdują się w [raporcie P1](P1-REPORT.md).
+
+## Pełne okno (P1 0.5.1)
+
+`EngineHost({ display: 'fill', ... })` dla poziomu sektorowego v2 dopasowuje
+kamerę do rodzica. Atlas nadaje rodzicowi rozmiar całego okna (`100dvh`), a HUD
+jest nakładką z safe-area i celami dotyku minimum 44 px. Katalog zachowuje
+zwykłe przewijanie po wyjściu z demonstracji.
+
+Silnik wybiera wspólną całkowitą skalę obu osi. Rozmiar logiczny jest ograniczony
+do 640 × 960, także na bardzo dużym monitorze; maksymalnie `skala - 1` pikseli
+CSS nadmiaru canvasa jest przyciętych przy krawędzi. Nie rozciąga proporcji i nie
+wywołuje Fullscreen API. Walidacja sprawdza cache i świat dla maksymalnego
+viewportu przy minimalnym zoomie: w Atlasie potrzeba najwyżej 42 sektorów
+z marginesem, cache ma 48. Zmiana rozmiaru zachowuje środek kamery (z ograniczeniem
+do granic świata), a input i minimapa korzystają z bieżących wymiarów.
+Domyślny tryb `fit` i kontrakt v1 pozostają zgodne.
