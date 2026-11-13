@@ -36,11 +36,29 @@ Przed zmianami przeczytaj `README.md`, `docs/SPECIFICATION.md` i `docs/ROADMAP.m
 - Gameplay powinien działać niezależnie od szybkości klatek; pracuj na czasie delta i zachowaj kontrolę nad pauzą/wznowieniem.
 - Zapis lokalny ma być wersjonowany i odseparowany przestrzenią nazw `gameId`. W razie uszkodzenia danych aplikacja nie może się wywracać.
 
+## Stała reguła: sterowanie bez pisanych podpowiedzi
+
+**Obowiązuje wszystkie gry i demo PixelForge od M0.** Gracz nie dostaje żadnych tekstowych instrukcji sterowania, samouczków, dymków typu „Naciśnij Shift”, opisów zagadek, strzałek z podpisami ani pop-upów objaśniających mechanikę. Nie dodawaj także ekranu z listą klawiszy. Mechanikę poznaje przez układ poziomu, animację, reakcję świata, dźwięk i obrazowe symbole. Krótkie nazwy menu i tytuł gry są dopuszczalne, ale nie mogą być instrukcją ani warunkiem rozwiązania zagadki.
+
+**Wspólny schemat klawiszy na desktopie:**
+- `←/→` lub `A/D`: ruch poziomy; `↑/↓` lub `W/S`: ruch pionowy tylko w gatunkach, które go wymagają.
+- `Spacja`: skok podczas platformówki; na ekranie startu/wyniku potwierdzenie lub ponowne rozpoczęcie, gdy nie ma skakania.
+- `Shift`: jedna kontekstowa akcja, np. użyj, podnieś, pociągnij lub włącz/wyłącz przełącznik. **Krótkie naciśnięcie**, a nie przytrzymywanie, jeśli akcja ma zmienić stan. Brak konieczności używania osobnego przycisku dla każdej zagadki.
+- `Esc`: pauza/wznowienie; z menu powrót bez niezamierzonej utraty postępu.
+- `Enter`: opcjonalne potwierdzenie w menu (równoważne Spacji). `R`: restart dopiero w stanie porażki lub w menu, żeby nie zresetować przypadkowo rozgrywki.
+- Nie wymagaj kombinacji klawiszy, skrótów wieloklawiszowych ani znajomości niestandardowych bindów. Nie wykorzystuj Shifta równocześnie do sprintu i interakcji.
+- InputService expose'uje akcje semantyczne, a nie klawisze; jedna gra może mieć dodatkową akcję, ale tylko wtedy, gdy gracz odkrywa ją intuicyjnie, a podstawowe sterowanie pozostaje niezmienione.
+- Dotyk: przyciski **ikonowe bez podpisów** o tych samych znaczeniach, odpowiednio duże i wygodne; nie używaj wirtualnego przycisku Shift z napisem „Shift”.
+
+Projektuj pierwsze 30–60 sekund każdego tytułu jako **niewerbalną naukę**: bezpieczna przestrzeń, pierwszy niski próg do przeskoczenia, widoczny reagujący obiekt i bezkarna możliwość ponowienia. Element interaktywny wyróżnia się animacją, światłem, ruchem lub dźwiękiem po zbliżeniu. Działanie przełącznika musi dawać natychmiastowy, wyraźny sygnał wizualny i dźwiękowy, również przy jego wyłączeniu. Nie stosuj zagadek polegających na odgadnięciu niepokazanego skrótu.
+
+**Kryterium odbioru:** osoba bez instrukcji przechodzi pierwszą scenę i odkrywa niezbędne działania na podstawie zachowania świata. Testuj to w M2 na osobie, która nie zna projektu. Tekst diagnostyczny widoczny wyłącznie podczas developmentu i komunikaty techniczne w razie krytycznego błędu nie są wskazówkami gameplayowymi.
+
 ## Jakość i UX
 
 - Pixel art bez rozmycia, logiczna rozdzielczość startowa **320 x 180**; dopasowanie obrazu do dostępnego ekranu z zachowaniem proporcji.
 - Pełna obsługa klawiatury i przygotowana abstrakcja pod dotyk/pada. Dotykowe sterowanie podstawowe w MVP.
-- Gry muszą mieć pauzę, restart, wyciszenie, informację o sterowaniu, jasny cel i ekran końca.
+- Gry muszą mieć pauzę, restart, wyciszenie, czytelny cel przedstawiony wizualnie i ekran końca. **Nie pokazuj instrukcji sterowania, ekranów tutorialowych ani podpowiedzi pisanych.**
 - Nawet demo powinno wyglądać spójnie: ograniczona paleta barw, animowany bohater, tło, podstawowe efekty i dźwięki. Nie zostawiaj surowych prostokątów debugowych jako finalnej oprawy.
 - Możliwość uruchomienia na Windows w przeglądarce i na smartfonie. Bez stałego połączenia z backendem.
 - Nie dodawaj reklam, analityki, zbędnych uprawnień, zewnętrznych fontów pobieranych w runtime ani elementów naruszających prawa autorskie.
@@ -48,7 +66,7 @@ Przed zmianami przeczytaj `README.md`, `docs/SPECIFICATION.md` i `docs/ROADMAP.m
 ## Testy wymagane na każdym etapie
 
 - `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`.
-- Po dodaniu demonstracji: `npm run test:e2e` obejmujący start gry, ruch, interakcję, przejście poziomu, pauzę i zapis/wznowienie.
+- Po dodaniu demonstracji: `npm run test:e2e` obejmujący start gry, ruch, interakcję, przejście poziomu, pauzę i zapis/wznowienie. Sprawdź także, że w gameplayu nie pojawiają się teksty instruktażowe.
 - Sprawdź obsługę błędnej konfiguracji, brakującego assetu, odświeżenia strony i zapisu uszkodzonego JSON.
 - Zapisuj ograniczenia testów ręcznych; nie udawaj, że testy wykonano, jeśli środowisko na to nie pozwala.
 
