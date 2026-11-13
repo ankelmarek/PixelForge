@@ -124,6 +124,7 @@ Poziomy opisuj w JSON, najlepiej z warstwami kompatybilnymi z eksportem Tiled: w
 Parser MUSI odrzucać nieznane akcje z czytelnym błędem; sam JSON nie może deklarować arbitralnego JavaScript.
 
 **Dwie ścieżki rozszerzalności:**
+
 - 80% zwykłych gier budujemy z konfiguracji, gotowych zachowań i poziomów.
 - Nietypowa mechanika powstaje jako moduł TS implementujący stabilny interfejs rejestrowany przez grę, bez zmian rdzenia.
 
@@ -164,16 +165,16 @@ W M0/M1 wystarczy jeden przykład mechaniki rozszerzalnej i dokumentacja, jak do
 
 **Stałe przypisanie sterowania, wspólne dla wszystkich gier:**
 
-| Akcja | Komputer | Dotyk |
-|---|---|---|
-| Ruch | strzałki lub WASD | ikonowy krzyżak / kierunki |
-| Skok | Spacja | ikonowy przycisk skoku |
-| Interakcja, aktywacja, przełącznik ON/OFF | Shift, pojedyncze naciśnięcie | ikonowy przycisk działania |
-| Pauza / wznowienie | Esc | ikona pauzy / odtwarzania |
-| Potwierdzenie w menu | Spacja lub Enter | dotknięcie elementu |
-| Ponowienie po porażce | Spacja lub Enter; ewentualnie R tylko na ekranie porażki | ikonowy przycisk ponowienia |
+| Akcja                                     | Komputer                                                 | Dotyk                       |
+| ----------------------------------------- | -------------------------------------------------------- | --------------------------- |
+| Ruch                                      | strzałki lub WASD                                        | ikonowy krzyżak / kierunki  |
+| Skok                                      | Spacja                                                   | ikonowy przycisk skoku      |
+| Interakcja, aktywacja, przełącznik ON/OFF | Shift, pojedyncze naciśnięcie                            | ikonowy przycisk działania  |
+| Pauza / wznowienie                        | Esc                                                      | ikona pauzy / odtwarzania   |
+| Potwierdzenie w menu                      | Spacja lub Enter                                         | dotknięcie elementu         |
+| Ponowienie po porażce                     | Spacja lub Enter; ewentualnie R tylko na ekranie porażki | ikonowy przycisk ponowienia |
 
-W grach top-down ruch w czterech kierunkach zastępuje skok; akcje pozostają spójne semantycznie. W platformówce Shift nie uruchamia sprintu. Nie wymagaj skrótów złożonych, długiego przytrzymywania Shifta ani wprowadzania wielu nowych przycisków. Naciśnięcie przełącznika działa jako *toggle* i musi wyraźnie zmienić wygląd obiektu. Niech początkowe 30–60 sekund bezpiecznie pokaże przepaść do przeskoczenia, reagujący przedmiot i efekt uruchomienia przełącznika, bez choćby jednego słowa instrukcji.
+W grach top-down ruch w czterech kierunkach zastępuje skok; akcje pozostają spójne semantycznie. W platformówce Shift nie uruchamia sprintu. Nie wymagaj skrótów złożonych, długiego przytrzymywania Shifta ani wprowadzania wielu nowych przycisków. Naciśnięcie przełącznika działa jako _toggle_ i musi wyraźnie zmienić wygląd obiektu. Niech początkowe 30–60 sekund bezpiecznie pokaże przepaść do przeskoczenia, reagujący przedmiot i efekt uruchomienia przełącznika, bez choćby jednego słowa instrukcji.
 
 **Rozpoznawalność interakcji:** obiekt, który reaguje na Shift, delikatnie pulsuje/rozświetla się, animuje przy zbliżeniu bohatera lub wydaje krótki dźwięk. Po akcji rezultat jest natychmiast widoczny (np. przełącznik zmienia pozycję, drzwi się otwierają, rozbłyska światło). Nie każ graczowi domyślać się niewidocznych klawiszy.
 
