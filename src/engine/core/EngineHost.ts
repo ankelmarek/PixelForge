@@ -39,8 +39,21 @@ export class EngineHost {
         );
         if (!response.ok)
           throw new Error(`Nie można wczytać mapy (${response.status})`);
-        const level = validateSimulationLevel(await response.json());
+        const level = validateSimulationLevel(
+          await response.json(),
+          this.options.worldLimits,
+        );
         const keys = new Set(Object.keys(definition.assets));
+        if (level.schemaVersion === 2) {
+          const terrain = level.terrain,
+            sheet = definition.spriteSheets?.[terrain.texture];
+          if (
+            !keys.has(terrain.texture) ||
+            sheet?.frameWidth !== level.tileSize ||
+            sheet.frameHeight !== level.tileSize
+          )
+            throw Error('Świat: atlas kafli musi pasować do tileSize');
+        }
         for (const node of level.nodes)
           for (const texture of [
             node.texture,

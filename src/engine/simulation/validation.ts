@@ -1,5 +1,10 @@
 import { Navigator } from './navigation';
 import type { Cell, GridRect, SimulationLevel } from './types';
+import {
+  defaultWorldLimits,
+  validateWorldTerrain,
+  type WorldLimits,
+} from '../world/validation';
 function object(value: unknown, name: string): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value))
     throw Error(`${name}: wymagany obiekt`);
@@ -18,14 +23,24 @@ function text(value: unknown, name: string) {
   if (typeof value !== 'string' || !/^[a-zA-Z0-9_-]+$/.test(value))
     throw Error(`${name}: błędny identyfikator`);
 }
-export function validateSimulationLevel(raw: unknown): SimulationLevel {
+export function validateSimulationLevel(
+  raw: unknown,
+  limits: WorldLimits = defaultWorldLimits,
+): SimulationLevel {
   const data = object(raw, 'Symulacja');
-  if (data.schemaVersion !== 1) throw Error('Symulacja: nieobsługiwana wersja');
+  if (data.schemaVersion !== 1 && data.schemaVersion !== 2)
+    throw Error('Symulacja: nieobsługiwana wersja');
+  if (data.schemaVersion === 2) validateWorldTerrain(raw, limits);
   text(data.id, 'id');
   if (typeof data.title !== 'string' || !data.title)
     throw Error('title: wymagany tekst');
   for (const key of ['width', 'height']) {
-    positive(data[key], key, 8, 128);
+    positive(
+      data[key],
+      key,
+      8,
+      data.schemaVersion === 2 ? limits.maxCells : 128,
+    );
     if (!Number.isInteger(data[key]))
       throw Error(`${key}: wymagana liczba całkowita`);
   }

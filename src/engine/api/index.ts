@@ -16,3 +16,13 @@ export type {
   SimulationCommand,
   ActorView,
 } from '../simulation/types';
+
+export type {
+  WorldLevel,
+  WorldTerrain,
+  SectorData,
+  SectorReference,
+} from '../simulation/types';
+export { validateSimulationLevel } from '../simulation/validation';
+export { validateSector, defaultWorldLimits } from '../world/validation';
+export type { WorldLimits } from '../world/validation';

@@ -1,6 +1,6 @@
 {
   "name": "pixelforge",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -14,7 +14,9 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "assets:world": "python3 tools/generate-world-demo.py",
+    "measure:world": "node tools/measure-world.mjs"
   },
   "dependencies": {
     "phaser": "4.2.1"

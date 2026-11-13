@@ -107,6 +107,20 @@ export interface Snapshot {
   actors?: ActorView[];
   nodes?: NodeState[];
   camera?: CameraView;
+  world?: {
+    width: number;
+    height: number;
+    resident: number;
+    pending: number;
+    requests: number;
+    evictions: number;
+    rendered: number;
+    missing: number;
+    textureBytes: number;
+    actorsRendered: number;
+    nodesRendered: number;
+    navigation: import('../world/navigation').NavigationStats[];
+  };
   completed: boolean;
   paused: boolean;
   failed?: boolean;
@@ -120,6 +134,7 @@ export interface Snapshot {
   elapsed?: number;
 }
 export interface HostOptions {
+  worldLimits?: import('../world/validation').WorldLimits;
   parent: HTMLElement;
   definition: AnyGameDefinition;
   onReady: () => void;

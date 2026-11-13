@@ -32,14 +32,18 @@ Funkcje silnika powstały w historycznych gałęziach M0–M3 i powiązanych PR,
 
 ## Uruchamianie
 
-Gałąź `feature/p0-core-extraction` zawiera odzyskany rdzeń i niezależne testy.
-Katalog aktywnych gier jest pusty — to oczekiwany stan P0. Oba zamknięte produkty
-pozostają wyłącznie w historycznych gałęziach. Nie scalono PR #1–#4.
+Gałąź `feature/p1-large-worlds` zawiera rdzeń P0 i demonstrację **Atlas**.
+Na ekranie głównym wybierz **Otwórz 4096 × 4096** albo **8192 × 8192**, następnie
+**Nowa sesja** lub **Wznów**. Katalog produktów pozostaje pusty — demonstracja
+techniczna jest poza `src/games/`. P1 zależy od PR #5; żaden PR nie został scalony
+automatycznie. Dawne gry pozostają w historycznych gałęziach.
 
-Wymagane Node.js **24 LTS** i npm 11. Po przełączeniu na gałąź P0:
+Wymagane Node.js **24 LTS** i npm 11. Po przełączeniu na gałąź P1:
 
 ```bash
-npm install
+git clone --branch feature/p1-large-worlds https://github.com/ankelmarek/PixelForge.git
+cd PixelForge
+npm ci
 npm run dev
 npm run build
 npm run lint
@@ -49,17 +53,23 @@ npm run test:e2e
 ```
 
 `npm run dev` podaje lokalny adres Vite. `npm run build` tworzy statyczny `dist/`
-z ekranem rdzenia, bez aktywnych tytułów, testów i fixture'ów. Build działa także
+z ekranem rdzenia i demonstracją świata, bez testów oraz fixture'ów. Build działa także
 z podkatalogu dzięki `base: './'`. `npm run preview` służy do jego sprawdzenia.
 
 Przed pierwszym E2E: `npx playwright install chromium`, następnie `npm run test:e2e`.
 Playwright uruchamia własny Vite na porcie 4190 i testuje prawdziwy EngineHost
-przez syntetyczny harness poza katalogiem produkcyjnym. Testy nie importują
+w laboratorium P1 oraz przez syntetyczny harness rdzenia poza buildem. Testy nie importują
 dawnych gier. PNG testowe odtwarza `python3 tools/generate-test-assets.py`.
 
 [Inwentaryzacja i pochodzenie modułów](docs/CORE-INVENTORY.md),
-[raport P0](docs/P0-REPORT.md),
+[raport P0](docs/P0-REPORT.md), [raport P1](docs/P1-REPORT.md),
+[format dużych światów i pomiary](docs/LARGE-WORLDS.md),
 [plan dużych map i aktualizatora](docs/IMPLEMENTATION-PLAN.md).
+
+Grafikę i sektory Atlasu odtwarza `npm run assets:world` (Python 3 bez bibliotek).
+Pomiary: `npm run preview -- --port 4194`, w drugim terminalu `npm run measure:world`.
+`?diagnostics=1` w adresie włącza lokalne liczniki techniczne. Nie jest to panel
+aktualizatora. P2/U0 — generator bezpiecznych paczek ZIP — pozostaje następnym etapem.
 
 Aktualizuj ten opis po każdej zmianie publicznego sposobu uruchamiania. Nie oznaczaj projektu jako ukończonego przed przejściem kryteriów odbioru z roadmapy.
 

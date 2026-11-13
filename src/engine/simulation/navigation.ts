@@ -1,11 +1,33 @@
 import type { Cell, GridRect, SimulationLevel } from './types';
+import { RegionalNavigator } from '../world/navigation';
 const contains = (rect: GridRect, cell: Cell) =>
   cell.x >= rect.x &&
   cell.x < rect.x + rect.width &&
   cell.y >= rect.y &&
   cell.y < rect.y + rect.height;
 export class Navigator {
-  constructor(readonly level: SimulationLevel) {}
+  private regional = new Map<boolean, RegionalNavigator>();
+  private rects = new Map<string, { blocked: GridRect[]; roads: GridRect[] }>();
+  constructor(readonly level: SimulationLevel) {
+    if (level.schemaVersion === 2) {
+      const size = level.terrain.sectorSize;
+      for (let y = 0; y < level.height; y += size)
+        for (let x = 0; x < level.width; x += size) {
+          const intersects = (r: GridRect) =>
+            r.x < x + size &&
+            r.x + r.width > x &&
+            r.y < y + size &&
+            r.y + r.height > y;
+          this.rects.set(`${x / size},${y / size}`, {
+            blocked: [...level.blockers, ...level.nodes].filter(intersects),
+            roads: level.roads.filter(intersects),
+          });
+        }
+    }
+  }
+  get stats() {
+    return [...this.regional.values()].map((n) => ({ ...n.stats }));
+  }
   walkable(cell: Cell, vehicle = false) {
     const radius = vehicle ? 1 : 0;
     for (let dy = -radius; dy <= radius; dy++)
@@ -20,12 +42,25 @@ export class Navigator {
           test.y >= this.level.height
         )
           return false;
+        const region =
+          this.level.schemaVersion === 2
+            ? this.rects.get(
+                `${Math.floor(test.x / this.level.terrain.sectorSize)},${Math.floor(test.y / this.level.terrain.sectorSize)}`,
+              )
+            : undefined;
         if (
-          this.level.blockers.some((rect) => contains(rect, test)) ||
-          this.level.nodes.some((node) => contains(node, test))
+          region
+            ? region.blocked.some((rect) => contains(rect, test))
+            : this.level.blockers.some((rect) => contains(rect, test)) ||
+              this.level.nodes.some((node) => contains(node, test))
         )
           return false;
-        if (vehicle && !this.level.roads.some((road) => contains(road, test)))
+        if (
+          vehicle &&
+          !(region?.roads ?? this.level.roads).some((road) =>
+            contains(road, test),
+          )
+        )
           return false;
       }
     return true;
@@ -33,6 +68,16 @@ export class Navigator {
   findPath(from: Cell, to: Cell, vehicle = false): Cell[] | null {
     if (!this.walkable(from, vehicle) || !this.walkable(to, vehicle))
       return null;
+    if (this.level.schemaVersion === 2) {
+      let navigator = this.regional.get(vehicle);
+      if (!navigator) {
+        navigator = new RegionalNavigator(this.level, (p) =>
+          this.walkable(p, vehicle),
+        );
+        this.regional.set(vehicle, navigator);
+      }
+      return navigator.findPath(from, to);
+    }
     const key = (cell: Cell) => cell.y * this.level.width + cell.x;
     const start = key(from),
       finish = key(to),

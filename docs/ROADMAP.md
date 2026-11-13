@@ -45,21 +45,31 @@ Build sprawdzono pod `/` i `/PixelForge/`, desktop i emulacja Pixel 7.
 Raport: [P0-REPORT.md](P0-REPORT.md), inwentaryzacja:
 [CORE-INVENTORY.md](CORE-INVENTORY.md), dalszy podział:
 [IMPLEMENTATION-PLAN.md](IMPLEMENTATION-PLAN.md).
-P1 i P2 pozostają niezrealizowane; nie wybrano tytułu P3 ani hostingu.
+W chwili zamknięcia P0 etapy P1 i P2 pozostawały niezrealizowane. Aktualny
+wynik P1 opisano poniżej; nie wybrano tytułu P3 ani hostingu.
 
 ### P1. Duże mapy i kamera 2D
 
-**Status: TODO. Priorytet: wysoki.**
+**Status: DONE (implementacja i testy).** Gałąź `feature/p1-large-worlds`,
+osobny PR do `main` zależny od P0 / PR #5. Bez samodzielnego merge.
 
-- [ ] Docelowy świat 4096 × 4096 pikseli lub większy, konfiguracja rozmiaru i sektorów zależna od gry; limit nie może być zapisany na sztywno w silniku.
-- [ ] Mapa składa się z kafli i niezależnie ładowanych chunków (np. 256/512 pikseli na chunk zależnie od `tileSize`). Nie renderować całej mapy jako jednego ogromnego PNG.
-- [ ] Przesuwanie kamery myszką przez przeciąganie pustego terenu, przybliżanie/oddalanie kółkiem, opcjonalna minimapa i skok widoku do zaznaczonego obiektu.
-- [ ] Kamera rozpoczyna na fragmencie świata, który nie pokazuje całej mapy jednocześnie; brak czarnych pasów/odsłoniętej pustki na krawędziach.
-- [ ] Sprite’y i dekoracje renderować oraz aktualizować stosownie do widoczności; implementować culling, grupowanie aktualizacji, lazy loading, a przy dużych odległościach uproszczone symulowanie jednostek.
-- [ ] Nawigację podzielić na regiony lub użyć hierarchicznej ścieżki. Nie wykonywać pełnego A* na całej siatce 4096 × 4096 pikseli dla każdego zlecenia.
-- [ ] Zadania jednostek poza ekranem muszą nadal działać prawidłowo; rozliczanie surowców i postępu niezależne od renderowania.
-- [ ] Testy: 4096 × 4096, rozszerzenie do 8192 × 8192, przesuwanie i zoom, dostęp do narożników, zapis/wznowienie, poruszanie w wielu sektorach, długie trasy i brak widocznych szwów na granicach chunków.
-- [ ] Zmierzyć pamięć i FPS na desktopie oraz w emulacji telefonu; celem jest stabilna rozgrywka, nie deklaracja bez pomiaru.
+- [x] Docelowy świat 4096 × 4096 pikseli lub większy, konfiguracja rozmiaru i sektorów zależna od gry; limit nie może być zapisany na sztywno w silniku.
+- [x] Mapa składa się z kafli i niezależnie ładowanych chunków (np. 256/512 pikseli na chunk zależnie od `tileSize`). Nie renderować całej mapy jako jednego ogromnego PNG.
+- [x] Przesuwanie kamery myszką przez przeciąganie pustego terenu, przybliżanie/oddalanie kółkiem, opcjonalna minimapa i skok widoku do zaznaczonego obiektu.
+- [x] Kamera rozpoczyna na fragmencie świata, który nie pokazuje całej mapy jednocześnie; brak czarnych pasów/odsłoniętej pustki na krawędziach.
+- [x] Sprite’y i dekoracje renderować oraz aktualizować stosownie do widoczności; implementować culling, grupowanie aktualizacji, lazy loading, a przy dużych odległościach uproszczone symulowanie jednostek.
+- [x] Nawigację podzielić na regiony lub użyć hierarchicznej ścieżki. Nie wykonywać pełnego A* na całej siatce 4096 × 4096 pikseli dla każdego zlecenia.
+- [x] Zadania jednostek poza ekranem muszą nadal działać prawidłowo; rozliczanie surowców i postępu niezależne od renderowania.
+- [x] Testy: 4096 × 4096, rozszerzenie do 8192 × 8192, przesuwanie i zoom, dostęp do narożników, zapis/wznowienie, poruszanie w wielu sektorach, długie trasy i brak widocznych szwów na granicach chunków.
+- [x] Zmierzyć pamięć i FPS na desktopie oraz w emulacji telefonu; celem jest stabilna rozgrywka, nie deklaracja bez pomiaru.
+
+Atlas uruchamia oba rozmiary świata przez wspólny `EngineHost`. Sektory 512 px,
+cache danych 24, culling, graf komponentów/przejść i lokalne A*, model 20 Hz oraz
+zapis v2. Dotyk, narożniki, zoom i zadania poza ekranem sprawdzone w Chromium.
+45 testów jednostkowych PASS; E2E 22 PASS + 2 oczekiwane SKIP dotyku na desktopie.
+Pomiary FPS/pamięci i ograniczenia: [P1-REPORT.md](P1-REPORT.md).
+Format świata i sposób pomiaru: [LARGE-WORLDS.md](LARGE-WORLDS.md).
+Następny etap: P2/U0. Nie rozpoczęto U1/U2 ani żadnej gry P3.
 
 ### P2. Aktualizator plikowy ZIP
 
@@ -88,11 +98,11 @@ Każdy tytuł ma własną specyfikację i gałąź oraz wykorzystuje wspólny si
 
 ## 4. Kryteria odbioru nowego kierunku
 
-- [ ] Silnik uruchamia demonstrację dużego świata niezależną od Winobrania i od platformówki.
-- [ ] Obraz mapy jest stabilny podczas przesuwania i przybliżania; nie ma sztucznie małego obszaru działania.
-- [ ] Zadania jednostek i zapis działają między sektorami, także poza kamerą.
+- [x] Silnik uruchamia demonstrację dużego świata niezależną od Winobrania i od platformówki.
+- [x] Obraz mapy jest stabilny podczas przesuwania i przybliżania; nie ma sztucznie małego obszaru działania.
+- [x] Zadania jednostek i zapis działają między sektorami, także poza kamerą.
 - [ ] Aktualizator instaluje paczkę ZIP, wykonuje walidację i w razie błędu wraca do poprzedniej wersji.
-- [ ] Przy dalszych pracach nie są rozwijane `winobranie` ani `forest-demo`.
+- [x] Przy dalszych pracach nie są rozwijane `winobranie` ani `forest-demo`.
 - [ ] Każdy nowy tytuł posiada osobny zestaw testów i nie duplikuje kodu silnika.
 
 ## 5. Pierwsze zadanie dla Codexa po tej decyzji
@@ -111,3 +121,15 @@ Każdy tytuł ma własną specyfikację i gałąź oraz wykorzystuje wspólny si
   nie zostały sprawdzone. Duże mapy i aktualizator są dopiero zaplanowane.
 - Następny krok: przegląd P0, następnie osobny zakres P1. Bez automatycznego merge,
   wdrożenia, rozpoczęcia P3 lub przywracania zakończonych produktów.
+
+### 2026-11-13 — P1: duże światy
+
+- Baza P0 `de1945d`, gałąź `feature/p1-large-worlds`; dokumentacja main nadal
+  `ead7666`. PR #5 jest zależnością, bez automatycznego scalenia stosu.
+- Wdrożono P1A–P1D: manifest v2, sektory, ograniczony cache, kamera, culling,
+  regionalna nawigacja, trwała symulacja i zapis. Atlas jest oddzielnym klientem
+  technicznym; aktywny katalog produktów pozostaje pusty.
+- Testy, pomiary i ograniczenia opisuje raport P1. Zachowano kontrakty v1,
+  przetestowano obie mapy, desktop i emulację Pixel 7. Fizyczny telefon i inne
+  silniki przeglądarek wymagają osobnego sprawdzenia.
+- P2/U0 to kolejny zakres. Aktualizator, hosting, P3 i P4 pozostają poza P1.

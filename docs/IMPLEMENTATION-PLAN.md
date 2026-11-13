@@ -1,7 +1,8 @@
 # Plan po P0 — duże światy i aktualizator ZIP
 
-Zakres wynika z roadmapy 0.2 i `UPDATER-SPEC.md`. Ten dokument nie oznacza
-wykonania P1/P2, wybrania hostingu ani rozpoczęcia którejkolwiek gry.
+Zakres wynika z roadmapy 0.2 i `UPDATER-SPEC.md`. P1A–P1D zrealizowano na gałęzi `feature/p1-large-worlds` —
+[raport P1](P1-REPORT.md), [kontrakt świata](LARGE-WORLDS.md). P2/U0–U3 pozostaje
+planem. Nie wybrano hostingu ani nie rozpoczęto którejkolwiek gry.
 
 ## P1 — duże mapy
 
@@ -44,8 +45,9 @@ zdalna dystrybucja. W P0 nie dodano uploadu, panelu, usług ani uprawnień serwe
 
 ## Zależności i punkty odbioru
 
-1. Przegląd P0 i zgoda właściciela na integrację rdzenia.
-2. Osobny zakres P1A–P1D, techniczna demonstracja dużego świata i pomiary.
+1. P0 gotowe w PR #5; P1 opiera się na jego kodzie. Przegląd i merge pozostają
+   decyzją właściciela, bez automatycznego scalania.
+2. P1A–P1D wykonane: osobny PR, demonstracja dużego świata i pomiary w raporcie.
 3. U0 jako oddzielny PR narzędzia offline; U1/U2 dopiero po ustaleniu hostingu
    i osobnym poleceniu wdrożeniowym. Żaden etap nie publikuje automatycznie.
 4. P3 dopiero po wybraniu tytułu i jego specyfikacji. P4 pozostaje odłożony.

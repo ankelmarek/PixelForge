@@ -17,7 +17,7 @@ export default ts.config(
     rules: {
       'no-restricted-imports': [
         'error',
-        { patterns: ['**/games/**', '**/app/**'] },
+        { patterns: ['**/games/**', '**/app/**', '**/demos/**'] },
       ],
     },
   },

@@ -48,8 +48,7 @@ export interface ActorDefinition extends Cell {
   unloadSeconds: number;
   cargoTexture: string;
 }
-export interface SimulationLevel {
-  schemaVersion: 1;
+export interface SimulationLevelData {
   id: string;
   title: string;
   width: number;
@@ -62,6 +61,32 @@ export interface SimulationLevel {
   actors: ActorDefinition[];
   goal: { storage: string; resource: string; amount: number };
   camera: { zoom: number; center: Cell; minZoom: number; maxZoom: number };
+}
+export interface SectorReference extends Cell {
+  id: string;
+  url: string;
+}
+export interface WorldTerrain {
+  revision: string;
+  sectorSize: number;
+  texture: string;
+  frames: number;
+  fallbackColor: number;
+  cacheSectors: number;
+  sectors: SectorReference[];
+}
+export type SimulationLevel = SimulationLevelData &
+  ({ schemaVersion: 1 } | { schemaVersion: 2; terrain: WorldTerrain });
+export type WorldLevel = SimulationLevelData & {
+  schemaVersion: 2;
+  terrain: WorldTerrain;
+};
+export interface SectorData {
+  schemaVersion: 1;
+  id: string;
+  revision: string;
+  /** Row-major RLE [frame, count]. -1 is transparent in overlay layers. */
+  layers: { name: string; runs: [number, number][] }[];
 }
 export interface SimulationDefinition {
   schemaVersion: 1;
@@ -113,6 +138,7 @@ export interface SimulationState {
   schemaVersion: 1;
   mapId: string;
   seconds: number;
+  remainder?: number;
   serial: number;
   actors: ActorState[];
   nodes: NodeState[];
@@ -133,4 +159,5 @@ export interface CameraView {
 export type SimulationCommand =
   | { type: 'select'; id: string | null }
   | { type: 'cancel' }
-  | { type: 'zoom'; direction: -1 | 0 | 1 };
+  | { type: 'zoom'; direction: -1 | 0 | 1 }
+  | { type: 'focus'; id?: string; point?: Cell };

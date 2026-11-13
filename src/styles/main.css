@@ -147,3 +147,218 @@ a:focus-visible {
     padding: 28px 15px;
   }
 }
+
+button {
+  font: inherit;
+  color: #e9eddf;
+  background: #254448;
+  border: 1px solid #6f8a75;
+  padding: 12px 18px;
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+}
+button:hover {
+  background: #37594f;
+}
+button:focus-visible {
+  outline: 2px solid #e9cf94;
+  outline-offset: 3px;
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: wait;
+}
+[hidden] {
+  display: none !important;
+}
+.demo-card {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 32px;
+  align-items: center;
+  border: 1px solid #48615d;
+  background: #1b3035;
+  padding: 24px;
+}
+.demo-card > img {
+  width: 100%;
+  image-rendering: pixelated;
+}
+.demo-card p {
+  color: #a8bcbb;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.demo-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.lab {
+  padding: 22px 0;
+}
+.lab h1 {
+  font-size: 30px;
+  margin: 8px 0 22px;
+}
+.lab-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 170px;
+  gap: 20px;
+  align-items: start;
+}
+.stage-wrap {
+  position: relative;
+  background: #172d32;
+  border: 1px solid #48615d;
+  padding: 10px;
+}
+#stage {
+  height: min(56vw, 400px);
+  min-height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#stage canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  touch-action: none;
+  outline-offset: 3px;
+}
+.lab-menu {
+  position: absolute;
+  inset: 10px;
+  background: #152a30e8;
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.lab-menu h2 {
+  margin: 0 0 10px;
+  font-size: 28px;
+}
+.lab-menu button {
+  min-width: 160px;
+}
+#minimap {
+  width: 144px;
+  height: 144px;
+  border: 1px solid #8ca17b;
+  image-rendering: pixelated;
+  touch-action: none;
+}
+.landmarks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-top: 12px;
+}
+.landmarks button {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+}
+.person-icon {
+  width: 64px;
+  height: 24px;
+  max-width: none;
+  position: absolute;
+  left: calc(50% - 8px);
+  top: 10px;
+  clip-path: inset(0 48px 0 0);
+  image-rendering: pixelated;
+}
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  gap: 10px;
+}
+.toolbar > div {
+  display: flex;
+  gap: 6px;
+}
+.toolbar button {
+  padding: 10px;
+}
+#progress {
+  color: #d7ca95;
+  font-size: 12px;
+  white-space: nowrap;
+}
+#session-menu {
+  padding-top: 16px;
+  display: flex;
+  gap: 10px;
+}
+#error {
+  color: #edaf91;
+  line-height: 1.6;
+}
+#diagnostics {
+  font-size: 10px;
+  color: #9ab3a4;
+  white-space: pre-wrap;
+}
+@media (max-width: 760px) {
+  .demo-card {
+    grid-template-columns: 1fr;
+  }
+  .demo-card > img {
+    max-width: 480px;
+  }
+  .lab-layout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .lab-layout aside {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  #minimap {
+    width: 96px;
+    height: 96px;
+  }
+  .landmarks {
+    margin: 0;
+    grid-template-columns: repeat(3, 44px);
+  }
+  .stage-wrap {
+    padding: 0;
+  }
+  .toolbar {
+    flex-wrap: wrap;
+  }
+  .toolbar > div {
+    gap: 4px;
+  }
+  #stage {
+    height: 54vw;
+    min-height: 160px;
+  }
+  .lab-menu {
+    inset: 0;
+    gap: 6px;
+  }
+  .lab-menu h2 {
+    font-size: 20px;
+    margin: 0;
+  }
+}
+#pause[aria-label='Pauza'] {
+  font-size: 0;
+}
+#pause[aria-label='Pauza']::after {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 14px;
+  border-left: 3px solid currentColor;
+  border-right: 3px solid currentColor;
+}

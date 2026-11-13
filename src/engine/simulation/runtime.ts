@@ -5,8 +5,11 @@ import { createFlowScenes } from '../scenes/flow';
 import { SimulationModel } from './model';
 import { SimulationSave } from './save';
 import { PointerInputService } from './pointer';
+import { SectorRenderer, cameraView } from '../world/renderer';
+import type { WorldView } from '../world/sectors';
 import type {
   ActorState,
+  ActorDefinition,
   SimulationCommand,
   SimulationDefinition,
   SimulationLevel,
@@ -65,6 +68,7 @@ export function createSimulationRuntime(
         fill?: Phaser.GameObjects.Image;
       }
     >();
+    private sectors?: SectorRenderer;
     private emitted = 0;
     private reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     constructor() {
@@ -78,61 +82,26 @@ export function createSimulationRuntime(
       this.nodeSprites.clear();
       this.emitted = -1;
       this.hover = null;
-      this.add.image(0, 0, 'background').setOrigin(0).setDepth(-1);
-      for (const node of level.nodes) {
-        const x = (node.x + node.width / 2) * tile,
-          y = (node.y + node.height) * tile;
-        const sprite = this.add
-          .sprite(x, y, node.texture)
-          .setOrigin(0.5, 1)
-          .setDepth(y);
-        const stock = (node.stockVisual?.slots ?? []).map((p) =>
-          this.add
-            .image(x + p.x * tile, y + p.y * tile, node.stockVisual!.texture)
-            .setScale(node.stockVisual!.scale ?? 1)
-            .setOrigin(0.5, 1)
-            .setDepth(y + 0.1),
-        );
-        const fill = node.fillTexture
-          ? this.add
-              .image(
-                x + node.fillOffset!.x,
-                y + node.fillOffset!.y,
-                node.fillTexture,
-              )
-              .setOrigin(0.5, 1)
-              .setDepth(y + 0.05)
-          : undefined;
-        this.nodeSprites.set(node.id, { sprite, stock, fill });
-      }
-      for (const actor of level.actors) {
-        const sprite = this.add.sprite(0, 0, actor.texture).setOrigin(0.5, 1);
-        const shadow = this.add.ellipse(
-          0,
-          0,
-          actor.kind === 'vehicle' ? 38 : 11,
-          actor.kind === 'vehicle' ? 8 : 3,
-          0x45553e,
-          0.28,
-        );
-        const cargo = Array.from(
-          {
-            length:
-              actor.kind === 'vehicle' ? Math.ceil(actor.capacity / 4) : 1,
+      if (level.schemaVersion === 2) {
+        if (
+          this.textures.get(level.terrain.texture).frameTotal - 1 <
+          level.terrain.frames
+        ) {
+          this.scene.pause();
+          active = undefined;
+          options.error('Świat: atlas ma mniej klatek niż deklaruje manifest');
+          return;
+        }
+        this.sectors = new SectorRenderer(
+          this,
+          level,
+          definition.levelUrl,
+          (message) => {
+            this.scene.pause();
+            options.error(message);
           },
-          () =>
-            this.add
-              .image(0, 0, actor.cargoTexture)
-              .setScale(actor.kind === 'vehicle' ? 0.5 : 0.65)
-              .setOrigin(0.5, 1),
         );
-        this.actorSprites.set(actor.id, {
-          sprite,
-          shadow,
-          cargo,
-          lastX: actor.x,
-        });
-      }
+      } else this.add.image(0, 0, 'background').setOrigin(0).setDepth(-1);
       this.graphics = this.add.graphics().setDepth(100000);
       this.cameras.main
         .setBounds(0, 0, level.width * tile, level.height * tile)
@@ -147,16 +116,117 @@ export function createSimulationRuntime(
         },
       );
       this.pointer.reset();
+      if (save.camera) {
+        this.cameras.main.setZoom(save.camera.zoom);
+        this.pointer.focus(save.camera.x, save.camera.y);
+      }
       this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
         this.pointer.destroy();
+        this.sectors?.destroy();
+        this.sectors = undefined;
         active = undefined;
       });
       this.render();
       this.emit();
     }
+    private addNode(node: SimulationNode) {
+      const x = (node.x + node.width / 2) * tile,
+        y = (node.y + node.height) * tile;
+      const sprite = this.add
+        .sprite(x, y, node.texture)
+        .setOrigin(0.5, 1)
+        .setDepth(y);
+      const stock = (node.stockVisual?.slots ?? []).map((p) =>
+        this.add
+          .image(x + p.x * tile, y + p.y * tile, node.stockVisual!.texture)
+          .setScale(node.stockVisual!.scale ?? 1)
+          .setOrigin(0.5, 1)
+          .setDepth(y + 0.1),
+      );
+      const fill = node.fillTexture
+        ? this.add
+            .image(
+              x + node.fillOffset!.x,
+              y + node.fillOffset!.y,
+              node.fillTexture,
+            )
+            .setOrigin(0.5, 1)
+            .setDepth(y + 0.05)
+        : undefined;
+      this.nodeSprites.set(node.id, { sprite, stock, fill });
+    }
+    private addActor(actor: ActorDefinition) {
+      const sprite = this.add.sprite(0, 0, actor.texture).setOrigin(0.5, 1);
+      const shadow = this.add.ellipse(
+        0,
+        0,
+        actor.kind === 'vehicle' ? 38 : 11,
+        actor.kind === 'vehicle' ? 8 : 3,
+        0x45553e,
+        0.28,
+      );
+      const cargo = Array.from(
+        {
+          length: actor.kind === 'vehicle' ? Math.ceil(actor.capacity / 4) : 1,
+        },
+        () =>
+          this.add
+            .image(0, 0, actor.cargoTexture)
+            .setScale(actor.kind === 'vehicle' ? 0.5 : 0.65)
+            .setOrigin(0.5, 1),
+      );
+      this.actorSprites.set(actor.id, {
+        sprite,
+        shadow,
+        cargo,
+        lastX: actor.x,
+      });
+    }
+    private inView(x: number, y: number, view: WorldView, margin = 80) {
+      return (
+        x >= view.x - margin &&
+        y >= view.y - margin &&
+        x <= view.x + view.width + margin &&
+        y <= view.y + view.height + margin
+      );
+    }
+    private reconcile(view: WorldView) {
+      for (const actor of model.state.actors) {
+        const visible =
+          !this.sectors ||
+          this.inView((actor.x + 0.5) * tile, (actor.y + 0.5) * tile, view);
+        const sprite = this.actorSprites.get(actor.id);
+        if (visible && !sprite) this.addActor(model.actorDefinition(actor.id));
+        if (!visible && sprite) {
+          sprite.sprite.destroy();
+          sprite.shadow.destroy();
+          sprite.cargo.forEach((s) => s.destroy());
+          this.actorSprites.delete(actor.id);
+        }
+      }
+      for (const node of level.nodes) {
+        const visible =
+          !this.sectors ||
+          this.inView(
+            (node.x + node.width / 2) * tile,
+            (node.y + node.height) * tile,
+            view,
+            Math.max(node.width, node.height) * tile + 32,
+          );
+        const sprite = this.nodeSprites.get(node.id);
+        if (visible && !sprite) this.addNode(node);
+        if (!visible && sprite) {
+          sprite.sprite.destroy();
+          sprite.stock.forEach((s) => s.destroy());
+          sprite.fill?.destroy();
+          this.nodeSprites.delete(node.id);
+        }
+      }
+    }
     private hit(x: number, y: number): string | null {
       for (const actor of [...model.state.actors].sort((a, b) => b.y - a.y)) {
-        const sprite = this.actorSprites.get(actor.id)!.sprite;
+        const sprite = this.actorSprites.get(actor.id)?.sprite;
+        if (!sprite) continue;
         if (
           Phaser.Geom.Rectangle.Contains(
             new Phaser.Geom.Rectangle(
@@ -222,14 +292,25 @@ export function createSimulationRuntime(
       else if (command.type === 'cancel') {
         model.cancelSelected();
         persist();
-      } else this.pointer.zoom(command.direction);
+      } else if (command.type === 'zoom') this.pointer.zoom(command.direction);
+      else if (command.type === 'focus') {
+        const actor = model.state.actors.find(
+          (a) => a.id === (command.id ?? model.selected),
+        );
+        const node = level.nodes.find((n) => n.id === command.id);
+        const point = command.point ?? actor ?? node;
+        if (point)
+          this.pointer.focus((point.x + 0.5) * tile, (point.y + 0.5) * tile);
+      }
+      this.render();
       this.emit();
     }
     private drawActor(actor: ActorState) {
       const def = model.actorDefinition(actor.id),
         view = this.actorSprites.get(actor.id)!,
-        x = (actor.x + 0.5) * tile,
-        y = (actor.y + 0.5) * tile;
+        position = model.visualPosition(actor),
+        x = (position.x + 0.5) * tile,
+        y = (position.y + 0.5) * tile;
       const moving = !!actor.current?.path.length;
       if (Math.abs(actor.x - view.lastX) > 0.001)
         view.sprite.setFlipX(actor.x < view.lastX);
@@ -370,14 +451,37 @@ export function createSimulationRuntime(
           );
     }
     private render() {
+      const view = cameraView(this.cameras.main);
+      this.sectors?.update(view);
+      this.reconcile(view);
       this.graphics.clear();
-      model.state.actors.forEach((actor) => this.drawActor(actor));
-      level.nodes.forEach((node) => this.drawNodeState(node));
+      model.state.actors.forEach((actor) => {
+        if (this.actorSprites.has(actor.id)) this.drawActor(actor);
+      });
+      level.nodes.forEach((node) => {
+        if (this.nodeSprites.has(node.id)) this.drawNodeState(node);
+      });
+      if (level.schemaVersion === 2)
+        save.camera = {
+          x: view.x + view.width / 2,
+          y: view.y + view.height / 2,
+          zoom: this.cameras.main.zoom,
+        };
     }
     private emit() {
       const camera = this.cameras.main;
       options.state({
         mode: 'simulation',
+        world: this.sectors
+          ? {
+              width: level.width * tile,
+              height: level.height * tile,
+              ...this.sectors.stats,
+              actorsRendered: this.actorSprites.size,
+              nodesRendered: this.nodeSprites.size,
+              navigation: model.navigator.stats,
+            }
+          : undefined,
         completed: model.state.completed,
         paused: false,
         elapsed: Math.floor(model.state.seconds),
@@ -439,6 +543,7 @@ export function createSimulationRuntime(
     start(resume) {
       started = true;
       model.reset();
+      save.camera = undefined;
       if (resume) save.read();
       lastSaved = model.state.seconds;
       if (!resume) persist();

@@ -45,6 +45,7 @@ export class PointerInputService {
             this.down.scrollY - (p.y - this.down.y) / camera.zoom,
           );
       }
+      this.clamp();
       const world = camera.getWorldPoint(p.x, p.y);
       hover(hit(world.x, world.y));
     };
@@ -65,10 +66,8 @@ export class PointerInputService {
       _over: unknown,
       _dx: number,
       dy: number,
-      _dz: number,
-      event: WheelEvent,
     ) => {
-      event.preventDefault();
+      p.event?.preventDefault();
       this.zoom(dy > 0 ? -1 : 1, p.x, p.y);
     };
     const context = (event: Event) => event.preventDefault();
@@ -89,6 +88,28 @@ export class PointerInputService {
       scene.game.canvas.removeEventListener('contextmenu', context);
     });
   }
+  focus(x: number, y: number) {
+    if (Number.isFinite(x) && Number.isFinite(y)) {
+      this.scene.cameras.main.centerOn(x, y);
+      this.clamp();
+    }
+  }
+  private clamp() {
+    const c = this.scene.cameras.main,
+      halfW = c.width / (2 * c.zoom),
+      halfH = c.height / (2 * c.zoom);
+    const x = Phaser.Math.Clamp(
+      c.scrollX + c.width / 2,
+      halfW,
+      this.level.width * this.level.tileSize - halfW,
+    );
+    const y = Phaser.Math.Clamp(
+      c.scrollY + c.height / 2,
+      halfH,
+      this.level.height * this.level.tileSize - halfH,
+    );
+    c.setScroll(x - c.width / 2, y - c.height / 2);
+  }
   reset() {
     const camera = this.scene.cameras.main;
     camera
@@ -97,6 +118,7 @@ export class PointerInputService {
         this.level.camera.center.x * this.level.tileSize,
         this.level.camera.center.y * this.level.tileSize,
       );
+    this.clamp();
   }
   zoom(direction: number, x = 160, y = 90) {
     if (direction === 0) {
@@ -119,6 +141,7 @@ export class PointerInputService {
         wx - camera.width / 2 - (x - camera.width / 2) / next,
         wy - camera.height / 2 - (y - camera.height / 2) / next,
       );
+    this.clamp();
   }
   destroy() {
     this.down = undefined;

@@ -15,6 +15,7 @@ export class SimulationModel {
   selected: string | null = null;
   dirty = false;
   revision = 0;
+  private previous = new Map<string, Cell>();
   readonly navigator: Navigator;
   readonly initialValue: number;
   constructor(readonly level: SimulationLevel) {
@@ -25,6 +26,7 @@ export class SimulationModel {
   fresh(): SimulationState {
     return {
       schemaVersion: 1,
+      ...(this.level.schemaVersion === 2 ? { remainder: 0 } : {}),
       mapId: this.level.id,
       seconds: 0,
       serial: 0,
@@ -48,6 +50,7 @@ export class SimulationModel {
   }
   reset() {
     this.state = this.fresh();
+    this.previous.clear();
     this.selected = null;
     this.changed();
   }
@@ -272,10 +275,31 @@ export class SimulationModel {
     to[resource] = (to[resource] ?? 0) + count;
     this.changed();
   }
+  visualPosition(actor: ActorState): Cell {
+    const previous = this.previous.get(actor.id);
+    if (!previous || this.level.schemaVersion === 1) return actor;
+    const t = Math.min(1, (this.state.remainder ?? 0) / 0.05);
+    return {
+      x: previous.x + (actor.x - previous.x) * t,
+      y: previous.y + (actor.y - previous.y) * t,
+    };
+  }
   step(seconds: number) {
     if (!Number.isFinite(seconds) || seconds < 0 || seconds > 60)
       throw Error('Nieprawidłowy czas symulacji');
     if (this.state.completed) return;
+    if (this.level.schemaVersion === 2) {
+      this.state.remainder = (this.state.remainder ?? 0) + seconds;
+      while (this.state.remainder >= 0.05 - 1e-9 && !this.state.completed) {
+        this.previous = new Map(
+          this.state.actors.map((a) => [a.id, { x: a.x, y: a.y }]),
+        );
+        this.tick(0.05);
+        this.state.remainder = Math.max(0, this.state.remainder - 0.05);
+      }
+      if (this.state.completed) this.state.remainder = 0;
+      return;
+    }
     let remaining = seconds;
     while (remaining > 0.000001 && !this.state.completed) {
       const delta = Math.min(0.05, remaining);
@@ -427,6 +451,10 @@ export class SimulationModel {
       if (
         !state ||
         state.schemaVersion !== 1 ||
+        (this.level.schemaVersion === 2 &&
+          (!Number.isFinite(state.remainder) ||
+            state.remainder! < 0 ||
+            state.remainder! >= 0.05)) ||
         state.mapId !== this.level.id ||
         !Number.isFinite(state.seconds) ||
         state.seconds < 0 ||
@@ -542,6 +570,7 @@ export class SimulationModel {
             this.level.goal.amount
       )
         return false;
+      this.previous.clear();
       this.state = state;
       this.selected = null;
       this.dirty = false;
