@@ -13,6 +13,7 @@ import {
   type SimulationRuntime,
 } from '../simulation/runtime';
 import type { SimulationCommand } from '../simulation/types';
+import type { ClientCommand, ClientRuntime } from '../api/client';
 export class EngineHost {
   private game?: Phaser.Game;
   private abort = new AbortController();
@@ -20,6 +21,7 @@ export class EngineHost {
   private audio = new Audio();
   private session?: Session;
   private simulation?: SimulationRuntime;
+  private client?: ClientRuntime;
   private paused = false;
   private snapshot?: Snapshot;
   private resize?: ResizeObserver;
@@ -33,6 +35,30 @@ export class EngineHost {
   async load() {
     try {
       const definition = validateDefinition(this.options.definition);
+      if (definition.kind === 'client') {
+        const response = await fetch(
+          new URL(definition.levelUrl, document.baseURI),
+          { signal: this.abort.signal },
+        );
+        if (!response.ok)
+          throw Error(`Nie można wczytać świata (${response.status})`);
+        const data: unknown = await response.json();
+        if (this.abort.signal.aborted) return;
+        this.client = await definition.createRuntime(
+          {
+            input: this.input,
+            audio: this.audio,
+            ready: this.options.onReady,
+            state: (snapshot) => this.publish(snapshot),
+            error: this.options.onError,
+            message: this.options.onMessage,
+          },
+          data,
+        );
+        if (this.abort.signal.aborted) return;
+        this.boot(this.client.scenes, 0);
+        return;
+      }
       if (definition.kind === 'simulation') {
         const response = await fetch(
           new URL(definition.levelUrl, document.baseURI),
@@ -163,12 +189,20 @@ export class EngineHost {
   command(command: SimulationCommand) {
     this.simulation?.command(command);
   }
+  clientCommand(command: ClientCommand) {
+    if (!this.paused && !this.snapshot?.completed && !this.snapshot?.failed)
+      this.client?.command(command);
+  }
   private attach() {
     const canvas = this.game!.canvas;
     canvas.tabIndex = 0;
     canvas.setAttribute(
       'aria-label',
-      this.simulation ? 'Obszar symulatora' : 'Obszar platformówki',
+      this.client
+        ? 'Obszar gry'
+        : this.simulation
+          ? 'Obszar symulatora'
+          : 'Obszar platformówki',
     );
     const key = (pressed: boolean) => (event: KeyboardEvent) => {
       const action = keyActions[event.code];
@@ -257,14 +291,15 @@ export class EngineHost {
     this.resize.observe(this.options.parent);
   }
   start(resume = false) {
-    if (!this.game || (!this.session && !this.simulation)) return;
+    if (!this.game || (!this.session && !this.simulation && !this.client))
+      return;
     this.audio.unlock();
-    this.audio.music(
-      (this.simulation?.definition ?? this.session!.definition).music,
-    );
+    this.audio.pause(false);
+    this.audio.music(this.options.definition.music);
     this.input.clear();
     this.paused = false;
-    if (this.simulation) this.simulation.start(resume);
+    if (this.client) this.client.start(resume);
+    else if (this.simulation) this.simulation.start(resume);
     else if (!resume) this.session!.progress.reset();
     else this.session!.progress.state = this.session!.progress.save.read();
     this.game.scene.stop('Title');
@@ -288,6 +323,7 @@ export class EngineHost {
     if (paused) {
       this.session?.progress.persist();
       this.simulation?.persist();
+      this.client?.persist();
       this.game.scene.pause('Gameplay');
     } else {
       this.game.scene.resume('Gameplay');
@@ -306,6 +342,7 @@ export class EngineHost {
   destroy() {
     this.session?.progress.persist();
     this.simulation?.persist();
+    this.client?.persist();
     this.abort.abort();
     this.cleanups.forEach((cleanup) => cleanup());
     this.resize?.disconnect();

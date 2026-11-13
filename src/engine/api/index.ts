@@ -26,3 +26,15 @@ export type {
 export { validateSimulationLevel } from '../simulation/validation';
 export { validateSector, defaultWorldLimits } from '../world/validation';
 export type { WorldLimits } from '../world/validation';
+export type {
+  ClientDefinition,
+  ClientContext,
+  ClientRuntime,
+  ClientCommand,
+} from './client';
+export { createFlowScenes } from '../scenes/flow';
+export { VersionedSave } from '../systems/versioned-save';
+export { MutableGrid } from '../world/mutable-grid';
+export { MutableTerrainRenderer } from '../world/mutable-renderer';
+export { cameraView } from '../world/renderer';
+export { pixelAlignedScroll } from '../simulation/camera';

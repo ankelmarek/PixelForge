@@ -143,13 +143,28 @@ Bez merge i wdrożenia na hosting. Następny zakres U3 wymaga osobnego zlecenia.
 
 ### P3. Pierwsza nowa gra na dużej mapie
 
-**Status: oczekuje na wybranie tytułu.** Kandydaci z zaakceptowaną koncepcją:
+**Status: pierwsza grywalna wersja „Życia Dżdżownicy” DONE (implementacja i testy),
+odbiór grywalności przez użytkownika pozostaje otwarty.** Gałąź `feature/p3-earthworm`, baza U2 / PR #9.
+Polecenie użytkownika z 13.11.2026 obejmuje grę oraz ZIP do instalatora.
+
+- [x] Osobna specyfikacja i katalog gry, bez zależności silnika od produktu.
+- [x] Świat 4096 × 4096, segmentowy ruch, trwałe tunele, skały, pokarm i wilgoć.
+- [x] Cztery ogrody / 12 korzeni, pogoda, krety, schronienie, wygrana i porażka.
+- [x] Mysz, klawiatura i dotyk; pełne okno, kamera, zoom, pauza, dźwięk i zapis.
+- [x] Niewerbalny początek, autorski pixel art i własne testy gry.
+- [x] Końcowy test pełnego ZIP-a w panelu U2: instalacja, rollback i ponowne wznowienie.
+- [ ] Odbiór przez użytkownika: zrozumiałość pierwszej sceny i pomiar czasu gry.
+
+[Specyfikacja](EARTHWORM.md), [kontrakt klienta i modyfikowalny teren](CLIENT-API.md),
+[raport](P3-REPORT.md). Docelowe 20–35 minut pozostaje celem do playtestu;
+nie wprowadzono sztucznego limitu czasu. U3 i Studio nie zostały rozpoczęte.
+
+Pozostałe koncepcje pozostają odłożone:
 
 - **Miodobranie**: zarządzanie pasieką, terenami pożytkowymi, ulami, ramkami i wirówką.
 - **Stacja Benzynowa**: ruch samochodów, dostawy cysterną, dystrybutory, obsługa sklepu i myjni.
-- **Życie Dżdżownicy**: kierowanie dżdżownicą myszką, modyfikacja gleby, wilgoć i drapieżniki.
 
-Każdy tytuł ma własną specyfikację i gałąź oraz wykorzystuje wspólny silnik. Czas rozgrywki celujemy w 20–35 minut. Nie zaczynaj implementacji żadnego z trzech tytułów bez wyboru i odrębnego polecenia.
+Każdy następny tytuł wymaga osobnego wyboru i polecenia użytkownika.
 
 ### P4. PixelForge Studio i katalog
 
@@ -162,7 +177,7 @@ Każdy tytuł ma własną specyfikację i gałąź oraz wykorzystuje wspólny si
 - [x] Zadania jednostek i zapis działają między sektorami, także poza kamerą.
 - [x] Aktualizator instaluje paczkę ZIP, wykonuje walidację i w razie błędu wraca do poprzedniej wersji.
 - [x] Przy dalszych pracach nie są rozwijane `winobranie` ani `forest-demo`.
-- [ ] Każdy nowy tytuł posiada osobny zestaw testów i nie duplikuje kodu silnika.
+- [x] Pierwszy nowy tytuł ma własny zestaw testów i używa wspólnego silnika.
 
 ## 5. Pierwsze zadanie dla Codexa po tej decyzji
 
@@ -249,3 +264,17 @@ Każdy tytuł ma własną specyfikację i gałąź oraz wykorzystuje wspólny si
   Terminal środowiska sesji był niedostępny; nie deklarujemy testów na tym terminalu.
 - Wydano osobny ZIP narzędzia U2 1.1.0. Gra i zapisy pozostają w kontrakcie 0.6.1.
 - Raport zawiera wyniki i ograniczenia. Bez merge, wdrożenia, U3 i gier P3.
+
+### 2026-11-13 — P3: Życie Dżdżownicy
+
+- Użytkownik wybrał Dżdżownicę i poprosił o ZIP do instalatora. Własna gra
+  na 4096 × 4096, 12 korzeni, gleba, pokarm, wilgoć, pogoda i krety.
+- Zaufany kontrakt klienta, wersjonowany zapis i modyfikowalny teren są wspólne.
+  Test architektury pilnuje braku importów gier przez rdzeń.
+- 61 Vitest, 15 U0, 36 integracji PHP; 38 scenariuszy E2E + 2 SKIP.
+  ZIP 0.7.0 sprawdzony pod dwiema ścieżkami na desktopie i w emulacji telefonu.
+  Panel U2 instaluje go nad 0.6.1, cofa wydanie i ponownie wznawia zapis gry.
+- Gotowy pełny ZIP zawiera również Atlas; bez zmiany jego formatu zapisu.
+  Raport P3 dokumentuje pomiary, ograniczenia i wymagany odbiór grywalności.
+- Bez merge i wdrożenia. Następny krok: uwagi do tej gry, bez automatycznego U3,
+  Studio, innego tytułu ani rozbudowy porzuconych produktów.

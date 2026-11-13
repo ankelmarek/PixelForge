@@ -228,7 +228,8 @@ export function validateDefinition(
   value: unknown,
 ): import('./types').AnyGameDefinition {
   const g = record(value, 'Gra');
-  if (g.kind !== 'simulation') return validateGame(value);
+  if (g.kind !== 'simulation' && g.kind !== 'client')
+    return validateGame(value);
   if (g.schemaVersion !== 1) throw new Error('Gra: nieobsługiwana wersja');
   text(g.id, 'id');
   if (!/^[a-z0-9-]+$/.test(g.id))
@@ -273,5 +274,17 @@ export function validateDefinition(
     if ((music.volume as number) > 0.03 || (music.beatSeconds as number) > 3)
       throw new Error('music: nieprawidłowa głośność/tempo');
   }
-  return value as import('../simulation/types').SimulationDefinition;
+  if (g.kind === 'client') {
+    if (typeof g.createRuntime !== 'function')
+      throw new Error('createRuntime: wymagany zaufany moduł TypeScript');
+    const p = record(g.presentation, 'presentation');
+    for (const key of [
+      'completionTitle',
+      'failureTitle',
+      'objectiveLabel',
+      'actionLabel',
+    ])
+      text(p[key], `presentation.${key}`);
+  }
+  return value as import('./types').AnyGameDefinition;
 }

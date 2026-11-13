@@ -94,9 +94,26 @@ export interface GameDefinition {
   };
   registerRules?: (rules: RuleSystem) => void;
 }
-export type AnyGameDefinition = GameDefinition | SimulationDefinition;
+export type AnyGameDefinition =
+  GameDefinition | SimulationDefinition | import('./client').ClientDefinition;
 export interface Snapshot {
-  mode?: 'simulation';
+  mode?: 'simulation' | 'client';
+  meters?: {
+    id: string;
+    icon: string;
+    label: string;
+    value: number;
+    max: number;
+    color: string;
+  }[];
+  phase?: { icon: string; label: string };
+  map?: {
+    width: number;
+    height: number;
+    markers: { x: number; y: number; icon: string; color: string }[];
+    trail: { x: number; y: number }[];
+  };
+  stats?: Record<string, string | number | boolean>;
   x?: number;
   y?: number;
   grounded?: boolean;

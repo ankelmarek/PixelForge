@@ -51,7 +51,7 @@ test('aktywny katalog nie udostępnia porzuconych tytułów', async ({ page }) =
   page.on('request', (r) => requested.push(r.url()));
   await page.goto('/');
   await expect(
-    page.getByRole('heading', { name: 'Brak aktywnych tytułów' }),
+    page.getByRole('heading', { name: 'Życie Dżdżownicy' }),
   ).toBeVisible();
   await expect(page.locator('body')).not.toContainText(
     /Winobranie|Leśny sygnał/,

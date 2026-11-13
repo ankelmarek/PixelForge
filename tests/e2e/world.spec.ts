@@ -317,7 +317,7 @@ test('ekran tytułowy zachowuje zapis, a szybkie wyjście przerywa ładowanie se
   await page.locator('#back').click();
   await page.waitForTimeout(400);
   await expect(
-    page.getByRole('heading', { name: 'Brak aktywnych tytułów' }),
+    page.getByRole('heading', { name: 'Życie Dżdżownicy' }),
   ).toBeVisible();
   expect(errors).toEqual([]);
 });

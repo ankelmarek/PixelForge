@@ -1,4 +1,4 @@
-export type Action = 'left' | 'right' | 'jump' | 'interact';
+export type Action = 'left' | 'right' | 'up' | 'down' | 'jump' | 'interact';
 export class Input {
   private sources = new Map<Action, Set<string>>();
   private edges = new Set<Action>();
@@ -28,6 +28,10 @@ export const keyActions: Record<string, Action | undefined> = {
   KeyA: 'left',
   ArrowRight: 'right',
   KeyD: 'right',
+  ArrowUp: 'up',
+  KeyW: 'up',
+  ArrowDown: 'down',
+  KeyS: 'down',
   Space: 'jump',
   ShiftLeft: 'interact',
   ShiftRight: 'interact',

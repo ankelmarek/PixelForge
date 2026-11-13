@@ -1,4 +1,42 @@
-# PixelForge 0.6.1 — gotowe pliki na serwer statyczny
+# PixelForge 0.7.0 — Życie Dżdżownicy + Atlas
+
+[Pobierz gotowy ZIP gry](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p3-earthworm/downloads/pixelforge-0.7.0-full.zip).
+
+**Do instalatora wgrywasz `pixelforge-0.7.0-full.zip` w całości, bez rozpakowywania.**
+Zawiera silnik, Dżdżownicę, dotychczasowy Atlas, zasoby i manifest z SHA-256.
+Nie jest to ZIP źródeł z przycisku „Code → Download ZIP”.
+
+## Instalacja przez panel U2
+
+1. Otwórz skonfigurowany panel administratora i zaloguj się.
+2. Wybierz `pixelforge-0.7.0-full.zip` i kliknij **Sprawdź pakiet**.
+3. Sprawdź wersję i listę zmian, następnie **Zainstaluj wydanie 0.7.0**.
+4. Otwórz stronę gry pod dotychczasowym adresem, np.
+   `https://twoja-domena.pl/PixelForge/index.html?v=0.7.0`.
+5. Przy Życiu Dżdżownicy wybierz **Zagraj** i **Nowa gra** albo **Wznów**.
+
+Panel U2 musi wcześniej zostać zainstalowany i skonfigurowany według
+[instrukcji](../admin-updater/README.md). Wymaga PHP 8.2+, ZipArchive i HTTPS.
+ZIP gry nie instaluje panelu. Można także użyć CLI instalatora U1 (`prepare`,
+następnie `apply` z identyfikatorem planu i sumą pokazaną przez `prepare`).
+U3 i paczki delta nie są do tego potrzebne.
+
+Rollback w panelu przywraca poprzednią wersję aplikacji. Zapis Dżdżownicy
+pozostaje w przeglądarce i wraca po ponownej instalacji 0.7.0. Zachowaj ten sam
+adres i przeglądarkę, żeby odczytać dotychczasowe zapisy.
+
+## Hosting wyłącznie statyczny
+
+Rozpakuj ZIP i wgraj **całą zawartość** do katalogu strony: `index.html`,
+`manifest.json` i całe `assets/`. Gra nie potrzebuje PHP ani Node.js.
+Jeśli adres kończący się `/` nie otwiera strony, dopisz `index.html`.
+W tej paczce nie ma dodatkowego katalogu nadrzędnego.
+
+Kontrola lokalna: `npm run package:validate -- downloads/pixelforge-0.7.0-full.zip`.
+Odtworzenie z kodu: `npm ci`, następnie `npm run package:release`.
+[Specyfikacja gry](../docs/EARTHWORM.md), [raport testów](../docs/P3-REPORT.md).
+
+## Archiwum: PixelForge 0.6.1
 
 [Pobierz ZIP](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u0-packages/downloads/pixelforge-0.6.1-full.zip)
 
@@ -48,7 +86,7 @@ npm run package:validate -- downloads/pixelforge-0.6.1-full.zip
 
 Wynik poprawnej kontroli ma `valid: true`. Szczegóły i limity:
 [RELEASE-PACKAGES.md](../docs/RELEASE-PACKAGES.md).
-Poprzednie paczki P1 0.5.0/0.5.1 i U0 0.6.0 zachowano jako archiwum; bieżąca to **0.6.1-full**.
+Paczki P1 0.5.0/0.5.1 i U0 0.6.0/0.6.1 zachowano jako archiwum; bieżąca to **0.7.0-full**.
 
 ## Osobny panel aktualizacji U2
 
@@ -58,7 +96,7 @@ ustawia własne hasło i tworzy publiczny plik panelu. Kolejne pełne ZIP-y gry
 wgrywa się już przez przeglądarkę: logowanie, podgląd, osobne zatwierdzenie.
 
 Nie wgrywaj ZIP-a panelu do katalogu gry ani do formularza paczek full.
-Wymagane PHP 8.2+, ZipArchive i HTTPS. Gra pozostaje statyczna w wersji 0.6.1.
+Wymagane PHP 8.2+, ZipArchive i HTTPS. Gra pozostaje statyczna; bieżące wydanie to 0.7.0.
 [Instrukcja konfiguracji i obsługi](../admin-updater/README.md),
 [raport U2](../docs/U2-REPORT.md).
 Poprzedni ZIP U1 1.0.0 zachowano jako archiwum narzędzia CLI.

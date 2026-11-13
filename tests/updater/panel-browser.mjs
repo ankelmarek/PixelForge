@@ -9,6 +9,11 @@ import { randomUUID } from 'node:crypto';
 import process from 'node:process';
 
 const root = resolve(import.meta.dirname, '../..');
+if (process.argv.includes('--release'))
+  process.env.PIXELFORGE_TEST_RELEASE = resolve(
+    root,
+    'downloads/pixelforge-0.7.0-full.zip',
+  );
 const server = spawn(
   'python3',
   ['-u', 'tests/updater/panel_browser_fixture.py'],
@@ -25,6 +30,8 @@ const configuration = await Promise.race([
   }),
 ]);
 const certificateName = 'PixelForge-test-' + randomUUID();
+const releaseVersion = configuration.releaseVersion;
+const newGame = !!process.env.PIXELFORGE_TEST_RELEASE;
 const stores = [];
 let browser;
 const results = [];
@@ -103,7 +110,7 @@ try {
     await game.locator('[data-focus="remote-source"]').click();
     await game.locator('#pause').click();
     const saved = await state();
-    const keys = await game.evaluate(() =>
+    let keys = await game.evaluate(() =>
       Object.keys(globalThis.localStorage).sort(),
     );
 
@@ -131,7 +138,10 @@ try {
       .getByRole('button', { name: 'Sprawdź pakiet', exact: true })
       .click();
     await expect(
-      panel.getByRole('heading', { name: '0.6.1 → 0.6.2', exact: true }),
+      panel.getByRole('heading', {
+        name: `0.6.1 → ${releaseVersion}`,
+        exact: true,
+      }),
     ).toBeVisible();
     await expect(panel.locator('[data-active]')).toHaveText('0.6.1');
     const viewport = panel.viewportSize();
@@ -141,13 +151,17 @@ try {
       ),
     ).toBeLessThanOrEqual(viewport.width);
     await panel.screenshot({
-      path: 'test-results/u2-' + device + '.png',
+      path:
+        'test-results/' + (newGame ? 'p3-install-' : 'u2-') + device + '.png',
       fullPage: true,
     });
     await panel
-      .getByRole('button', { name: 'Zainstaluj wydanie 0.6.2', exact: true })
+      .getByRole('button', {
+        name: `Zainstaluj wydanie ${releaseVersion}`,
+        exact: true,
+      })
       .click();
-    await expect(panel.locator('[data-active]')).toHaveText('0.6.2');
+    await expect(panel.locator('[data-active]')).toHaveText(releaseVersion);
     await expect(panel.locator('.notice[role="status"]')).toContainText(
       'Wydanie zostało zainstalowane',
     );
@@ -159,10 +173,57 @@ try {
     ).toEqual(keys);
     await game.locator('#pause').click();
 
+    let wormSave;
+    if (newGame) {
+      await game.locator('#back').click();
+      await game.locator('[data-game="earthworm"]').click();
+      await game.locator('#start').click();
+      for (const [x, y] of [
+        [488, 512],
+        [528, 488],
+        [588, 492],
+        [552, 536],
+      ]) {
+        const c = (await state()).camera,
+          r = await game.locator('#stage canvas').boundingBox();
+        const px =
+          r.x +
+          (((x - c.scrollX - c.width / 2) * c.zoom + c.width / 2) / c.width) *
+            r.width;
+        const py =
+          r.y +
+          (((y - c.scrollY - c.height / 2) * c.zoom + c.height / 2) /
+            c.height) *
+            r.height;
+        if (device === 'mobile') await game.touchscreen.tap(px, py);
+        else await game.mouse.click(px, py);
+        await expect
+          .poll(async () => {
+            const s = await state();
+            return Math.hypot(s.x - x, s.y - y);
+          })
+          .toBeLessThan(4);
+      }
+      await expect.poll(async () => (await state()).collected).toBe(1);
+      keys = await game.evaluate(() =>
+        Object.keys(globalThis.localStorage).sort(),
+      );
+      await game.locator('#diagnostics').evaluate((e) => {
+        e.style.display = 'none';
+      });
+      await game.screenshot({
+        path: 'test-results/p3-game-' + device + '.png',
+      });
+      await game.locator('#pause').click();
+      wormSave = await game.evaluate(() =>
+        globalThis.localStorage.getItem('pixelforge:client:v1:earthworm'),
+      );
+    }
+
     await panel
       .getByRole('link', { name: 'Przywróć poprzednią wersję', exact: true })
       .click();
-    await expect(panel.locator('[data-active]')).toHaveText('0.6.2');
+    await expect(panel.locator('[data-active]')).toHaveText(releaseVersion);
     await panel
       .getByRole('button', { name: 'Potwierdź przywrócenie', exact: true })
       .click();
@@ -172,6 +233,41 @@ try {
     expect(
       await game.evaluate(() => Object.keys(globalThis.localStorage).sort()),
     ).toEqual(keys);
+    if (newGame) {
+      expect(
+        await game.evaluate(() =>
+          globalThis.localStorage.getItem('pixelforge:client:v1:earthworm'),
+        ),
+      ).toBe(wormSave);
+      await panel.locator('#package').setInputFiles(configuration.package);
+      await panel
+        .getByRole('button', { name: 'Sprawdź pakiet', exact: true })
+        .click();
+      await panel
+        .getByRole('button', {
+          name: `Zainstaluj wydanie ${releaseVersion}`,
+          exact: true,
+        })
+        .click();
+      await expect(panel.locator('[data-active]')).toHaveText(releaseVersion);
+      await game.goto(
+        configuration.origin + '/PixelForge/index.html?diagnostics=1',
+      );
+      await game.locator('[data-game="earthworm"]').click();
+      await game.locator('#resume').click();
+      await expect.poll(async () => (await state()).collected).toBe(1);
+      expect((await state()).stats.tunnels).toBe(
+        JSON.parse(wormSave).state.tunnels.length,
+      );
+      await game.locator('#pause').click();
+      await panel
+        .getByRole('link', { name: 'Przywróć poprzednią wersję', exact: true })
+        .click();
+      await panel
+        .getByRole('button', { name: 'Potwierdź przywrócenie', exact: true })
+        .click();
+      await expect(panel.locator('[data-active]')).toHaveText('0.6.1');
+    }
     await panel.getByRole('button', { name: 'Wyloguj', exact: true }).click();
     await expect(panel.getByLabel('Hasło', { exact: true })).toBeVisible();
     expect(errors).toEqual([]);
@@ -179,8 +275,9 @@ try {
       device,
       httpsVerified: true,
       uploadOnlyPrepares: true,
-      install: '0.6.1 -> 0.6.2',
-      rollback: '0.6.2 -> 0.6.1',
+      install: `0.6.1 -> ${releaseVersion}`,
+      rollback: `${releaseVersion} -> 0.6.1`,
+      gameReinstalledAndResumed: newGame,
       savedCameraRestored: true,
       savesPreserved: true,
       errors,
@@ -201,7 +298,7 @@ try {
     .getByRole('button', { name: 'Sprawdź pakiet', exact: true })
     .click();
   await expect(
-    page.getByRole('button', { name: 'Zainstaluj wydanie 0.6.2' }),
+    page.getByRole('button', { name: `Zainstaluj wydanie ${releaseVersion}` }),
   ).toBeVisible();
   await page.getByRole('button', { name: 'Usuń plan', exact: true }).click();
   await expect(page.locator('.notice[role="status"]')).toContainText(
@@ -209,11 +306,13 @@ try {
   );
   await context.close();
   await writeFile(
-    'test-results/U2-BROWSER-RESULTS.json',
+    `test-results/${newGame ? 'P3-INSTALLER' : 'U2'}-BROWSER-RESULTS.json`,
     JSON.stringify(
       {
         chromium: browser.version(),
-        fixtureRelease: '0.6.2 is a temporary fixture, not a published game',
+        release: newGame
+          ? releaseVersion
+          : '0.6.2 is a temporary fixture, not a published game',
         javascriptDisabledUploadAndDiscard: true,
         results,
       },

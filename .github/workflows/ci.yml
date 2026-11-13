@@ -52,6 +52,9 @@ jobs:
       - run: npm run test:e2e
       - run: npm run test:updater:browser
       - run: npm run test:panel:browser
+      - run: npm run package:release
+      - run: npm run test:game:browser
+      - run: npm run test:release:browser
       - run: npm run package:updater
       - uses: actions/upload-artifact@v4
         if: always()
@@ -62,5 +65,7 @@ jobs:
             playwright-report/
             downloads/pixelforge-updater-*.zip
             downloads/pixelforge-updater-*.sha256
+            downloads/pixelforge-0.7.0-full.zip
+            downloads/pixelforge-0.7.0-full.zip.sha256
           if-no-files-found: ignore
           retention-days: 14

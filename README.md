@@ -32,12 +32,16 @@ Funkcje silnika powstały w historycznych gałęziach M0–M3 i powiązanych PR,
 
 ## Gotowa paczka na hosting
 
-[Pobierz PixelForge 0.6.1 — pełny ZIP na serwer statyczny](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u0-packages/downloads/pixelforge-0.6.1-full.zip).
+[Pobierz PixelForge 0.7.0 — Życie Dżdżownicy + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p3-earthworm/downloads/pixelforge-0.7.0-full.zip).
+W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.7.0**.
+Po instalacji otwórz stronę gry i wybierz **Zagraj** przy Życiu Dżdżownicy.
+Panel trzeba wcześniej jednorazowo skonfigurować; jest osobnym narzędziem PHP.
+Możliwe jest również ręczne wgranie na hosting statyczny:
 Rozpakuj i wgraj `index.html`, cały katalog `assets/` oraz `manifest.json` do
 katalogu strony, np. `public_html/pixelforge/`. Otwórz potem
 `https://twoja-domena.pl/pixelforge/`. Na hostingu nie potrzebujesz Node.js,
 Pythona ani PHP. [Pełna instrukcja](downloads/README.md).
-Atlas zajmuje całe okno przeglądarki, także po obrocie telefonu.
+Dżdżownica i Atlas zajmują całe okno przeglądarki, także po obrocie telefonu.
 Wydanie 0.6.1 poprawia migotanie przy maksymalnym oddaleniu i daty plików ZIP
 wpływające na cache przeglądarki. [Raport poprawki](docs/HOTFIX-0.6.1.md).
 
@@ -48,20 +52,21 @@ Paczka gry nie wdraża się samodzielnie.
 
 ## Uruchamianie
 
-Gałąź `feature/p2-u2-admin-panel` zawiera rdzeń P0, demonstrację **Atlas** z P1
-i narzędzia U0/U1/U2. Bazuje na U1 / PR #8, dalej PR #7, #6 i #5.
-Na ekranie głównym wybierz **Otwórz 4096 × 4096** albo **8192 × 8192**, następnie
-**Nowa sesja** lub **Wznów**. Katalog produktów pozostaje pusty — demonstracja
-techniczna jest poza `src/games/`. P1 zależy od PR #5; żaden PR nie został scalony
-automatycznie. Dawne gry pozostają w historycznych gałęziach.
+Gałąź `feature/p3-earthworm` zawiera grę **Życie Dżdżownicy**, rdzeń P0/P1,
+demonstrację **Atlas** i narzędzia U0/U1/U2. Bazuje na U2 / PR #9;
+wcześniejsze PR pozostają zależnościami, bez automatycznego merge.
+Wybierz **Zagraj**, następnie **Nowa gra** lub **Wznów**. Atlas pozostaje
+dostępny pod przyciskami **Otwórz 4096 × 4096** / **8192 × 8192**.
+Gra ma własne mechaniki i zapis, poza kodem silnika.
+[Specyfikacja gry](docs/EARTHWORM.md), [raport P3](docs/P3-REPORT.md).
 
 Wymagane Node.js **24 LTS**, npm 11 oraz Python **3.11+** do testów i paczek U0.
 Pełny zestaw testów obejmuje także PHP **8.2+**, ZipArchive i system Unix/Linux
 (na Windows można użyć WSL). PHP służy aktualizatorowi, nie statycznej grze.
-Po przełączeniu na gałąź U2:
+Po przełączeniu na gałąź P3:
 
 ```bash
-git clone --branch feature/p2-u2-admin-panel https://github.com/ankelmarek/PixelForge.git
+git clone --branch feature/p3-earthworm https://github.com/ankelmarek/PixelForge.git
 cd PixelForge
 npm ci
 npm run dev
@@ -73,7 +78,7 @@ npm run test:e2e
 ```
 
 `npm run dev` podaje lokalny adres Vite. `npm run build` tworzy statyczny `dist/`
-z ekranem rdzenia i demonstracją świata, bez testów oraz fixture'ów. Build działa także
+z grą i demonstracją świata, bez testów oraz fixture'ów. Build działa także
 z podkatalogu dzięki `base: './'`. `npm run preview` służy do jego sprawdzenia.
 
 Przed pierwszym E2E: `npx playwright install chromium`, następnie `npm run test:e2e`.
@@ -95,7 +100,7 @@ aktualizatora.
 
 ```bash
 npm run package:release
-npm run package:validate -- downloads/pixelforge-0.6.1-full.zip
+npm run package:validate -- downloads/pixelforge-0.7.0-full.zip
 npm run test:packages
 ```
 
@@ -109,12 +114,13 @@ w Pythonie/PHP (biblioteka standardowa, bez pip). [Format, limity i polecenia](d
 
 [Osobny ZIP narzędzia PHP](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p2-u2-admin-panel/downloads/pixelforge-updater-u2-1.1.0.zip)
 rozpakowuje się poza katalogiem publicznym. Nie jest paczką gry do wgrania
-do PixelForge. Działający Atlas pozostaje w wersji 0.6.1.
+do PixelForge. Aktualizacja gry 0.7.0 zachowuje zapisy Atlasu z 0.6.1.
 
 ```bash
 npm run test:updater
 npm run test:updater:browser
 npm run test:panel:browser
+npm run test:release:browser
 npm run package:updater
 php admin-updater/cli.php help
 ```
@@ -127,6 +133,9 @@ wyłącznie jako fixture. Sprawdza instalację, rollback i zachowanie zapisu.
 [raport U2](docs/U2-REPORT.md). Test panelu używa lokalnego HTTPS i własnego
 CA dodawanego na czas testu do NSS; wymaga OpenSSL oraz certutil (libnss3-tools).
 Weryfikacja TLS pozostaje włączona.
+`test:release:browser` używa rzeczywistego ZIP-a 0.7.0: instaluje go nad 0.6.1,
+uruchamia Dżdżownicę, cofa wydanie, instaluje ponownie i wznawia zachowany zapis.
+`npm run assets:earthworm` odtwarza autorską grafikę i mapę nowej gry.
 U1 używa dwóch rename katalogów z krótkim oknem HTTP 404; po zabiciu procesu
 w tym oknie potrzebne jest `recover`. Nie obiecuje atomowej podmiany.
 
