@@ -84,10 +84,22 @@ pauzie i wyjściu. Wznowienie wraca do checkpointu, nie dowolnej pozycji.
 
 Brak dostępu do localStorage, zła wersja, niepoprawne życia, ID lub JSON dają
 bezpieczną nową sesję. Zmiana niekompatybilnej zawartości wymaga zmiany `version`.
-M0 v1 jest migrowane do flagi `activated`; zakończenie migruje tylko w grze
-jednopoziomowej. Nowa sesja zapisuje v2 i nie wraca do starych flag.
+M0 v1 jest migrowane do flagi `activated` i zakończenia tylko w grze
+jednopoziomowej. Nowa kampania wielopoziomowa zaczyna się od czystego stanu. Nowa sesja zapisuje v2 i nie wraca do starych flag.
 
 Host zachowuje sceny Boot/Preload/Title/Gameplay. HTML aplikacji obsługuje pauzę,
 porażkę i zwycięstwo; pauza zatrzymuje scenę, fizykę i czas. Restart i wyjście
 usuwają listenery, obiekty oraz timery. UI nie pokazuje pisanych samouczków.
 Audio współdzielone: skok, interakcja, zebranie, obrażenia, ukończenie; wyciszenie.
+
+## Uzupełnienia M2
+
+`LevelDefinition.title` to krótka nazwa poziomu dla HUD-u. `theme` wskazuje
+teksturę tła, kolor terenu i opcjonalną dekorację przednią. Wszystkie wskazane
+klucze muszą istnieć w assetach gry. Zasoby `gem`, `lock` i `enemy` są dostarczane
+przez grę; sceny nie zawierają jej nazw ani geometrii.
+
+Opcjonalne `music` w definicji gry zawiera `notes` (MIDI 0–100, 0 oznacza pauzę),
+`beatSeconds` (0,1–3) i `volume` (0–0,03). `Audio` syntezuje ton, wspólny master
+obsługuje wyciszenie, a zawieszenie kontekstu zatrzymuje muzykę na pauzie.
+Motyw i parametry są danymi gry, bez zewnętrznych plików i kont.

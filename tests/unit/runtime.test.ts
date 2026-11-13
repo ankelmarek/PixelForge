@@ -5,7 +5,8 @@ import {
   SaveService,
 } from '../../src/engine/systems/progress';
 import { validateLevel } from '../../src/engine/api/validation';
-import { forestDemo } from '../../src/games/forest-demo';
+import { forestDemo as campaign } from '../../src/games/forest-demo';
+const forestDemo = { ...campaign, startingLives: 3 };
 import raw from '../../public/assets/games/forest-demo/level.json';
 const first = validateLevel({
   ...raw,

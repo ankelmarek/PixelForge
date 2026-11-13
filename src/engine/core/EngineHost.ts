@@ -114,7 +114,7 @@ export class EngineHost {
       up = key(false);
     const blur = () => {
       this.input.clear();
-      this.pause(true);
+      if (!this.snapshot?.completed && !this.snapshot?.failed) this.pause(true);
     };
     const visibility = () => {
       if (document.hidden) blur();
@@ -144,6 +144,7 @@ export class EngineHost {
   start(resume = false) {
     if (!this.game || !this.session) return;
     this.audio.unlock();
+    this.audio.music(this.session.definition.music);
     this.input.clear();
     this.paused = false;
     if (!resume) this.session.progress.reset();
@@ -164,6 +165,7 @@ export class EngineHost {
     )
       return;
     this.paused = paused;
+    this.audio.pause(paused);
     this.input.clear();
     if (paused) {
       this.session?.progress.persist();

@@ -59,7 +59,7 @@ Kryteria odbioru:
 
 ### M2. Dopieszczona gra demonstracyjna
 
-**Status: TODO. Priorytet: P0.**
+**Status: IN PROGRESS. Priorytet: P0. Kod demo gotowy; trwa weryfikacja i odbiór.**
 
 Zakres:
 
@@ -72,13 +72,13 @@ Zakres:
 
 Kryteria odbioru:
 
-- [ ] Grę da się ukończyć od startu do zakończenia bez konsoli deweloperskiej i bez instrukcji tekstowych.
-- [ ] Zapis i wznowienie działają po odświeżeniu strony.
-- [ ] Menu pauzy, restart, wyciszenie, porażka i zwycięstwo działają.
-- [ ] Wszystkie zasoby mają ustalony status licencji.
-- [ ] Przeglądarkowe smoke e2e i testy logiki przechodzą.
+- [x] Grę da się ukończyć od startu do zakończenia bez konsoli deweloperskiej i bez instrukcji tekstowych.
+- [x] Zapis i wznowienie działają po odświeżeniu strony.
+- [x] Menu pauzy, restart, wyciszenie, porażka i zwycięstwo działają.
+- [x] Wszystkie zasoby mają ustalony status licencji.
+- [x] Przeglądarkowe smoke e2e i testy logiki przechodzą.
 - [ ] Playtest z nową osobą potwierdza, że niezbędne akcje są odkrywalne bez instrukcji i bez pisanych podpowiedzi.
-- [ ] Raport zawiera faktyczny wynik playtestu, przybliżony czas gry i znane ograniczenia.
+- [x] Raport zawiera faktyczny wynik playtestu, przybliżony czas gry i znane ograniczenia.
 
 ### M3. Rozszerzenie silnika TopDown Simulator i pierwszy prototyp „Winobranie”
 
@@ -176,6 +176,17 @@ Kryteria odbioru:
 - [ ] Procedura wydania i przywrócenia poprzedniej wersji jest opisana.
 
 ## Rejestr zmian statusów
+
+### 2026-11-13 — M2 IN PROGRESS
+
+- Gałąź `feature/m2-forest-demo`, baza M1 `a1836e1`; Winobranie/M3 odłożone.
+- Kampania trzech krain, 22 kolekcje, checkpointy, patrole, zagrożenia, finał,
+  własna grafika/animacje/SFX/muzyka i UX bez pisanych samouczków.
+- Kontrole lint/typecheck/test/build OK; Vitest 17, E2E 13 zaliczonych + 1 pominięty na desktopie.
+- Pełne przejście rzeczywistych map zwykłymi klawiszami: 303,337 s, 7/7 żyć, bez błędów JS. To automatyczny gracz, nie nowy człowiek.
+- Raport i ograniczenia: `docs/M2-REPORT.md`; dane `docs/M2-PLAYTEST.json`; gotowy ZIP w `downloads/`.
+- Pozostaje odbiór przez nową osobę, która nie zna sterowania; nie oznaczać
+  M2 jako DONE przed potwierdzeniem tego kryterium.
 
 ### 2026-11-13 — M1 DONE
 

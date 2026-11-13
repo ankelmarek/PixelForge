@@ -1,13 +1,14 @@
 # PixelForge
 
 Modułowy runtime gier 2D w pixel art: **Phaser 4.2.1**, TypeScript `strict`, Vite.
-Silnik nie zna nazw ani fabuły gier. M0 dostarcza uruchamialny fundament i jedną
-krótką platformówkę **Leśny sygnał** (`forest-demo`). To prototyp jednego poziomu,
-nie docelowa demonstracja 5–8 minut ani ukończony silnik MVP.
+Silnik nie zna nazw ani fabuły gier. M1 dostarcza współdzielony runtime,
+a M2 — kampanię **Leśny sygnał** (`forest-demo`): trzy mapy, kolekcje, patrole,
+checkpointy i zakończenie. Kod M2 jest gotowy do odbioru; test z nową osobą
+nieznającą sterowania pozostaje niezaliczonym kryterium roadmapy.
 
 ## Gotowa paczka na serwer statyczny
 
-[Pobierz ZIP M0](downloads/PixelForge-M0-static.zip?raw=true). Rozpakuj i wgraj
+[Pobierz ZIP M2](downloads/PixelForge-M2-static.zip?raw=true). Rozpakuj i wgraj
 `index.html` oraz cały katalog `assets/` do katalogu strony na serwerze HTTP(S).
 Nie potrzebujesz Node.js, npm ani PHP. [Szczegóły i suma kontrolna](downloads/README.md).
 
@@ -21,7 +22,8 @@ npm run dev
 ```
 
 Otwórz adres podany przez Vite (domyślnie `http://localhost:5173`).
-Kod M0 znajduje się na gałęzi `feature/m0-engine-foundation`.
+Kod M1: `feature/m1-runtime`. Demo M2: `feature/m2-forest-demo`.
+Etapy są przekazywane w osobnych PR-ach; `main` może nie zawierać jeszcze implementacji.
 
 W katalogu wybierz **Odkryj las**, potem **Nowa wyprawa** lub **Wznów wyprawę**.
 Na telefonie w tej samej sieci użyj adresu LAN komputera i portu Vite;
@@ -42,13 +44,14 @@ backendu; ponowne uruchomienie w pełni offline/PWA nie jest częścią M0.
 
 - Ruch: **← → / A D**, skok: **Spacja**.
 - W grze nie ma pisanych instrukcji; nauka odbywa się wizualnie.
-- Wejdź po platformach do latarni i wciśnij **Shift**. Potem dotrzyj do bramy po prawej.
+- Zbierz odłamki w każdej krainie, wróć do latarni i wciśnij **Shift**.
+  Potem przejdź przez otwartą bramę. To opis dla dewelopera, niewyświetlany w grze.
 - Przyciski ekranowe: **← →**, **↑** (skok), **✦** (interakcja), także wielodotyk.
 - **Esc** lub **Pauza** zatrzymuje grę; **Esc** lub przycisk **Wróć do gry** ją wznawia.
 - Dostępne są restart, wyciszenie, ekran zakończenia i powrót do katalogu bez
   przeładowania strony. Klawisze gry działają po nadaniu fokusowi canvasowi.
-- Zapis lokalny zachowuje zapalenie latarni i ukończenie, osobno dla każdego `gameId`.
-  Wznowienie przenosi do latarni. Nowa wyprawa zeruje zapis. Brak dostępu do
+- Zapis v2 zachowuje etap, checkpoint, flagi, kolekcje, życia i czas, osobno dla
+  każdego `gameId`. Wznowienie przenosi do checkpointu. Nowa wyprawa zeruje zapis. Brak dostępu do
   localStorage lub uszkodzony zapis nie blokują sesji. Po ukryciu karty lub utracie
   fokusu gra automatycznie pauzuje.
 
@@ -62,6 +65,15 @@ npm run build
 npx playwright install chromium
 npm run test:e2e
 ```
+
+Pełne przejście rzeczywistych map, po uruchomieniu `npm run dev` na porcie 5173:
+
+```bash
+node tools/play-campaign.mjs
+```
+
+To dłuższy test automatycznego gracza przez zwykłe klawisze, bez teleportacji
+i zmiany czasu silnika. Zapisuje pomiar, stan i zrzuty w `work/`.
 
 Playwright sam uruchamia Vite. Testuje Chromium desktop i emulację Pixel 7,
 przejście całego poziomu przez rzeczywiste sterowanie, kolizje, interakcję,
@@ -78,14 +90,17 @@ na fizycznym Androidzie/iPhonie. `npm run format` formatuje pliki.
 - `src/games/forest-demo/`, `public/assets/games/forest-demo/` — konfiguracja,
   grafiki i JSON poziomu; wyłącznie specyfika demonstracji.
 - `tests/` — Vitest i Playwright.
-- `tools/generate-forest.py` — odtwarzanie własnych PNG (Python 3, bez bibliotek).
+- `tools/generate-forest.py` — odtwarzanie własnych PNG (Python 3, bez bibliotek);
+  `tools/generate-campaign.py` — mapy kampanii.
 
 API runtime M1: [ENGINE-API.md](docs/ENGINE-API.md),
 [raport M1](docs/M1-REPORT.md).
 
+Demo M2 i ograniczenia odbioru: [M2-REPORT.md](docs/M2-REPORT.md).
+
 Kontrakt M0 i raport: [docs/M0-REPORT.md](docs/M0-REPORT.md).
 Założenia: [AGENTS.md](AGENTS.md), [specyfikacja](docs/SPECIFICATION.md),
-[roadmapa](docs/ROADMAP.md). **M1 i kolejne etapy wymagają osobnego polecenia.**
+[roadmapa](docs/ROADMAP.md). **Winobranie/M3 pozostaje odłożone do zakończenia odbioru M1/M2 i osobnego polecenia.**
 
 Zasoby są oryginalne; ich pochodzenie i warunki użycia zapisano w
 [licencji assetów](public/assets/games/forest-demo/LICENSE.md). Brak zewnętrznych

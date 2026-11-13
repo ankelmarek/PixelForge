@@ -55,6 +55,11 @@ for i in range(65):
 for x,y in [(42,117),(183,135),(286,102),(116,82),(67,65)]:
     im.rect(x,y,1,2,'#b5c779')
 im.save('background.png')
+original = im.pixels[:]
+for name, shift in [('dawn.png', (25, 9, -13)), ('ruins.png', (5, -5, 12))]:
+    im.pixels = [tuple(max(0, min(255, p[i]+shift[i])) for i in range(3))+(p[3],) for p in original]
+    im.save(name)
+im.pixels = original
 
 im=Image(32,24,'#3b3d39')
 im.rect(0,0,32,3,'#a4bd72'); im.rect(0,3,32,3,'#607f4b'); im.rect(0,6,32,3,'#405941')
@@ -64,8 +69,8 @@ for x,y,w in [(2,12,6),(13,10,8),(25,14,5),(6,20,9),(20,21,8)]:
     im.rect(x,y,w,2,'#505144'); im.rect(x+1,y,2,1,'#6e6b51')
 im.save('terrain.png')
 
-im=Image(96,24)
-for frame in range(6):
+im=Image(112,24)
+for frame in range(7):
     x=frame*16; bob=1 if frame in [2,5] else 0
     # boots and asymmetrical walking legs
     im.rect(x+4,19,3,4,'#263b3e'); im.rect(x+9,19,3,4,'#263b3e')
@@ -80,6 +85,8 @@ for frame in range(6):
     im.rect(x+11,7+bob,1,2,'#263c3e'); im.rect(x+10,10+bob,3,1,'#bb865f')
     im.rect(x+5,11+bob,8,2,'#d8a65d'); im.rect(x+3,12+bob,3,5,'#ba7447')
     im.rect(x+12,14+bob,2,4,'#e7bf8c')
+# Seventh frame: recoil pose, kept inside the same sheet contract.
+im.rect(96+2,17,3,3,'#e7bf8c'); im.rect(96+12,11,3,3,'#e7bf8c')
 im.save('player.png')
 
 im=Image(24,32)
@@ -95,3 +102,34 @@ for y in range(13,42,4):
     im.rect(12+(y%3),y,8,1,'#89c1a2')
 im.rect(6,13,2,28,'#a7b596'); im.rect(23,13,2,28,'#a7b596'); im.rect(14,6,4,4,'#e6d99a')
 im.save('portal.png')
+
+# Additional original sprites for the full three-map demonstration.
+im=Image(12,14)
+for y,w in [(0,2),(1,6),(3,10),(5,12),(9,8),(12,2)]:
+    im.rect((12-w)//2,y,w,2,'#92cfc2')
+im.rect(4,3,3,7,'#d9f6ce'); im.rect(7,6,3,4,'#5c9bb2'); im.save('gem.png')
+im=Image(48,16)
+for f in range(3):
+    x=f*16
+    im.rect(x+2,10,12,5,'#485943'); im.rect(x+3,6,10,7,'#77925a'); im.rect(x+5,4,6,4,'#a4b869')
+    im.rect(x+3,9,2,2,'#e8d697'); im.rect(x+11,9,2,2,'#e8d697'); im.rect(x+4,10,1,1,'#273b35'); im.rect(x+12,10,1,1,'#273b35')
+    im.rect(x+(2 if f==0 else 4),14,4,2,'#283e35'); im.rect(x+10,14,4,2,'#283e35')
+    if f==2: im.rect(x+4,7,8,2,'#d49a72')
+im.save('enemy.png')
+im=Image(16,28)
+im.rect(6,3,3,25,'#536e5e'); im.rect(7,4,8,7,'#d7b473'); im.rect(8,5,6,3,'#eddda0'); im.rect(3,25,10,3,'#8e9c74'); im.save('checkpoint.png')
+im=Image(20,12)
+for x in [0,5,10,15]:
+    im.rect(x+1,2,2,9,'#6b7357'); im.rect(x+2,0,1,9,'#c3b18b'); im.rect(x,9,5,3,'#464f42')
+im.save('hazard.png')
+im=Image(12,14)
+im.rect(2,5,8,9,'#b9b595'); im.rect(3,1,6,2,'#d9cd9a'); im.rect(2,3,2,4,'#d9cd9a'); im.rect(8,3,2,4,'#d9cd9a'); im.rect(5,8,2,4,'#49534a'); im.save('lock.png')
+for name, color in [('flowers.png','#d5bc82'),('ferns.png','#80a586'),('stones.png','#879c97')]:
+    im=Image(24,24)
+    for x in [3,10,18]:
+        height=random.randrange(5,12)
+        im.rect(x,24-height,1,height,'#507760'); im.rect(x-2,25-height,5,3,color)
+        im.rect(x+1,20,3,1,'#6a9066')
+    if name=='stones.png':
+        im.rect(3,19,9,5,color); im.rect(6,17,6,4,color); im.rect(17,20,5,4,'#a5b0a1')
+    im.save(name)

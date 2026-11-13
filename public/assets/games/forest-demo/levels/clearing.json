@@ -1,0 +1,234 @@
+{
+  "schemaVersion": 1,
+  "id": "clearing",
+  "title": "Le\u015bna polana",
+  "width": 3200,
+  "height": 180,
+  "spawn": {
+    "x": 28,
+    "y": 139
+  },
+  "platforms": [
+    {
+      "x": 0,
+      "y": 156,
+      "width": 3200,
+      "height": 24
+    },
+    {
+      "x": 88,
+      "y": 144,
+      "width": 40,
+      "height": 12
+    },
+    {
+      "x": 300,
+      "y": 128,
+      "width": 80,
+      "height": 16
+    },
+    {
+      "x": 392,
+      "y": 100,
+      "width": 64,
+      "height": 16
+    },
+    {
+      "x": 700,
+      "y": 128,
+      "width": 80,
+      "height": 16
+    },
+    {
+      "x": 792,
+      "y": 100,
+      "width": 64,
+      "height": 16
+    },
+    {
+      "x": 1100,
+      "y": 128,
+      "width": 80,
+      "height": 16
+    },
+    {
+      "x": 1192,
+      "y": 100,
+      "width": 64,
+      "height": 16
+    },
+    {
+      "x": 1500,
+      "y": 128,
+      "width": 80,
+      "height": 16
+    },
+    {
+      "x": 1592,
+      "y": 100,
+      "width": 64,
+      "height": 16
+    },
+    {
+      "x": 1900,
+      "y": 128,
+      "width": 80,
+      "height": 16
+    },
+    {
+      "x": 1992,
+      "y": 100,
+      "width": 64,
+      "height": 16
+    },
+    {
+      "x": 2300,
+      "y": 128,
+      "width": 80,
+      "height": 16
+    },
+    {
+      "x": 2392,
+      "y": 100,
+      "width": 64,
+      "height": 16
+    },
+    {
+      "x": 2700,
+      "y": 128,
+      "width": 80,
+      "height": 16
+    },
+    {
+      "x": 2792,
+      "y": 100,
+      "width": 64,
+      "height": 16
+    }
+  ],
+  "interaction": {
+    "x": 160,
+    "y": 156,
+    "action": "activate"
+  },
+  "exit": {
+    "x": 3152,
+    "y": 156
+  },
+  "entities": [
+    {
+      "id": "beacon",
+      "type": "switch",
+      "x": 160,
+      "y": 156,
+      "texture": "beacon",
+      "requires": {
+        "condition": "allCollected"
+      },
+      "onInteract": [
+        {
+          "action": "toggleFlag",
+          "flag": "activated"
+        }
+      ]
+    },
+    {
+      "id": "shard-0",
+      "type": "collectible",
+      "x": 420,
+      "y": 91,
+      "texture": "gem"
+    },
+    {
+      "id": "shard-1",
+      "type": "collectible",
+      "x": 820,
+      "y": 91,
+      "texture": "gem"
+    },
+    {
+      "id": "shard-2",
+      "type": "collectible",
+      "x": 1220,
+      "y": 91,
+      "texture": "gem"
+    },
+    {
+      "id": "shard-3",
+      "type": "collectible",
+      "x": 1620,
+      "y": 91,
+      "texture": "gem"
+    },
+    {
+      "id": "shard-4",
+      "type": "collectible",
+      "x": 2020,
+      "y": 91,
+      "texture": "gem"
+    },
+    {
+      "id": "shard-5",
+      "type": "collectible",
+      "x": 2420,
+      "y": 91,
+      "texture": "gem"
+    },
+    {
+      "id": "shard-6",
+      "type": "collectible",
+      "x": 2820,
+      "y": 91,
+      "texture": "gem"
+    },
+    {
+      "id": "checkpoint-0",
+      "type": "checkpoint",
+      "x": 600,
+      "y": 156,
+      "texture": "checkpoint"
+    },
+    {
+      "id": "checkpoint-1",
+      "type": "checkpoint",
+      "x": 1400,
+      "y": 156,
+      "texture": "checkpoint"
+    },
+    {
+      "id": "checkpoint-2",
+      "type": "checkpoint",
+      "x": 2200,
+      "y": 156,
+      "texture": "checkpoint"
+    },
+    {
+      "id": "checkpoint-3",
+      "type": "checkpoint",
+      "x": 2900,
+      "y": 156,
+      "texture": "checkpoint"
+    },
+    {
+      "id": "sentry-0",
+      "type": "enemy",
+      "x": 550,
+      "y": 156,
+      "texture": "enemy",
+      "patrol": {
+        "min": 538,
+        "max": 564,
+        "speed": 16
+      }
+    }
+  ],
+  "exitRequires": {
+    "allFlags": ["activated"],
+    "condition": "allCollected"
+  },
+  "theme": {
+    "background": "background",
+    "tint": 16777215,
+    "decoration": "flowers"
+  }
+}

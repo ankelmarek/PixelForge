@@ -1,5 +1,18 @@
 import { test, expect, type Page } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+const legacy = JSON.parse(
+  readFileSync('public/assets/games/forest-demo/level.json', 'utf8'),
+);
 async function launch(page: Page) {
+  await page.route('**/levels/clearing.json', (route) =>
+    route.fulfill({ json: legacy }),
+  );
+  for (const name of ['marsh', 'sanctuary'])
+    await page.route(`**/levels/${name}.json`, (route) =>
+      route.fulfill({
+        json: { ...legacy, id: name, spawn: legacy.exit, exitRequires: {} },
+      }),
+    );
   await page.goto('/');
   await page.getByRole('button', { name: 'Odkryj las' }).click();
   await expect(
@@ -139,13 +152,13 @@ test('dotyk, wyciszenie, obrót i ostry obraz', async ({ page }) => {
 test('błędny poziom i brak assetu mają czytelne komunikaty', async ({
   page,
 }) => {
-  await page.route('**/level.json', (route) =>
+  await page.route('**/levels/clearing.json', (route) =>
     route.fulfill({ json: { schemaVersion: 50 } }),
   );
   await page.goto('/');
   await page.getByRole('button', { name: 'Odkryj las' }).click();
   await expect(page.getByText('Poziom: nieobsługiwana wersja')).toBeVisible();
-  await page.unroute('**/level.json');
+  await page.unroute('**/levels/clearing.json');
   await page.route('**/player.png', (route) =>
     route.fulfill({ status: 404, body: '' }),
   );

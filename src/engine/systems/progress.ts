@@ -43,7 +43,8 @@ export class SaveService {
       const raw = storage.getItem(`pixelforge:v2:${this.game.id}`);
       if (raw === null) {
         const old = readProgress(this.game.id, storage);
-        if (old.activated) fresh.flags[`${fresh.levelId}:activated`] = true;
+        if (old.activated && this.levels.length === 1)
+          fresh.flags[`${fresh.levelId}:activated`] = true;
         fresh.completed = old.completed && this.levels.length === 1;
         return fresh;
       }

@@ -72,8 +72,11 @@ export function createScenes(session: Session) {
     private beacon!: Phaser.GameObjects.Image;
     private portal!: Phaser.GameObjects.Image;
     private entities: Entity[] = [];
+    private lock?: Phaser.GameObjects.Image;
+    private pips: { id: string; image: Phaser.GameObjects.Image }[] = [];
     private level!: LevelDefinition;
     private invulnerableUntil = 0;
+    private hurtUntil = 0;
     private tick = 0;
     private changing = false;
     private reducedMotion = matchMedia('(prefers-reduced-motion: reduce)')
@@ -85,6 +88,9 @@ export function createScenes(session: Session) {
       this.level = progress.level;
       const level = this.level;
       this.entities = [];
+      this.pips = [];
+      this.hurtUntil = 0;
+      this.lock = undefined;
       this.tick = 0;
       this.invulnerableUntil = progress.state.elapsedSeconds + 0.5;
       this.changing = false;
@@ -104,11 +110,21 @@ export function createScenes(session: Session) {
         platforms.add(terrain);
       });
       if (level.theme?.decoration) {
-        for (let x = 56; x < level.width; x += 97)
+        for (let x = 56; x < level.width; x += 97) {
+          if (
+            (level.entities ?? []).some(
+              (e) =>
+                ['hazard', 'enemy', 'checkpoint', 'switch'].includes(e.type) &&
+                Math.abs(e.x - x) < 30,
+            )
+          )
+            continue;
           this.add
             .image(x, 157, level.theme.decoration)
             .setOrigin(0.5, 1)
-            .setDepth(25);
+            .setDepth(25)
+            .setAlpha(0.8);
+        }
       }
       this.beacon = this.add
         .image(level.interaction.x, level.interaction.y, 'beacon')
@@ -118,6 +134,24 @@ export function createScenes(session: Session) {
         .image(level.exit.x, level.exit.y, 'portal')
         .setOrigin(0.5, 1)
         .setDepth(3);
+      if (this.textures.exists('lock'))
+        this.lock = this.add
+          .image(level.exit.x, level.exit.y - 23, 'lock')
+          .setDepth(4);
+      const collectibles = (level.entities ?? []).filter(
+        (e) => e.type === 'collectible',
+      );
+      for (const [index, entity] of collectibles.entries()) {
+        const image = this.add
+          .image(
+            level.interaction.x + (index - (collectibles.length - 1) / 2) * 5,
+            level.interaction.y - 38,
+            entity.texture ?? 'beacon',
+          )
+          .setScale(0.28)
+          .setDepth(4);
+        this.pips.push({ id: entity.id, image });
+      }
       // Explicit entities replace the compatibility interaction used by M0 maps.
       this.beacon.setVisible(
         !(level.entities ?? []).some((e) => e.type === 'switch'),
@@ -153,6 +187,20 @@ export function createScenes(session: Session) {
           continue;
         const entity = createEntity(this, definition);
         this.entities.push(entity);
+        if (
+          definition.type === 'checkpoint' &&
+          progress.state.checkpointId === definition.id
+        )
+          entity.sprite.setTint(0xe5ffd2);
+        if (definition.type === 'collectible' && !this.reducedMotion)
+          this.tweens.add({
+            targets: entity.sprite,
+            y: definition.y - 2,
+            duration: 850,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut',
+          });
         if (definition.type === 'enemy') {
           this.physics.add.collider(entity.sprite, platforms);
           if (game.spriteSheets?.[definition.texture ?? '']) {
@@ -222,6 +270,7 @@ export function createScenes(session: Session) {
           0,
         levelIndex: progress.state.levelIndex,
         levelCount: session.levels.length,
+        levelName: this.level.title ?? this.level.id,
         checkpoint: progress.state.checkpointId,
         elapsed: Math.floor(progress.state.elapsedSeconds),
       });
@@ -263,13 +312,29 @@ export function createScenes(session: Session) {
         this.persist();
       } else if (e.type === 'collectible' && progress.collect(e.id)) {
         this.burst(sprite.x, sprite.y - 8, e.texture);
+        this.tweens.killTweensOf(sprite);
         sprite.destroy();
         audio.play('collect');
       } else if (e.type === 'checkpoint' && progress.checkpoint(e.id)) {
         sprite.setTint(0xe5ffd2);
         this.burst(sprite.x, sprite.y - 8);
         audio.play('activate');
-      } else if (e.type === 'enemy' || e.type === 'hazard') this.hit();
+      } else if (e.type === 'enemy' || e.type === 'hazard') {
+        if (
+          e.type === 'enemy' &&
+          e.texture &&
+          game.spriteSheets?.[e.texture] &&
+          this.textures.get(e.texture).frameTotal > 3 &&
+          progress.state.elapsedSeconds >= this.invulnerableUntil
+        ) {
+          sprite.anims.pause();
+          sprite.setFrame(2);
+          this.time.delayedCall(220, () => {
+            if (sprite.active) sprite.anims.resume();
+          });
+        }
+        this.hit();
+      }
     }
     private hit() {
       if (
@@ -280,6 +345,7 @@ export function createScenes(session: Session) {
       const alive = progress.damage();
       audio.play('hit');
       this.invulnerableUntil = progress.state.elapsedSeconds + 1.4;
+      this.hurtUntil = progress.state.elapsedSeconds + 0.35;
       if (!this.reducedMotion) this.cameras.main.shake(90, 0.003);
       if (alive) {
         const spawn =
@@ -317,7 +383,7 @@ export function createScenes(session: Session) {
       progress.state.elapsedSeconds += elapsed;
       this.tick += Math.min(delta, 100);
       const body = this.player.body as Phaser.Physics.Arcade.Body;
-      const hurt = progress.state.elapsedSeconds < this.invulnerableUntil - 0.3;
+      const hurt = progress.state.elapsedSeconds < this.hurtUntil;
       this.player.setTint(hurt ? 0xf6ac91 : 0xffffff).setAlpha(hurt ? 0.75 : 1);
       if (hurt && this.textures.get('player').frameTotal > 7) {
         this.player.anims.stop();
@@ -385,6 +451,9 @@ export function createScenes(session: Session) {
         progress.context(),
       );
       this.portal.setAlpha(unlocked ? 1 : 0.4);
+      this.lock?.setVisible(!unlocked);
+      for (const pip of this.pips)
+        pip.image.setAlpha(context.collected.includes(pip.id) ? 1 : 0.25);
       if (
         Math.abs(this.player.x - this.level.exit.x) < 18 &&
         Math.abs(this.player.y - this.level.exit.y) < 38 &&

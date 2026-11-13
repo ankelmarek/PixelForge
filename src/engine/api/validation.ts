@@ -83,6 +83,20 @@ export function validateGame(value: unknown): GameDefinition {
       }
     }
   }
+  if (g.music !== undefined) {
+    const music = record(g.music, 'music');
+    if (
+      !Array.isArray(music.notes) ||
+      !music.notes.length ||
+      music.notes.length > 128 ||
+      !music.notes.every((n) => Number.isInteger(n) && n >= 0 && n <= 100)
+    )
+      throw new Error('music.notes: nieprawidłowa melodia');
+    number(music.beatSeconds, 'beatSeconds', 0.1);
+    number(music.volume, 'volume');
+    if ((music.volume as number) > 0.03 || (music.beatSeconds as number) > 3)
+      throw new Error('music: nieprawidłowa głośność/tempo');
+  }
   const movement = record(g.movement, 'movement');
   for (const key of ['speed', 'jump', 'gravity'])
     number(movement[key], `movement.${key}`, 1);
@@ -97,6 +111,7 @@ export function validateLevel(
   const l = record(value, 'Poziom');
   if (l.schemaVersion !== 1) throw new Error('Poziom: nieobsługiwana wersja');
   text(l.id, 'level.id');
+  if (l.title !== undefined) text(l.title, 'level.title');
   number(l.width, 'width', 320);
   number(l.height, 'height', 180);
   point(l.spawn, 'spawn', l.width, l.height);

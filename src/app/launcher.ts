@@ -2,16 +2,16 @@ import { EngineHost, type Action, type GameDefinition } from '../engine/api';
 import { games } from '../games/registry';
 export function mountApp(root: HTMLElement) {
   root.innerHTML = `
-    <header class="masthead"><a class="brand" href="./" aria-label="PixelForge — katalog"><span class="brand-mark">▧</span> PIXEL<span>FORGE</span></a><span class="build-label">LABORATORIUM GIER <i></i> M0 / 0.0.1</span></header>
+    <header class="masthead"><a class="brand" href="./" aria-label="PixelForge — katalog"><span class="brand-mark">▧</span> PIXEL<span>FORGE</span></a><span class="build-label">LABORATORIUM GIER <i></i> M2 / 0.2.0</span></header>
     <main><section id="catalog" aria-labelledby="catalog-title">
       <p class="eyebrow">MAŁE ŚWIATY. WIELKIE PRZYGODY.</p><h1 id="catalog-title">Każda podróż<br>zaczyna się od <em>piksela.</em></h1>
       <p class="intro">Wybierz świat i zrób pierwszy krok. PixelForge to wspólny silnik dla niezależnych przygód 2D.</p>
       <article class="game-card"><div class="cover"><img alt="Księżycowy las z leśną latarnią" src="${import.meta.env.BASE_URL}assets/games/forest-demo/background.png"><span class="cover-badge">GRYWALNY PROTOTYP</span><div class="cover-art"><img alt="" src="${import.meta.env.BASE_URL}assets/games/forest-demo/beacon.png"><span>01 / LEŚNA POLANA</span></div></div>
-      <div class="card-content"><p class="eyebrow">PLATFORMÓWKA · FOREST-DEMO</p><h2></h2><p class="description"></p><div class="tags"><span>Klawiatura + dotyk</span><span>1 krótki poziom</span></div><button id="launch" class="primary">Odkryj las <span>↗</span></button></div></article>
-      <p class="catalog-note"><span>01</span> Jeden silnik. Osobne światy. <small>Fundament PixelForge / etap M0</small></p>
+      <div class="card-content"><p class="eyebrow">PLATFORMÓWKA · FOREST-DEMO</p><h2></h2><p class="description"></p><div class="tags"><span>Klawiatura + dotyk</span><span>3 krainy</span></div><button id="launch" class="primary">Odkryj las <span>↗</span></button></div></article>
+      <p class="catalog-note"><span>01</span> Jeden silnik. Osobne światy. <small>Leśny sygnał / pełny przepływ demo</small></p>
     </section>
     <section id="play" hidden aria-label="Gra demonstracyjna">
-      <div class="play-heading"><div><p class="eyebrow">FOREST-DEMO / PROTOTYP M0</p><h2 id="game-title"></h2></div><button id="exit" class="subtle">← Katalog</button></div>
+      <div class="play-heading"><div><p class="eyebrow">FOREST-DEMO / DEMO</p><h2 id="game-title"></h2></div><button id="exit" class="subtle">← Katalog</button></div>
       <div class="game-frame"><div class="game-topbar"><span>◈ LEŚNA POLANA</span><span id="progress">◇</span></div><div id="stage">
         <div id="canvas-container"></div><div id="overlay" class="overlay"><div class="overlay-card"><p class="eyebrow" id="overlay-kicker">PRZYGOTOWUJEMY ŚWIAT</p><h3 id="overlay-title">Wczytywanie…</h3><p id="overlay-copy"></p><div class="overlay-actions"><button id="start" class="primary" hidden>Nowa wyprawa →</button><button id="resume" hidden>Wznów wyprawę</button></div></div></div>
       </div><div class="game-bottom"><span id="hint" role="status"></span><div><button id="pause" disabled>Pauza</button><button id="restart" disabled>Od nowa</button><button id="mute" aria-pressed="false">Dźwięk: wł.</button></div></div></div>
@@ -79,6 +79,8 @@ export function mountApp(root: HTMLElement) {
         Object.entries(state).forEach(([key, value]) => {
           stage.dataset[key] = String(value);
         });
+        find('.game-topbar > span:first-child').textContent =
+          `◈ ${state.levelName ?? ''}`;
         find('#progress').textContent =
           `${'♥'.repeat(state.lives ?? 3)}  ${state.total ? `◆ ${state.collected}/${state.total}  ` : ''}${(state.levelIndex ?? 0) + 1}/${state.levelCount ?? 1}  ${state.activated ? '◈' : '◇'}`;
         if ((state.completed || state.failed) && !complete) {
@@ -116,6 +118,7 @@ export function mountApp(root: HTMLElement) {
   root.addEventListener('keydown', (event) => {
     if (
       event.code === 'Escape' &&
+      !event.repeat &&
       paused &&
       active &&
       !complete &&

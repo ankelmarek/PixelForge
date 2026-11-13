@@ -1,18 +1,26 @@
-# PixelForge M0 — paczka statyczna
+# Paczki na serwer statyczny
 
-Pobierz [PixelForge-M0-static.zip](PixelForge-M0-static.zip), rozpakuj i wgraj
-**zawartość** archiwum do katalogu strony na serwerze. `index.html` i `assets/`
-muszą znajdować się obok siebie. Nie trzeba instalować Node.js ani npm.
+## Leśny sygnał M2 — aktualna kampania
 
-Otwórz adres strony przez HTTP(S), np. `https://twoja-domena.pl/PixelForge/`.
-Paczka obsługuje też katalog główny domeny. Szczegóły: `WDROZENIE.txt` w ZIP.
+[Pobierz PixelForge-M2-static.zip](PixelForge-M2-static.zip?raw=true).
+Rozpakuj i wgraj **zawartość**, czyli `index.html` i `assets/`, do katalogu
+strony na serwerze HTTP(S). Nie trzeba instalować Node.js, npm, PHP ani bazy.
+Szczegóły zawiera `WDROZENIE.txt` w archiwum.
 
-Źródła: `cb6434593a18ecd6336d02c4000c275a57cbfb87`. Archiwum zawiera gotowy build M0, a nie kod źródłowy.
-Po zmianie źródeł trzeba ponownie uruchomić `npm run build` i utworzyć ZIP
-z zawartości `dist/`; paczka nie aktualizuje się automatycznie.
+Paczka działa pod domeną główną i podkatalogiem, np. `/PixelForge/`.
+Ma trzy poziomy i wersję zawartości 0.2.0. Status odbioru: `docs/M2-REPORT.md`.
+Rozmiar: **403422 bajtów**.
 
 SHA-256:
 
 ```text
-7fbf74ea19b799e1c48873d2ab32ac5bb29a61bc736484732d73f845973e9a29
+b166eb6060391dfdebe4d48649e19d69942b71a5407c7e0df0e86948f4333a4b
 ```
+
+Odtworzenie: `npm run build`, potem `python3 tools/package-static.py`.
+Paczka nie aktualizuje się automatycznie po zmianie źródeł.
+
+## Archiwum M0
+
+[PixelForge-M0-static.zip](PixelForge-M0-static.zip?raw=true) to wcześniejszy,
+jednopoziomowy fundament. Nie zawiera kampanii M2.

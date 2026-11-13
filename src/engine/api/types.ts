@@ -1,3 +1,4 @@
+import type { MusicDefinition } from '../systems/audio';
 import type { RuleSystem } from '../systems/rules';
 export interface Rect {
   x: number;
@@ -40,6 +41,7 @@ export interface EntityDefinition extends Point {
 export interface LevelDefinition {
   schemaVersion: 1;
   id: string;
+  title?: string;
   width: number;
   height: number;
   spawn: Point;
@@ -75,6 +77,7 @@ export interface GameDefinition {
     gravity: number;
     acceleration?: number;
   };
+  music?: MusicDefinition;
   registerRules?: (rules: RuleSystem) => void;
 }
 export interface Snapshot {
@@ -90,6 +93,7 @@ export interface Snapshot {
   total?: number;
   levelIndex?: number;
   levelCount?: number;
+  levelName?: string;
   checkpoint?: string | null;
   elapsed?: number;
 }
