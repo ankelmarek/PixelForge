@@ -129,7 +129,7 @@ try {
       .getByRole('button', { name: 'Zainstaluj wydanie 0.6.2', exact: true })
       .click();
     await expect(panel.locator('[data-active]')).toHaveText('0.6.2');
-    await expect(panel.getByRole('status')).toContainText(
+    await expect(panel.locator('.notice[role="status"]')).toContainText(
       'Wydanie zostało zainstalowane',
     );
     await open(true);
@@ -185,7 +185,9 @@ try {
     page.getByRole('button', { name: 'Zainstaluj wydanie 0.6.2' }),
   ).toBeVisible();
   await page.getByRole('button', { name: 'Usuń plan', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('Plan został usunięty');
+  await expect(page.locator('.notice[role="status"]')).toContainText(
+    'Plan został usunięty',
+  );
   await context.close();
   await writeFile(
     'test-results/U2-BROWSER-RESULTS.json',

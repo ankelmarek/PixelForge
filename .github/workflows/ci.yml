@@ -50,6 +50,17 @@ jobs:
       - run: npm test
       - run: npm run test:panel:browser
       - run: npm run build
+      - name: Verify unchanged static game
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('downloads/pixelforge-0.6.1-full.zip') as archive:
+              expected = {name: archive.read(name) for name in archive.namelist() if name != 'manifest.json'}
+          actual = {path.relative_to('dist').as_posix(): path.read_bytes() for path in Path('dist').rglob('*') if path.is_file()}
+          assert actual == expected, 'Static build changed during the updater stage'
+          print(f'{len(actual)} static files match the accepted 0.6.1 release byte for byte')
+          PY
       - run: npm run test:e2e
       - run: npm run test:updater:browser
       - run: npm run package:updater
