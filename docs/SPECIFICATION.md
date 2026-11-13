@@ -76,13 +76,13 @@ Silnik oferuje:
 2. **GameDefinition**: deklaruje ID, tytuł, typ, wersję formatu, rozmiar logiczny, assety, poziomy, reguły.
 3. **LevelDefinition**: opisuje geometrię, warstwy, obiekty, punkty wejścia, aktywatory i warunek ukończenia.
 4. **SceneFlow**: boot, preload, tytuł, wybór poziomu (opcjonalny), gameplay, pauza, zwycięstwo, porażka, zakończenie.
-5. **InputService**: mapuje klawiaturę i dotyk na akcje `left/right/up/down/jump/interact/pause`; nie odwołuje się do konkretnych klawiszy z poziomu mechanik.
+5. **InputService**: mapuje klawiaturę i dotyk na akcje `left/right/up/down/jump/interact/pause/confirm`; zachowuje stały układ klawiszy opisany w sekcji 7.1; mechaniki nie odwołują się bezpośrednio do klawiszy.
 6. **EntityFactory + Behaviors**: tworzy obiekty ze złożonych zachowań, np. move, jump, patrol, collectible, damageable, trigger, door, checkpoint.
 7. **RuleSystem**: obsługuje predefiniowane warunki i akcje bez `eval`, `new Function` ani uruchamiania kodu z JSON.
 8. **ProgressService**: prowadzi stan gry, cele, punkty kontrolne i informacje o ukończeniu.
 9. **SaveService**: localStorage, wersjonowane rekordy osobno dla każdego gameId, walidacja odczytu i bezpieczny reset uszkodzonego rekordu.
 10. **AudioService**: muzyka i SFX, wyciszenie, rozsądne głośności, odblokowanie audio po pierwszej interakcji.
-11. **UISystem**: nakładka, punkty życia, komunikaty, pauza, podpowiedź sterowania, ekran końca.
+11. **UISystem**: nakładka, punkty życia, sygnały wizualne, pauza i ekran końca; bez pisanych podpowiedzi sterowania i samouczków.
 
 Początkowo nie implementuj pełnego systemu encja–komponent–system. Wystarczą kompozycyjne zachowania oraz małe, testowalne serwisy.
 
@@ -155,8 +155,31 @@ W M0/M1 wystarczy jeden przykład mechaniki rozszerzalnej i dokumentacja, jak do
 - Animowany sprite gracza: idle, run, jump, hit; przeciwnik: idle/patrol/hit.
 - Drobne efekty cząsteczkowe lub animowane detale, ale ogranicz przeciążenie i migotanie. Respektuj preferencję reduced motion, jeśli możliwe.
 - Dźwięki: skok, zbieranie, obrażenia, sukces; muzyka z opcją wyciszenia. Odtwarzanie audio po geście użytkownika.
-- Wspólne UI: ekran tytułowy, instrukcja sterowania, pauza, restart, wynik i zakończenie. Na małych ekranach obszary dotykowe mają być wygodne, a widok gry czytelny.
-- Wszystkie teksty interfejsu przygotuj do przyszłej lokalizacji, język początkowy: polski.
+- Wspólne UI: ekran tytułowy, pauza, restart, wynik i zakończenie, ale **bez ekranu instrukcji sterowania i tekstowych wskazówek**. Na małych ekranach obszary dotykowe mają być duże, ikonowe i czytelne.
+- Dopuszczalne nazwy menu, tytuły i komunikaty techniczne przygotuj do lokalizacji (polski jako język początkowy). Nie wykorzystuj tekstów do tłumaczenia mechanik, sterowania ani rozwiązań zagadek.
+
+### 7.1. Zasada nadrzędna: nauka bez słów i wspólna klawiszologia
+
+**Żadnych pisanych wskazówek podczas rozgrywki.** Zabronione są tekstowe samouczki, podpowiedzi kontekstowe, instrukcje „Naciśnij…”, plansze z klawiszologią, opisowe dymki, zadania wyjaśniane tekstem lub wskazówki do zagadek. Gracz rozumie świat poprzez kompozycję scen, zachowanie obiektów, animacje, kolory, dźwięki i konsekwencje własnych działań. Krótkie tytuły i etykiety menu mogą pozostać; nie mogą zastępować nauki mechaniki.
+
+**Stałe przypisanie sterowania, wspólne dla wszystkich gier:**
+
+| Akcja | Komputer | Dotyk |
+|---|---|---|
+| Ruch | strzałki lub WASD | ikonowy krzyżak / kierunki |
+| Skok | Spacja | ikonowy przycisk skoku |
+| Interakcja, aktywacja, przełącznik ON/OFF | Shift, pojedyncze naciśnięcie | ikonowy przycisk działania |
+| Pauza / wznowienie | Esc | ikona pauzy / odtwarzania |
+| Potwierdzenie w menu | Spacja lub Enter | dotknięcie elementu |
+| Ponowienie po porażce | Spacja lub Enter; ewentualnie R tylko na ekranie porażki | ikonowy przycisk ponowienia |
+
+W grach top-down ruch w czterech kierunkach zastępuje skok; akcje pozostają spójne semantycznie. W platformówce Shift nie uruchamia sprintu. Nie wymagaj skrótów złożonych, długiego przytrzymywania Shifta ani wprowadzania wielu nowych przycisków. Naciśnięcie przełącznika działa jako *toggle* i musi wyraźnie zmienić wygląd obiektu. Niech początkowe 30–60 sekund bezpiecznie pokaże przepaść do przeskoczenia, reagujący przedmiot i efekt uruchomienia przełącznika, bez choćby jednego słowa instrukcji.
+
+**Rozpoznawalność interakcji:** obiekt, który reaguje na Shift, delikatnie pulsuje/rozświetla się, animuje przy zbliżeniu bohatera lub wydaje krótki dźwięk. Po akcji rezultat jest natychmiast widoczny (np. przełącznik zmienia pozycję, drzwi się otwierają, rozbłyska światło). Nie każ graczowi domyślać się niewidocznych klawiszy.
+
+**Dostępność:** znaczniki dostępności HTML dla screen readerów i wewnętrzna dokumentacja deweloperska mogą opisywać funkcje kontrolek, ale nie pokazuj tych opisów jako podpowiedzi w samej grze. Zapewnij wyraźny focus menu, podstawowe działania na dotyk i możliwość wyciszenia.
+
+**Test akceptacyjny:** obserwuj osobę, która nie zna klawiszologii projektu i nie otrzyma instrukcji. Powinna samodzielnie odkryć najważniejsze akcje w pierwszej scenie. Jeśli nie, popraw projekt otoczenia lub reakcje obiektów, a nie dodawaj tekst.
 
 ## 8. Stan i zapis
 
@@ -181,7 +204,7 @@ Nie zapisuj co klatkę. Zapisuj po checkpointach, wyjściu z etapu i ważnych in
 3. Test odczytu zapisu poprawnego, niezgodnego wersją i uszkodzonego.
 4. Test izolacji gameId oraz restartu nowej sesji.
 5. Smoke e2e: wybór demonstracji, start, ruch, kolizja, interakcja, pauza/wznowienie, checkpoint, zwycięstwo i ponowne wejście.
-6. Ręczne testy mobilne: orientacja, sterowanie dotykowe, ekran pauzy, wyciszanie, czytelność.
+6. Ręczne testy mobilne: orientacja, sterowanie dotykowe bez napisów, ekran pauzy, wyciszanie, czytelność i zrozumiałość interakcji bez podpowiedzi tekstowych.
 7. Build pod domenę główną i nie-root base path.
 8. W drugim etapie test niezależności: druga gra wykorzystuje wspólne usługi bez edycji `src/engine`.
 
