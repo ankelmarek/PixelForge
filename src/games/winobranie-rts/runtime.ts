@@ -23,6 +23,8 @@ import {
 import { validateWorld, varieties, riverAt, type Variety } from './world';
 import { registerArt, VineyardViewRenderer } from './view';
 import { guidance } from './guidance';
+import { seasonView } from './season-view';
+import type { WaterMode } from './water';
 
 export function createVineyardRuntime(
   definition: ClientDefinition,
@@ -31,9 +33,22 @@ export function createVineyardRuntime(
 ): ClientRuntime {
   const world = validateWorld(data),
     model = new VineyardModel(world),
-    save = new VersionedSave(definition.id, 1, (value) =>
+    save = new VersionedSave(definition.id, 2, (value) =>
       model.validateSave(value),
+    ),
+    legacySave = new VersionedSave(definition.id, 1, (value) =>
+      model.migrateV1(value),
     );
+  const placementTools = [
+    'row',
+    'road',
+    'house',
+    'move',
+    'tank',
+    'pump',
+    'sprinkler',
+    'pipe',
+  ];
   let active: Gameplay | undefined,
     started = false,
     lastSave = 0;
@@ -73,6 +88,7 @@ export function createVineyardRuntime(
     private planKey = '';
     private previousSold = 0;
     private previousProcessed = 0;
+    private previousWeather = '';
     constructor() {
       super('Gameplay');
     }
@@ -91,6 +107,7 @@ export function createVineyardRuntime(
       this.elapsed = 0;
       this.previousSold = model.state.sold;
       this.previousProcessed = model.state.processed;
+      this.previousWeather = model.climate.at(model.state.tick).kind;
       registerArt(this);
       this.terrain = new SectorRenderer(
         this,
@@ -103,7 +120,7 @@ export function createVineyardRuntime(
       camera
         .setBounds(0, 0, 8192, 8192)
         .setZoom(world.camera.zoom)
-        .centerOn(253 * 16, 250 * 16);
+        .centerOn(253 * 16, (model.state.environment ? 248 : 250) * 16);
       const point = (p: Phaser.Input.Pointer) => {
         const q = camera.getWorldPoint(p.x, p.y);
         return { x: Math.floor(q.x / 16), y: Math.floor(q.y / 16) };
@@ -176,7 +193,7 @@ export function createVineyardRuntime(
               inside({ x: (u.x + 0.5) * 16, y: (u.y + 0.5) * 16 }, this.box!),
             )
             .map((u) => u.id);
-        else if (['row', 'road', 'house', 'move'].includes(this.tool)) {
+        else if (placementTools.includes(this.tool)) {
           this.hover = q;
           this.preview();
           if (this.plan && model.commit(this.plan)) {
@@ -188,7 +205,19 @@ export function createVineyardRuntime(
             context.audio.play('hit');
           }
         } else if (this.tool === 'remove') {
-          const ok = id ? model.remove(id) : model.removeRoad(q);
+          const pipe = model.state.environment?.water.pipes.some(
+            (c) => c.x === q.x && c.y === q.y,
+          );
+          const device = model.state.environment?.water.devices.some(
+            (d) => d.id === id,
+          );
+          const ok = device
+            ? model.remove(id!)
+            : pipe
+              ? model.removePipe(q)
+              : id
+                ? model.remove(id)
+                : model.removeRoad(q);
           if (ok) {
             context.audio.play('activate');
             persist();
@@ -271,6 +300,10 @@ export function createVineyardRuntime(
           Math.hypot(u.x - p.x, u.y - p.y) < (u.kind === 'tractor' ? 2.4 : 1.4),
       );
       if (unit) return unit.id;
+      const device = model.state.environment?.water.devices.find(
+        (d) => Math.abs(d.x - p.x) < 1 && Math.abs(d.y - p.y) < 1,
+      );
+      if (device) return device.id;
       const building = model.state.buildings.find((b) => inside(p, b));
       if (building) return building.id;
       if (inside(p, STORE)) return 'warehouse';
@@ -283,14 +316,11 @@ export function createVineyardRuntime(
       );
     }
     private preview() {
-      if (
-        !this.hover ||
-        !['row', 'road', 'house', 'move'].includes(this.tool)
-      ) {
+      if (!this.hover || !placementTools.includes(this.tool)) {
         this.plan = undefined;
         return;
       }
-      const from = ['row', 'road'].includes(this.tool)
+      const from = ['row', 'road', 'pipe'].includes(this.tool)
         ? (this.drag?.cell ?? this.hover)
         : this.hover;
       const signature = JSON.stringify([
@@ -366,12 +396,27 @@ export function createVineyardRuntime(
         const id = this.guidance()?.target;
         const target =
           model.state.units.find((u) => u.id === id) ??
-          model.state.buildings.find((b) => b.id === id);
+          model.state.buildings.find((b) => b.id === id) ??
+          model.state.environment?.water.devices.find((d) => d.id === id) ??
+          (() => {
+            const row = model.state.rows.find((r) => r.id === id);
+            return row
+              ? { id: row.id, ...row.cells[Math.floor(row.cells.length / 2)] }
+              : undefined;
+          })();
         if (target) {
           this.selected = [target.id];
           this.tool = 'select';
-          const x = target.x + ('width' in target ? target.width / 2 : 0);
-          const y = target.y + ('height' in target ? target.height / 2 : 0);
+          const x =
+            target.x +
+            ('width' in target && typeof target.width === 'number'
+              ? target.width / 2
+              : 0);
+          const y =
+            target.y +
+            ('height' in target && typeof target.height === 'number'
+              ? target.height / 2
+              : 0);
           this.cameras.main.centerOn(x * 16, y * 16);
           this.clamp();
         }
@@ -388,6 +433,10 @@ export function createVineyardRuntime(
           'remove',
           'move',
           'parcel',
+          'tank',
+          'pump',
+          'sprinkler',
+          'pipe',
         ].includes(payload)
       )
         this.tool = payload as Tool;
@@ -434,6 +483,27 @@ export function createVineyardRuntime(
       }
       this.planKey = '';
       this.hint = '';
+      if (
+        ['water-mode', 'refill', 'care'].includes(action) &&
+        this.selected[0]
+      ) {
+        const id = this.selected[0];
+        const ok =
+          action === 'refill'
+            ? model.refill(id)
+            : action === 'care'
+              ? model.care(id)
+              : typeof payload === 'string' &&
+                model.waterMode(id, payload as WaterMode);
+        if (ok) {
+          context.audio.play('activate');
+          persist();
+        } else {
+          context.audio.play('hit');
+          this.hint =
+            'Nie można wykonać zlecenia: sprawdź gotówkę, dostęp i trwającą pracę.';
+        }
+      }
       this.preview();
       this.emit();
     }
@@ -450,6 +520,13 @@ export function createVineyardRuntime(
       this.clamp();
       this.terrain.update(cameraView(this.cameras.main));
       this.art.draw(this.selected, this.plan, this.box);
+      if (model.state.environment) {
+        const kind = model.climate.at(model.state.tick).kind;
+        if (kind !== this.previousWeather) {
+          if (kind === 'frost') context.audio.play('hit');
+          this.previousWeather = kind;
+        }
+      }
       if (model.state.processed > this.previousProcessed) {
         this.previousProcessed = model.state.processed;
         context.audio.play('activate');
@@ -484,27 +561,36 @@ export function createVineyardRuntime(
         build: 'Budowa',
         rest: 'Postój',
       };
-      const label = b
-        ? 'Domek winiarski'
-        : r
-          ? varieties[r.variety].name
-          : u
-            ? u.kind === 'tractor'
-              ? 'Traktor'
-              : `Pracownik ${u.id.slice(-1)}`
-            : this.selected[0] === 'warehouse'
-              ? 'Magazyn'
-              : 'Winnica';
+      const season = seasonView(
+        model,
+        this.selected[0],
+        this.tool === 'row' ? this.hover : undefined,
+      );
+      const label =
+        season?.deviceName ||
+        (b
+          ? 'Domek winiarski'
+          : r
+            ? varieties[r.variety].name
+            : u
+              ? u.kind === 'tractor'
+                ? 'Traktor'
+                : `Pracownik ${u.id.slice(-1)}`
+              : this.selected[0] === 'warehouse'
+                ? 'Magazyn'
+                : 'Winnica');
       const detail = b
         ? `${(quantity(b.stock) / 1000).toFixed(1)} kg gron · ${b.work ? 'Budowa' : b.batch ? 'Tłoczenie' : 'Prasa'}`
         : r
-          ? `${r.vines} krzewów · ${(r.stock / 1000).toFixed(1)} kg · ${r.work ? 'Sadzenie' : r.mature ? 'Zbiór' : 'Młode'}`
+          ? `${r.vines} krzewów · ${(r.stock / 1000).toFixed(1)} kg · ${r.work ? 'Sadzenie' : r.mature ? 'Zbiór' : s.environment ? 'Wzrost' : 'Młode'}`
           : u
             ? `${names[u.role]} · ${(quantity(u.cargo) / 1000).toFixed(1)} kg${u.blocked ? ' · Brak trasy' : ''}`
             : `${s.rows.reduce((a, r) => a + r.vines, 0)} krzewów · ${s.buildings.length} domki · ${(quantity(s.warehouse) / 1000).toFixed(1)} kg`;
       const client = {
         cash: s.ledger.balance,
         seconds: s.tick / 20,
+        duration: model.duration,
+        season,
         speed: model.clock.speed,
         sold: s.sold,
         vouchers: s.vouchers,
@@ -541,6 +627,18 @@ export function createVineyardRuntime(
           { label: 'Koszty', value: `${s.ledger.costs / 100} ◈` },
           { label: 'Gotówka', value: `${s.ledger.balance / 100} ◈` },
           { label: 'Utracone grona', value: `${s.lost / 1000} kg` },
+          ...(s.environment
+            ? [
+                {
+                  label: 'Straty upraw',
+                  value: `${(s.environment.potentialLost / 1000).toFixed(1)} kg`,
+                },
+                {
+                  label: 'Zużycie wody',
+                  value: `${(s.environment.water.used / 1000).toFixed(1)} L`,
+                },
+              ]
+            : []),
         ],
         mode: 'client',
         completed: s.completed,
@@ -599,6 +697,9 @@ export function createVineyardRuntime(
           processed: s.processed,
           grams: model.balanceGrams,
           grown: s.grown,
+          seed: s.environment?.seed ?? -1,
+          water: JSON.stringify(s.environment?.water ?? null),
+          crops: JSON.stringify(s.environment?.crops ?? null),
           rows: s.rows.length,
           buildings: s.buildings.length,
           roadCells: s.roads.length,
@@ -630,9 +731,11 @@ export function createVineyardRuntime(
       Gameplay,
     ],
     start(resume) {
-      model.reset();
+      model.reset(crypto.getRandomValues(new Uint32Array(1))[0]);
       if (resume) {
-        const previous = save.inspect();
+        const current = save.inspect();
+        const previous =
+          current.status === 'absent' ? legacySave.inspect() : current;
         if (previous.status === 'invalid')
           context.message(
             'Zapis Winobrania jest uszkodzony. Rozpoczęto nowy sezon.',

@@ -1560,8 +1560,8 @@
     ]
   },
   "scenario": {
-    "id": "first-harvest",
-    "seconds": 360,
+    "id": "living-season",
+    "seconds": 600,
     "seed": 731,
     "initialCash": 30000,
     "goal": 40000

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import data from '../../public/assets/games/winobranie-rts/world.json';
 import { VineyardModel } from '../../src/games/winobranie-rts/model';
 import { validateWorld } from '../../src/games/winobranie-rts/world';
-const create = () => new VineyardModel(validateWorld(data));
+const create = () => new VineyardModel(validateWorld(data), null);
 function build(m: VineyardModel) {
   for (const x of [268, 280]) {
     const p = m.preview('house', { x, y: 253 });

@@ -7,6 +7,7 @@ import {
   ownsAll,
   lineCells,
   rectCells,
+  randomSample,
   type Cell,
   type GridRect,
   type LedgerState,
@@ -18,9 +19,34 @@ import {
   terrainBlocked,
   publicRoad,
 } from './world';
+import { VineyardClimate, SEASON_TICKS } from './climate';
+import {
+  newEnvironment,
+  newCrop,
+  needsWater,
+  stepCrop,
+  type EnvironmentState,
+} from './agronomy';
+import {
+  WaterNetwork,
+  waterCosts,
+  WATER_CAPACITY,
+  type WaterKind,
+  type WaterMode,
+} from './water';
+import { validateEnvironment } from './validation';
 
 export type Tool =
-  'select' | 'box' | 'row' | 'road' | 'house' | 'remove' | 'move' | 'parcel';
+  | 'select'
+  | 'box'
+  | 'row'
+  | 'road'
+  | 'house'
+  | 'remove'
+  | 'move'
+  | 'parcel'
+  | WaterKind
+  | 'pipe';
 export type Role = 'auto' | 'harvest' | 'press' | 'build' | 'rest';
 export interface Row {
   id: string;
@@ -49,7 +75,15 @@ export interface Building extends GridRect {
   } | null;
 }
 export interface Job {
-  kind: 'harvest' | 'build' | 'press' | 'deposit' | 'load' | 'unload' | 'move';
+  kind:
+    | 'harvest'
+    | 'build'
+    | 'press'
+    | 'deposit'
+    | 'load'
+    | 'unload'
+    | 'move'
+    | 'care';
   target: string;
   goal: Cell;
   progress: number;
@@ -67,8 +101,9 @@ export interface Unit extends Cell {
   routeRevision: number;
 }
 export interface VineyardState {
-  version: 1;
-  revision: 'vineyard-w1';
+  version: 2;
+  revision: 'vineyard-w2';
+  environment: EnvironmentState | null;
   tick: number;
   clock: { speed: 1 | 2 | 4; remainder: number };
   serial: number;
@@ -160,14 +195,20 @@ export class VineyardModel {
   private blocked = new Uint8Array(512 * 512);
   private road = new Uint8Array(512 * 512);
   private reservations = new Reservations();
+  climate!: VineyardClimate;
+  water!: WaterNetwork | null;
   lastReason = '';
-  constructor(readonly world: VineyardWorld) {
-    this.reset();
+  constructor(
+    readonly world: VineyardWorld,
+    readonly seed: number | null = world.scenario.seed,
+  ) {
+    this.reset(seed);
   }
-  reset() {
+  reset(seed = this.seed) {
     this.state = {
-      version: 1,
-      revision: 'vineyard-w1',
+      version: 2,
+      revision: 'vineyard-w2',
+      environment: seed === null ? null : newEnvironment(seed),
       tick: 0,
       clock: { speed: 1, remainder: 0 },
       serial: 10,
@@ -193,12 +234,20 @@ export class VineyardModel {
       })) as Unit[],
       sold: 0,
       processed: 0,
-      grown: 96000,
+      grown: seed === null ? 96000 : 0,
       lost: 0,
       completed: false,
       failed: false,
     };
-    (Object.keys(varieties) as Variety[]).forEach((variety, i) => {
+    const initial: Variety[] =
+      seed === null
+        ? ['solaris', 'regent', 'johanniter']
+        : [
+            randomSample(seed, 20, 0) < 0.5 ? 'solaris' : 'rondo',
+            randomSample(seed, 20, 1) < 0.5 ? 'regent' : 'johanniter',
+            randomSample(seed, 20, 2) < 0.5 ? 'muscaris' : 'cortis',
+          ];
+    initial.forEach((variety, i) => {
       const cells = lineCells(
         { x: 232, y: 238 + 4 * i },
         { x: 262, y: 238 + 4 * i },
@@ -207,13 +256,17 @@ export class VineyardModel {
         id: `row-${i}`,
         cells,
         variety,
-        stock: 32000,
+        stock: seed === null ? 32000 : 0,
         vines: 16,
         planted: 0,
         work: 0,
-        mature: true,
+        mature: seed === null,
         access: { x: 232, y: 239 + 4 * i },
       });
+      if (this.state.environment) {
+        const row = this.state.rows.at(-1)!;
+        this.state.environment.crops[row.id] = newCrop(row, 3);
+      }
     });
     this.clock.remainder = 0;
     this.clock.speed = 1;
@@ -221,6 +274,10 @@ export class VineyardModel {
     this.rebuild();
   }
   private rebuild() {
+    this.climate = new VineyardClimate(this.state.environment?.seed ?? 731);
+    this.water = this.state.environment
+      ? new WaterNetwork(this.state.environment.water)
+      : null;
     this.blocked.fill(0);
     this.road.fill(0);
     for (let y = 0; y < 512; y++)
@@ -234,6 +291,8 @@ export class VineyardModel {
       for (const p of row.cells) this.blocked[p.y * 512 + p.x] = 1;
     for (const b of this.state.buildings)
       for (const p of rectCells(b)) this.blocked[p.y * 512 + p.x] = 1;
+    for (const d of this.state.environment?.water.devices ?? [])
+      this.blocked[d.y * 512 + d.x] = 1;
     for (const p of this.state.roads) this.road[p.y * 512 + p.x] = 1;
     this.human = new RegionalNavigator(this.world, (p) => this.walkable(p));
     this.vehicle = new RegionalNavigator(this.world, (p) =>
@@ -287,7 +346,18 @@ export class VineyardModel {
       rotation < 0 ||
       rotation > 3 ||
       !Object.hasOwn(varieties, variety) ||
-      !['row', 'road', 'house', 'move'].includes(tool)
+      (!this.state.environment &&
+        !['solaris', 'regent', 'johanniter'].includes(variety)) ||
+      ![
+        'row',
+        'road',
+        'house',
+        'move',
+        'tank',
+        'pump',
+        'sprinkler',
+        'pipe',
+      ].includes(tool)
     )
       return {
         tool,
@@ -307,6 +377,32 @@ export class VineyardModel {
       cost = 0,
       reason = '';
     const building = houseAt(a, rotation);
+    const env = this.state.environment;
+    if (['tank', 'pump', 'sprinkler', 'pipe'].includes(tool)) {
+      if (!env) reason = 'Dokończ zapis W1; nowe sezony mają nawadnianie';
+      else if (tool === 'pipe') {
+        if (Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y)) > 63)
+          reason = 'Maks. 64 pola';
+        else {
+          const line = lineCells(a, b);
+          const connected = line.flatMap((p, i) =>
+            i && line[i - 1].x !== p.x && line[i - 1].y !== p.y
+              ? [p, { x: line[i - 1].x, y: p.y }]
+              : [p],
+          );
+          const existing = new Set(env.water.pipes.map(key));
+          cells = connected.filter((p) => !existing.has(key(p)));
+          cost = cells.length * waterCosts.pipe;
+          if (env.water.pipes.length + cells.length > 2048)
+            reason = 'Limit rur';
+        }
+      } else {
+        cost = waterCosts[tool as WaterKind];
+        const limit = tool === 'sprinkler' ? 24 : 4;
+        if (env.water.devices.filter((d) => d.kind === tool).length >= limit)
+          reason = 'Limit urządzeń';
+      }
+    }
     if (tool === 'house' || tool === 'move') {
       cells = rectCells(building);
       cost = tool === 'move' ? 100000 : 0;
@@ -315,7 +411,9 @@ export class VineyardModel {
       if (Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y)) > 63)
         reason = 'Maks. 64 pola';
       else cells = lineCells(a, b);
-      if (tool === 'row') cost = Math.ceil(cells.length / 2) * 3000;
+      if (tool === 'row')
+        cost =
+          Math.ceil(cells.length / 2) * (env ? varieties[variety].cost : 3000);
       else {
         const expanded = new Map<string, Cell>();
         // Fill both orthogonal steps at diagonal corners before applying the
@@ -357,7 +455,8 @@ export class VineyardModel {
     };
     const reject = (why: string) => ({ ...plan, reason: why });
     if (reason) return plan;
-    if (!cells.length) return reject('Droga istnieje');
+    if (!cells.length)
+      return reject(tool === 'pipe' ? 'Rura istnieje' : 'Droga istnieje');
     if (!ownsAll(cells, this.state.parcels)) return reject('Cudza parcela');
     if (this.state.completed || this.state.failed)
       return reject('Sezon zakończony');
@@ -371,6 +470,11 @@ export class VineyardModel {
     if (tool === 'road' && this.state.roads.length + cells.length > 10000)
       return reject('Limit dróg');
     if (cost > this.state.ledger.balance) return reject('Brak środków');
+    // Underground pipes may cross roads and planted rows, without affecting navigation.
+    if (tool === 'pipe')
+      return cells.some((p) => terrainBlocked(p.x, p.y))
+        ? reject('Zajęte pole')
+        : { ...plan, valid: true };
     const old = this.state.buildings.find((item) => item.id === moving);
     if (tool === 'move' && (!old || !this.idle(old)))
       return reject('Domek zajęty');
@@ -483,7 +587,30 @@ export class VineyardModel {
         mature: false,
         access: current.access!,
       });
+      if (this.state.environment)
+        this.state.environment.crops[id] = newCrop(this.state.rows.at(-1)!, 0);
     } else if (plan.tool === 'road') this.state.roads.push(...cells);
+    else if (this.state.environment) {
+      const w = this.state.environment.water;
+      if (plan.tool === 'pipe') w.pipes.push(...cells);
+      else {
+        const volume = plan.tool === 'tank' ? 100000 : 0;
+        w.devices.push({
+          id,
+          ...current.from,
+          kind: plan.tool as WaterKind,
+          mode: 'auto',
+          volume,
+          delivery: null,
+        });
+        w.supplied += volume;
+      }
+      w.revision++;
+    }
+    if (plan.tool === 'pipe') {
+      this.changed();
+      return true;
+    }
     for (const p of cells)
       (plan.tool === 'road' ? this.road : this.blocked)[p.y * 512 + p.x] = 1;
     this.changed(...areas);
@@ -520,8 +647,26 @@ export class VineyardModel {
   }
   remove(id: string) {
     if (this.state.completed || this.state.failed) return false;
+    const water = this.state.environment?.water;
+    const device = water?.devices.find((d) => d.id === id);
+    if (water && device) {
+      if (device.delivery) return false;
+      water.discarded += device.volume;
+      water.devices = water.devices.filter((d) => d !== device);
+      water.revision++;
+      this.blocked[device.y * 512 + device.x] = 0;
+      this.changed({ ...device, width: 1, height: 1 });
+      return true;
+    }
     const row = this.state.rows.find((r) => r.id === id),
       b = this.state.buildings.find((r) => r.id === id);
+    const refund =
+      row &&
+      !row.mature &&
+      (!this.state.environment || this.state.environment.crops[id]?.age === 0)
+        ? row.vines *
+          (this.state.environment ? varieties[row.variety].cost / 10 : 300)
+        : 0;
     if (
       (!row && !b) ||
       (b && !this.idle(b)) ||
@@ -532,13 +677,88 @@ export class VineyardModel {
     if (row) {
       this.state.lost += row.stock;
       this.state.rows = this.state.rows.filter((r) => r !== row);
+      if (this.state.environment) delete this.state.environment.crops[row.id];
     } else this.state.buildings = this.state.buildings.filter((r) => r !== b);
     new Ledger(this.state.ledger).transact(
       `remove-${this.state.serial++}`,
-      row && !row.mature ? row.vines * 300 : 0,
+      refund,
     );
     for (const p of cells) this.blocked[p.y * 512 + p.x] = 0;
     this.changed(bounds(cells));
+    return true;
+  }
+  removePipe(p: Cell) {
+    const w = this.state.environment?.water;
+    if (!w || this.state.completed || this.state.failed) return false;
+    const i = w.pipes.findIndex((q) => key(q) === key(p));
+    if (i < 0) return false;
+    w.pipes.splice(i, 1);
+    w.revision++;
+    this.changed();
+    return true;
+  }
+  waterMode(id: string, mode: WaterMode) {
+    if (
+      this.state.completed ||
+      this.state.failed ||
+      !['off', 'auto', 'on'].includes(mode)
+    )
+      return false;
+    const d = this.state.environment?.water.devices.find((d) => d.id === id);
+    if (!d || d.kind === 'tank') return false;
+    d.mode = mode;
+    return true;
+  }
+  refill(id: string) {
+    if (this.state.completed || this.state.failed) return false;
+    const d = this.state.environment?.water.devices.find((d) => d.id === id);
+    if (!d || d.kind !== 'tank' || d.delivery) return false;
+    const amount = Math.min(500000, WATER_CAPACITY - d.volume);
+    if (
+      amount <= 0 ||
+      ![
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ].some(([dx, dy]) =>
+        this.human.findPath(DEPOT, { x: d.x + dx, y: d.y + dy }),
+      )
+    )
+      return false;
+    if (
+      !new Ledger(this.state.ledger).transact(
+        `water-${this.state.serial}`,
+        -Math.ceil(amount / 10),
+      )
+    )
+      return false;
+    this.state.serial++;
+    d.delivery = { due: this.state.tick + 400, amount };
+    return true;
+  }
+  care(id: string) {
+    if (this.state.completed || this.state.failed) return false;
+    const crop = this.state.environment?.crops[id];
+    const row = this.state.rows.find((r) => r.id === id);
+    if (
+      !crop ||
+      !row ||
+      row.work ||
+      row.mature ||
+      crop.care ||
+      !crop.plots.some((p) => p.mildew > 0)
+    )
+      return false;
+    if (
+      !new Ledger(this.state.ledger).transact(
+        `care-${this.state.serial}`,
+        -10000,
+      )
+    )
+      return false;
+    this.state.serial++;
+    crop.care = 120;
     return true;
   }
   removeRoad(p: Cell) {
@@ -689,7 +909,7 @@ export class VineyardModel {
         j.amount,
         this.state.rows.find((r) => r.id === j.target)?.stock ?? 0,
       );
-    if (j.kind === 'build' || j.kind === 'press')
+    if (j.kind === 'build' || j.kind === 'press' || j.kind === 'care')
       return this.reservations.reserve(u.id, j.target, 1, 1);
     return true;
   }
@@ -736,6 +956,12 @@ export class VineyardModel {
       return;
     }
     if (u.role === 'auto' || u.role === 'build') {
+      for (const row of this.state.rows)
+        if (
+          this.state.environment?.crops[row.id].care &&
+          this.assign(u, this.job('care', row.id, row.access))
+        )
+          return;
       for (const item of [...this.state.buildings, ...this.state.rows])
         if (
           item.work > 0 &&
@@ -787,12 +1013,46 @@ export class VineyardModel {
         -(2000 + 300 * this.state.buildings.length),
         true,
       );
-    for (const r of this.state.rows)
-      if (!r.mature && r.planted >= 0 && this.state.tick - r.planted >= 2400) {
-        r.mature = true;
-        r.stock = r.vines * 200;
-        this.state.grown += r.stock;
+    const env = this.state.environment;
+    if (env && this.water) {
+      const weather = this.climate.at(this.state.tick);
+      this.water.step(
+        this.state.tick,
+        weather,
+        this.state.ledger.balance >= 100 && !this.state.ledger.arrears,
+        (d) => needsWater(d, this.state.rows, env, weather),
+      );
+      if (
+        this.state.tick % 20 === 0 &&
+        env.water.energy > env.water.paidEnergy
+      ) {
+        new Ledger(this.state.ledger).transact(
+          `energy-${this.state.tick}`,
+          -(env.water.energy - env.water.paidEnergy),
+          true,
+        );
+        env.water.paidEnergy = env.water.energy;
       }
+      for (const r of this.state.rows)
+        this.state.grown += stepCrop(
+          r,
+          env.crops[r.id],
+          env,
+          weather,
+          this.water,
+          this.state.tick,
+        );
+    } else
+      for (const r of this.state.rows)
+        if (
+          !r.mature &&
+          r.planted >= 0 &&
+          this.state.tick - r.planted >= 2400
+        ) {
+          r.mature = true;
+          r.stock = r.vines * 200;
+          this.state.grown += r.stock;
+        }
     for (const b of this.state.buildings)
       if (b.batch && b.batch.work <= 0 && --b.batch.remaining <= 0) {
         const amount = b.batch.amount * 0.6;
@@ -827,7 +1087,15 @@ export class VineyardModel {
         this.finish(u);
         continue;
       }
-      if (j.kind === 'build') {
+      if (j.kind === 'care') {
+        const crop = this.state.environment!.crops[j.target];
+        crop.care = Math.max(0, crop.care - 1);
+        if (!crop.care) {
+          for (const plot of crop.plots)
+            plot.mildew = Math.max(0, plot.mildew - 2500);
+          this.finish(u);
+        }
+      } else if (j.kind === 'build') {
         const item = [...this.state.rows, ...this.state.buildings].find(
           (b) => b.id === j.target,
         )!;
@@ -899,12 +1167,15 @@ export class VineyardModel {
         this.finish(u);
       }
     }
-    if (this.state.tick >= this.world.scenario.seconds * 20) {
+    if (this.state.tick >= this.duration * 20) {
       this.state.completed =
         this.state.sold >= this.world.scenario.goal &&
         !this.state.ledger.arrears;
       this.state.failed = !this.state.completed;
     }
+  }
+  get duration() {
+    return this.state.environment ? SEASON_TICKS / 20 : 360;
   }
   get balanceGrams() {
     return (
@@ -939,13 +1210,17 @@ export class VineyardModel {
       typeof x === 'object' &&
       !Array.isArray(x) &&
       Object.entries(x).every(
-        ([v, n]) => Object.hasOwn(varieties, v) && int(n, cap),
+        ([v, n]) =>
+          Object.hasOwn(varieties, v) &&
+          (s.environment !== null ||
+            ['solaris', 'regent', 'johanniter'].includes(v)) &&
+          int(n, cap),
       ) &&
       total(x) <= cap;
     if (
-      s.version !== 1 ||
-      s.revision !== 'vineyard-w1' ||
-      !int(s.tick, 7200) ||
+      s.version !== 2 ||
+      s.revision !== 'vineyard-w2' ||
+      !int(s.tick, s.environment === null ? 7200 : SEASON_TICKS) ||
       !int(s.serial, 100000) ||
       !int(s.topology, 100000) ||
       !int(s.vouchers, 2) ||
@@ -955,6 +1230,7 @@ export class VineyardModel {
       !int(s.lost) ||
       typeof s.completed !== 'boolean' ||
       typeof s.failed !== 'boolean' ||
+      (s.completed && s.failed) ||
       !Array.isArray(s.rows) ||
       s.rows.length > 64 ||
       !Array.isArray(s.buildings) ||
@@ -968,6 +1244,7 @@ export class VineyardModel {
       !stock(s.warehouse, 200000)
     )
       return fail();
+    validateEnvironment(s);
     if (
       !s.ledger ||
       ![
@@ -1021,8 +1298,10 @@ export class VineyardModel {
     for (const row of s.rows) {
       if (
         !Object.hasOwn(varieties, row.variety) ||
+        (s.environment === null &&
+          !['solaris', 'regent', 'johanniter'].includes(row.variety)) ||
         !int(row.vines, 32, 1) ||
-        !int(row.stock, 64000) ||
+        !int(row.stock, s.environment ? 100000 : 64000) ||
         !int(row.work, 512) ||
         !int(row.planted, s.tick, -1) ||
         typeof row.mature !== 'boolean' ||
@@ -1044,6 +1323,18 @@ export class VineyardModel {
           return fail();
         occupied.add(key(p));
       }
+    }
+    for (const d of s.environment?.water.devices ?? []) {
+      if (
+        ids.has(d.id) ||
+        occupied.has(key(d)) ||
+        terrainBlocked(d.x, d.y) ||
+        publicRoad(d.x, d.y) ||
+        !ownsAll([d], s.parcels)
+      )
+        return fail();
+      ids.add(d.id);
+      occupied.add(key(d));
     }
     for (const b of s.buildings) {
       if (
@@ -1071,6 +1362,8 @@ export class VineyardModel {
       if (
         b.batch &&
         (!Object.hasOwn(varieties, b.batch.variety) ||
+          (s.environment === null &&
+            !['solaris', 'regent', 'johanniter'].includes(b.batch.variety)) ||
           !int(b.batch.amount, 10000, 1) ||
           !int(b.batch.work, 60) ||
           !int(b.batch.remaining, 100, 1))
@@ -1121,11 +1414,14 @@ export class VineyardModel {
           'load',
           'unload',
           'move',
+          'care',
         ].includes(u.job.kind) ||
           !cell(u.job.goal) ||
           !int(u.job.progress, 100000) ||
           !int(u.job.amount, 1000) ||
           !Object.hasOwn(varieties, u.job.variety) ||
+          (s.environment === null &&
+            !['solaris', 'regent', 'johanniter'].includes(u.job.variety)) ||
           (!['', 'warehouse'].includes(u.job.target) && !ids.has(u.job.target)))
       )
         return fail();
@@ -1157,6 +1453,15 @@ export class VineyardModel {
           (!building ||
             u.kind !== 'worker' ||
             key(j.goal) !== key(building.access) ||
+            !reservations.reserve(u.id, j.target, 1, 1))
+        )
+          return fail();
+        if (
+          j.kind === 'care' &&
+          (!row ||
+            u.kind !== 'worker' ||
+            !s.environment?.crops[row.id].care ||
+            key(j.goal) !== key(row.access) ||
             !reservations.reserve(u.id, j.target, 1, 1))
         )
           return fail();
@@ -1199,11 +1504,32 @@ export class VineyardModel {
       grams !== s.grown ||
       s.sold + s.buildings.map((b) => total(b.must)).reduce(sum, 0) !==
         s.processed * 0.6 ||
-      (s.completed || s.failed) !== (s.tick === 7200) ||
-      s.completed !== (s.tick === 7200 && s.sold >= 40000 && !s.ledger.arrears)
+      (s.completed || s.failed) !==
+        (s.tick === (s.environment ? SEASON_TICKS : 7200)) ||
+      s.completed !==
+        (s.tick === (s.environment ? SEASON_TICKS : 7200) &&
+          s.sold >= 40000 &&
+          !s.ledger.arrears)
     )
       return fail();
     return s;
+  }
+  migrateV1(raw: unknown) {
+    if (
+      !raw ||
+      typeof raw !== 'object' ||
+      !('version' in raw) ||
+      raw.version !== 1 ||
+      !('revision' in raw) ||
+      raw.revision !== 'vineyard-w1'
+    )
+      throw Error('Winobranie RTS: uszkodzony zapis W1');
+    return this.validateSave({
+      ...raw,
+      version: 2,
+      revision: 'vineyard-w2',
+      environment: null,
+    });
   }
   restore(value: unknown) {
     const valid = this.validateSave(value);

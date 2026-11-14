@@ -1,4 +1,5 @@
 import type { Plan, Tool, VineyardState } from './model';
+import { seasonGuidance } from './season-guidance';
 
 export interface Guidance {
   id: string;
@@ -46,6 +47,11 @@ const toolHelp: Partial<Record<Tool, string>> = {
     'Wskaż rząd lub drogę do usunięcia. Odzyskasz tylko część kosztu sadzonek.',
   parcel: 'Wskaż sąsiednią działkę. Zakup ziemi kosztuje 6000 monet.',
   box: 'Przeciągnij ramkę wokół ludzi, a potem wybierz im rolę w panelu gospodarstwa.',
+  tank: 'Postaw zbiornik przy uprawach. Zawiera 100 L; kolejną dostawę zamówisz w jego panelu. Zbiera też deszcz.',
+  pump: 'Pompa tłoczy 2 L/s i zużywa energię. Połącz ją rurami ze zbiornikiem; większa instalacja potrzebuje więcej pomp.',
+  pipe: 'Przeciągnij rurę od zbiornika przez pompę do zraszaczy. Rury mogą przebiegać pod rzędami i drogami.',
+  sprinkler:
+    'Okrąg pokazuje zasięg zraszacza. Połącz go rurą; Auto chroni przed mrozem i podlewa suchą ziemię.',
 };
 
 /** Read-only projection of the current game; no tutorial progress in the save. */
@@ -78,6 +84,20 @@ export function guidance(
       'success',
     );
 
+  const seasonal = seasonGuidance(s);
+  if (
+    seasonal &&
+    [
+      'thaw',
+      'frost',
+      'water-off',
+      'water-energy',
+      'frost-coverage',
+      'water-low',
+    ].includes(seasonal.id)
+  )
+    return seasonal;
+
   const ready = s.buildings.find((b) => total(b.must) > 0);
   if (ready)
     return say(
@@ -103,6 +123,7 @@ export function guidance(
       'first-house',
       'Zbuduj domek przy drodze narzędziem „Domek”. W nim wytłoczysz moszcz z zebranych gron.',
     );
+  if (seasonal) return seasonal;
 
   const workers = s.units.filter((u) => u.kind === 'worker');
   const canWork = (role: 'build' | 'press' | 'harvest') =>
@@ -172,10 +193,14 @@ export function guidance(
   if (s.rows.some((r) => !r.mature || r.work))
     return say(
       'growth',
-      'Młode krzewy jeszcze rosną. Pierwszy, niewielki plon pojawi się po dwóch minutach od posadzenia.',
+      s.environment
+        ? 'Krzewy dojrzewają w swoim tempie. Wybierz rząd, aby sprawdzić fazę wzrostu, wilgoć i zdrowie; młode sadzonki mają mały pierwszy plon.'
+        : 'Młode krzewy jeszcze rosną. Pierwszy, niewielki plon pojawi się po dwóch minutach od posadzenia.',
     );
   return say(
     'empty',
-    'Zbiory są wyczerpane. Nowe nasadzenia potrzebują dwóch minut, aby dać pierwszy plon.',
+    s.environment
+      ? 'Zbiory tego sezonu są wyczerpane. Dokończ transport, tłoczenie i sprzedaż przed końcem czasu.'
+      : 'Zbiory są wyczerpane. Nowe nasadzenia potrzebują dwóch minut, aby dać pierwszy plon.',
   );
 }

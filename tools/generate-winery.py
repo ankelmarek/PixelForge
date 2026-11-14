@@ -27,6 +27,6 @@ for sy in range(16):
         ident = f's{sx}-{sy}'
         refs.append(dict(id=ident, x=sx, y=sy, url=f'sectors/{ident}.json'))
         (ROOT / f'sectors/{ident}.json').write_text(json.dumps(dict(schemaVersion=1, id=ident, revision='vineyard-w1', layers=[dict(name='ground', runs=runs)]), separators=(',', ':')) + '\n')
-world = dict(schemaVersion=2, id='vineyard-w1', width=512, height=512, tileSize=16, camera=dict(zoom=0.5, minZoom=0.5, maxZoom=2, center=dict(x=253, y=250)), terrain=dict(revision='vineyard-w1', sectorSize=32, texture='vineyard-ground', frames=7, fallbackColor=0x6b8645, cacheSectors=48, sectors=refs), scenario=dict(id='first-harvest', seconds=360, seed=731, initialCash=30000, goal=40000))
+world = dict(schemaVersion=2, id='vineyard-w1', width=512, height=512, tileSize=16, camera=dict(zoom=0.5, minZoom=0.5, maxZoom=2, center=dict(x=253, y=250)), terrain=dict(revision='vineyard-w1', sectorSize=32, texture='vineyard-ground', frames=7, fallbackColor=0x6b8645, cacheSectors=48, sectors=refs), scenario=dict(id='living-season', seconds=600, seed=731, initialCash=30000, goal=40000))
 (ROOT / 'world.json').write_text(json.dumps(world, indent=2) + '\n')
 print('256 sectors, 8192 × 8192 world')

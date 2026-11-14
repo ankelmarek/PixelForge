@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import { cameraView } from '../../engine/api';
 import { type VineyardModel, type Plan, STORE, houseAt } from './model';
 import { varieties, riverAt } from './world';
+import { SeasonRenderer } from './season-art';
+import { siteAt } from './climate';
 
 export function registerArt(scene: Phaser.Scene) {
   const objects = scene.textures.get('objects'),
@@ -65,6 +67,7 @@ export class VineyardViewRenderer {
   private sprites = new Map<string, Phaser.GameObjects.Image>();
   private ground: Phaser.GameObjects.Graphics;
   private effects: Phaser.GameObjects.Graphics;
+  private season: SeasonRenderer;
   rendered = 0;
   constructor(
     private scene: Phaser.Scene,
@@ -72,6 +75,7 @@ export class VineyardViewRenderer {
   ) {
     this.ground = scene.add.graphics().setDepth(0);
     this.effects = scene.add.graphics().setDepth(10000);
+    this.season = new SeasonRenderer(scene, model);
   }
   draw(
     selection: string[],
@@ -175,18 +179,73 @@ export class VineyardViewRenderer {
       for (let i = 0; i < r.cells.length; i += 2) {
         const p = r.cells[i];
         if (!visible(p.x * 16, p.y * 16, 64)) continue;
-        g.fillStyle(0x876b48, 0.7);
+        const crop = state.environment?.crops[r.id],
+          plot = crop?.plots[Math.floor(i / 8)];
+        const progress = plot
+          ? Math.min(1, plot.heat / varieties[r.variety].heat)
+          : r.mature
+            ? 1
+            : 0;
+        const soil = state.environment
+          ? siteAt(state.environment.seed, p).soil
+          : '';
+        g.fillStyle(
+          !soil
+            ? 0x876b48
+            : soil === 'Piasek'
+              ? 0xb39362
+              : soil === 'Glina'
+                ? 0x916c51
+                : 0x725d43,
+          0.7,
+        );
         g.fillEllipse(p.x * 16 + 8, p.y * 16 + 12, 34, 12);
         const s = sprite(
           `${r.id}-${i}`,
           p.x * 16 + 8,
           p.y * 16 + 2,
-          r.mature ? varieties[r.variety].frame : 11,
-          45,
-          40,
+          r.mature || (crop && (crop.age > 0 || progress > 0.32))
+            ? varieties[r.variety].frame
+            : 11,
+          crop && !r.mature ? 34 + progress * 11 : 45,
+          crop && !r.mature ? 30 + progress * 10 : 40,
           r.work ? 0.55 : 1,
         );
-        if (s) s.setTint(r.stock || !r.mature ? 0xffffff : 0xa5bb72);
+        if (s)
+          s.setTint(
+            plot?.ice
+              ? 0xc2e1e6
+              : plot && plot.buds < 4000
+                ? 0xaf9e70
+                : plot && plot.mildew > 1800
+                  ? 0xb5b287
+                  : r.stock || !r.mature
+                    ? 0xffffff
+                    : 0xa5bb72,
+          );
+        if (plot) {
+          if (progress > 0.65 && (r.stock || !plot.yielded)) {
+            e.fillStyle(color, 0.9);
+            e.fillRect(p.x * 16 + 3, p.y * 16, 3, 3);
+            e.fillRect(p.x * 16 + 6, p.y * 16 + 3, 3, 3);
+          }
+          if (plot.ice) {
+            e.fillStyle(0xe1f3ed, 0.85);
+            e.fillRect(p.x * 16, p.y * 16 - 10, 8, 2);
+            e.fillRect(p.x * 16 + 10, p.y * 16 - 4, 3, 5);
+          }
+          if (selection.includes(r.id)) {
+            e.fillStyle(0x2d4733, 0.8);
+            e.fillRect(p.x * 16 - 2, p.y * 16 + 17, 20, 3);
+            e.fillStyle(plot.buds < 5000 ? 0xd69c6b : 0xaed18c);
+            e.fillRect(
+              p.x * 16 - 2,
+              p.y * 16 + 17,
+              Math.ceil((20 * plot.buds) / 10000),
+              3,
+            );
+          }
+        }
       }
       if (selection.includes(r.id)) {
         e.lineStyle(2, color, 0.9);
@@ -331,6 +390,7 @@ export class VineyardViewRenderer {
       e.lineStyle(1, 0xf3e0aa);
       e.strokeRect(box.x, box.y, box.width, box.height);
     }
+    this.season.draw(g, e, view, selection, plan);
     for (const [id, s] of this.sprites)
       if (!wanted.has(id)) {
         s.destroy();
@@ -343,5 +403,6 @@ export class VineyardViewRenderer {
     this.sprites.clear();
     this.ground.destroy();
     this.effects.destroy();
+    this.season.destroy();
   }
 }

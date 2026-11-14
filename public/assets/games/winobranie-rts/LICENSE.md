@@ -18,3 +18,9 @@ nie przypisujemy im cudzej licencji CC ani nie deklarujemy wyłączności.
 
 Oryginały obrazów zachowano bez kadrowania, usuwania tła lub resamplingu plików.
 Filtr NEAREST, culling sprite'ów i strumieniowanie sektorów działają w runtime.
+
+W2 (0.10.0): `season-art.ts` rysuje nowy, autorski atlas 96 × 32 piksele:
+zbiornik, pompę i zraszacz, oraz cząstki deszczu i wody. `view.ts` nakłada
+barwy odmian/gleby, wzrost i szron. Oryginalne pliki PNG W1 są zachowane.
+Generator nadal tworzy tę samą geometrię sektorów; nowy scenariusz trwa 600 s,
+a seed pogody, gleb i startowych odmian jest losowany przy Nowej grze.

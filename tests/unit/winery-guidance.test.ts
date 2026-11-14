@@ -4,7 +4,7 @@ import { VineyardModel } from '../../src/games/winobranie-rts/model';
 import { guidance } from '../../src/games/winobranie-rts/guidance';
 import { validateWorld } from '../../src/games/winobranie-rts/world';
 
-const create = () => new VineyardModel(validateWorld(data));
+const create = () => new VineyardModel(validateWorld(data), null);
 const read = (m: VineyardModel) => guidance(m.state, m.world.scenario.goal);
 function build(m: VineyardModel) {
   for (const x of [268, 280])

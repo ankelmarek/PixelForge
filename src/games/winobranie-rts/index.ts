@@ -4,9 +4,9 @@ export const winery: ClientDefinition = {
   kind: 'client',
   schemaVersion: 1,
   id: 'winobranie-rts',
-  version: '0.1.3',
+  version: '0.2.0',
   title: 'Winobranie RTS',
-  description: 'Twoja ziemia. Pierwszy zbiór. Początek winnicy.',
+  description: 'Sześć odmian. Kapryśna pogoda. Twoja winnica.',
   viewport: { width: 320, height: 180 },
   preferredViewport: { width: 640, height: 360 },
   levelUrl: 'assets/games/winobranie-rts/world.json',
@@ -22,7 +22,7 @@ export const winery: ClientDefinition = {
   catalog: {
     cover: 'assets/games/winobranie-rts/cover-v1.png',
     launchLabel: 'Rozpocznij sezon',
-    badge: 'WINNICA · W1',
+    badge: 'WINNICA · W2',
     detail: 'Winobranie RTS',
   },
   presentation: {

@@ -847,6 +847,8 @@ body:has(.lab) {
   border: 1px solid #aab17780;
   border-radius: 9px;
   pointer-events: auto;
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
 }
 .vineyard-tools button {
   display: flex;
@@ -903,6 +905,7 @@ body:has(.lab) {
 .varieties {
   display: flex;
   gap: 5px;
+  flex-wrap: wrap;
 }
 .varieties button {
   font-size: 11px;
@@ -1027,6 +1030,75 @@ body:has(.lab) {
 .must-sale strong {
   font-size: 16px;
 }
+.vineyard-weather {
+  position: absolute;
+  top: 106px;
+  left: 164px;
+  width: min(600px, calc(100% - 350px));
+  padding: 10px 14px;
+  background: #20382fed;
+  border: 1px solid #aab17780;
+  border-radius: 8px;
+  font:
+    12px/1.5 system-ui,
+    sans-serif;
+  pointer-events: auto;
+}
+.vineyard-weather > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.vineyard-weather[data-kind='frost'] {
+  border-color: #bad8e7;
+  background: #283e4aee;
+}
+.vineyard-weather[data-kind='drought'] {
+  border-color: #dfb375;
+}
+.vineyard-weather small {
+  margin: 5px 0 0;
+  letter-spacing: 0;
+}
+.vineyard-forecast {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+  font-size: 10px;
+  color: #d7dfbf;
+  flex-wrap: wrap;
+}
+.living-season .vineyard-options {
+  top: 208px;
+}
+.vineyard-options [data-view='cultivar'] {
+  margin: 0;
+  flex-basis: 100%;
+  font:
+    11px/1.5 system-ui,
+    sans-serif;
+}
+.vineyard-options [data-view='site'] {
+  flex-basis: 100%;
+  letter-spacing: 0;
+}
+.season-detail {
+  white-space: pre-line;
+  line-height: 1.6 !important;
+}
+.water-modes {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.vineyard-selection [data-refill],
+.vineyard-selection [data-care] {
+  width: 100%;
+}
+.vineyard-selection [data-view='care-pending'] {
+  letter-spacing: 0;
+  margin-top: 10px;
+}
 .vineyard-ui.inactive {
   pointer-events: none;
 }
@@ -1043,6 +1115,22 @@ body:has(.lab) {
   }
 }
 @media (max-width: 700px) {
+  .vineyard-weather {
+    left: 66px;
+    top: 100px;
+    width: calc(100% - 198px);
+    padding: 7px;
+  }
+  .vineyard-weather > div:first-child {
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .vineyard-forecast {
+    display: none;
+  }
+  .living-season .vineyard-options {
+    top: 210px;
+  }
   .vineyard-guidance {
     left: 12px;
     right: 12px;

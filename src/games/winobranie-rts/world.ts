@@ -2,19 +2,11 @@ import {
   validateWorldTerrain,
   type TerrainWorld,
 } from '../../engine/api/strategy';
-export type Variety = 'solaris' | 'regent' | 'johanniter';
-export const varieties: Record<
-  Variety,
-  { name: string; frame: number; color: number; price: number }
-> = {
-  solaris: { name: 'Solaris', frame: 8, color: 0xd8ce65, price: 18 },
-  regent: { name: 'Regent', frame: 9, color: 0x9e6cb0, price: 22 },
-  johanniter: { name: 'Johanniter', frame: 10, color: 0xb7d48b, price: 20 },
-};
+export { varieties, type Variety } from './cultivars';
 export interface VineyardWorld extends TerrainWorld {
   scenario: {
-    id: 'first-harvest';
-    seconds: 360;
+    id: 'living-season';
+    seconds: 600;
     seed: 731;
     initialCash: 30000;
     goal: 40000;
@@ -38,13 +30,13 @@ export function validateWorld(data: unknown): VineyardWorld {
     d.camera.zoom !== 0.5 ||
     d.camera.center?.x !== 253 ||
     d.camera.center.y !== 250 ||
-    d.scenario?.id !== 'first-harvest' ||
-    d.scenario.seconds !== 360 ||
+    d.scenario?.id !== 'living-season' ||
+    d.scenario.seconds !== 600 ||
     d.scenario.seed !== 731 ||
     d.scenario.initialCash !== 30000 ||
     d.scenario.goal !== 40000
   )
-    throw Error('Winobranie RTS: niezgodny scenariusz W1');
+    throw Error('Winobranie RTS: niezgodny scenariusz W2');
   return d;
 }
 export const riverAt = (y: number) => 120 + Math.trunc(18 * Math.sin(y / 45));
