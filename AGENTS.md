@@ -6,29 +6,29 @@ Zbuduj **PixelForge**, modułowy silnik przeglądarkowych gier 2D w pixel art, u
 
 Przed zmianami przeczytaj `README.md`, `docs/SPECIFICATION.md` i `docs/ROADMAP.md`. Decyzje w tych plikach są obowiązujące, dopóki użytkownik ich nie zmieni.
 
-## Aktualne decyzje projektowe (2026-11-13, nadrzędne nad dawnymi instrukcjami)
+## Aktualne decyzje projektowe (2026-11-14, nadrzędne nad dawnymi instrukcjami)
 
-**Zmiana kierunku:** PixelForge pozostaje wspólnym silnikiem, ale rozwój produktów **„Winobranie” i platformówki „Leśny sygnał” / `forest-demo` jest zakończony i nie należy go kontynuować**. Nie twórz kolejnych poziomów, mechanik, grafik ani wydań dla tych gier. Ich kod w starych PR stanowi materiał historyczny, z którego można wyodrębnić generyczne, wielokrotnego użytku mechanizmy. Nie usuwaj ani nie scalaj hurtowo historycznych gałęzi bez polecenia.
+**Nowa decyzja:** stary uproszczony prototyp `winobranie` z PR #4 jest porzucony, ale użytkownik zatwierdził **nowy, osobny produkt `Winobranie RTS: Trzy sezony`**, wielką strategię 2D z góry, z sześcioma odmianami, swobodnym układaniem plantacji, ochroną przed przymrozkami, zakupem domków i traktorów, zatrudnianiem ludzi, dźwiękiem i finałem kampanii. Obowiązuje szczegółowa [specyfikacja](docs/WINOBRANIE-RTS.md) i roadmapa 0.3. Nie reaktywuj mapy ani pętli starego Winobrania; wykorzystuj generyczny rdzeń. **Platformówka `Leśny sygnał` / `forest-demo` pozostaje porzucona.** Nie usuwaj ani nie scalaj hurtowo historycznych gałęzi bez polecenia.
 
 Nowym kierunkiem są **duże światy 2D z góry, widok z góry 3/4, sterowanie myszą, przyjazne symulatory i krótkie gry na 20–35 minut**. Docelowy świat nowej gry ma startować od 4096 × 4096 pikseli, z architekturą sektorową/chunkową pozwalającą na większe wymiary. Nie buduj jednej ogromnej tekstury ani nie uruchamiaj pełnego A* na całej mapie przy każdym ruchu.
 
 Nowym zadaniem infrastrukturalnym jest **bezpieczny aktualizator ZIP** z podglądem zmian, kontrolą wersji, stagingiem, kopią poprzedniego wydania i rollbackiem. Sam statyczny frontend nie aktualizuje hostingu. Opcjonalny moduł webowy wymaga osobnego, uwierzytelnionego komponentu serwerowego. Nie uruchamiaj publicznego uploadu bez logowania.
 
-**Bieżąca dokumentacja:** `docs/ROADMAP.md` (wersja 0.2) i `docs/UPDATER-SPEC.md`. Stara `docs/ROADMAP-ARCHIVE-2026-11.md` jest archiwum. Wszelkie sprzeczne dawne polecenia dotyczące M0/M2/M3/Winobrania czy platformówki są uchylone.
+**Bieżąca dokumentacja:** `docs/ROADMAP.md` (wersja 0.3), `docs/WINOBRANIE-RTS.md` i dokumenty obecnego engine. Roadmapy 0.2 oraz historyczne są archiwum. Nowe Winobranie RTS jest odrębną grą, stare Winobranie nie może być rozwijane. Nie rozpoczynaj automatycznie implementacji kolejnego etapu.
 
 **Zmiana koncepcji „Życia Dżdżownicy” na polecenie użytkownika (2026-11-13):** ta gra pokazuje pionowy przekrój gleby z boku, a nie widok z góry. Rośliny rosną na powierzchni, pod nimi są korzenie, pędraki i larwy. Bohater porusza się w obu osiach, drąży i użyźnia glebę. Głębiej rośnie trudność; deszcz przenika od powierzchni w dół. Punkty i stopniowy rozwój prowadzą do dorosłości. Poprzedni pomysł czterech ogrodów i odrodzenia centralnego drzewa jest zastąpiony tą koncepcją. Pozostały rdzeń i laboratorium dużego świata pozostają niezależne od perspektywy tej gry.
 
 ## Gałęzie i pull requesty
 
 - `main` jest gałęzią stabilną. Dokumentacja bazowa może w niej pozostać, ale **implementacja kodu każdego etapu musi być wykonywana na osobnej gałęzi roboczej**.
-- Pierwszy etap M0 realizuj na istniejącej gałęzi `feature/m0-engine-foundation`. Nie commituj kodu bezpośrednio do `main`.
-- Kolejne etapy otrzymują oddzielne gałęzie `feature/m1-runtime`, `feature/m2-forest-demo` itd., tworzone z aktualnego `main` po zatwierdzeniu poprzedniego etapu.
+- Dla Winobrania RTS przygotuj nową gałąź `feature/p3-winobranie-rts` od **najnowszej działającej i zaakceptowanej bazy kodu**, po sprawdzeniu bieżących PR (np. PR #12), ponieważ dokumentacyjny `main` może nie zawierać implementacji silnika.
+- Dla kolejnych etapów używaj osobnych, czytelnych gałęzi albo kolejnych małych PR, bez niekontrolowanego scalania niesprawdzonych zależności.
 - Na koniec etapu przygotuj pull request do `main` z podsumowaniem zmian, testami i kryteriami odbioru. Nie scalaj samodzielnie PR bez wyraźnej zgody użytkownika.
 - Poprawki do aktywnego etapu dopisuj do jego gałęzi, bez tworzenia kolejnego PR na każdą drobną zmianę.
 
 ## Sposób pracy
 
-1. Zacznij od aktualnego planu P0 w `docs/ROADMAP.md` (wersja 0.2) lub od odrębnie zleconego zadania. W jednym cyklu realizuj tylko wskazany zakres.
+1. Zacznij od etapu W0 nowej gry w `docs/ROADMAP.md` (wersja 0.3), jeśli użytkownik zleca prace nad Winobraniem RTS; w innym wypadku realizuj wyłącznie wskazany etap bieżącego projektu.
 2. Sprawdzaj istniejący kod przed edycją. Nie niszcz działających rozwiązań, nie zastępuj całych modułów bez konieczności.
 3. Wykonuj małe, czytelne zmiany i dodawaj testy. Po każdym etapie uruchamiaj wszystkie dostępne kontrole.
 4. Zakończenie każdego etapu udokumentuj w `docs/ROADMAP.md`: status, istotne decyzje, testy, ograniczenia i następny krok.
@@ -93,10 +93,10 @@ Projektuj pierwsze 30–60 sekund każdego tytułu jako **niewerbalną naukę**:
 
 ## Zakaz przedwczesnego rozbudowywania
 
-W MVP NIE BUDUJ edytora drag-and-drop, kont użytkowników, chmury zapisów, multiplayera, sklepu, systemu pluginów instalowanych z internetu, rozbudowanego ECS, edytora grafiki, pełnej obsługi sześciu gatunków ani 30-minutowej gry komercyjnej.
+Nie buduj kont użytkowników, chmury zapisów, multiplayera, sklepu, systemu pluginów instalowanych z internetu, rozbudowanego ECS ani ogólnego edytora grafiki. **Wyjątek:** nowa strategia Winobranie RTS ma wprost zatwierdzone budowanie, zakup parcel i 30-minutową kampanię; te funkcje rozwijaj etapami W1–W4, nie interpretuj starego zakazu MVP jako zakazu tworzenia tej gry.
 
-Najpierw musi powstać jedna działająca gra demonstracyjna i czytelny interfejs umożliwiający dodanie następnej gry bez modyfikowania rdzenia.
+Pierwszym zadaniem gry jest W0: kontrakty i plan, potem jeden grywalny vertical slice W1; dopiero po odbiorze jego kolejny zakres.
 
 ## Następne polecenie dla Codexa
 
-> Przeczytaj `docs/ROADMAP.md` w wersji 0.2 oraz `docs/UPDATER-SPEC.md`. Nie rozwijaj Leśnego sygnału ani Winobrania. Przeprowadź inwentaryzację gotowego rdzenia z gałęzi M0–M3, wskaż bezpieczną integrację modułów bez nieautoryzowanego merge, a następnie podziel prace nad dużymi mapami i aktualizatorem ZIP zgodnie z nową roadmapą. Bez wdrażania gry lub panelu aktualizacji do publicznego hostingu bez zgody.
+> Przeczytaj `docs/ROADMAP.md` w wersji 0.3 i `docs/WINOBRANIE-RTS.md`. Rozpocznij wyłącznie W0 nowej gry: wybierz sprawdzoną bazę silnika z aktualnych PR, opracuj kontrakty, fazy wdrażania i strategię testów, opisz dynamiczną nawigację i swobodne rozmieszczanie parcel, mechanikę przymrozku i ciągłego zraszania, gospodarkę oraz finał trzech lat. Starego Winobrania ani Leśnego sygnału nie rozwijaj. Bez automatycznego merge lub instalacji na hostingu.

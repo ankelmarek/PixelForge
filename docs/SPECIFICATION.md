@@ -1,5 +1,7 @@
 # PixelForge — specyfikacja techniczna i funkcjonalna
 
+> **Decyzja z 14 listopada 2026:** nowy produkt **Winobranie RTS: Trzy sezony** ma własną [specyfikację](WINOBRANIE-RTS.md) i etapy W0–W4 w [roadmapie 0.3](ROADMAP.md). Dawny prototyp `winobranie` pozostaje porzucony. Zatwierdzone budowanie, etykiety strategiczne, sterowanie myszą i kampania nowej gry mają pierwszeństwo nad historycznymi ograniczeniami poniżej. Dżdżownica zachowuje własny pionowy przekrój gleby.
+
 > **Uwaga z 13 listopada 2026:** to specyfikacja historycznych fundamentów PixelForge. Jej wytyczne o pierwszej platformówce, demie forest-demo, Winobraniu i małych mapach zostały zastąpione przez [bieżącą roadmapę](./ROADMAP.md). Nie rozwijaj tych gier. Nowy priorytet to mapy od 4096 × 4096 pikseli, obsługa myszą i aktualizator według [UPDATER-SPEC.md](./UPDATER-SPEC.md). Zachowaj ogólne kontrakty i użyteczne serwisy.
 
 > **Bieżąca gra:** na polecenie użytkownika „Życie Dżdżownicy” przedstawia pionowy przekrój gleby, rośliny na powierzchni, odżywianie korzeni, larwy, pogodę przenikającą w głąb i rozwój do dorosłości. Szczegóły: [EARTHWORM.md](EARTHWORM.md). Wymóg widoku z góry nie dotyczy tego klienta; współdzielony silnik pozostaje niezależny od perspektywy.
