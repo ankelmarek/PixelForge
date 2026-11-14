@@ -2,6 +2,8 @@
 
 **Data:** 14 listopada 2026. **Status:** projekt S0 do odbioru.
 Stacja nie ma jeszcze runtime, wpisu w katalogu ani nowego ZIP-a.
+[PR #17](https://github.com/ankelmarek/PixelForge/pull/17) pozostaje roboczy
+ze względu na opisany niżej błąd regresji odziedziczonej bazy.
 
 ## Zakres i wybrana baza
 
@@ -21,7 +23,7 @@ Runtime, testy, zależności, narzędzia, CI i paczki tej bazy są identyczne
 z `c295bb0`, dla którego pełne [CI #19](https://github.com/ankelmarek/PixelForge/actions/runs/43633785720)
 przeszło testy logiki, E2E, instalacji, rollbacku i hostingu.
 Różnice `c295bb0..7f678a1` to tylko cztery pliki dokumentacji.
-S0 dodatkowo uruchamia lokalne kontrole na swojej gałęzi; wyniki poniżej.
+W S0 dodatkowo wykonano lokalne kontrole na swojej gałęzi; wyniki poniżej.
 
 **Nowsza regresja nie jest w pełni zielona:** podczas S0 zakończyło się
 [CI #20 dla `7f678a1`](https://github.com/ankelmarek/PixelForge/actions/runs/43636198213).
@@ -44,6 +46,8 @@ tej próby jako poprawnego przejścia W3. Trace i kontekst są lokalnie
 w `test-results/winery-W3-*/`; kod testu i gry pozostawiono na etapie S0
 bez zmian. Naprawa powinna obsłużyć zmianę stanu przed kliknięciem i ponownie
 sprawdzić cały finał, bez osłabiania wymaganych asercji.
+Pełny lokalny zestaw E2E zakończył się wynikiem **46 PASS, 7 SKIP, 1 FAIL**
+w 22.4 min. Atlas i Dżdżownica przeszły regresję; jedyny błąd to opisany W3.
 
 ## Wynik projektowania
 
