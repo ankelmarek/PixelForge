@@ -118,13 +118,91 @@ Paliwa mają magazyn w litrach, pojemność, cenę zakupu, cenę sprzedaży, mar
 
 ## 8. Sklep, myjnia i usługi dodatkowe
 
-**Sklep:** trzy proste grupy produktów: napoje, przekąski, kawa. Można kupować zapas, zwiększać pojemność, zmieniać marże i dołożyć drugą kasę. Koszyk klientów zależy od pory dnia i typu kierowcy. Pracownik przy kasie decyduje o tempie obsługi. Towary faktycznie ubywają.
+**Sklep własny ORLAR:** trzy proste grupy produktów: napoje, przekąski, kawa. Można kupować zapas, zwiększać pojemność, zmieniać marże i dołożyć drugą kasę. Koszyk klientów zależy od pory dnia i typu kierowcy. Pracownik przy kasie decyduje o tempie obsługi. Towary faktycznie ubywają.
 
 **Myjnia:** kupowana po pierwszym większym przychodzie. Kolejka maksymalnie kilku aut; pojazdy muszą fizycznie wjechać, zostać umyte i wyjechać. Animacje piany, szczotek i mokrego asfaltu. Deszcz obniża popyt, słoneczny szczyt zwiększa. Myjnia zwiększa przychód, ale ma koszty wody i obsługi.
 
 **Toaleta i parking:** na początku proste czynniki komfortu i zdolności obsługi większej liczby turystów, bez własnej mikrogierki sprzątania w MVP.
 
 Nie wprowadzaj trzech równoległych, monotonicznych minigier wymagających spamowania przyciskami. Zarządzanie ma być realnie strategiczne.
+
+### 8.1. ORLAR i Skoczka: sklep prowadzony samodzielnie albo wynajęty
+
+**Decyzja projektowa (14.11.2026):** w świecie gry stacja otrzymuje roboczą nazwę **ORLAR**, a lokalna, fikcyjna sieć sklepów otrzymuje nazwę **Skoczka**. Te nazwy i projekty graficzne są robocze; przed publikacją należy sprawdzić kolizje znaków towarowych. **Nie wolno kopiować logo, fontów, maskotek, oznaczeń i plików rzeczywistych marek ORLEN ani Żabka.** Znak orła i znak żabki należy stworzyć od podstaw w odróżnialnej formie, z własnymi kolorami akcentowymi, układem i typografią. Grafiki pokazane w rozmowie służą tylko inspiracji/briefowi, nie są automatycznie produkcyjnymi zasobami.
+
+**Główna nowa mechanika:** właściciel stacji może wybrać **samodzielny sklep ORLAR** albo **wynająć powierzchnię operatorowi „Skoczka”**. Najem nie jest dodatkiem czysto estetycznym. Zmienia gospodarkę, zarządzanie personelem, sklepowe kolejki, opłacalność parkingu, natężenie ruchu i obciążenie decyzjami gracza.
+
+| Aspekt                       | Sklep własny ORLAR                                 | Wynajęty sklep Skoczka                                                         |
+| ---------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Przychody właściciela stacji | pełna marża na rzeczywiście sprzedanych produktach | czynsz i ewentualny udział w obrocie najemcy                                   |
+| Towary i dostawy             | gracz kupuje towar, organizuje zapasy              | operator sam zaopatruje sklep i rozlicza jego sprzedaż                         |
+| Personel                     | kasjer i pracownik obciążają etaty stacji          | własna obsługa najemcy, bez ręcznego kierowania przez gracza                   |
+| Decyzje                      | ceny, ekspres, chłodnia, dostawy, druga kasa       | kontrakt, standard lokalu, reklama, parking, ewentualne wspólne promocje       |
+| Ryzyko                       | zalegające towary, pustki w magazynie, pensje      | mniejszy udział w zyskach, możliwe ograniczenie przepustowości i warunki umowy |
+| Wpływ na paliwo              | część kierowców dojeżdża po zakupy                 | operator przyciąga również klientów sklepu, część dodatkowo tankuje            |
+| Inwestycje                   | wyposażenie należące do stacji                     | lokal, dojazd, wspólna infrastruktura; ruchome wyposażenie zapewnia operator   |
+
+**Nie wolno naliczać równocześnie marży ze sklepu i czynszu jako podwójnego zarobku z tej samej sprzedaży.** W trybie najmu obrót towarowy sklepu jest metryką operatora, a nie przychodem stacji. Paliwo, myjnia i inne usługi ORLAR nadal rozlicza właściciel stacji.
+
+#### Odblokowanie i umowa
+
+- Kampania startuje z małym **własnym sklepem**, zgodnie ze startowym wariantem gry. Po pierwszej zmianie (na początku soboty) gracz otrzymuje wizualną ofertę współpracy ze Skoczką. Może podpisać umowę lub nadal prowadzić sklep samodzielnie. To **dobrowolny wybór** i obie ścieżki muszą prowadzić do osiągalnego sukcesu w kampanii.
+- Umowa zawierana kliknięciem panelu nieruchomości: widoczne piktogramy dwóch stron, proste liczby i krótkie etykiety \`Własny\` / \`Wynajmij\`. Dwa rodzaje umów, przykładowo:
+  1. **Stały czynsz:** większa gwarantowana kwota za zmianę, bez udziału w obrotach.
+  2. **Partnerska:** niższy stały czynsz plus procent realnego obrotu najemcy.
+- Przykładowe wartości do balansu: \`fixed=450\` jednostek za zmianę albo \`base=200\` oraz \`8%\` przychodu sklepu. To **liczby projektowe, nie wycena rzeczywistej franczyzy**. Codex ma sprawdzić ich sensowność przy budżecie i czasie kampanii.
+- Kontrakt obowiązuje co najmniej do końca kolejnej zmiany. Wcześniejsze rozwiązanie jest możliwe tylko przy zmianie dnia, z wyraźną karą, aby nie można było naprzemiennie eksploatować obu modeli w tej samej minucie.
+- Wprowadź stan przejęcia lokalu: rezerwacja wejścia, zamknięcie na krótką przebudowę i pojawienie się nowego szyldu/wyposażenia. Zmiana modelu nie może usuwać obecnych klientów ani tworzyć drugiej kopii lokalu w tym samym miejscu.
+- Jeśli brak drogi/parkingu/podstawowego lokalu, oferta najmu może być niedostępna z wizualnie pokazanym brakującym warunkiem. Nie blokuj tym całej kampanii.
+
+#### Zachowanie sklepu najemcy
+
+1. **Autonomiczna działalność**: najemca ma własną obsługę, kolejkę, harmonogram dostaw i ograniczoną pojemność magazynu. Symulacja pozostaje aktywna poza kamerą.
+2. **Wspólny napływ klientów**: klient paliwowy może wejść do Skoczki po zaparkowaniu; klient Skoczki może przyjechać tylko na zakupy i ewentualnie zatankować. Parking i dojazd muszą rzeczywiście istnieć, podobnie jak ścieżka piesza.
+3. **Nie generuj darmowego nieskończonego ruchu**: wpływ renomy sieci to ograniczona, parametryzowana zmiana _prawdopodobieństwa zjazdu_ już generowanego ruchu na drodze, a nie nieograniczony spawn aut. Limit klientów, przepustowość wejścia i parkingu obowiązują oba typy sklepu.
+4. **Niezależne rozliczenie**: każda transakcja najemcy zwiększa \`tenantTurnover\` dokładnie raz; dochód gracza z najmu naliczany jest zgodnie z kontraktem i zaksięgowany osobno, na koniec zmiany lub w ustalonych okresach. Wpływ na satysfakcję / popyt nie jest dodatkowym przychodem księgowym.
+5. **Efekty operacyjne**: jeśli kolejka blokuje wejście lub parking jest pełen, część klientów odjeżdża. Inwestycje gracza w parking, chodnik, oświetlenie lub standard lokalu mogą temu przeciwdziałać, ale nie dają zawsze dodatniej stopy zwrotu.
+6. **Zdarzenia**: dostawczy samochód Skoczki przyjeżdża i rozładowuje towar; promocyjny weekend zwiększa ruch; chwilowa awaria chłodni ogranicza asortyment. Zdarzenia zgodne ze wspólnym schedulerem i nie powinny generować dwóch krytycznych alarmów naraz.
+7. **Nie zarządzaj pracownikami operatora jak swoimi**: widoczna praca kasjera/sklepu jest autonomiczna. Właściciel stacji zarządza tylko lokalem, infrastrukturą oraz umową.
+
+#### Powiązanie z trzema zmianami
+
+- **Piątek:** działa sklep własny i uczy decyzji o zapasach, cenach i pracowniku.
+- **Sobota:** oferta wynajmu Skoczce. Gracz wybiera między pewnym czynszem a wyższym, lecz trudniejszym do utrzymania zyskiem ze sklepu. Nowa działalność przyciąga część dodatkowych klientów i obciąża parking. To odpowiedni moment, by zainwestować w drugi dystrybutor, kasę albo parking.
+- **Niedziela:** najemca może przeprowadzić promocję w szczycie wyjazdowym. Własny sklep z kolei daje pełną marżę, ale wymaga uzupełniania towarów i obsady. Obydwa warianty uczestniczą w ostatecznym wyniku stacji.
+
+**Warunek jakościowy:** odnieś co najmniej dwie pełne zwycięskie kampanie na różnych seedach, jedną ze sklepem własnym, drugą po wynajęciu Skoczce, bez ukrytego mnożnika zwycięstwa wymuszającego jeden model.
+
+#### Wymagania wizualne i dźwiękowe
+
+- ORLAR: własna, czytelna estetyka polskiej stacji z geometrycznym, **oryginalnym** orłem na oznakowaniu. Nie skanować ani odtwarzać rzeczywistego znaku ORLEN.
+- Skoczka: własny motyw sympatycznej żabki w ruchu, ale odmienny od oznaczeń Żabki. Dobrze widoczny szyld na budynku, zielony akcent witryn, oświetlenie wnętrza, paczki i regały. Nie wykorzystywać oryginalnego znaku Żabka.
+- Z zewnątrz sklep **żyje**: piesi wchodzą i wychodzą, zapalają się światła, przyjeżdża mały samochód dostawczy, widać ograniczenie miejsc parkingowych.
+- SFX: otwieranie drzwi, sygnał kasy, ekspres, rozładunek, subtelny motyw podpisania umowy i regularny wpływ czynszu; ambient sklepu słyszalny po przybliżeniu kamery. Audio z ograniczeniem równoległych głosów.
+- Identyfikacje na tablicach, małych sprite'ach i ekranie tytułowym muszą być czytelne przy zoomie. Dla rozpoznawalności nie wystarcza wielki obraz pełnowymiarowego logo; przygotować także uproszczone symbole pixel art.
+
+#### Model danych i zapis
+
+W kliencie \`gas-station\` dodaj np. \`shopMode: 'owned' | 'leased'\`, \`tenantId\`, \`leaseContract { id, type, signedAtShift, minTerm, baseRent, revenueShareBps, settlementPeriod, penalty }\`, \`tenantTurnover\`, \`tenantQueue\`, \`tenantStaff\`, \`tenantStock\`, \`tenantDeliveries\`, \`leaseSettlements\` i \`tenantEvents\`. To sugestia modelu, nie dosłowny kontrakt niezależny od obecnego engine.
+
+Zapis musi odtwarzać status pracowników i zamówień zarówno po odświeżeniu, jak i po wycofaniu aktualizacji ZIP; migrację zapisu zapewnić tylko dla nowych wersji tego samego \`gameId\`. Nie nadpisywać kluczy zapisów Winobrania RTS, Atlasu i Dżdżownicy.
+
+Rozliczenie okresowe ma posiadać **unikalne ID i ochronę przed ponownym naliczeniem** przy zapisie, pauzie, przyspieszeniu oraz wielokrotnym renderowaniu. W \`EconomyLedger\` zapisuj rozłączne kategorie: \`owned_shop_margin\`, \`tenant_rent\`, \`tenant_share\`, \`shop_staff_cost\`, \`tenant_building_cost\`, \`shop_stock_cost\`. Nie księguj sprzedaży sklepu najemcy jako obrotu właściciela.
+
+#### Testy akceptacyjne najmu
+
+- [ ] Ten sam budynek przechodzi między trybem własnym a wynajętym bez duplikacji obiektów i klientów.
+- [ ] Sklep własny wymaga towaru i kasjera; Skoczka sama zarządza swoimi pracownikami i dostawami.
+- [ ] Stacja zarabia wyłącznie na czynszu/udziale najemcy plus własnych usługach, nigdy na fikcyjnym pełnym obrocie Skoczki.
+- [ ] Wynajem zwalnia własnego pracownika sklepu do innych zadań, bez dopisywania darmowego pracownika stacji.
+- [ ] Dodatkowy ruch najemcy jest ograniczony popytem z drogi i pojemnością parkingu.
+- [ ] Dla braku parkingu lub zablokowanego dojazdu klient nie teleportuje się do Skoczki ani nie otrzymuje obsługi.
+- [ ] Płatności czynszu naliczają się dokładnie raz przy ×1/×4, po save/resume, rollbacku i przekroczeniu granicy zmiany.
+- [ ] Podpisanie oraz rozwiązanie kontraktu ma termin/koszt, nie daje darmowego cyklicznego przełączania.
+- [ ] Własny sklep i Skoczka mogą oba prowadzić do sukcesu w trzyzmianowej kampanii; porównywalność sprawdzona playtestem i kilkoma seedami.
+- [ ] Obie marki mają oryginalne zasoby, bez logo, fontów lub oznaczeń importowanych z cudzych plików.
+
+**Miejsce w harmonogramie:** rozpoznanie architektury kontraktów w **S0**, własny sklep i punkty obsługi w **S1**, **działający najem Skoczki w S2**, wpływ na kampanię i balans w **S3**, ostateczna grafika/dźwięk/asset audit w **S4**. S1 nie może udawać, że wbudowano już najem.
 
 ## 9. Pracownicy i automatyzacja
 
@@ -143,11 +221,12 @@ Prowadź **jeden jawny księgowy ledger** operacji: gotówka, koszt zakupu paliw
 
 Wszystkie wartości pieniężne w najmniejszych jednostkach liczbowych całkowitych, litry paliwa jako liczby całkowite lub fixed-point. Zakaz pływających błędów sumowania, ujemnych stanów paliwa i zdublowanych transakcji po odświeżeniu.
 
-**Konkurencyjne strategie:**
+**Konkurencyjne strategie (w tym wybór modelu sklepu):**
 
 1. **Szybka obsługa:** niskie ceny, dużo pomp, krótka kolejka, duży obrót.
-2. **Sklep premium:** nieco wyższe ceny, mocny sklep z kawą i przekąskami, spokojniejszy ruch.
+2. **Sklep premium własny ORLAR:** nieco wyższe ceny, mocny sklep z kawą i przekąskami, spokojniejszy ruch.
 3. **Transport ciężki:** większy dystrybutor ON, parking, wysokie pojedyncze transakcje.
+4. **Wynajem Skoczce:** stabilny czynsz, niższe ryzyko towarowe i odciążenie personelu kosztem niższej kontroli nad marżą.
 
 Warianty muszą być porównywalnie grywalne, a nie tylko dekoracyjnymi „perk-ami”. Balans sprawdzić kilkoma seedami i automatycznymi strategiami.
 
@@ -240,6 +319,7 @@ src/games/gas-station/
   customers.ts
   fuel.ts
   shop.ts
+  tenant-lease.ts
   car-wash.ts
   economy.ts
   placement.ts
@@ -276,6 +356,7 @@ Stan: `schemaVersion`, `gameId`, `gameVersion`, seed, zmiana i zegar, status kam
 - [ ] Przejrzyj najnowszą działającą gałąź silnika, PR #15 lub późniejszy, nie bazuj ślepo na dokumentacyjnym `main`.
 - [ ] Utwórz `docs/STACJA-BENZYNOWA-IMPLEMENTATION.md`: dokładny model stanów, kontrakty, zakres systemów generycznych, schematy, budżet assetów, plan E2E i ryzyka.
 - [ ] Opracuj jednoznaczną tabelę pętli 3 zmian, koszty, marże, wagi satysfakcji i ograniczenia liczby jednostek.
+- [ ] Zaprojektuj dwa modele lokalu: własny ORLAR i wynajęty Skoczce; umowy, rozliczenie czynszu i udziału, dane klienta oraz brak podwójnego księgowania.
 - [ ] Załóż nową gałąź `feature/p3-stacja-benzynowa` od sprawdzonej bazy. Nie scalaj ani nie publikuj automatycznie.
 
 ### S1. Vertical slice 5–8 minut
@@ -294,6 +375,7 @@ Stan: `schemaVersion`, `gameId`, `gameVersion`, seed, zmiana i zegar, status kam
 - [ ] Kupowanie parcel i swobodne rozmieszczenie dystrybutorów, parkingów, drugiej kasy, drogi.
 - [ ] Pracownicy, płace, zmiany i priorytety.
 - [ ] Zmienne ceny, różna marża, sklep i popyt na usługi.
+- [ ] Oferta wynajmu lokalu operatorowi Skoczka, wybór umowy, animowane przejęcie lokalu, autonomiczni pracownicy i dostawy najemcy, niezależne rozliczenia.
 - [ ] Brak zakleszczeń i regresji regionalnego pathfindingu.
 
 ### S3. Myjnia, ekonomia, trzy zmiany, zakończenie
@@ -301,11 +383,13 @@ Stan: `schemaVersion`, `gameId`, `gameVersion`, seed, zmiana i zegar, status kam
 - [ ] Myjnia z rzeczywistym dojazdem, animacją, kosztami i kolejką.
 - [ ] Dynamiczne wydarzenia, deszcz, fala turystów, awarie i dostawy.
 - [ ] Pełne piątek/sobota/niedziela i nieunikniony finał po trzeciej zmianie.
+- [ ] Bilansuj ścieżki sklepu własnego i wynajmu; Skoczka może przyciągać klientów, lecz wymaga parkingu i nie daje właścicielowi podwójnej marży.
 - [ ] Co najmniej trzy opłacalne strategie, wygrana/częściowy sukces/porażka, bilans ekonomiczny.
 
 ### S4. Dopracowanie i wydanie
 
 - [ ] Trzy scenariusze, pełna grafika, animacje, audio i dynamiczne światło.
+- [ ] Oryginalny branding ORLAR (orzeł) i Skoczka (żabka): odrębny od realnych marek, także w uproszczonych sprite'ach i dźwiękach.
 - [ ] Playtesty z co najmniej 3 osobami, pomiar czasu i problemów z odkrywalnością.
 - [ ] Regresja wcześniejszych gier, pełna kampania na kilku seedach, testy wydajności i rozmiaru builda.
 - [ ] Wydanie `full ZIP` zgodne z istniejącym aktualizatorem U2, bez aktualizacji jego kodu.
@@ -316,7 +400,8 @@ Stan: `schemaVersion`, `gameId`, `gameVersion`, seed, zmiana i zegar, status kam
 - [ ] Pełny cykl samochodu od drogi do odjazdu, z uwolnieniem wszystkich rezerwacji.
 - [ ] Tankowanie zużywa właściwy rodzaj paliwa, przyrost gotówki i koszt poprawnie rozliczany.
 - [ ] Cysterna podnosi zapas dokładnie o dostarczoną ilość, nie przepełnia zbiornika.
-- [ ] Sklep rozlicza towar i kasę dokładnie raz.
+- [ ] Sklep własny rozlicza towar i kasę dokładnie raz; sklep wynajęty rozlicza osobno czynsz i udział, bez pełnego przychodu ze sprzedaży najemcy.
+- [ ] Najem Skoczce jest dobrowolny i opłacalny w części scenariuszy; sklep własny nadal pozwala wygrać.
 - [ ] Budowa nie blokuje bezpowrotnie wejść, wyjść i tras obecnych samochodów.
 - [ ] Kolejki i zachowania klientów są logiczne przy zmianie ceny, braku towaru i awarii.
 - [ ] Pauza, ×1/×2/×4, zapis i restart nie zmieniają bilansu oraz nie tworzą podwójnych klientów.

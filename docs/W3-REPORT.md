@@ -6,11 +6,21 @@ Sprawdzono otwarty PR #15 i jego zakończone sukcesem pełne CI. Dokumentacyjny
 `main` nadal nie zawiera połączonego stosu kodu. W3 ma własny PR; nie scala
 poprzednich PR do `main` i nie instaluje gry na hostingu użytkownika.
 
-Status: **REVIEW — implementacja i kontrole lokalne zakończone**.
-Wynik pełnego CI jest dołączany do [PR #16](https://github.com/ankelmarek/PixelForge/pull/16).
-W4 nie rozpoczęto. Podczas publikacji pobrano nowe dokumenty z `main`
-`6a97fd1`: plan Stacji na Trasie S0–S4. Uzgodniono tylko dokumentację na
-gałęzi W3, zachowując plan nowej gry; kod i opublikowane ZIP-y nie zmieniły się.
+Status: **REVIEW — implementacja, kontrole lokalne i pełne CI zakończone**.
+[PR #16](https://github.com/ankelmarek/PixelForge/pull/16),
+[CI #19 — PASS](https://github.com/ankelmarek/PixelForge/actions/runs/43633785720)
+dla `c295bb0`: 115 Vitest, 15 testów paczek, 36 Python/PHP, 12 Apache/PHP,
+47 E2E PASS (7 pominięć zgodnych z platformą) i wszystkie kontrole dystrybucji.
+CI odtworzyło identyczne SHA-256 obu ZIP-ów; pobrano je także z GitHuba
+i porównano z lokalnymi archiwami.
+
+W4 nie rozpoczęto. Podczas publikacji pobrano dokumenty z `main` `6a97fd1`
+i późniejsze `45dcfa2`: plan Stacji na Trasie S0–S4 i najem Skoczki.
+Uzgodniono tylko dokumentację na gałęzi W3, zachowując plan nowej gry.
+Końcowe uzgodnienie po CI nie zmienia kodu, testów, narzędzi, zależności,
+workflow ani ZIP-ów względem sprawdzonego `c295bb0`; potwierdza to diff Git.
+Dokumenty przeszły lint/Prettier. Automatyczne CI tego ostatniego uzupełnienia
+dokumentacji ma osobny status w PR.
 
 ## Kampania i rozwój
 

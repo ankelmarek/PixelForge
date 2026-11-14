@@ -65,13 +65,13 @@ nowy tytuł nie jest jeszcze dostępny w launcherze ani ZIP-ie.
 
 ### Plan rozwoju Stacji na Trasie (oddzielny cykl)
 
-Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: koncepcja dopracowana, nie wdrażana.
+Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: koncepcja dopracowana, nie wdrażana. **Nowy wariant ekonomiczny:** fikcyjna polska stacja **ORLAR** ma możliwość prowadzenia własnego sklepu lub wynajęcia go sieci **Skoczka**, z czynszem, kontraktem, odmiennymi obowiązkami i ruchem klientów. Funkcja zaplanowana do S2; branding autorski, bez kopiowania realnych znaków ORLEN i Żabka.
 
 | Etap | Cel                                                                                                   | Status |
 | ---- | ----------------------------------------------------------------------------------------------------- | ------ |
 | S0   | Inwentaryzacja aktualnego PixelForge, architektura symulacji ruchu i kolejek, projekt ekonomii        | TODO   |
 | S1   | Grywalna stacja, dwa dystrybutory, sklep, pracownicy, cysterna, pierwsza sprzedaż i podstawowy dźwięk | TODO   |
-| S2   | Swobodna rozbudowa, ruch samochodów osobowych i ciężarówek, nowe stanowiska, pracownicy i ceny        | TODO   |
+| S2   | Swobodna rozbudowa, ruch samochodów, pracownicy, ceny oraz **najem sklepu fikcyjnej sieci Skoczka**   | TODO   |
 | S3   | Myjnia, ekonomia, zdarzenia i 3 zmiany kończące się wynikiem                                          | TODO   |
 | S4   | Warianty, pixel art, dźwięki, balans, testy, pełny ZIP dla istniejącego panelu                        | TODO   |
 
@@ -179,5 +179,6 @@ szczepy z plonem w roku 3. Zapis v3 kontynuuje starsze W1/W2 w trybie zgodności
 115 testów logiki PASS, w tym sześć pełnych kampanii z prawdziwymi komendami,
 zgodność ×1/×4 i wznowienia oraz pełny magazyn butelek. Kampania przez UI
 osiągnęła 415 butelek i sukces; 46 wcześniejszych scenariuszy przeglądarkowych
-przeszło regresję. Raport zawiera wyniki, obrazy, paczki i kontrolę dystrybucji.
+przeszło regresję. Pełne CI #19 zaliczyło 47 E2E oraz kontrole paczek,
+instalacji, rollbacku i hostingu. Raport zawiera wyniki, obrazy i archiwa.
 W4 wymaga kolejnego polecenia; bez samodzielnego merge lub wdrożenia.
