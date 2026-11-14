@@ -30,22 +30,26 @@ Projekt powstaje z myślą o wielokrotnym wykorzystaniu gotowego silnika i produ
 
 ## Stan implementacji
 
-Funkcje silnika powstały w historycznych gałęziach M0–M3 i powiązanych PR, które pozostają do przeglądu i integracji. **Gałąź main nie jest jeszcze opublikowaną wersją kodu.** Stare Winobranie i Leśny sygnał zostały porzucone, natomiast nowy projekt **Winobranie RTS** działa jako W1 w osobnym katalogu na współdzielonym silniku; generyczne moduły pozostają do wykorzystania. Nowe mapy muszą być znacznie większe od historycznej próbki 640 × 416 pikseli.
+Funkcje silnika powstały w historycznych gałęziach M0–M3 i powiązanych PR, które pozostają do przeglądu i integracji. **Gałąź main nie jest jeszcze opublikowaną wersją kodu.** Stare Winobranie i Leśny sygnał zostały porzucone, natomiast nowy projekt **Winobranie RTS** działa jako osobny klient w osobnym katalogu na współdzielonym silniku; generyczne moduły pozostają do wykorzystania. Nowe mapy muszą być znacznie większe od historycznej próbki 640 × 416 pikseli.
 
-**Winobranie RTS — W2:** żywy sezon na mapie 8192 × 8192. Sześć odmian,
-losowana pogoda i gleba, prognoza, wzrost krzewów, przymrozki, susza i pielęgnacja.
-Zbiorniki, pompy, rury i zraszacze wymagają ciągłego dopływu wody aż do
-odmarznięcia. Własne rzędy i drogi, dwa domki, dwóch pracowników i traktor
-obsługują zbiór, tłoczenie i sprzedaż moszczu. Nowy sezon trwa 10 minut przy ×1,
-z tempem ×2/×4 i pauzą. [Raport W2](docs/W2-REPORT.md).
-Zwijany panel **„Co teraz?”** podaje bieżący cel i potrzebne działanie,
-a „Pokaż miejsce” wskazuje obiekt. Zapis W1 można dokończyć według dawnych
-reguł; **Nowa gra** uruchamia losowane W2. Pełna kampania trzech lat pozostaje W3.
+**Winobranie RTS — W3:** trzyletnia kampania na mapie 8192 × 8192,
+po 10 minut na rocznik przy ×1. Sześć odmian, zmienna pogoda i ochrona upraw
+pozostają częścią rozbudowy. Kupujesz kolejne domki i traktory, zatrudniasz ludzi,
+ulepszasz winiarnie, fermentujesz, butelkujesz i sprzedajesz partie o różnej jakości.
+Kontrakty, koszty utrzymania i ograniczona pożyczka wpływają na decyzje.
+Cel: 300 sprzedanych butelek, średnia jakość ≥65, nieujemna wartość netto
+oraz co najmniej dwa szczepy z plonem w roku trzecim. [Raport W3](docs/W3-REPORT.md).
+
+Panel **„Rozwój i finanse”** zawiera zakupy i kontrakty, a zaznaczony domek —
+produkcję, ulepszenia i sprzedaż. Zwijane **„Co teraz?”** wskazuje bieżące działanie.
+**Nowa gra** rozpoczyna W3; **Wznów** dokańcza zapisy W1/W2 według dawnych reguł.
+Zapis v3 zachowuje starsze klucze na potrzeby rollbacku. Dostępne są ×2/×4 i pauza.
 Odbiór strategii obejmuje komputer; Dżdżownica i Atlas zachowują obsługę telefonu.
+Warianty kampanii, pełny miks audio i badania z nowymi graczami pozostają W4.
 
 ## Gotowa paczka na hosting
 
-[Pobierz wszystko do public_html — gry 0.10.0 + instalator i aktualizator 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/w2-winobranie-seasons/downloads/pixelforge-public-html-0.10.0-installer-1.2.0.zip).
+[Pobierz wszystko do public_html — gry 0.11.0 + instalator i aktualizator 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/w3-winobranie-campaign/downloads/pixelforge-public-html-0.11.0-installer-1.2.0.zip).
 
 Rozpakuj **zawartość** w `public_html`, razem z ukrytymi `.htaccess`, i otwórz
 `https://twoja-domena.pl/setup.php`. Pobierz z instalatora plik konfiguracji,
@@ -60,9 +64,9 @@ to `/pixelforge.php`. Przy zastępowaniu starej gry wgraj nowy katalog `PixelFor
 w całości, bez pozostawiania starych assetów. Zachowaj wcześniejszą kopię.
 
 **Do kolejnych aktualizacji gry albo samego hostingu statycznego:**
-[Pobierz PixelForge 0.10.0 — Winobranie RTS W2 + Dżdżownica + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/w2-winobranie-seasons/downloads/pixelforge-0.10.0-full.zip).
-W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.10.0**.
-Po instalacji otwórz stronę gry i wybierz **Rozpocznij sezon** przy Winobraniu RTS.
+[Pobierz PixelForge 0.11.0 — Winobranie RTS W3 + Dżdżownica + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/w3-winobranie-campaign/downloads/pixelforge-0.11.0-full.zip).
+W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.11.0**.
+Po instalacji otwórz stronę gry i wybierz **Rozpocznij kampanię** przy Winobraniu RTS.
 Panel trzeba wcześniej jednorazowo skonfigurować; jest osobnym narzędziem PHP.
 Możliwe jest również ręczne wgranie na hosting statyczny:
 Rozpakuj i wgraj `index.html`, cały katalog `assets/` oraz `manifest.json` do
@@ -80,8 +84,8 @@ Paczka gry nie wdraża się samodzielnie.
 
 ## Uruchamianie
 
-Gałąź `feature/w2-winobranie-seasons` zawiera nową grę, działającą Dżdżownicę,
-Atlas i aktualizator. W katalogu wybierz **Rozpocznij sezon**, następnie
+Gałąź `feature/w3-winobranie-campaign` zawiera nową grę, działającą Dżdżownicę,
+Atlas i aktualizator. W katalogu wybierz **Rozpocznij kampanię**, następnie
 **Nowa gra** lub **Wznów**. Mapa zajmuje całe okno. Nie trzeba pobierać
 osobnego silnika ani instalować osobnego modułu Winobrania.
 PR pozostaje do odbioru i scalenia; `main` może nadal zawierać samą dokumentację.
@@ -92,7 +96,7 @@ Pełny zestaw testów obejmuje także PHP **8.2+**, ZipArchive i system Unix/Lin
 Po przełączeniu na bieżącą gałąź:
 
 ```bash
-git clone --branch feature/w2-winobranie-seasons https://github.com/ankelmarek/PixelForge.git
+git clone --branch feature/w3-winobranie-campaign https://github.com/ankelmarek/PixelForge.git
 cd PixelForge
 npm ci
 npm run dev
@@ -126,7 +130,7 @@ aktualizatora.
 
 ```bash
 npm run package:release
-npm run package:validate -- downloads/pixelforge-0.10.0-full.zip
+npm run package:validate -- downloads/pixelforge-0.11.0-full.zip
 npm run test:packages
 ```
 
@@ -140,7 +144,7 @@ w Pythonie/PHP (biblioteka standardowa, bez pip). [Format, limity i polecenia](d
 
 [Osobny ZIP narzędzia PHP 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p3-soil-adventure/downloads/pixelforge-updater-u2-1.2.0.zip)
 rozpakowuje się poza katalogiem publicznym. Nie jest paczką gry do wgrania
-do PixelForge. Aktualizacja gry 0.10.0 zachowuje zapisy Atlasu i starej Dżdżownicy. Nowy pionowy świat ma osobny zapis v3; mapa z widokiem z góry pozostaje dostępna po rollbacku do 0.7.0.
+do PixelForge. Aktualizacja gry 0.11.0 zachowuje zapisy Atlasu i starej Dżdżownicy. Nowy pionowy świat ma osobny zapis v3; mapa z widokiem z góry pozostaje dostępna po rollbacku do 0.7.0.
 
 ```bash
 npm run test:updater
@@ -166,7 +170,7 @@ Testy `hosting` wymagają dodatkowo Apache i modułu PHP (`apache2`,
 `libapache2-mod-php` na Debianie/Ubuntu). Sprawdzają prawdziwe `.htaccess`,
 konfigurację przez WWW, odrzucenie braku ochrony/TLS, SIGKILL, instalację
 i rollback. Zmienne dla niestandardowych binarek opisuje [raport](docs/PUBLIC-HTML-REPORT.md).
-`test:release:browser` używa rzeczywistego ZIP-a 0.10.0: instaluje go nad 0.6.1,
+`test:release:browser` używa rzeczywistego ZIP-a 0.11.0: instaluje go nad 0.6.1,
 uruchamia Dżdżownicę i Winobranie RTS, cofa wydanie, instaluje ponownie i wznawia zachowane zapisy.
 `npm run assets:earthworm` odtwarza mapę JSON Dżdżownicy; nie nadpisuje ilustracji.
 U1 używa dwóch rename katalogów z krótkim oknem HTTP 404; po zabiciu procesu

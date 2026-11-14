@@ -650,7 +650,7 @@ Kolejny zakres to **W1a–W1d i odbiór wycinka**, po osobnym poleceniu zgodnym
 z roadmapą. W0 kończy się tym dokumentem, raportem, zaktualizowanymi checklistami
 i PR. W2–W4, U3, Studio oraz stare produkty nie są rozpoczęte.
 
-## 15. Realizacja W2 — 2026-11-14
+## 16. Realizacja W2 — 2026-11-14
 
 Po poleceniu rozbudowy po W1 wdrożono sześć odmian, agregowane fragmenty rzędów,
 wzrost od ciepła/słońca/wilgoci, seed pogody, prognozę, mróz i odmarzanie,
@@ -664,3 +664,37 @@ ograniczenia opisuje [raport W2](W2-REPORT.md). Aktualny klucz to
 `pixelforge:client:v2:winobranie-rts`; migracja v1 zachowuje stary sezon jako
 tryb zgodności i nie nadpisuje v1. Nowa wersja danych gry pozostaje zgodna
 z manifestem full v1 i istniejącym instalatorem 1.2.0.
+
+## 17. Realizacja W3 — 2026-11-14
+
+Po osobnym poleceniu „Rób nowy zakres” powstała kampania trzech roczników.
+Zegar wykonuje 36000 kroków; przełom roku przenosi zasoby i procesy,
+starzeje krzewy, rozpoczyna nowy wzrost i wyprowadza pogodę z seeda/roku.
+Cel przyjęty po testach to 300 butelek (500 z planu było propozycją),
+jakość sprzedaży ≥65, wartość netto ≥0 i dwa szczepy z plonem w roku 3.
+Istnieją odrębne wyniki: sukces, częściowy sukces i porażka.
+
+Publiczny `LotBook` przenosi całkowitą ilość, moment jakości i pochodzenie
+między właścicielami. Klient określa grona/moszcz/wino/butelki, receptury,
+roczniki, jakość, kontrakty i reguły ekonomii. Konwersje bilansują osobno
+gramy, mililitry i sztuki; straty technologiczne są jawne. Przy pełnym
+wyjściu produkcja czeka. Czas fermentacji to 30/90 s, butelkowanie wymaga
+pracownika, a finał nie kończy bezpłatnie rozpoczętej produkcji.
+
+Zakupy obejmują następne domki, ulepszenia, pracowników stałych/sezonowych
+oraz trzy warianty traktorów. Nowy profil 5×5 korzysta z tego samego indeksu
+regionalnego i osobnego wariantu drogi. Rezerwacje doków ograniczają wspólny
+załadunek; ładunki nadal poruszają się fizycznie. To uproszczona logistyka,
+bez symulacji skrętu pojazdu jako bryły. Limit aktorów pozostaje 24.
+
+Zapis v3 zawiera księgę partii, załogę, procesy, finanse, cele, rocznik
+i wynik. Ścisła walidacja oraz odtworzenie nawigacji poprzedzają publikację
+stanu. V1/V2 kontynuują dawne sezony; nowa kampania wymaga „Nowa gra”.
+Nawigacja rozstrzyga równoważne portale według geometrii, żeby historia
+invalidacji nie zmieniała tras po wznowieniu.
+
+Parametry, ceny, sześć pełnych kampanii, próba całej gry przez UI oraz
+walidacja dystrybucji są w [raporcie W3](W3-REPORT.md).
+Nowe moduły klienta rozdzielają reguły kampanii, produkcję, walidację,
+prezentację i komunikaty. Engine nie importuje gry. W4 nie rozpoczęto;
+następny zakres wymaga osobnego polecenia, bez automatycznego merge/wdrożenia.

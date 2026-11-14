@@ -187,7 +187,7 @@ Model: deterministyczny seeded RNG, krok stały (np. istniejące 50 ms), praca p
 - [x] Nie przepisywać Dżdżownicy, Atlasu ani aktualizatora.
 
 Wykonano 2026-11-14: [kontrakty i plan](WINOBRANIE-RTS-IMPLEMENTATION.md),
-[raport weryfikacji bazy](W0-REPORT.md). W1 zrealizowano na kolejnej gałęzi; [raport W1](W1-REPORT.md). W2 zostało zlecone po W1 i jest w weryfikacji — [raport W2](W2-REPORT.md). W3–W4 pozostają do realizacji.
+[raport weryfikacji bazy](W0-REPORT.md). W1 zrealizowano na kolejnej gałęzi; [raport W1](W1-REPORT.md). W2 jest bazą następnego zlecenia — [raport W2](W2-REPORT.md). Użytkownik zlecił W3: „Rób nowy zakres”; [raport W3](W3-REPORT.md). W4 pozostaje do osobnego zlecenia.
 
 ### W1. Grywalny rdzeń na dużej mapie
 
@@ -214,10 +214,17 @@ wydanie 0.10.0. Szczegóły, testy i ograniczenia: [raport W2](W2-REPORT.md).
 
 ### W3. Strategia ekonomiczna i trzy lata
 
-- [ ] Kupowanie ziemi, nowych traktorków, ludzi i kolejnych domków, upgrade, obciążenia finansowe.
-- [ ] Kilka etapów produkcji, partie jakościowe i sprzedaż, podstawowe kontrakty.
-- [ ] Cały cykl trzech lat, scena sukcesu/niepełnego sukcesu/porażki, co najmniej 3 sensowne strategie osiągnięcia celu.
-- [ ] Co najmniej jedna realizacja od startu do końca w każdej z dwóch skrajnych pogód, bez cheatów i teleportacji.
+- [x] Kupowanie ziemi, nowych traktorków, ludzi i kolejnych domków, upgrade, obciążenia finansowe.
+- [x] Kilka etapów produkcji, partie jakościowe i sprzedaż, podstawowe kontrakty.
+- [x] Cały cykl trzech lat, scena sukcesu/niepełnego sukcesu/porażki, co najmniej 3 sensowne strategie osiągnięcia celu.
+- [x] Co najmniej jedna realizacja od startu do końca w każdej z dwóch skrajnych pogód, bez cheatów i teleportacji.
+
+W3: trzy roczniki po 600 s, cel 300 sprzedanych butelek, jakość ≥65,
+nieujemna wartość netto i dwa szczepy z plonem w roku 3. Sześć pełnych prób
+trzech strategii na dwóch skrajnych pogodach przeszło; dodatkowo pełna kampania
+przez interfejs myszą osiągnęła 415 butelek i jakość 70,1. Wydanie 0.11.0,
+zapis v3 z zachowaniem starszych sezonów W1/W2. [Raport i ograniczenia](W3-REPORT.md).
+Odbiór przez nowych graczy oraz docelowa oprawa pozostają w W4.
 
 ### W4. Warianty, grafika, dźwięk i publikacja
 

@@ -1,6 +1,6 @@
 # PixelForge — aktualna roadmapa 0.3
 
-**Decyzja:** 14 listopada 2026. **Stan:** W0 nowej gry **Winobranie RTS: Trzy sezony** wykonane — inwentaryzacja, kontrakty i plan; W1 jest zaimplementowane; użytkownik zlecił dalszą rozbudowę W2. W2 ma zaimplementowany żywy sezon i zielone kontrole lokalne; jest do przeglądu. W3–W4 nie rozpoczęto. **Główny dokument produkcyjny:** [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md).
+**Decyzja:** 14 listopada 2026. **Stan:** W0 nowej gry **Winobranie RTS: Trzy sezony** wykonane — inwentaryzacja, kontrakty i plan. W1 i W2 są bazą kolejnych zleceń. Po poleceniu „Rób nowy zakres” zaimplementowano W3: trzyletnią kampanię, rozbudowę, ekonomię i produkcję wina. W3 jest do odbioru; W4 nie rozpoczęto. **Główny dokument produkcyjny:** [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md).
 
 Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md) oraz [archiwum historycznym](./ROADMAP-ARCHIVE-2026-11.md). Oba mają status historyczny. Jeżeli ich zapis przeczy temu dokumentowi lub `docs/WINOBRANIE-RTS.md`, obowiązuje aktualna decyzja z 14 listopada.
 
@@ -34,8 +34,8 @@ Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md
 | ------ | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
 | **W0** | Inwentaryzacja kodu, projekt architektury, modele danych i balans wstępny                                        | DONE — dokumentacja i weryfikacja bazy |
 | **W1** | Pierwszy grywalny vertical slice: duża mapa, własne rzędy, dwa domki, pracownicy, traktor, zbiór i sprzedaż      | DONE — baza dalszego zlecenia W2       |
-| **W2** | 6 szczepów, wzrost roślin, pogoda, prognoza, przymrozki i zraszacze z nieprzerwaną pracą                         | REVIEW — testy lokalne PASS            |
-| **W3** | 3 lata, zakup nowych domków, pracowników i traktorów, ekonomia, produkcja wina, warunki wygranej/przegranej      | TODO                                   |
+| **W2** | 6 szczepów, wzrost roślin, pogoda, prognoza, przymrozki i zraszacze z nieprzerwaną pracą                         | DONE — baza dalszego zlecenia W3       |
+| **W3** | 3 lata, zakup nowych domków, pracowników i traktorów, ekonomia, produkcja wina, warunki wygranej/przegranej      | REVIEW — implementacja i testy         |
 | **W4** | 3 warianty kampanii, grafika pixel art, audio, balans, wydajność, testy E2E, pełny ZIP przez dotychczasowy panel | TODO                                   |
 
 **Szczegółowe mechaniki, etapy i checklisty znajdują się w [specyfikacji Winobrania RTS](./WINOBRANIE-RTS.md).** Każdy etap powinien być ukończony, przetestowany i zrecenzowany przed kolejnym. Nie deklarować ukończenia całej gry po zbudowaniu pierwszego prototypu.
@@ -144,5 +144,24 @@ Lokalnie: 100 Vitest, 15 testów paczek, 36 PHP/Python, 12 Apache/PHP oraz
 46 Playwright PASS (6 pominięć zgodnych z platformą); TypeScript, build
 i walidacja pełnego ZIP PASS. Kontrole produkcyjnego archiwum, instalacji,
 rollbacku i public_html są także objęte CI; szczegóły podaje raport W2.
-Następny możliwy zakres to W3,
-po odbiorze i osobnym poleceniu; bez automatycznego merge ani instalacji.
+W3 zostało następnie osobno zlecone; wykonanie opisuje sekcja 11.
+
+## 11. W3 — trzy roczniki (2026-11-14)
+
+Polecenie: „Rób nowy zakres”. Gałąź `feature/w3-winobranie-campaign` powstała
+z `3fdb6f9` / PR #15, którego pełne CI przeszło. Wydanie aplikacji 0.11.0,
+klient 0.3.0; instalator nadal 1.2.0. [Raport W3](W3-REPORT.md).
+
+Trzy automatyczne roczniki po 600 s, starzenie nasadzeń i nowa pogoda każdego
+roku; dodatkowi pracownicy, trzy warianty floty i drogi 5 pól, kolejne domki,
+ulepszenia, identyfikowane partie gron/moszczu/wina/butelek, jakość,
+kontrakty, płace, utrzymanie, płynność i trzy wyniki kampanii. Cel 300 butelek
+został dobrany po symulacjach; 500 z planu W0 było propozycją, nie wymaganiem
+zamkniętego balansu. Pozostałe warunki: jakość ≥65, wartość netto ≥0 i dwa
+szczepy z plonem w roku 3. Zapis v3 kontynuuje starsze W1/W2 w trybie zgodności.
+
+115 testów logiki PASS, w tym sześć pełnych kampanii z prawdziwymi komendami,
+zgodność ×1/×4 i wznowienia oraz pełny magazyn butelek. Kampania przez UI
+osiągnęła 415 butelek i sukces; 46 wcześniejszych scenariuszy przeglądarkowych
+przeszło regresję. Raport zawiera wyniki, obrazy, paczki i kontrolę dystrybucji.
+W4 wymaga kolejnego polecenia; bez samodzielnego merge lub wdrożenia.
