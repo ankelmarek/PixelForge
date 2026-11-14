@@ -1,0 +1,79 @@
+{
+  "chromium": "158.0.8127.18",
+  "php": "8.4.24",
+  "fixtureRelease": "0.6.2 is a local test fixture, not a published game",
+  "results": [
+    {
+      "device": "desktop",
+      "path": "/",
+      "size": 4096,
+      "install": "0.6.1 -> 0.6.2",
+      "rollback": "0.6.2 -> 0.6.1",
+      "savedCameraRestored": true,
+      "errors": []
+    },
+    {
+      "device": "desktop",
+      "path": "/",
+      "size": 8192,
+      "install": "0.6.1 -> 0.6.2",
+      "rollback": "0.6.2 -> 0.6.1",
+      "savedCameraRestored": true,
+      "errors": []
+    },
+    {
+      "device": "desktop",
+      "path": "/PixelForge/",
+      "size": 4096,
+      "install": "0.6.1 -> 0.6.2",
+      "rollback": "0.6.2 -> 0.6.1",
+      "savedCameraRestored": true,
+      "errors": []
+    },
+    {
+      "device": "desktop",
+      "path": "/PixelForge/",
+      "size": 8192,
+      "install": "0.6.1 -> 0.6.2",
+      "rollback": "0.6.2 -> 0.6.1",
+      "savedCameraRestored": true,
+      "errors": []
+    },
+    {
+      "device": "mobile",
+      "path": "/",
+      "size": 4096,
+      "install": "0.6.1 -> 0.6.2",
+      "rollback": "0.6.2 -> 0.6.1",
+      "savedCameraRestored": true,
+      "errors": []
+    },
+    {
+      "device": "mobile",
+      "path": "/",
+      "size": 8192,
+      "install": "0.6.1 -> 0.6.2",
+      "rollback": "0.6.2 -> 0.6.1",
+      "savedCameraRestored": true,
+      "errors": []
+    },
+    {
+      "device": "mobile",
+      "path": "/PixelForge/",
+      "size": 4096,
+      "install": "0.6.1 -> 0.6.2",
+      "rollback": "0.6.2 -> 0.6.1",
+      "savedCameraRestored": true,
+      "errors": []
+    },
+    {
+      "device": "mobile",
+      "path": "/PixelForge/",
+      "size": 8192,
+      "install": "0.6.1 -> 0.6.2",
+      "rollback": "0.6.2 -> 0.6.1",
+      "savedCameraRestored": true,
+      "errors": []
+    }
+  ]
+}

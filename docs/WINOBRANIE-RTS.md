@@ -1,4 +1,5 @@
 # WINOBRANIE RTS — „Trzy sezony”
+
 **Status:** zatwierdzona nowa koncepcja; specyfikacja do realizacji przez Codexa. **Data:** 2026-11-14. **Silnik:** PixelForge, nie osobna aplikacja technologiczna.
 
 > **Zmiana decyzji:** pierwotny prosty prototyp „Winobrania” z PR #4 pozostaje porzucony. Użytkownik zamawia NOWY, dużo ambitniejszy tytuł o roboczej nazwie **Winobranie RTS: Trzy sezony**. Nie reaktywować starej, 640×416 px mapy ani kopiować jej grywalności. Można wykorzystać tylko wspólne, sprawdzone usługi silnika i dopasowane assety, jeśli spełnią nowe standardy.
@@ -28,6 +29,7 @@ To **real-time strategy / tycoon** o zarządzaniu winnicą i przetwórstwem wino
 ### Koniec i punktacja
 
 Po jesieni roku trzeciego gra kończy się automatycznie ekranem wyników. Przykładowa **propozycja do zbalansowania**:
+
 - **Wygrana:** wyprodukuj i sprzedaj minimum 500 butelek, utrzymaj średnią jakość sprzedanych partii ≥65/100, osiągnij nieujemną wartość netto i posiadaj przynajmniej dwa produkcyjne szczepy winorośli w roku trzecim.
 - **Częściowy sukces:** dotrzyj do finału z działającą winnicą, ale bez spełnienia wszystkich celów.
 - **Przedterminowa porażka:** trwała niewypłacalność przy braku możliwości odzyskania płynności lub utrata wszystkich produkcyjnych krzewów bez środków na odbudowę. Zapewnij ostrzeżenia wizualne i realną możliwość ratunku, nie losową ścianę.
@@ -38,6 +40,7 @@ Po jesieni roku trzeciego gra kończy się automatycznie ekranem wyników. Przyk
 ## 3. Tryby / warianty rozgrywki
 
 W menu wybór jednego z trzech scenariuszy z rozpoznawalną ikoną i krótką etykietą:
+
 1. **Spokojne Wzgórza:** łagodna pogoda, mniejsze ryzyko, na naukę ekonomii.
 2. **Dolina Przymrozków:** częste zimne poranki, zagłębienia terenu i konieczność sensownej obrony plantacji.
 3. **Kapryśny Sezon:** nieprzewidywalny deszcz, susza, zmienne ceny i umiarkowane przymrozki.
@@ -47,6 +50,7 @@ Każdy scenariusz ma deterministyczne ziarno losowości i zestaw parametrów, be
 ## 4. Teren, mapa i wolne budowanie
 
 ### Mapa
+
 - World v2 / sektorowy renderer PixelForge; co najmniej 8192×8192 px, sektor 512 px lub kompatybilny z aktualnym engine. Nie rysować jednego PNG całego świata.
 - Mapa ma cechy parcel: nasłonecznienie, wysokość, nachylenie, typ/potencjał gleby, wilgotność, ryzyko mrozu, dostęp do drogi i wody. Wskazuj je ikonami, prostą mapą cieplną i symbolami, nie ścianą tekstu.
 - Doliny są chłodniejsze, wzniesienia bardziej słoneczne i przewiewne; nie przesadzaj z realizmem GIS. Rozmieszczenie roślin ma wpływać na opłacalność.
@@ -54,6 +58,7 @@ Każdy scenariusz ma deterministyczne ziarno losowości i zestaw parametrów, be
 - Swobodna rozbudowa **w granicach kupionych parcel**. Gracz wyznacza kierunek oraz długość rzędu, drogi, miejsca postoju i budynki. Nie narzucać gotowego układu jak w starym Winobraniu.
 
 ### Narzędzia budowy
+
 - Panel ikon: **winorośl, droga, domek winiarski, magazyn, zbiornik wody, pompa, zraszacz, sprzedaż/rozbudowa**.
 - Wybór szczepu, potem „malowanie” rzędów przez przeciągnięcie myszy między początkiem i końcem; automatyczne rozstawienie podpór i sadzonek, możliwość anulowania przed potwierdzeniem.
 - Budynek: podgląd „ducha”/footprint, zielony lub czerwony obrys kolizji, obrót przyciskiem na ekranie (R opcjonalnie), kliknięcie zatwierdza, anulowanie prawym przyciskiem lub ikoną.
@@ -66,13 +71,13 @@ Każdy scenariusz ma deterministyczne ziarno losowości i zestaw parametrów, be
 
 Rozpocznij od **6 odmian spotykanych w polskim winiarstwie**:
 
-| Odmiana | Typ | Styl rozgrywki i kompromis |
-|---|---|---|
-| Solaris | jasna | wcześnie dojrzewa, szybki przychód, wrażliwy na nieoptymalny termin zbioru |
-| Johanniter | jasna | stabilniejszy profil jakości, późniejszy termin, wymaga pielęgnacji |
-| Muscaris | jasna | odmiana aromatyczna, premia ceny jakości, ryzyko strat przy wiosennym przymrozku |
-| Regent | ciemna | rozsądny balans ryzyka chorób i wydajności, średni termin |
-| Rondo | ciemna | wczesne czerwone grona, potencjał koloru, inny profil wrażliwości |
+| Odmiana         | Typ    | Styl rozgrywki i kompromis                                                        |
+| --------------- | ------ | --------------------------------------------------------------------------------- |
+| Solaris         | jasna  | wcześnie dojrzewa, szybki przychód, wrażliwy na nieoptymalny termin zbioru        |
+| Johanniter      | jasna  | stabilniejszy profil jakości, późniejszy termin, wymaga pielęgnacji               |
+| Muscaris        | jasna  | odmiana aromatyczna, premia ceny jakości, ryzyko strat przy wiosennym przymrozku  |
+| Regent          | ciemna | rozsądny balans ryzyka chorób i wydajności, średni termin                         |
+| Rondo           | ciemna | wczesne czerwone grona, potencjał koloru, inny profil wrażliwości                 |
 | Cabernet Cortis | ciemna | wyższy potencjał ceny, dłuższe dojrzewanie i większe ryzyko przy chłodnej jesieni |
 
 Te opisy są **uproszczeniem na potrzeby gry**, nie naukowym rankingiem mrozoodporności. Zimotrwałość odmian i odporność młodych pąków na wiosenny przymrozek to różne rzeczy. Przy modelowaniu szkody uwzględnij przede wszystkim fazę pąków, temperaturę, długość zjawiska i mikroklimat parceli.
@@ -105,11 +110,13 @@ Krzew ma cykl: sadzonka → rozwój pąków → kwitnienie → zawiązanie → d
 ## 8. Traktorki, pracownicy i automatyzacja
 
 ### Flota
+
 - Start **1 traktorek**; można kupić minimum 2 kolejne warianty: mały tani, mocniejszy droższy, z większą przyczepą. Każdy ma ładowność, prędkość, promień skrętu, dostępność drogi, koszty eksploatacji.
 - Jednostka realizuje pętlę odbiór skrzynek → transport do wybranego domku → rozładunek → powrót. Może jechać ręcznie wyznaczoną trasą przez kliknięcie lub pracować automatycznie w przydzielonym sektorze.
 - Zakup traktora powinien pomagać przy rosnących odległościach i natężeniu zbiorów. Nie teleportuj skrzynek.
 
 ### Pracownicy
+
 - Start **2 pracowników**. Możliwość zatrudnienia dodatkowych sezonowych i stałych (inne koszty, wydajność, dostępność); zwalniania po zakończeniu przydziału. Płace pomniejszają budżet w czasie.
 - Role: sadzenie, pielęgnacja, zbieranie, obsługa winiarni, załadunek/rozładunek. Pierwsza wersja może mieć jedną klasę pracownika z przełączaną rolą, ale zadania muszą faktycznie wpływać na dostępność.
 - Kliknięcie ludzi i obszaru przydziela pracę; oznaczanie obszaru wielokrotnym zaznaczeniem pozwala wysłać kilku pracowników. Dostępna kolejka zadań, priorytety sezonowe i tryb automatyczny.
@@ -127,6 +134,7 @@ W wersji planistycznej przykładowy budżet startowy **30 000 umownych monet**. 
 ## 10. UI i sterowanie
 
 **Mysz wystarcza do ukończenia 100% kampanii.**
+
 - LPM klik: wybór jednostki, budynku, ziemi, zadania i potwierdzenie.
 - LPM przeciągnięcie: malowanie rzędów, wyznaczenie drogi, zaznaczanie kilku jednostek albo przesuwanie kamery po pustym terenie. Kontekst i próg ruchu rozstrzygają gest.
 - Kółko: zoom z kotwicą pod kursorem.
@@ -152,6 +160,7 @@ W wersji planistycznej przykładowy budżet startowy **30 000 umownych monet**. 
 **Nie pisz osobnej aplikacji Phaser.** Dodaj `src/games/winobranie-rts/` jako nowego klienta z własnym `GameDefinition/ClientDefinition` i osobnymi plikami world, parcel, cultivar, costs, recipes, scenarios, assets, audio. Użyj istniejących `EngineHost`, sektorowego świata v2, symulacji fixed-step, regionalnej nawigacji, audio, UI, zapisów i pakowania statycznego ZIP. Nie importuj kodu gry z `src/engine`.
 
 Uzupełnienia generyczne silnika:
+
 1. `LandOwnershipService` / moduł własności parcel i granic.
 2. `PlacementService`: placement, rotate, conflict, undo-before-commit, dynamic blockers/roads, inkrementalna aktualizacja grafu nawigacji.
 3. `JobQueueService`: wielu pracowników, priorytety, zlecenia obszarowe, rezerwacje zasobów.
@@ -170,13 +179,18 @@ Model: deterministyczny seeded RNG, krok stały (np. istniejące 50 ms), praca p
 ## 13. Zakres etapów dla Codexa
 
 ### W0. Plan techniczny i gra projektowa (bez pełnego runtime)
-- [ ] Zbadaj PR #12 / `feature/p3-soil-adventure`, dokument `docs/LARGE-WORLDS.md`, stare PR #4 oraz bieżący instalator. Sprawdź, czy jest nowsza zatwierdzona baza.
-- [ ] Zaproponuj gałąź `feature/p3-winobranie-rts` od ostatniego działającego i zaakceptowanego kodu, **nie od starego dokumentacyjnego main**.
-- [ ] Utwórz `docs/WINOBRANIE-RTS-IMPLEMENTATION.md` z diagramem zależności, modelami stanu, schematami, etapami, zakresem testów i ryzykami.
-- [ ] Wyodrębnij listę funkcji już dostępnych i brakujących (dynamiczna nawigacja, budowanie, agronomia, wieloetapowa produkcja, ekonomia).
-- [ ] Nie przepisywać Dżdżownicy, Atlasu ani aktualizatora.
+
+- [x] Zbadaj PR #12 / `feature/p3-soil-adventure`, dokument `docs/LARGE-WORLDS.md`, stare PR #4 oraz bieżący instalator. Sprawdź, czy jest nowsza zatwierdzona baza.
+- [x] Zaproponuj gałąź `feature/p3-winobranie-rts` od ostatniego działającego i zaakceptowanego kodu, **nie od starego dokumentacyjnego main**.
+- [x] Utwórz `docs/WINOBRANIE-RTS-IMPLEMENTATION.md` z diagramem zależności, modelami stanu, schematami, etapami, zakresem testów i ryzykami.
+- [x] Wyodrębnij listę funkcji już dostępnych i brakujących (dynamiczna nawigacja, budowanie, agronomia, wieloetapowa produkcja, ekonomia).
+- [x] Nie przepisywać Dżdżownicy, Atlasu ani aktualizatora.
+
+Wykonano 2026-11-14: [kontrakty i plan](WINOBRANIE-RTS-IMPLEMENTATION.md),
+[raport weryfikacji bazy](W0-REPORT.md). Runtime W1–W4 pozostaje do realizacji.
 
 ### W1. Grywalny rdzeń na dużej mapie
+
 - [ ] Nowy tytuł widoczny w katalogu, duża mapa, kamera, minimapa, atrakcyjne podłoże.
 - [ ] Własność parcel, swobodne stawianie dwóch domków, rysowanie 3 odmian winorośli i dróg, podstawowy budżet.
 - [ ] 2 pracowników, 1 traktor, zadania i dynamiczna nawigacja po budowie.
@@ -185,18 +199,21 @@ Model: deterministyczny seeded RNG, krok stały (np. istniejące 50 ms), praca p
 - [ ] Pull Request i odbiór przed rozbudową.
 
 ### W2. Pełna agronomia i przymrozek
+
 - [ ] 6 odmian, fazy rozwoju i wiek nasadzeń, różne gleby/nasłonecznienie.
 - [ ] Pogoda, prognoza, temperatura i przymrozek z ochroną przez nieprzerwane zraszanie.
 - [ ] Dynamiczna sieć wody/pompy/zraszacze oraz symulacja stresu i utraty części plonu.
 - [ ] Testy porównawcze strat z/bez ochrony i test przerwanej pompy, bez wymuszonej porażki.
 
 ### W3. Strategia ekonomiczna i trzy lata
+
 - [ ] Kupowanie ziemi, nowych traktorków, ludzi i kolejnych domków, upgrade, obciążenia finansowe.
 - [ ] Kilka etapów produkcji, partie jakościowe i sprzedaż, podstawowe kontrakty.
 - [ ] Cały cykl trzech lat, scena sukcesu/niepełnego sukcesu/porażki, co najmniej 3 sensowne strategie osiągnięcia celu.
 - [ ] Co najmniej jedna realizacja od startu do końca w każdej z dwóch skrajnych pogód, bez cheatów i teleportacji.
 
 ### W4. Warianty, grafika, dźwięk i publikacja
+
 - [ ] Trzy scenariusze, pełna oprawa pixel art, przejścia sezonów, audio, animacje urządzeń i ludzi.
 - [ ] Balans i testy grywalności: 3–5 osób nieznających gry, pomiar średniej i rozrzutu czasu ukończenia.
 - [ ] Badania FPS/pamięci, także poza ekranem, na światowych mapach, desktop i emulacji telefonu.

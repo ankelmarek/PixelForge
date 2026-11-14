@@ -1,7 +1,10 @@
 # PixelForge — specyfikacja techniczna i funkcjonalna
 
+> **Decyzja z 14 listopada 2026:** nowy produkt **Winobranie RTS: Trzy sezony** ma własną [specyfikację](WINOBRANIE-RTS.md) i etapy W0–W4 w [roadmapie 0.3](ROADMAP.md). Dawny prototyp `winobranie` pozostaje porzucony. Zatwierdzone budowanie, etykiety strategiczne, sterowanie myszą i kampania nowej gry mają pierwszeństwo nad historycznymi ograniczeniami poniżej. Dżdżownica zachowuje własny pionowy przekrój gleby.
+
 > **Uwaga z 13 listopada 2026:** to specyfikacja historycznych fundamentów PixelForge. Jej wytyczne o pierwszej platformówce, demie forest-demo, Winobraniu i małych mapach zostały zastąpione przez [bieżącą roadmapę](./ROADMAP.md). Nie rozwijaj tych gier. Nowy priorytet to mapy od 4096 × 4096 pikseli, obsługa myszą i aktualizator według [UPDATER-SPEC.md](./UPDATER-SPEC.md). Zachowaj ogólne kontrakty i użyteczne serwisy.
 
+> **Bieżąca gra:** na polecenie użytkownika „Życie Dżdżownicy” przedstawia pionowy przekrój gleby, rośliny na powierzchni, odżywianie korzeni, larwy, pogodę przenikającą w głąb i rozwój do dorosłości. Szczegóły: [EARTHWORM.md](EARTHWORM.md). Wymóg widoku z góry nie dotyczy tego klienta; współdzielony silnik pozostaje niezależny od perspektywy.
 
 **Status:** dokument bazowy dla Codexa. **Repozytorium:** ankelmarek/PixelForge. **Wersja założeń:** 0.1.
 
@@ -127,6 +130,7 @@ Poziomy opisuj w JSON, najlepiej z warstwami kompatybilnymi z eksportem Tiled: w
 Parser MUSI odrzucać nieznane akcje z czytelnym błędem; sam JSON nie może deklarować arbitralnego JavaScript.
 
 **Dwie ścieżki rozszerzalności:**
+
 - 80% zwykłych gier budujemy z konfiguracji, gotowych zachowań i poziomów.
 - Nietypowa mechanika powstaje jako moduł TS implementujący stabilny interfejs rejestrowany przez grę, bez zmian rdzenia.
 
@@ -167,16 +171,16 @@ W M0/M1 wystarczy jeden przykład mechaniki rozszerzalnej i dokumentacja, jak do
 
 **Stałe przypisanie sterowania, wspólne dla wszystkich gier:**
 
-| Akcja | Komputer | Dotyk |
-|---|---|---|
-| Ruch | strzałki lub WASD | ikonowy krzyżak / kierunki |
-| Skok | Spacja | ikonowy przycisk skoku |
-| Interakcja, aktywacja, przełącznik ON/OFF | Shift, pojedyncze naciśnięcie | ikonowy przycisk działania |
-| Pauza / wznowienie | Esc | ikona pauzy / odtwarzania |
-| Potwierdzenie w menu | Spacja lub Enter | dotknięcie elementu |
-| Ponowienie po porażce | Spacja lub Enter; ewentualnie R tylko na ekranie porażki | ikonowy przycisk ponowienia |
+| Akcja                                     | Komputer                                                 | Dotyk                       |
+| ----------------------------------------- | -------------------------------------------------------- | --------------------------- |
+| Ruch                                      | strzałki lub WASD                                        | ikonowy krzyżak / kierunki  |
+| Skok                                      | Spacja                                                   | ikonowy przycisk skoku      |
+| Interakcja, aktywacja, przełącznik ON/OFF | Shift, pojedyncze naciśnięcie                            | ikonowy przycisk działania  |
+| Pauza / wznowienie                        | Esc                                                      | ikona pauzy / odtwarzania   |
+| Potwierdzenie w menu                      | Spacja lub Enter                                         | dotknięcie elementu         |
+| Ponowienie po porażce                     | Spacja lub Enter; ewentualnie R tylko na ekranie porażki | ikonowy przycisk ponowienia |
 
-W grach top-down ruch w czterech kierunkach zastępuje skok; akcje pozostają spójne semantycznie. W platformówce Shift nie uruchamia sprintu. Nie wymagaj skrótów złożonych, długiego przytrzymywania Shifta ani wprowadzania wielu nowych przycisków. Naciśnięcie przełącznika działa jako *toggle* i musi wyraźnie zmienić wygląd obiektu. Niech początkowe 30–60 sekund bezpiecznie pokaże przepaść do przeskoczenia, reagujący przedmiot i efekt uruchomienia przełącznika, bez choćby jednego słowa instrukcji.
+W grach top-down ruch w czterech kierunkach zastępuje skok; akcje pozostają spójne semantycznie. W platformówce Shift nie uruchamia sprintu. Nie wymagaj skrótów złożonych, długiego przytrzymywania Shifta ani wprowadzania wielu nowych przycisków. Naciśnięcie przełącznika działa jako _toggle_ i musi wyraźnie zmienić wygląd obiektu. Niech początkowe 30–60 sekund bezpiecznie pokaże przepaść do przeskoczenia, reagujący przedmiot i efekt uruchomienia przełącznika, bez choćby jednego słowa instrukcji.
 
 **Rozpoznawalność interakcji:** obiekt, który reaguje na Shift, delikatnie pulsuje/rozświetla się, animuje przy zbliżeniu bohatera lub wydaje krótki dźwięk. Po akcji rezultat jest natychmiast widoczny (np. przełącznik zmienia pozycję, drzwi się otwierają, rozbłyska światło). Nie każ graczowi domyślać się niewidocznych klawiszy.
 

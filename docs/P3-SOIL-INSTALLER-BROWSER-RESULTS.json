@@ -1,0 +1,29 @@
+{
+  "chromium": "158.0.8127.18",
+  "release": "0.8.0",
+  "javascriptDisabledUploadAndDiscard": true,
+  "results": [
+    {
+      "device": "desktop",
+      "httpsVerified": true,
+      "uploadOnlyPrepares": true,
+      "install": "0.6.1 -> 0.8.0",
+      "rollback": "0.8.0 -> 0.6.1",
+      "gameReinstalledAndResumed": true,
+      "savedCameraRestored": true,
+      "savesPreserved": true,
+      "errors": []
+    },
+    {
+      "device": "mobile",
+      "httpsVerified": true,
+      "uploadOnlyPrepares": true,
+      "install": "0.6.1 -> 0.8.0",
+      "rollback": "0.8.0 -> 0.6.1",
+      "gameReinstalledAndResumed": true,
+      "savedCameraRestored": true,
+      "savesPreserved": true,
+      "errors": []
+    }
+  ]
+}
