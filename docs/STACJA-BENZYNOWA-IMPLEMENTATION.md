@@ -1,10 +1,12 @@
 # Stacja na Trasie — projekt wdrożenia S0
 
-**Data:** 14 listopada 2026. **Status:** projekt do odbioru, bez runtime Stacji.
+**Data:** 14 listopada 2026. **Status S0:** zaakceptowany następnym poleceniem
+„Możesz kontynuować”. Implementację S1 opisują sekcja 14 i [raport S1](S1-REPORT.md).
 Wymagania: [specyfikacja](STACJA-BENZYNOWA.md), [roadmapa](ROADMAP.md),
 [AGENTS](../AGENTS.md). Wyniki wykonanych kontroli: [raport S0](S0-REPORT.md).
 Poniższe kontrakty i liczby są decyzjami dla kolejnych etapów, nie deklaracją
-istnienia tych funkcji. S1 wymaga osobnego zlecenia po odbiorze S0.
+istnienia wszystkich funkcji S2–S4. S1 zostało osobno zlecone; kolejne etapy
+wciąż wymagają następnego polecenia.
 
 ## 1. Baza i podział odpowiedzialności
 
@@ -283,9 +285,10 @@ na odległość. Planowana budowa musi uwzględniać zamówioną cysternę.
 ### Trzy odrębne wielkości w panelu
 
 - **Gotówka:** początkowe środki + otrzymane płatności − faktyczne wydatki.
-- **Wynik operacyjny:** sprzedaż własna − koszt sprzedanego paliwa/towaru
-  - czynsz/udział − płace, transport, utrzymanie, naprawy, woda i energia.
-    Zakup zapasu nie jest jednocześnie ponownym kosztem jego rozchodu.
+- **Wynik operacyjny:** sprzedaż własna pomniejszona o koszt sprzedanego
+  paliwa/towaru, powiększona o czynsz/udział, pomniejszona o płace, transport,
+  utrzymanie, naprawy, wodę i energię. Zakup zapasu nie jest jednocześnie
+  ponownym kosztem jego rozchodu.
 - **Wartość netto:** gotówka + zapas i towar w drodze + należności za wykonane
   usługi + wartość odsprzedaży infrastruktury − zaległości − kapitał pożyczki.
   Zakup trwałego obiektu nie obniża automatycznie całego wyniku operacyjnego.
@@ -615,6 +618,50 @@ odtworzyć porażkę. Test modelu nie zastąpi przejścia przez UI ani oceny gra
 - **Niepołączone PR:** S0 ma jawnie wskazaną bazę #16; PR do main dziedziczy
   wcześniejszy kod. Odbiór S0 powinien oglądać przyrost od `7f678a1`.
 
-W S0 powstaje dokumentacja, nie nowa wersja 0.11.0 ani ZIP ze Stacją.
-Następne zlecenie powinno uruchomić wyłącznie S1a–S1d, bez automatycznego
-przejścia do najmu, pełnej kampanii, W4 Winobrania lub U3 aktualizatora.
+S0 nie zmieniało paczek 0.11.0. Następne zlecenie uruchomiło S1a–S1d,
+bez przejścia do najmu, pełnej kampanii, W4 Winobrania lub U3 aktualizatora.
+
+## 14. Wdrożenie S1 i rozstrzygnięcia prototypu
+
+Klient `gas-station` 0.1.0 jest częścią PixelForge 0.12.0. Ma własną mapę,
+model, renderer, kontrolki, grafikę i zapis v1. Pierwsza zmiana trwa dokładnie
+7200 ticków; wynik wymaga 12 opłaconych wizyt zakończonych na wyjeździe stacji
+oraz dodatniego zysku operacyjnego. Auto nadal jedzie do portalu poza stacją.
+Przy końcu zmiany niezakończone wizyty nie punktują; wydane paliwo zachowuje
+koszt i należność. To własny sklep, bez najmu, myjni i trzech zmian.
+
+Użyte wspólne API: `api/strategy`, `api/mobility` (rezerwacje i FIFO),
+`api/economy` (księga oraz ilość/koszt zapasu), host, sektory, zapis i audio.
+Silnik nie importuje Stacji. Nawigacja regionalna obsługuje pieszych;
+pojazdy jadą po jawnych kierunkowych trasach stałej stacji. Swobodne drogi
+i edycja grafu pozostają S2. Trzecia pompa ma przygotowany fundament;
+jej zakup nie przebudowuje pasów ani nie odcina obecnych klientów.
+
+Po testach manewrów **rezerwacja pojazdu przez cały ruch** obejmuje obwiednię
+4 × 4 dla auta i 8 × 8 dla cysterny. Narysowane sylwetki pozostają mniejsze.
+To celowo zachowawczy odstęp: pojazd jadący z tyłu nie zajmie rogu potrzebnego
+do następnego skrętu. Ruch zachowuje pozycje w jednostkach 1/256 komórki.
+Pieszy może wykonać boczny krok z położenia między komórkami, gdy oba miejsca
+na siatce są zajęte; zapis przechowuje też takie punkty trasy. Lokalne
+omijanie rozwija najwyżej 289 pozycji, bez pełnego A* mapy.
+
+Prędkości po pierwszych próbach: auto 4 komórki/s, cysterna 3.5, pieszy 3.
+Pozostałe ceny, zapasy początkowe, czasy obsługi i cel są zgodne z sekcją 7.
+Scenariusz otwarcia ma powtarzalny seed 20261114; testy obejmują także 731.
+Typ klienta, paliwo, ilość, koszyk, budżet, cierpliwość i kolor korzystają
+z oddzielnych deterministycznych strumieni. Kamera nie wpływa na losowania.
+
+Księga zapisuje `cash`, `profit`, `revenue` z identyfikatorem transakcji.
+Validator odtwarza saldo i porównuje przychód, rozchód oraz należności
+z ewidencją zapasów. Stan obejmuje rezerwacje paliwa, częściowe wydanie,
+fizyczny ładunek dostawy i towar niesiony do magazynu. Anulowanie przed
+wyjazdem oddaje także transport; później zwraca jedynie pozostały ładunek.
+
+Oprawa i mapa pochodzą z `tools/generate-station.py`. Samochody mają osiem
+kierunków i dwie klatki świateł, piesi cztery kierunki chodu, pompy cztery
+klatki, drzwi trzy położenia. Dźwięki są syntezą w Web Audio, z magistralami
+muzyka/otoczenie/efekty i limitami 2/2/8 głosów. Regulacja działa także na
+aktualnie brzmiące głosy. Nie ma tekstowego samouczka.
+
+Wyniki testów, pomiary, paczki i ograniczenia odbioru są w [raporcie S1](S1-REPORT.md).
+Następny zakres to S2 po odbiorze S1 i kolejnym poleceniu.

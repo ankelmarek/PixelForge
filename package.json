@@ -1,6 +1,6 @@
 {
   "name": "pixelforge",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -30,7 +30,8 @@
     "test:panel:browser": "node tests/updater/panel-browser.mjs",
     "test:release:browser": "node tests/updater/panel-browser.mjs --release",
     "test:game:browser": "node tests/packages/game-browser.mjs",
-    "assets:winery": "python3 tools/generate-winery.py"
+    "assets:winery": "python3 tools/generate-winery.py",
+    "assets:station": "python3 tools/generate-station.py"
   },
   "dependencies": {
     "phaser": "4.2.1"
@@ -46,5 +47,5 @@
     "@playwright/test": "^1.56.1",
     "@types/node": "^24.10.0"
   },
-  "releaseEpoch": 1794683303
+  "releaseEpoch": 1794694990
 }

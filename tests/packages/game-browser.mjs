@@ -6,7 +6,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import process from 'node:process';
 
 const archive =
-  process.env.PIXELFORGE_TEST_RELEASE ?? 'downloads/pixelforge-0.11.0-full.zip';
+  process.env.PIXELFORGE_TEST_RELEASE ?? 'downloads/pixelforge-0.12.0-full.zip';
 const server = spawn(
   'python3',
   ['-u', 'tests/packages/serve_game.py', archive],
@@ -190,6 +190,35 @@ try {
           errors,
         });
       }
+      await page.locator('#back').click();
+      await page.locator('[data-game="gas-station"]').click();
+      await page.locator('#start').click();
+      await expect.poll(async () => (await state()).stats.ready).toBe(true);
+      await page.locator('.station-tabs [data-st-tab="fuel"]').click();
+      await page.locator('[data-st-order="on"][data-litres="200"]').click();
+      await expect
+        .poll(async () => (await state()).stats.delivery)
+        .toBe('ordered');
+      await page.locator('#pause').click();
+      const station = await state();
+      await page.reload();
+      await page.locator('[data-game="gas-station"]').click();
+      await page.locator('#resume').click();
+      await expect.poll(async () => (await state()).stats.ready).toBe(true);
+      expect((await state()).stats.delivery).toBe('ordered');
+      expect(Number((await state()).stats.tick)).toBeGreaterThanOrEqual(
+        Number(station.stats.tick),
+      );
+      expect(errors).toEqual([]);
+      results.push({
+        game: 'gas-station',
+        device,
+        base,
+        installedFromArchive: true,
+        ordered: true,
+        resumed: true,
+        errors,
+      });
       await context.close();
     }
   await writeFile(

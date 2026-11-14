@@ -6,7 +6,13 @@
 
 Projekt powstaje z myślą o wielokrotnym wykorzystaniu gotowego silnika i produkowaniu kolejnych, niezależnych tytułów, zamiast pisania całych gier od zera.
 
-**Stacja na Trasie: Wielki Weekend — S0 do odbioru:** [specyfikacja](docs/STACJA-BENZYNOWA.md), [projekt wdrożenia](docs/STACJA-BENZYNOWA-IMPLEMENTATION.md) i [raport S0](docs/S0-REPORT.md). Przygotowano architekturę ruchu, kolejek, dostaw, ekonomii oraz własnego sklepu ORLAR i najmu Skoczki. Gałąź `feature/p3-stacja-benzynowa` bazuje na Winobraniu W3 z PR #16. S1 będzie pierwszą grywalną stacją; obecny katalog i ZIP 0.11.0 jeszcze jej nie zawierają. Dalsze etapy opisuje [roadmapa](docs/ROADMAP.md).
+**Stacja na Trasie — S1 do odbioru:** pierwsza sześciominutowa zmiana ORLAR
+jest dostępna w katalogu i ZIP-ie 0.12.0. Dwie pompy, sklep, dwóch pracowników,
+kolejki, fizyczne dostawy i rozbudowa o trzeci dystrybutor. Cel: co najmniej
+12 obsłużonych klientów i dodatni zysk operacyjny. Gra ma własne grafiki,
+dźwięki, zapis, obsługę myszą i podstawowy dotyk. [Raport S1](docs/S1-REPORT.md),
+[specyfikacja](docs/STACJA-BENZYNOWA.md) i [plan](docs/STACJA-BENZYNOWA-IMPLEMENTATION.md).
+Najem Skoczki i swobodne budowanie to S2; pełny „Wielki Weekend” to S3.
 
 ## Główna zasada
 
@@ -52,7 +58,7 @@ Warianty kampanii, pełny miks audio i badania z nowymi graczami pozostają W4.
 
 ## Gotowa paczka na hosting
 
-[Pobierz wszystko do public_html — gry 0.11.0 + instalator i aktualizator 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/w3-winobranie-campaign/downloads/pixelforge-public-html-0.11.0-installer-1.2.0.zip).
+[Pobierz wszystko do public_html — gry 0.12.0 + instalator i aktualizator 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s1-stacja-benzynowa/downloads/pixelforge-public-html-0.12.0-installer-1.2.0.zip).
 
 Rozpakuj **zawartość** w `public_html`, razem z ukrytymi `.htaccess`, i otwórz
 `https://twoja-domena.pl/setup.php`. Pobierz z instalatora plik konfiguracji,
@@ -67,9 +73,9 @@ to `/pixelforge.php`. Przy zastępowaniu starej gry wgraj nowy katalog `PixelFor
 w całości, bez pozostawiania starych assetów. Zachowaj wcześniejszą kopię.
 
 **Do kolejnych aktualizacji gry albo samego hostingu statycznego:**
-[Pobierz PixelForge 0.11.0 — Winobranie RTS W3 + Dżdżownica + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/w3-winobranie-campaign/downloads/pixelforge-0.11.0-full.zip).
-W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.11.0**.
-Po instalacji otwórz stronę gry i wybierz **Rozpocznij kampanię** przy Winobraniu RTS.
+[Pobierz PixelForge 0.12.0 — Stacja S1 + Winobranie RTS W3 + Dżdżownica + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s1-stacja-benzynowa/downloads/pixelforge-0.12.0-full.zip).
+W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.12.0**.
+Po instalacji otwórz stronę gry i wybierz **Otwórz stację**, a następnie **Nowa gra**.
 Panel trzeba wcześniej jednorazowo skonfigurować; jest osobnym narzędziem PHP.
 Możliwe jest również ręczne wgranie na hosting statyczny:
 Rozpakuj i wgraj `index.html`, cały katalog `assets/` oraz `manifest.json` do
@@ -87,10 +93,10 @@ Paczka gry nie wdraża się samodzielnie.
 
 ## Uruchamianie
 
-Gałąź `feature/w3-winobranie-campaign` zawiera nową grę, działającą Dżdżownicę,
-Atlas i aktualizator. W katalogu wybierz **Rozpocznij kampanię**, następnie
-**Nowa gra** lub **Wznów**. Mapa zajmuje całe okno. Nie trzeba pobierać
-osobnego silnika ani instalować osobnego modułu Winobrania.
+Gałąź `feature/s1-stacja-benzynowa` zawiera Stację, Winobranie RTS W3,
+Dżdżownicę, Atlas i aktualizator. W katalogu wybierz **Otwórz stację**, następnie
+**Nowa gra** lub **Wznów**. Mapa zajmuje całe okno. Cały silnik i zasoby
+są w jednej paczce, bez dodatkowej instalacji poszczególnych gier.
 PR pozostaje do odbioru i scalenia; `main` może nadal zawierać samą dokumentację.
 
 Wymagane Node.js **24 LTS**, npm 11 oraz Python **3.11+** do testów i paczek U0.
@@ -99,7 +105,7 @@ Pełny zestaw testów obejmuje także PHP **8.2+**, ZipArchive i system Unix/Lin
 Po przełączeniu na bieżącą gałąź:
 
 ```bash
-git clone --branch feature/w3-winobranie-campaign https://github.com/ankelmarek/PixelForge.git
+git clone --branch feature/s1-stacja-benzynowa https://github.com/ankelmarek/PixelForge.git
 cd PixelForge
 npm ci
 npm run dev
@@ -133,7 +139,7 @@ aktualizatora.
 
 ```bash
 npm run package:release
-npm run package:validate -- downloads/pixelforge-0.11.0-full.zip
+npm run package:validate -- downloads/pixelforge-0.12.0-full.zip
 npm run test:packages
 ```
 
@@ -147,7 +153,7 @@ w Pythonie/PHP (biblioteka standardowa, bez pip). [Format, limity i polecenia](d
 
 [Osobny ZIP narzędzia PHP 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p3-soil-adventure/downloads/pixelforge-updater-u2-1.2.0.zip)
 rozpakowuje się poza katalogiem publicznym. Nie jest paczką gry do wgrania
-do PixelForge. Aktualizacja gry 0.11.0 zachowuje zapisy Atlasu i starej Dżdżownicy. Nowy pionowy świat ma osobny zapis v3; mapa z widokiem z góry pozostaje dostępna po rollbacku do 0.7.0.
+do PixelForge. Aktualizacja gry 0.12.0 zachowuje zapisy Atlasu i starej Dżdżownicy. Nowy pionowy świat ma osobny zapis v3; mapa z widokiem z góry pozostaje dostępna po rollbacku do 0.7.0.
 
 ```bash
 npm run test:updater
@@ -173,8 +179,8 @@ Testy `hosting` wymagają dodatkowo Apache i modułu PHP (`apache2`,
 `libapache2-mod-php` na Debianie/Ubuntu). Sprawdzają prawdziwe `.htaccess`,
 konfigurację przez WWW, odrzucenie braku ochrony/TLS, SIGKILL, instalację
 i rollback. Zmienne dla niestandardowych binarek opisuje [raport](docs/PUBLIC-HTML-REPORT.md).
-`test:release:browser` używa rzeczywistego ZIP-a 0.11.0: instaluje go nad 0.6.1,
-uruchamia Dżdżownicę i Winobranie RTS, cofa wydanie, instaluje ponownie i wznawia zachowane zapisy.
+`test:release:browser` używa rzeczywistego ZIP-a 0.12.0: instaluje go nad 0.6.1,
+uruchamia Dżdżownicę, Winobranie RTS i Stację, cofa wydanie, instaluje ponownie i wznawia zachowane zapisy.
 `npm run assets:earthworm` odtwarza mapę JSON Dżdżownicy; nie nadpisuje ilustracji.
 U1 używa dwóch rename katalogów z krótkim oknem HTTP 404; po zabiciu procesu
 w tym oknie potrzebne jest `recover`. Nie obiecuje atomowej podmiany.
@@ -200,3 +206,9 @@ menedżer plików hostingu, a ZIP `full` wybiera się wewnątrz panelu aktualiza
 `npm run assets:winery` odtwarza wyłącznie dane mapy Winobrania.
 Pliki ilustracji pozostają niezmienione. W2 dodaje mały atlas urządzeń wodnych
 i efekty generowane z kodu; [pochodzenie zasobów](public/assets/games/winobranie-rts/LICENSE.md).
+
+`npm run assets:station` odtwarza własne atlasy i sektory Stacji (Python 3,
+bez dodatkowych bibliotek). Pochodzenie: [LICENSE.md](public/assets/games/gas-station/LICENSE.md).
+Po `npm run build` i `npm run preview -- --port 4194` pomiar Stacji uruchamia
+`node tools/measure-station.mjs`: 60 s przy ×4 i zoomie 0.5, ruch kamery,
+liczniki sektorów/jednostek/audio, czasy klatek i rozmiar zapisu.

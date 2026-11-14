@@ -2,7 +2,7 @@
 
 **Decyzja:** 14 listopada 2026. **Stan:** W0 nowej gry **Winobranie RTS: Trzy sezony** wykonane — inwentaryzacja, kontrakty i plan. W1 i W2 są bazą kolejnych zleceń. Po poleceniu „Rób nowy zakres” zaimplementowano W3: trzyletnią kampanię, rozbudowę, ekonomię i produkcję wina. W3 jest do odbioru; W4 nie rozpoczęto. **Główny dokument produkcyjny:** [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md).
 
-**Stacja na Trasie:** S0 wykonane i do odbioru — [projekt wdrożenia](STACJA-BENZYNOWA-IMPLEMENTATION.md), [raport](S0-REPORT.md). S1–S4 i runtime gry nie są rozpoczęte.
+**Stacja na Trasie:** S0 zaakceptowane kolejnym poleceniem. **S1 do odbioru** — pierwszy grywalny klient i ZIP 0.12.0; [raport S1](S1-REPORT.md), [projekt wdrożenia](STACJA-BENZYNOWA-IMPLEMENTATION.md). S2–S4 nie rozpoczęto.
 
 Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md) oraz [archiwum historycznym](./ROADMAP-ARCHIVE-2026-11.md). Oba mają status historyczny. Jeżeli ich zapis przeczy temu dokumentowi lub `docs/WINOBRANIE-RTS.md`, obowiązuje aktualna decyzja z 14 listopada.
 
@@ -59,7 +59,7 @@ nowy tytuł nie jest jeszcze dostępny w launcherze ani ZIP-ie.
 ## 4. Kolejka pozostałych gier
 
 - **Miodobranie:** zaakceptowana koncepcja, osobny etap w przyszłości.
-- **Stacja na Trasie: Wielki Weekend:** [pełna specyfikacja RTS](./STACJA-BENZYNOWA.md), osobna gra ekonomiczna z ruchem pojazdów, usługami, 3 zmianami i końcem po około 30 minutach. **S0 do odbioru**, programowanie S1–S4 nie rozpoczęte. Nie wstrzymuje aktualnych prac nad Winobraniem RTS.
+- **Stacja na Trasie: Wielki Weekend:** [pełna specyfikacja RTS](./STACJA-BENZYNOWA.md), osobna gra ekonomiczna z ruchem pojazdów, usługami, 3 zmianami i końcem po około 30 minutach. **S1 do odbioru**: pierwsza zmiana na 6 minut; S2–S4 nie rozpoczęto. Nie wstrzymuje prac nad Winobraniem RTS.
 - **Życie Dżdżownicy:** istniejąca produkcja; zachować kompatybilność.
 - Pozostałe koncepcje pozostają propozycjami, nie aktywnymi zadaniami.
 
@@ -67,15 +67,19 @@ nowy tytuł nie jest jeszcze dostępny w launcherze ani ZIP-ie.
 
 Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: S0 zaprojektowane na bazie PR #16; [kontrakty i plan S1](STACJA-BENZYNOWA-IMPLEMENTATION.md). **Nowy wariant ekonomiczny:** fikcyjna polska stacja **ORLAR** ma możliwość prowadzenia własnego sklepu lub wynajęcia go sieci **Skoczka**, z czynszem, kontraktem, odmiennymi obowiązkami i ruchem klientów. Funkcja zaplanowana do S2; branding autorski, bez kopiowania realnych znaków ORLEN i Żabka.
 
-| Etap | Cel                                                                                                   | Status                              |
-| ---- | ----------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| S0   | Inwentaryzacja aktualnego PixelForge, architektura symulacji ruchu i kolejek, projekt ekonomii        | REVIEW — projekt i weryfikacja bazy |
-| S1   | Grywalna stacja, dwa dystrybutory, sklep, pracownicy, cysterna, pierwsza sprzedaż i podstawowy dźwięk | TODO                                |
-| S2   | Swobodna rozbudowa, ruch samochodów, pracownicy, ceny oraz **najem sklepu fikcyjnej sieci Skoczka**   | TODO                                |
-| S3   | Myjnia, ekonomia, zdarzenia i 3 zmiany kończące się wynikiem                                          | TODO                                |
-| S4   | Warianty, pixel art, dźwięki, balans, testy, pełny ZIP dla istniejącego panelu                        | TODO                                |
+| Etap | Cel                                                                                                   | Status                         |
+| ---- | ----------------------------------------------------------------------------------------------------- | ------------------------------ |
+| S0   | Inwentaryzacja aktualnego PixelForge, architektura symulacji ruchu i kolejek, projekt ekonomii        | DONE — baza zleconego S1       |
+| S1   | Grywalna stacja, dwa dystrybutory, sklep, pracownicy, cysterna, pierwsza sprzedaż i podstawowy dźwięk | REVIEW — implementacja i testy |
+| S2   | Swobodna rozbudowa, ruch samochodów, pracownicy, ceny oraz **najem sklepu fikcyjnej sieci Skoczka**   | TODO                           |
+| S3   | Myjnia, ekonomia, zdarzenia i 3 zmiany kończące się wynikiem                                          | TODO                           |
+| S4   | Warianty, pixel art, dźwięki, balans, testy, pełny ZIP dla istniejącego panelu                        | TODO                           |
 
 **Zależność:** nowa gra używa istniejącego silnika, sektorów, nawigacji i zapisu. Codex przed rozpoczęciem S0 musi sprawdzić ostatni działający kod i PR #15 lub nowszy, ponieważ `main` może zawierać tylko dokumentację. Oddzielna gałąź `feature/p3-stacja-benzynowa`, brak automatycznego scalania i wdrażania. **Nie rozpoczynaj S1 bez akceptacji S0.**
+
+S0 zostało następnie zaakceptowane poleceniem „Możesz kontynuować”.
+S1 jest na osobnej gałęzi `feature/s1-stacja-benzynowa`; opis wykonania
+i dowody znajdują się w sekcji 12 oraz [raporcie S1](S1-REPORT.md).
 
 ### Wykonane S0 — 14 listopada 2026
 
@@ -204,3 +208,31 @@ osiągnęła 415 butelek i sukces; 46 wcześniejszych scenariuszy przeglądarkow
 przeszło regresję. Pełne CI #19 zaliczyło 47 E2E oraz kontrole paczek,
 instalacji, rollbacku i hostingu. Raport zawiera wyniki, obrazy i archiwa.
 W4 wymaga kolejnego polecenia; bez samodzielnego merge lub wdrożenia.
+
+## 12. S1 — pierwsza zmiana ORLAR (2026-11-14)
+
+Polecenie „Możesz kontynuować” po S0. Gałąź `feature/s1-stacja-benzynowa`
+powstała z `4feec4e` / PR #17. Wydanie PixelForge **0.12.0**, nowy klient
+`gas-station` **0.1.0**, instalator nadal **1.2.0**. [Raport S1](S1-REPORT.md).
+
+Świat 4096² i 64 sektory, sześciominutowa zmiana, dwie pompy E95/ON,
+własny sklep i dwóch pracowników. Auta podjeżdżają, stoją w fizycznych
+kolejkach, tankują; kierowcy idą do kasy i wracają. Punktacja dopiero przy
+wyjeździe po zapłacie. Cysterna rozładowuje rzeczywisty zapas, artykuły
+pracownik przenosi do sklepu. Trzeci dystrybutor wymaga zakupu i budowy.
+Zysk jest oddzielony od gotówki i zapasów; sukces to ≥12 klientów i zysk >0.
+
+Rezerwacje przestrzeni/FIFO, dziennik transakcji i miks audio są generycznym
+API silnika. Reguły stacji, oryginalny pixel art, UI, kamera i zapis v1
+są oddzielnym klientem. Obsługa myszą i podstawowy dotyk, pełne okno,
+zoom 0.5–2, minimapa, pauza, ×1/×2/×4 i wyciszenie. Brak tutorialu tekstowego.
+
+Pełna zmiana przez UI zakończyła się 14 obsłużonymi i zyskiem +371 monet.
+Testy modelu obejmują dwa seedy, momenty budowy, kolejki, braki obsady,
+częściowy rozładunek, wznowienie i bilans zasobów. Raport podaje komplet
+kontroli, pomiary oraz ograniczenia. ZIP `full` służy istniejącemu panelowi,
+`public-html` pierwszej instalacji. Archiwalne wydania 0.11.0 są niezmienione.
+
+**S1: REVIEW. S2–S4: TODO.** Następny etap wymaga odbioru i osobnego zlecenia.
+Najem Skoczki, swobodne budowanie, myjnia i trzy zmiany nie są jeszcze
+dostępne. Nie wdrożono gry na hosting i nie scalono PR do `main`.

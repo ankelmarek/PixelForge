@@ -1,4 +1,5 @@
 import type { AnyGameDefinition } from '../engine/api';
 import { earthworm } from './earthworm';
 import { winery } from './winobranie-rts';
-export const games: readonly AnyGameDefinition[] = [earthworm, winery];
+import { station } from './gas-station';
+export const games: readonly AnyGameDefinition[] = [earthworm, winery, station];

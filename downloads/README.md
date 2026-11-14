@@ -1,8 +1,8 @@
-# PixelForge 0.11.0 — Winobranie RTS W3 + Życie Dżdżownicy + Atlas
+# PixelForge 0.12.0 — Stacja S1 + Winobranie RTS W3 + Życie Dżdżownicy + Atlas
 
 ## Pierwsza instalacja wszystkiego w public_html
 
-[Pobierz jeden ZIP: PixelForge + instalator + aktualizator](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/w3-winobranie-campaign/downloads/pixelforge-public-html-0.11.0-installer-1.2.0.zip).
+[Pobierz jeden ZIP: PixelForge + instalator + aktualizator](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s1-stacja-benzynowa/downloads/pixelforge-public-html-0.12.0-installer-1.2.0.zip).
 
 1. Rozpakuj zawartość w `public_html`, także ukryte pliki `.htaccess`.
 2. Otwórz `https://twoja-domena.pl/setup.php`.
@@ -23,10 +23,11 @@ Nie rozpakowuj paczki startowej ponownie na skonfigurowany panel.
 
 ## Paczka samej gry do aktualizatora
 
-[Pobierz gotowy ZIP gry](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/w3-winobranie-campaign/downloads/pixelforge-0.11.0-full.zip).
+[Pobierz gotowy ZIP gry](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s1-stacja-benzynowa/downloads/pixelforge-0.12.0-full.zip).
 
-**Do instalatora wgrywasz `pixelforge-0.11.0-full.zip` w całości, bez rozpakowywania.**
-Zawiera silnik, Winobranie RTS W3, Dżdżownicę, dotychczasowy Atlas, zasoby i manifest z SHA-256.
+**Do instalatora wgrywasz `pixelforge-0.12.0-full.zip` w całości, bez rozpakowywania.**
+Zawiera silnik, Stację na Trasie S1, Winobranie RTS W3, Dżdżownicę,
+dotychczasowy Atlas, zasoby i manifest z SHA-256.
 Nie jest to ZIP źródeł z przycisku „Code → Download ZIP”.
 
 Większe grafiki wymagają odpowiedniego limitu uploadu w PHP. Zalecane:
@@ -36,12 +37,12 @@ ustawiony na hostingu; jego zmiana należy do ustawień PHP w panelu hostingowym
 ## Instalacja przez panel U2
 
 1. Otwórz skonfigurowany panel administratora i zaloguj się.
-2. Wybierz `pixelforge-0.11.0-full.zip` i kliknij **Sprawdź pakiet**.
-3. Sprawdź wersję i listę zmian, następnie **Zainstaluj wydanie 0.11.0**.
+2. Wybierz `pixelforge-0.12.0-full.zip` i kliknij **Sprawdź pakiet**.
+3. Sprawdź wersję i listę zmian, następnie **Zainstaluj wydanie 0.12.0**.
 4. Otwórz stronę gry pod dotychczasowym adresem, np.
-   `https://twoja-domena.pl/PixelForge/index.html?v=0.11.0`.
-5. Przy Winobraniu RTS wybierz **Rozpocznij kampanię** i **Nowa gra**, aby zagrać w trzyletnią kampanię W3.
-   **Wznów** zachowuje rozpoczęty sezon; zapisy W1 i W2 kończą dawne rozgrywki. Nowy zapis v3 nie nadpisuje ich kluczy.
+   `https://twoja-domena.pl/PixelForge/index.html?v=0.12.0`.
+5. Przy Stacji na Trasie wybierz **Otwórz stację** i **Nowa gra**.
+   **Wznów** kontynuuje rozpoczętą zmianę. Pozostałe gry i ich zapisy pozostają dostępne.
 
 Panel U2 musi wcześniej zostać zainstalowany i skonfigurowany według
 [instrukcji](../admin-updater/README.md). Wymaga PHP 8.2+, ZipArchive i HTTPS.
@@ -50,7 +51,7 @@ następnie `apply` z identyfikatorem planu i sumą pokazaną przez `prepare`).
 U3 i paczki delta nie są do tego potrzebne.
 
 Rollback w panelu przywraca poprzednią wersję aplikacji. Zapis Dżdżownicy
-pozostaje w przeglądarce i wraca po ponownej instalacji 0.11.0. Pionowa przygoda
+pozostaje w przeglądarce i wraca po ponownej instalacji 0.12.0. Pionowa przygoda
 korzysta z osobnego zapisu v3; zapis starego ogrodu v1 nie jest kasowany ani
 przenoszony do odmiennej mapy. Zachowaj ten sam
 adres i przeglądarkę, żeby odczytać dotychczasowe zapisy.
@@ -62,13 +63,18 @@ Rozpakuj ZIP i wgraj **całą zawartość** do katalogu strony: `index.html`,
 Jeśli adres kończący się `/` nie otwiera strony, dopisz `index.html`.
 W tej paczce nie ma dodatkowego katalogu nadrzędnego.
 
-Kontrola lokalna: `npm run package:validate -- downloads/pixelforge-0.11.0-full.zip`.
+Kontrola lokalna: `npm run package:validate -- downloads/pixelforge-0.12.0-full.zip`.
 Odtworzenie z kodu: `npm ci`, następnie `npm run package:release`.
 [Specyfikacja gry](../docs/EARTHWORM.md), [raport nowej gry](../docs/P3-SOIL-REPORT.md).
 
 W3: trzy roczniki, rozbudowa, zatrudnienie, flota, fermentacja, butelki, jakość
 i kontrakty. [Raport i testy](../docs/W3-REPORT.md).
 Zapis Winobrania v3 zachowuje v1/v2 do rollbacku, a zapisy innych gier nie są migrowane.
+
+S1: pierwsza zmiana ORLAR na 6 minut, dwie pompy, sklep, pracownicy,
+dostawy i trzeci dystrybutor. Sukces wymaga ≥12 obsłużonych i dodatniego
+zysku. [Raport i testy](../docs/S1-REPORT.md). Zapis Stacji jest osobny;
+rollback zachowuje go w przeglądarce do ponownej instalacji 0.12.0.
 
 ## Archiwum: PixelForge 0.7.0
 
@@ -126,7 +132,7 @@ npm run package:validate -- downloads/pixelforge-0.6.1-full.zip
 
 Wynik poprawnej kontroli ma `valid: true`. Szczegóły i limity:
 [RELEASE-PACKAGES.md](../docs/RELEASE-PACKAGES.md).
-Paczki P1 0.5.0/0.5.1 i U0 0.6.0/0.6.1 zachowano jako archiwum; bieżąca to **0.11.0-full**.
+Paczki P1 0.5.0/0.5.1 i U0 0.6.0/0.6.1 zachowano jako archiwum; bieżąca to **0.12.0-full**.
 
 ## Osobny panel aktualizacji U2 — wariant prywatny poza public_html
 
@@ -136,7 +142,7 @@ ustawia własne hasło i tworzy publiczny plik panelu. Kolejne pełne ZIP-y gry
 wgrywa się już przez przeglądarkę: logowanie, podgląd, osobne zatwierdzenie.
 
 Nie wgrywaj ZIP-a panelu do katalogu gry ani do formularza paczek full.
-Wymagane PHP 8.2+, ZipArchive i HTTPS. Gra pozostaje statyczna; bieżące wydanie to 0.11.0.
+Wymagane PHP 8.2+, ZipArchive i HTTPS. Gra pozostaje statyczna; bieżące wydanie to 0.12.0.
 [Instrukcja konfiguracji i obsługi](../admin-updater/README.md),
 [raport U2](../docs/U2-REPORT.md).
 Poprzednie ZIP-y U1 1.0.0 i U2 1.1.0 zachowano bez zmiany bajtów.

@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, errors, type Page } from '@playwright/test';
 import type { Snapshot } from '../../src/engine/api/types';
 import { VineyardModel } from '../../src/games/winobranie-rts/model';
 import { validateWorld } from '../../src/games/winobranie-rts/world';
@@ -10,6 +10,28 @@ async function state(page: Page): Promise<Snapshot> {
   return page
     .locator('#diagnostics')
     .evaluate((e) => JSON.parse(e.dataset.state!));
+}
+/** An optional offer can expire between the observation and the next frame. */
+async function clickAvailable(page: Page, selector: string) {
+  const button = page.locator(selector);
+  const ended = async () => {
+    const s = await state(page);
+    return s.completed || s.failed;
+  };
+  if (await ended()) return;
+  if (!(await button.isVisible()) || !(await button.isEnabled())) return;
+  try {
+    await button.click({ timeout: 1000 });
+  } catch (error) {
+    if (
+      error instanceof errors.TimeoutError &&
+      ((await ended()) ||
+        !(await button.isVisible()) ||
+        !(await button.isEnabled()))
+    )
+      return;
+    throw error;
+  }
 }
 async function open(page: Page, resume = false) {
   await page.goto('/?diagnostics=1');
@@ -33,6 +55,8 @@ async function point(page: Page, x: number, y: number) {
   };
 }
 async function clickCell(page: Page, x: number, y: number) {
+  const s = await state(page);
+  if (s.completed || s.failed) return;
   const p = await point(page, x, y);
   await page.mouse.click(p.x, p.y);
 }
@@ -172,28 +196,24 @@ test('W3: trzyletnia kampania myszą, rozbudowa, kontrakty, fermentacja i finał
       await focus(page, 212, 241);
       await clickCell(page, d.x, d.y);
       if (await page.locator('[data-refill]').isEnabled())
-        await page.locator('[data-refill]').click();
-      await page.locator('[data-cancel]').click();
+        await clickAvailable(page, '[data-refill]');
+      await clickAvailable(page, '[data-cancel]');
     }
     if (
       (await page
         .locator('.vineyard-guidance')
         .getAttribute('data-guidance')) === 'mildew'
     ) {
-      await page.locator('[data-guidance-focus]').click();
-      if (
-        (await page.locator('[data-care]').isVisible()) &&
-        (await page.locator('[data-care]').isEnabled())
-      )
-        await page.locator('[data-care]').click();
-      await page.locator('[data-cancel]').click();
+      await clickAvailable(page, '[data-guidance-focus]');
+      await clickAvailable(page, '[data-care]');
+      await clickAvailable(page, '[data-cancel]');
     }
     const lots = JSON.parse(String(s.stats?.lots)) as {
       owner: string;
       resource: string;
     }[];
     if (!resumed && lots.some((l) => l.owner.startsWith('ferment:'))) {
-      await page.locator('#pause').click();
+      await clickAvailable(page, '#pause');
       const paused = await state(page);
       await page.waitForTimeout(200);
       expect((await state(page)).stats?.tick).toBe(paused.stats?.tick);
@@ -205,7 +225,7 @@ test('W3: trzyletnia kampania myszą, rozbudowa, kontrakty, fermentacja i finał
         .toBe(true);
       expect((await state(page)).stats?.seed).toBe(731);
       resumed = true;
-      await page.locator('[data-speed="4"]').click();
+      await clickAvailable(page, '[data-speed="4"]');
     }
     if (lots.some((l) => l.resource === 'bottles')) {
       await focus(page, 268, 253);
@@ -215,19 +235,19 @@ test('W3: trzyletnia kampania myszą, rozbudowa, kontrakty, fermentacja i finał
           (await page.locator('[data-sell]').isVisible()) &&
           (await page.locator('[data-sell]').isEnabled())
         )
-          await page.locator('[data-sell]').click();
+          await clickAvailable(page, '[data-sell]');
         if (!upgraded && Number((await state(page)).stats?.cash) > 600000) {
-          await page.locator('[data-upgrade="control"]').click();
+          await clickAvailable(page, '[data-upgrade="control"]');
           upgraded = true;
         }
       }
-      await page.locator('[data-cancel]').click();
+      await clickAvailable(page, '[data-cancel]');
     }
     if (Number(s.stats?.year) > year) {
       year = Number(s.stats?.year);
-      await page.locator('.vineyard-business summary').click();
-      await page.locator(`[data-contract="volume-${year}"]`).click();
-      await page.locator('.vineyard-business summary').click();
+      await clickAvailable(page, '.vineyard-business summary');
+      await clickAvailable(page, `[data-contract="volume-${year}"]`);
+      await clickAvailable(page, '.vineyard-business summary');
       await page.screenshot({
         path: `test-results/winery-w3-year-${year}.png`,
         style: '#diagnostics {visibility:hidden}',

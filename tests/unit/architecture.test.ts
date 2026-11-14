@@ -2,9 +2,17 @@ import { expect, it } from 'vitest';
 import { globSync, readFileSync } from 'node:fs';
 import { games } from '../../src/games/registry';
 import { platformDefinition } from '../fixtures/content';
-import { validateGame } from '../../src/engine/api/validation';
+import {
+  validateGame,
+  validateDefinition,
+} from '../../src/engine/api/validation';
 it('aktywny katalog zawiera wybrany tytuł P3, bez porzuconych gier', () => {
-  expect(games.map((game) => game.id)).toEqual(['earthworm', 'winobranie-rts']);
+  expect(games.map((game) => game.id)).toEqual([
+    'earthworm',
+    'winobranie-rts',
+    'gas-station',
+  ]);
+  for (const game of games) expect(validateDefinition(game).id).toBe(game.id);
   for (const file of globSync('tests/**/*.{ts,html}'))
     expect(readFileSync(file, 'utf8')).not.toMatch(
       /(?:from|import\s*\()\s*['"][^'"]*games\/(?:forest-demo|winobranie)(?:\/|['"])/,

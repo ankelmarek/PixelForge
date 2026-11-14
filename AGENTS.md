@@ -28,7 +28,16 @@ Gra ma korzystać z PixelForge, obsługi dużych map, dynamicznych dróg i nawig
 
 Przy poleceniu rozpoczęcia tego tytułu wykonaj **wyłącznie S0**, po sprawdzeniu aktualnej działającej bazy i PR #15 lub nowszych. Nie przerywaj, nie przepisuj i nie scalaj automatycznie bieżących prac nad Winobraniem RTS. Nie wdrażaj gry na hosting bez osobnego polecenia.
 
-**Stan S0:** po poleceniu „możesz budowac stację benzunową, zerknij w roadmapę” przygotowano [projekt wdrożenia](docs/STACJA-BENZYNOWA-IMPLEMENTATION.md) i [raport S0](docs/S0-REPORT.md) na `feature/p3-stacja-benzynowa`, z bazy `7f678a1` / PR #16. S0 jest do odbioru; Stacja nie ma jeszcze runtime ani ZIP-a. Przy następnym zleceniu sprawdź te dokumenty i aktualny PR. S1 wymaga akceptacji S0; najem Skoczki pozostaje S2, pełna kampania S3. Nie rozpoczynaj ich automatycznie.
+**Stan S0:** po poleceniu „możesz budowac stację benzunową, zerknij w roadmapę” przygotowano [projekt wdrożenia](docs/STACJA-BENZYNOWA-IMPLEMENTATION.md) i [raport S0](docs/S0-REPORT.md) na `feature/p3-stacja-benzynowa`, z bazy `7f678a1` / PR #16. W S0 Stacja nie miała jeszcze runtime ani ZIP-a. Plan wymagał akceptacji S0 przed implementacją; nastąpiła ona kolejnym poleceniem opisanym poniżej. Najem Skoczki pozostaje S2, pełna kampania S3. Nie rozpoczynaj ich automatycznie.
+
+**Stan S1:** następne polecenie „Możesz kontynuować” zatwierdziło przejście do S1.
+Na `feature/s1-stacja-benzynowa`, z bazy `4feec4e` / PR #17, powstał klient
+`gas-station` 0.1.0 i wydanie PixelForge 0.12.0: pierwsza sześciominutowa
+zmiana, dwie pompy, własny sklep, dwóch pracowników, fizyczny ruch/kolejki,
+dostawy, jedna rozbudowa, dźwięk i osobny zapis. [Raport S1](docs/S1-REPORT.md)
+opisuje testy i ograniczenia. S1 jest do odbioru. Poprawki prowadź na tej
+samej gałęzi; S2–S4 oraz W4 wymagają kolejnego polecenia. Najem Skoczki,
+swobodne budowanie i pełna kampania nie są jeszcze zaimplementowane.
 
 **Uzupełnienie dla Stacji na Trasie (14.11.2026):** robocze marki to **ORLAR** (stacja z orłem) oraz **Skoczka** (fikcyjna sieć niewielkich sklepów z motywem żabki). Gracz ma móc **prowadzić sklep sam lub oddać lokal w najem Skoczce**. W najmie przychód stacji to czynsz oraz umówiony udział, a nie pełny obrót sklepu; najemca zapewnia swoich pracowników i towary. Zadbaj o parking, oddzielne kolejki, realną animację dostaw i wpływ sklepu na ruch. Mechanikę implementować w S2 po S0 i S1, zgodnie z sekcją 8.1 `docs/STACJA-BENZYNOWA.md`. Nazwy i znaki są robocze, nie kopiuj oznaczeń ORLEN ani Żabka, sprawdź odróżnialność przed publikacją.
 

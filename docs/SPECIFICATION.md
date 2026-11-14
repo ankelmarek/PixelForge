@@ -1,5 +1,14 @@
 # PixelForge — specyfikacja techniczna i funkcjonalna
 
+> **Stacja na Trasie — S1:** klient `gas-station` realizuje pierwszą zmianę
+> na świecie 4096² według [specyfikacji gry](STACJA-BENZYNOWA.md)
+> i [planu wdrożenia](STACJA-BENZYNOWA-IMPLEMENTATION.md#14-wdrożenie-s1-i-rozstrzygnięcia-prototypu).
+> Wspólne API obejmuje rezerwacje przestrzeni i FIFO, dziennik transakcji
+> z oddzielnym zyskiem oraz miks muzyki, otoczenia i efektów. Logika paliwa,
+> personelu, kolejek stacji i jej zapisu pozostaje wyłącznie w kliencie.
+> S1 ma 6 minut, cel 12 obsłużonych i dodatni zysk; pełna kampania to S3.
+> Wyniki weryfikacji i paczki 0.12.0: [raport S1](S1-REPORT.md).
+
 > **Doprecyzowanie UX z 14 listopada 2026:** na polecenie użytkownika Winobranie RTS otrzymuje niewielkie, kontekstowe komunikaty „Co teraz?” z celem, następnym krokiem lub przyczyną blokady. Zwijany panel nie zatrzymuje gry i nie wymaga przeklikiwania. Ten wyjątek zastępuje zakaz pisanych podpowiedzi dla tego klienta; szczegóły w [specyfikacji gry](WINOBRANIE-RTS.md#10-ui-i-sterowanie). Pozostałe gry zachowują dotychczasowe zachowanie.
 
 > **Decyzja z 14 listopada 2026:** nowy produkt **Winobranie RTS: Trzy sezony** ma własną [specyfikację](WINOBRANIE-RTS.md) i etapy W0–W4 w [roadmapie 0.3](ROADMAP.md). Dawny prototyp `winobranie` pozostaje porzucony. Zatwierdzone budowanie, etykiety strategiczne, sterowanie myszą i kampania nowej gry mają pierwszeństwo nad historycznymi ograniczeniami poniżej. Dżdżownica zachowuje własny pionowy przekrój gleby.

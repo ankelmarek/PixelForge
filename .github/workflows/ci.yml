@@ -69,8 +69,8 @@ jobs:
             playwright-report/
             downloads/pixelforge-updater-*.zip
             downloads/pixelforge-updater-*.sha256
-            downloads/pixelforge-0.11.0-full.zip
-            downloads/pixelforge-0.11.0-full.zip.sha256
+            downloads/pixelforge-0.12.0-full.zip
+            downloads/pixelforge-0.12.0-full.zip.sha256
             downloads/pixelforge-public-html-*.zip
             downloads/pixelforge-public-html-*.sha256
           if-no-files-found: ignore

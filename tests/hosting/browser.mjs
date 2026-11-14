@@ -117,8 +117,8 @@ try {
     await page
       .getByRole('button', { name: 'Zaloguj się', exact: true })
       .click();
-    await expect(page.locator('[data-active]')).toHaveText('0.11.0');
-    let game, save;
+    await expect(page.locator('[data-active]')).toHaveText('0.12.0');
+    let game, save, stationSave;
     if (site.device !== 'no-js') {
       game = await context.newPage();
       game.on('pageerror', (error) => errors.push(error.message));
@@ -163,26 +163,37 @@ try {
         globalThis.localStorage.getItem('pixelforge:client:v3:earthworm'),
       );
       expect(save).toBeTruthy();
+      await game.locator('#back').click();
+      await game.locator('[data-game="gas-station"]').click();
+      await game.locator('#start').click();
+      await expect.poll(async () => (await state()).stats.ready).toBe(true);
+      await game.locator('.station-tabs [data-st-tab="fuel"]').click();
+      await game.locator('[data-st-order="on"][data-litres="200"]').click();
+      await game.locator('#pause').click();
+      stationSave = await game.evaluate(() =>
+        globalThis.localStorage.getItem('pixelforge:client:v1:gas-station'),
+      );
+      expect(stationSave).toBeTruthy();
     }
     await page.locator('#package').setInputFiles(config.package);
     await page
       .getByRole('button', { name: 'Sprawdź pakiet', exact: true })
       .click();
     await expect(
-      page.getByRole('heading', { name: '0.11.0 → 0.11.1', exact: true }),
+      page.getByRole('heading', { name: '0.12.0 → 0.12.1', exact: true }),
     ).toBeVisible();
-    await expect(page.locator('[data-active]')).toHaveText('0.11.0');
+    await expect(page.locator('[data-active]')).toHaveText('0.12.0');
     await page
-      .getByRole('button', { name: 'Zainstaluj wydanie 0.11.1', exact: true })
+      .getByRole('button', { name: 'Zainstaluj wydanie 0.12.1', exact: true })
       .click();
-    await expect(page.locator('[data-active]')).toHaveText('0.11.1');
+    await expect(page.locator('[data-active]')).toHaveText('0.12.1');
     await page
       .getByRole('link', { name: 'Przywróć poprzednią wersję', exact: true })
       .click();
     await page
       .getByRole('button', { name: 'Potwierdź przywrócenie', exact: true })
       .click();
-    await expect(page.locator('[data-active]')).toHaveText('0.11.0');
+    await expect(page.locator('[data-active]')).toHaveText('0.12.0');
     if (game) {
       expect(
         await game.evaluate(() =>
@@ -199,6 +210,27 @@ try {
             .evaluate((e) => JSON.parse(e.dataset.state).stats.blooms),
         )
         .toBe(1);
+      await game.locator('#pause').click();
+      expect(
+        await game.evaluate(() =>
+          globalThis.localStorage.getItem('pixelforge:client:v1:gas-station'),
+        ),
+      ).toBe(stationSave);
+      await game.locator('#back').click();
+      await game.locator('[data-game="gas-station"]').click();
+      await game.locator('#resume').click();
+      await expect
+        .poll(async () =>
+          game
+            .locator('#diagnostics')
+            .evaluate((e) => JSON.parse(e.dataset.state).stats.ready),
+        )
+        .toBe(true);
+      expect(
+        await game
+          .locator('#diagnostics')
+          .evaluate((e) => JSON.parse(e.dataset.state).stats.delivery),
+      ).toBe('ordered');
       await game.locator('#pause').click();
       expect(
         await page.evaluate(
@@ -227,6 +259,7 @@ try {
       installAndRollback: true,
       privateHttp403: true,
       wormSaveResumed: site.device !== 'no-js',
+      stationSaveResumed: site.device !== 'no-js',
       errors,
     });
     process.stdout.write(JSON.stringify(results.at(-1)) + '\n');
@@ -238,7 +271,7 @@ try {
       {
         chromium: browser.version(),
         release:
-          '0.11.1 is a temporary fixture with unchanged 0.11.0 payload, not a game release',
+          '0.12.1 is a temporary fixture with unchanged 0.12.0 payload, not a game release',
         results,
       },
       null,

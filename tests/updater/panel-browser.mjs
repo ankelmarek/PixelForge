@@ -12,7 +12,7 @@ const root = resolve(import.meta.dirname, '../..');
 if (process.argv.includes('--release'))
   process.env.PIXELFORGE_TEST_RELEASE = resolve(
     root,
-    'downloads/pixelforge-0.11.0-full.zip',
+    'downloads/pixelforge-0.12.0-full.zip',
   );
 const server = spawn(
   'python3',
@@ -175,6 +175,7 @@ try {
 
     let winerySave;
     let wormSave;
+    let stationSave;
     if (newGame) {
       await game.locator('#back').click();
       await game.locator('[data-game="earthworm"]').click();
@@ -249,6 +250,23 @@ try {
       );
     }
 
+    if (newGame) {
+      await game.locator('#back').click();
+      await game.locator('[data-game="gas-station"]').click();
+      await game.locator('#start').click();
+      await expect.poll(async () => (await state()).stats.ready).toBe(true);
+      await game.locator('.station-tabs [data-st-tab="fuel"]').click();
+      await game.locator('[data-st-order="on"][data-litres="200"]').click();
+      await game.locator('#pause').click();
+      stationSave = await game.evaluate(() =>
+        globalThis.localStorage.getItem('pixelforge:client:v1:gas-station'),
+      );
+      expect(stationSave).toBeTruthy();
+      keys = await game.evaluate(() =>
+        Object.keys(globalThis.localStorage).sort(),
+      );
+    }
+
     await panel
       .getByRole('link', { name: 'Przywróć poprzednią wersję', exact: true })
       .click();
@@ -263,6 +281,11 @@ try {
       await game.evaluate(() => Object.keys(globalThis.localStorage).sort()),
     ).toEqual(keys);
     if (newGame) {
+      expect(
+        await game.evaluate(() =>
+          globalThis.localStorage.getItem('pixelforge:client:v1:gas-station'),
+        ),
+      ).toBe(stationSave);
       expect(
         await game.evaluate(() =>
           globalThis.localStorage.getItem('pixelforge:client:v3:earthworm'),
@@ -308,6 +331,15 @@ try {
         );
         await game.locator('#pause').click();
       }
+      await game.locator('#back').click();
+      await game.locator('[data-game="gas-station"]').click();
+      await game.locator('#resume').click();
+      await expect.poll(async () => (await state()).stats.ready).toBe(true);
+      expect((await state()).stats.delivery).toBe('ordered');
+      expect(Number((await state()).stats.tick)).toBeGreaterThanOrEqual(
+        JSON.parse(stationSave).state.tick,
+      );
+      await game.locator('#pause').click();
       await panel
         .getByRole('link', { name: 'Przywróć poprzednią wersję', exact: true })
         .click();
@@ -327,6 +359,7 @@ try {
       rollback: `${releaseVersion} -> 0.6.1`,
       gameReinstalledAndResumed: newGame,
       wineryReinstalledAndResumed: !!winerySave,
+      stationReinstalledAndResumed: !!stationSave,
       savedCameraRestored: true,
       savesPreserved: true,
       errors,
