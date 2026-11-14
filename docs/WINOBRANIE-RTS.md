@@ -187,16 +187,20 @@ Model: deterministyczny seeded RNG, krok stały (np. istniejące 50 ms), praca p
 - [x] Nie przepisywać Dżdżownicy, Atlasu ani aktualizatora.
 
 Wykonano 2026-11-14: [kontrakty i plan](WINOBRANIE-RTS-IMPLEMENTATION.md),
-[raport weryfikacji bazy](W0-REPORT.md). Runtime W1–W4 pozostaje do realizacji.
+[raport weryfikacji bazy](W0-REPORT.md). W1 zrealizowano na kolejnej gałęzi; [raport W1](W1-REPORT.md). W2–W4 pozostają do realizacji.
 
 ### W1. Grywalny rdzeń na dużej mapie
 
-- [ ] Nowy tytuł widoczny w katalogu, duża mapa, kamera, minimapa, atrakcyjne podłoże.
-- [ ] Własność parcel, swobodne stawianie dwóch domków, rysowanie 3 odmian winorośli i dróg, podstawowy budżet.
-- [ ] 2 pracowników, 1 traktor, zadania i dynamiczna nawigacja po budowie.
-- [ ] Produkcja: zbiór → transport → tłoczenie → pierwsza sprzedaż. Zapis/wznowienie i prosta ocena wyniku.
-- [ ] Pierwszy 5–8 minutowy **vertical slice** zawierający rzeczywiste decyzje. Bez fałszywych dekoracyjnych przycisków.
-- [ ] Pull Request i odbiór przed rozbudową.
+- [x] Nowy tytuł widoczny w katalogu, duża mapa, kamera, minimapa, atrakcyjne podłoże.
+- [x] Własność parcel, swobodne stawianie dwóch domków, rysowanie 3 odmian winorośli i dróg, podstawowy budżet.
+- [x] 2 pracowników, 1 traktor, zadania i dynamiczna nawigacja po budowie.
+- [x] Produkcja: zbiór → transport → tłoczenie → pierwsza sprzedaż. Zapis/wznowienie i prosta ocena wyniku.
+- [x] Pierwszy 5–8 minutowy **vertical slice** zawierający rzeczywiste decyzje. Bez fałszywych dekoracyjnych przycisków.
+- [ ] Odbiór użytkownika przed rozbudową; PR i wyniki testów w raporcie W1.
+
+Implementacja wycinka: 360 s przy ×1, trzy odmiany, sprzedaż moszczu.
+Pełny przebieg automatyczny przez mysz przy ×4; nie jest to jeszcze
+30-minutowa kampania ani badanie nowych graczy. [Raport](W1-REPORT.md).
 
 ### W2. Pełna agronomia i przymrozek
 

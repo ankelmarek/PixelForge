@@ -1,0 +1,126 @@
+# W1 — Winobranie RTS: pierwszy sezon
+
+14 listopada 2026 (Europe/Warsaw). Gałąź `feature/w1-winobranie-rts`, baza
+`f6c4a767` / PR #13 (W0), dziedzicząca działający kod PR #12. W1a–W1d
+zaimplementowano; końcowa weryfikacja wydania i PR jest w toku. W2–W4 nie
+rozpoczęto. Nie wykonano merge ani instalacji na hostingu użytkownika.
+
+![Winobranie RTS W1 — pracownicy, domki i traktor](reports/W1-desktop.png)
+
+## Co działa
+
+- Nowy, osobny klient `winobranie-rts` 0.1.0 w katalogu PixelForge 0.9.0.
+  Stare `winobranie` z PR #4 pozostaje nieaktywne.
+- 8192 × 8192 px, 256 sektorów po 512 px; streaming RLE, culling sprite'ów,
+  minimapa, przeciąganie kamery, zoom 0.5–2 z wyrównaniem do pikseli.
+- Start: 30 000 monet, 48 dorosłych krzewów, Solaris/Regent/Johanniter,
+  dwóch ludzi, jeden traktor i magazyn. Dwa uprawnienia do budowy domków.
+- Swobodne linie rzędów i dróg, obrót domku, podgląd kosztu i dostępności.
+  Walidacja całej powierzchni: własność, kolizje, stromy teren, dojście ludzi
+  i prześwit 3 × 3 dla traktora. Zły/anulowany/stary preview niczego nie pobiera.
+  Zakup sąsiedniej parceli, usunięcie nasadzeń i przeniesienie pustego domku.
+- Ludzie wykonują budowę/sadzenie, zbiór i pracę przy prasie. Role Auto,
+  Zbiór, Budowa, Prasa, Postój. Wybór pojedynczy lub prostokątem; wszystkie
+  potrzebne akcje dostępne myszą. Anulowanie pracy zachowuje ładunek.
+- Grona są rezerwowane, zbierane, niesione do magazynu, ładowane na traktor,
+  przewożone do dostępnego doku i tłoczone. Prasa potrzebuje pracy operatora;
+  wsad i produkt mają własny bilans. Sprzedaż usuwa moszcz dokładnie raz.
+- Nowe sadzonki wymagają posadzenia i 120 s wzrostu; pierwszy plon wynosi
+  0.2 kg/krzew wobec 2 kg dorosłych krzewów startowych. To uproszczenie W1,
+  pełna agronomia jest zakresem W2.
+- Zegar 50 ms, tempo ×1/×2/×4, opłaty dzienne. Finał po 360 s symulacji:
+  sukces przy sprzedaży ≥40 L i braku zaległości; w przeciwnym razie
+  podsumowanie niedokończonego celu. Wynik obejmuje przychód, koszty i straty.
+- Osobny zapis `pixelforge:client:v1:winobranie-rts`: praca, ładunki, partie,
+  ekonomia, drogi, nasadzenia, zegar i tempo. Odtworzenie waliduje całość przed
+  podmianą aktywnego modelu. Uszkodzony zapis daje komunikat techniczny.
+- Oryginalne atlasy pixel art, animacja pracy/ruchu, skrzynki/beczki,
+  podgląd doku, efekty syntezowane i muzyka z wyciszeniem. Brak tekstowego
+  tutorialu i nowych zależności runtime. [Pochodzenie](../public/assets/games/winobranie-rts/LICENSE.md).
+
+## Zmiany współdzielone
+
+`engine/api/strategy` udostępnia generyczne zegar, ledger, inventory,
+rezerwacje, geometrię i regionalny navigator. `TerrainWorld` nie wymaga
+fikcyjnych aktorów ani receptur. Indeks budowany jest porcjami podczas
+ładowania; edycja aktualizuje dotknięte regiony i portale, z halo pojazdu.
+Podgląd używa kopii indeksu współdzielącej niezmienne regiony; przeniesienie
+aktualizuje osobno stare i nowe miejsce. Trasy poza edycją pozostają ważne.
+Trasa zablokowana zachowuje pracę/ładunek i jest ponawiana po zmianie topologii.
+
+Opcjonalne `createControls`, `client-action`, projekcja `Snapshot.client`,
+lista `results` i preferowany gęstszy viewport są niezależne od nazwy gry.
+Aplikacja zachowuje wspólną pauzę, minimapę i cleanup. `VersionedSave.inspect`
+rozróżnia brak i uszkodzenie zapisu. [Kontrakt](CLIENT-API.md).
+
+Najpierw zapisano neutralne testy kontraktowe i potwierdzono ich błąd przy
+braku usług; potem wdrożono kod. Testy architektury nadal zabraniają importów
+silnik → gry i użycia prywatnych modułów silnika przez gry. Zakaz dawnego
+Winobrania został zawężony do dokładnego ID, bez zakazu nowego produktu.
+
+## Weryfikacja
+
+| Kontrola                                        | Wynik                                                   |
+| ----------------------------------------------- | ------------------------------------------------------- |
+| TypeScript strict                               | PASS                                                    |
+| ESLint + Prettier                               | PASS                                                    |
+| Vitest                                          | 83 PASS                                                 |
+| Paczki U0 (Python)                              | 15 PASS                                                 |
+| Aktualizator/panel (PHP/Python)                 | 36 PASS                                                 |
+| Hosting Apache/PHP                              | 12 PASS                                                 |
+| Build produkcyjny                               | PASS; istniejące ostrzeżenie Vite o dużym module Phaser |
+| Playwright — cały projekt                       | W toku                                                  |
+| ZIP w `/` i `/PixelForge/`                      | W toku                                                  |
+| Panel: instalacja, rollback, ponowna instalacja | W toku                                                  |
+| Zestaw `public_html` przez HTTPS/Apache         | W toku                                                  |
+
+Osobny pełny przebieg W1 przez prawdziwy UI już przeszedł: dwa domki,
+droga, rząd Regent, rzeczywista produkcja, pauza, wznowienie w trakcie pracy,
+sprzedaż ≥40 L i finał. Test trwa około 1.7 min przy ×4 i nie dopisuje zasobów
+ani pieniędzy. Zapis Dżdżownicy pozostaje nietknięty. Dodatkowe E2E sprawdzają
+anulowanie gestu, dalekie sektory, minimum zoomu, brak atlasu/sektora,
+błędny scenariusz i uszkodzony save. Model przechodzi 7200 ticków oraz kontrolę
+bilansu podczas zbioru/transportu, odtworzenie w trakcie pracy, obrót/przenosiny,
+x1/x4, rezerwacje, pełne wyjście receptury i niepoprawne referencje zapisu.
+
+## Pomiar
+
+Chromium 158.0.8127.18, Linux, headless/software rendering, 1440 × 900,
+zoom 0.5, tempo ×4, 48 krzewów, 2 domki i 3 jednostki. Próbka 6 s po
+rozgrzaniu sceny: średnio 60.0 FPS, p95 klatki 16.8 ms. Maksymalny zmierzony
+podgląd budowy 11.7 ms; aktualizacja modelu w klatce 1.9 ms. Około 11.3 MiB
+retained JS heap, 84 sprite'y, 20 MiB tekstur terenu, 20 rezydentnych sektorów,
+zero brakujących sektorów/błędów. Dwa źródłowe atlasy zajmują dodatkowo około
+12 MiB RGBA; pomiar nie obejmuje wszystkich buforów GPU/przeglądarki.
+[Surowy wynik](reports/W1-performance.json).
+
+To pomiar konkretnego wycinka, nie gwarancja FPS na innych komputerach ani
+test docelowej kampanii z dziesiątkami jednostek. Przeglądarka i PHP działają
+w środowisku testowym; nie wykonano testu na prawdziwym telefonie/LiteSpeed.
+
+## Granice W1 i dalszy odbiór
+
+- W1 trwa 6 minut przy ×1, a nie 30–35 minut. Nie ma jeszcze fermentacji,
+  butelkowania, przymrozków, zraszaczy, sześciu odmian ani trzech lat.
+- W1 nie sprzedaje dodatkowych domków, ludzi ani traktorów. Zakup sąsiedniej
+  ziemi i budowanie są przygotowaniem przestrzeni; pełny rozwój to W2/W3.
+- Jednostki mają miękkie mijanie (nie blokują sobie komórek). Zasoby i stanowiska
+  prasy/budowy są rezerwowane; nie deklarujemy pełnego systemu unikania tłoku.
+- Trasy są zapisywane jako walidowana pozostała sekwencja legalnych sąsiadów,
+  zamiast odtwarzania z samego celu. Pozwala to wznowić ruch między komórkami
+  bez zmiany dalszego przebiegu. Zmiana topologii przelicza dotkniętą trasę.
+- Odbiór interfejsu strategii dotyczy desktopu. Regresja dotyku Dżdżownicy/Atlasu
+  jest obowiązkowa; obsługa całej nowej strategii na telefonie pozostaje później.
+- Nie przeprowadzono badania 3–5 nowych graczy. Czytelność bez instrukcji i
+  balans W1 wymagają odbioru użytkownika przed rozpoczęciem W2.
+
+## Paczki i GitHub
+
+`pixelforge-0.9.0-full.zip` zawiera cały frontend (W1 + Dżdżownica + Atlas)
+i manifest full v1 / engineSchemaVersion 2. Do skonfigurowanego panelu
+przesyła się ten ZIP bez rozpakowywania. Zestaw
+`pixelforge-public-html-0.9.0-installer-1.2.0.zip` służy pierwszej instalacji
+w `public_html`. Aktualizator 1.2.0 oraz poprzednie ZIP-y pozostają niezmienione.
+Sumy SHA-256 są obok archiwów w `downloads/`.
+
+Weryfikacja dystrybucji i link PR zostaną dopisane po zakończeniu kontroli.

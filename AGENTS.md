@@ -16,7 +16,7 @@ Nowym zadaniem infrastrukturalnym jest **bezpieczny aktualizator ZIP** z podglą
 
 **Bieżąca dokumentacja:** `docs/ROADMAP.md` (wersja 0.3), `docs/WINOBRANIE-RTS.md` i dokumenty obecnego engine. Roadmapy 0.2 oraz historyczne są archiwum. Nowe Winobranie RTS jest odrębną grą, stare Winobranie nie może być rozwijane. Nie rozpoczynaj automatycznie implementacji kolejnego etapu.
 
-**Stan W0:** wykonano inwentaryzację i [plan wdrożenia](docs/WINOBRANIE-RTS-IMPLEMENTATION.md) na `feature/p3-winobranie-rts`, bazując na kodzie PR #12. [Raport W0](docs/W0-REPORT.md) oddziela sprawdzone funkcje bazy od projektowanych usług. Następny zakres to W1 po osobnym zleceniu; nie powtarzaj W0 ani nie uznawaj dokumentacji za gotową grę.
+**Stan W0:** wykonano inwentaryzację i [plan wdrożenia](docs/WINOBRANIE-RTS-IMPLEMENTATION.md) na `feature/p3-winobranie-rts`, bazując na kodzie PR #12. [Raport W0](docs/W0-REPORT.md) oddziela sprawdzone funkcje bazy od projektowanych usług. W1 został następnie zlecony i zaimplementowany na `feature/w1-winobranie-rts`; [raport W1](docs/W1-REPORT.md) opisuje weryfikację. Nie rozpoczynaj W2 przed odbiorem i osobnym poleceniem.
 
 **Zmiana koncepcji „Życia Dżdżownicy” na polecenie użytkownika (2026-11-13):** ta gra pokazuje pionowy przekrój gleby z boku, a nie widok z góry. Rośliny rosną na powierzchni, pod nimi są korzenie, pędraki i larwy. Bohater porusza się w obu osiach, drąży i użyźnia glebę. Głębiej rośnie trudność; deszcz przenika od powierzchni w dół. Punkty i stopniowy rozwój prowadzą do dorosłości. Poprzedni pomysł czterech ogrodów i odrodzenia centralnego drzewa jest zastąpiony tą koncepcją. Pozostały rdzeń i laboratorium dużego świata pozostają niezależne od perspektywy tej gry.
 
@@ -101,4 +101,4 @@ W0 określiło kontrakty i plan. Następnie powstaje jeden grywalny vertical sli
 
 ## Następne polecenie dla Codexa
 
-> Przed kolejnym zleceniem przeczytaj `docs/ROADMAP.md`, `docs/WINOBRANIE-RTS.md`, `docs/WINOBRANIE-RTS-IMPLEMENTATION.md` i `docs/W0-REPORT.md`. W0 jest zakończone. Jeśli użytkownik zleci W1, realizuj wyłącznie opisany wycinek W1a–W1d z testami kontraktowymi przed rozbudową silnika. Nie rozpoczynaj samodzielnie W2–W4. Starego Winobrania ani Leśnego sygnału nie rozwijaj. Bez automatycznego merge lub instalacji na hostingu.
+> Przed kolejnym zleceniem przeczytaj `docs/ROADMAP.md`, `docs/WINOBRANIE-RTS.md`, `docs/WINOBRANIE-RTS-IMPLEMENTATION.md` i `docs/W0-REPORT.md`. W0 i implementacja W1 są zakończone. Sprawdź raport W1 oraz jego PR; poprawki W1 prowadź na tej samej gałęzi. W2 wymaga odbioru W1 i osobnego zlecenia. Nie rozpoczynaj samodzielnie W2–W4. Starego Winobrania ani Leśnego sygnału nie rozwijaj. Bez automatycznego merge lub instalacji na hostingu.

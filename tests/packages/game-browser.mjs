@@ -6,7 +6,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import process from 'node:process';
 
 const archive =
-  process.env.PIXELFORGE_TEST_RELEASE ?? 'downloads/pixelforge-0.8.0-full.zip';
+  process.env.PIXELFORGE_TEST_RELEASE ?? 'downloads/pixelforge-0.9.0-full.zip';
 const server = spawn(
   'python3',
   ['-u', 'tests/packages/serve_game.py', archive],
@@ -139,6 +139,53 @@ try {
       expect(stats.textureBytes).toBeLessThanOrEqual(20 * 1024 * 1024);
       results.push(result);
       process.stdout.write(JSON.stringify(result) + '\n');
+      if (device === 'desktop') {
+        await page.locator('#back').click();
+        await page.locator('[data-game="winobranie-rts"]').click();
+        await page.locator('#start').click();
+        await expect.poll(async () => (await state()).stats.ready).toBe(true);
+        await page.locator('[data-tool="house"]').click();
+        const c = (await state()).camera,
+          r = await page.locator('#stage canvas').boundingBox();
+        await page.mouse.click(
+          r.x +
+            (((268 * 16 - c.scrollX - c.width / 2) * c.zoom + c.width / 2) /
+              c.width) *
+              r.width,
+          r.y +
+            (((253 * 16 - c.scrollY - c.height / 2) * c.zoom + c.height / 2) /
+              c.height) *
+              r.height,
+        );
+        await expect.poll(async () => (await state()).stats.buildings).toBe(1);
+        await page.locator('[data-cancel]').click();
+        await page.locator('[data-speed="4"]').click();
+        await expect
+          .poll(async () => Number((await state()).stats.processed), {
+            timeout: 40000,
+          })
+          .toBeGreaterThan(0);
+        await page.locator('#pause').click();
+        const winery = await state();
+        await page.reload();
+        await page.locator('[data-game="winobranie-rts"]').click();
+        await page.locator('#resume').click();
+        await expect.poll(async () => (await state()).stats.ready).toBe(true);
+        expect((await state()).stats.buildings).toBe(1);
+        expect((await state()).stats.processed).toBe(winery.stats.processed);
+        await expect.poll(async () => (await state()).stats.missing).toBe(0);
+        expect(errors).toEqual([]);
+        results.push({
+          game: 'winobranie-rts',
+          device,
+          base,
+          installedFromArchive: true,
+          constructed: true,
+          physicalProcessing: true,
+          resumed: true,
+          errors,
+        });
+      }
       await context.close();
     }
   await writeFile(

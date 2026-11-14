@@ -1,6 +1,6 @@
 # PixelForge — aktualna roadmapa 0.3
 
-**Decyzja:** 14 listopada 2026. **Stan:** W0 nowej gry **Winobranie RTS: Trzy sezony** wykonane — inwentaryzacja, kontrakty i plan; runtime W1–W4 nie jest rozpoczęty. **Główny dokument produkcyjny:** [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md).
+**Decyzja:** 14 listopada 2026. **Stan:** W0 nowej gry **Winobranie RTS: Trzy sezony** wykonane — inwentaryzacja, kontrakty i plan; W1 jest zaimplementowane i przechodzi końcową weryfikację, W2–W4 nie rozpoczęto. **Główny dokument produkcyjny:** [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md).
 
 Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md) oraz [archiwum historycznym](./ROADMAP-ARCHIVE-2026-11.md). Oba mają status historyczny. Jeżeli ich zapis przeczy temu dokumentowi lub `docs/WINOBRANIE-RTS.md`, obowiązuje aktualna decyzja z 14 listopada.
 
@@ -33,7 +33,7 @@ Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md
 | Etap   | Zakres                                                                                                           | Status                                 |
 | ------ | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
 | **W0** | Inwentaryzacja kodu, projekt architektury, modele danych i balans wstępny                                        | DONE — dokumentacja i weryfikacja bazy |
-| **W1** | Pierwszy grywalny vertical slice: duża mapa, własne rzędy, dwa domki, pracownicy, traktor, zbiór i sprzedaż      | TODO                                   |
+| **W1** | Pierwszy grywalny vertical slice: duża mapa, własne rzędy, dwa domki, pracownicy, traktor, zbiór i sprzedaż      | REVIEW — W1a–W1d, odbiór po testach    |
 | **W2** | 6 szczepów, wzrost roślin, pogoda, prognoza, przymrozki i zraszacze z nieprzerwaną pracą                         | TODO                                   |
 | **W3** | 3 lata, zakup nowych domków, pracowników i traktorów, ekonomia, produkcja wina, warunki wygranej/przegranej      | TODO                                   |
 | **W4** | 3 warianty kampanii, grafika pixel art, audio, balans, wydajność, testy E2E, pełny ZIP przez dotychczasowy panel | TODO                                   |
@@ -97,3 +97,18 @@ nowy tytuł nie jest jeszcze dostępny w launcherze ani ZIP-ie.
   Szczegóły oraz kontrola identyczności źródeł i paczek: [raport W0](W0-REPORT.md).
 - Nie dodano runtime nowej gry, nie rozpoczęto W1–W4/U3/Studio, nie wdrożono
   niczego na hosting i nie scalono PR do main.
+
+## 9. W1 — pierwszy sezon (2026-11-14)
+
+Gałąź `feature/w1-winobranie-rts`, baza W0 / PR #13. Implementacja obejmuje
+W1a–W1d: publiczny teren bez statycznego schematu symulatora, lokalną zmianę
+nawigacji i bezpieczny preview, zegar, budżet/rezerwacje, osobny klient z własnymi
+panelami, 256 sektorów mapy 8192², parcelę startową i zakup sąsiednich, trzy
+odmiany, własne rzędy/drogi, dwa domki, 2 ludzi i traktor, rzeczywiste zbiory,
+transport, tłoczenie, sprzedaż moszczu i finał po 360 s. W1 ma własny zapis v1.
+
+[Raport W1](W1-REPORT.md) podaje testy, pomiar i ograniczenia. Wydanie 0.9.0
+zawiera także dotychczasową Dżdżownicę i Atlas; instalator pozostaje 1.2.0.
+Archiwa 0.8.0 nie są zmieniane. Pełny sezon sprawdzono automatycznie przez UI
+przy ×4, bez ustawiania środków/zasobów poza rozgrywką. Odbiór przez użytkownika
+i badanie z osobami nieznającymi gry pozostają osobne. W2 nie jest rozpoczęte.

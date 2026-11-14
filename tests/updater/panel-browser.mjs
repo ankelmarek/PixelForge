@@ -12,7 +12,7 @@ const root = resolve(import.meta.dirname, '../..');
 if (process.argv.includes('--release'))
   process.env.PIXELFORGE_TEST_RELEASE = resolve(
     root,
-    'downloads/pixelforge-0.8.0-full.zip',
+    'downloads/pixelforge-0.9.0-full.zip',
   );
 const server = spawn(
   'python3',
@@ -173,6 +173,7 @@ try {
     ).toEqual(keys);
     await game.locator('#pause').click();
 
+    let winerySave;
     let wormSave;
     if (newGame) {
       await game.locator('#back').click();
@@ -220,6 +221,34 @@ try {
       );
     }
 
+    if (newGame && device === 'desktop') {
+      await game.locator('#back').click();
+      await game.locator('[data-game="winobranie-rts"]').click();
+      await game.locator('#start').click();
+      await expect.poll(async () => (await state()).stats.ready).toBe(true);
+      await game.locator('[data-tool="house"]').click();
+      const c = (await state()).camera,
+        r = await game.locator('#stage canvas').boundingBox();
+      await game.mouse.click(
+        r.x +
+          (((268 * 16 - c.scrollX - c.width / 2) * c.zoom + c.width / 2) /
+            c.width) *
+            r.width,
+        r.y +
+          (((253 * 16 - c.scrollY - c.height / 2) * c.zoom + c.height / 2) /
+            c.height) *
+            r.height,
+      );
+      await expect.poll(async () => (await state()).stats.buildings).toBe(1);
+      await game.locator('#pause').click();
+      winerySave = await game.evaluate(() =>
+        globalThis.localStorage.getItem('pixelforge:client:v1:winobranie-rts'),
+      );
+      keys = await game.evaluate(() =>
+        Object.keys(globalThis.localStorage).sort(),
+      );
+    }
+
     await panel
       .getByRole('link', { name: 'Przywróć poprzednią wersję', exact: true })
       .click();
@@ -239,6 +268,14 @@ try {
           globalThis.localStorage.getItem('pixelforge:client:v3:earthworm'),
         ),
       ).toBe(wormSave);
+      if (winerySave)
+        expect(
+          await game.evaluate(() =>
+            globalThis.localStorage.getItem(
+              'pixelforge:client:v1:winobranie-rts',
+            ),
+          ),
+        ).toBe(winerySave);
       await panel.locator('#package').setInputFiles(configuration.package);
       await panel
         .getByRole('button', { name: 'Sprawdź pakiet', exact: true })
@@ -260,6 +297,17 @@ try {
         JSON.parse(wormSave).state.tunnels.length,
       );
       await game.locator('#pause').click();
+      if (winerySave) {
+        await game.locator('#back').click();
+        await game.locator('[data-game="winobranie-rts"]').click();
+        await game.locator('#resume').click();
+        await expect.poll(async () => (await state()).stats.ready).toBe(true);
+        expect((await state()).stats.buildings).toBe(1);
+        expect(Number((await state()).stats.tick)).toBeGreaterThanOrEqual(
+          JSON.parse(winerySave).state.tick,
+        );
+        await game.locator('#pause').click();
+      }
       await panel
         .getByRole('link', { name: 'Przywróć poprzednią wersję', exact: true })
         .click();
@@ -278,6 +326,7 @@ try {
       install: `0.6.1 -> ${releaseVersion}`,
       rollback: `${releaseVersion} -> 0.6.1`,
       gameReinstalledAndResumed: newGame,
+      wineryReinstalledAndResumed: !!winerySave,
       savedCameraRestored: true,
       savesPreserved: true,
       errors,
