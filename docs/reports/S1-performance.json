@@ -1,0 +1,72 @@
+{
+  "measuredAt": "2026-11-14T22:47:53.327Z",
+  "base": "http://127.0.0.1:4274/",
+  "chromium": "158.0.8127.18",
+  "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+  "logicalCpus": 5,
+  "memoryBytes": 18882662400,
+  "viewport": {
+    "width": 1280,
+    "height": 900
+  },
+  "durationMs": 60016.29999997616,
+  "frames": 3396,
+  "fps": 56.58660783614545,
+  "medianFrameMs": 16.69999999999709,
+  "p95FrameMs": 16.80000000000291,
+  "framesOver50ms": 9,
+  "maxUnits": 17,
+  "maxAdvanceMs": 6,
+  "maxLocalExpanded": 90,
+  "maxAudioVoices": 3,
+  "maxResidentSectors": 48,
+  "maxPendingSectors": 0,
+  "maxTextureBytes": 26214400,
+  "saveBytes": 13202,
+  "beforeHeap": {
+    "usedSize": 11810332,
+    "totalSize": 20324352,
+    "embedderHeapUsedSize": 6279896,
+    "backingStorageSize": 38102005
+  },
+  "afterHeap": {
+    "usedSize": 11524652,
+    "totalSize": 42868736,
+    "embedderHeapUsedSize": 5265096,
+    "backingStorageSize": 32829566
+  },
+  "retainedHeap": {
+    "usedSize": 10694780,
+    "totalSize": 11673600,
+    "embedderHeapUsedSize": 2657128,
+    "backingStorageSize": 32793239
+  },
+  "final": {
+    "ready": true,
+    "tick": 4933,
+    "seed": 20261114,
+    "result": "",
+    "served": 7,
+    "profit": 24989,
+    "stockE95": 484,
+    "stockOn": 1779,
+    "customers": 12,
+    "units": 16,
+    "fuelQueue": 2,
+    "checkoutQueue": 1,
+    "delivery": "",
+    "deliveryReceived": 0,
+    "deliveries": 1,
+    "thirdPump": true,
+    "cash": 1339692,
+    "saveVersion": 1,
+    "maxAdvanceMs": 6,
+    "navRegions": 64,
+    "navLocal": 10,
+    "terrain": "{\"resident\":48,\"pending\":0,\"requests\":254,\"evictions\":206,\"rendered\":24,\"missing\":0,\"textureBytes\":25165824}",
+    "audioVoices": 2,
+    "duration": 7200
+  },
+  "errors": [],
+  "notes": "Headless Chromium with software rendering, no CPU/network throttling. 60 seconds at speed x4 and zoom 0.5 with camera moves; ordinary S1 population, not a synthetic 32-unit stress test. Heap excludes GPU; textureBytes estimates sector RGBA surfaces."
+}

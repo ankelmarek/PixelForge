@@ -7,6 +7,17 @@ Gałąź `feature/s1-stacja-benzynowa` powstała z `4feec4e` / PR #17;
 zawiera wcześniejszy silnik, Dżdżownicę i Winobranie W3. Przyrost S1
 należy oglądać od tego commita. Nie scalono PR ani nie wdrożono hostingu.
 
+[PR #18](https://github.com/ankelmarek/PixelForge/pull/18), kod i paczki
+w commicie `f861147`. Status: **REVIEW — kontrole lokalne i pełne CI PASS**.
+[CI #23](https://github.com/ankelmarek/PixelForge/actions/runs/43649290650)
+zaliczyło 135 Vitest, 15 testów paczek, 36 PHP/Python, 12 Apache/PHP,
+52 E2E (17.6 min, 8 uzasadnionych pominięć) oraz wszystkie kontrole
+instalacji, rollbacku i hostingu. CI odtworzyło identyczne SHA-256 obu ZIP-ów.
+Końcowe uzupełnienie tego raportu i roadmapy zmienia wyłącznie dokumentację
+oraz załączone wyniki/obrazy; kod, testy, zależności, workflow i paczki są
+identyczne ze sprawdzonym `f861147`. Automatyczne CI po tym uzupełnieniu
+dokumentacji ma własny status w PR.
+
 Nowy klient `gas-station` 0.1.0: świat 4096 × 4096, 64 sektory, zmiana
 6 minut, dwie pompy E95/ON, własny sklep, dwóch pracowników, fizyczne
 kolejki i parking, cysterna i dostawa towaru, trzeci dystrybutor z budową.
@@ -49,18 +60,24 @@ Wynik: **14 klientów, 387 L paliwa, 22 artykuły, +371 monet zysku**
 (liczby monet w interfejsie są zaokrąglane). Wznowienie wyniku również przeszło.
 
 [Widok stacji](reports/S1-station.png), [wynik](reports/S1-result.png),
-[emulacja telefonu](reports/S1-mobile.png).
+[emulacja telefonu](reports/S1-mobile.png), [ekran 320 px](reports/S1-mobile-narrow.png).
 
-Przeszły lint, TypeScript, build, 134 testy Vitest i dodatkowy test dostawy
-sklepowej, 15 testów paczek, 36 PHP/Python oraz 12 Apache/PHP.
-Składnia 17 plików PHP jest poprawna. Pełny zestaw E2E, testy dystrybucji
-i pomiar wydajności są uzupełniane przed publikacją PR.
+Przeszły lint, TypeScript, build, **135 testów Vitest**, 15 testów paczek,
+36 PHP/Python oraz 12 Apache/PHP. Składnia 17 plików PHP jest poprawna.
+Pełne lokalne E2E: **52 PASS, 8 SKIP, 0 FAIL** (19.1 min). Pominięcia:
+dwa testy wyłącznie dotykowe na desktopie, pięć desktopowych scenariuszy
+Winobrania na telefonie i pełna zmiana Stacji na telefonie, objęta osobną
+próbą podstawowej obsługi. Dodatkowo ponowiono test mobilny z ekranem 320 px:
+cele ≥44 px, brak zasłaniania środka przycisków, zamówienie i anulowanie PASS.
+Wszystkie pięć poleceń przeglądarkowej weryfikacji dystrybucji przeszło;
+szczegóły poniżej.
 
 Zastany test W3 miał wyścig między obserwacją dostępnej pielęgnacji a kliknięciem
 po jej zniknięciu; podobnie finał mógł zasłonić przycisk anulowania. Test
 ponownie sprawdza stan oferty/końca po krótkim nieudanym kliknięciu.
 Inne błędy nadal przerywają test; kryteria sukcesu kampanii i limit 720 s
-pozostają takie same. Kod Winobrania i jego formaty zapisu nie są zmieniane.
+pozostają takie same. Pełna kampania W3 przeszła w 8.0 min; przeszły też
+starsze sezony W1/W2. Kod Winobrania i jego formaty zapisu nie są zmieniane.
 
 ## Budżety i dystrybucja
 
@@ -72,6 +89,23 @@ gzip. Generator odtworzył wszystkie pliki identycznie bajt w bajt.
 Własny moduł runtime Stacji ma około 16.6 kB gzip w buildzie Vite;
 definicja i kontrolki są w małym wspólnym module katalogu.
 
+[Pomiar buildu](reports/S1-performance.json), `tools/measure-station.mjs`:
+Chromium 158 headless, renderowanie programowe, Xeon Platinum 8573C,
+5 dostępnych CPU, viewport 1280 × 900, bez ograniczania CPU/sieci.
+Przez 60 s: ×4, zoom 0.5, dostawa, budowa i 30 skoków kamery między
+sektorami. Liczniki stanu próbkowane co sekundę, czasy klatek przez rAF.
+Średnio **56.6 FPS**, mediana 16.7 ms, **p95 16.8 ms**, 9 klatek
+powyżej 50 ms. Największy krok symulacji 6 ms, lokalna trasa 90 rozwinięć.
+Cache najwyżej 48 sektorów, tekstury sektorów 25 MiB (z atlasami około
+28 MiB), zapis **13 202 bajty**, do 3 głosów audio w próbkach. Po powrocie do
+stacji 0 brakujących sektorów i 0 błędów JS. Heap JS po GC: około 10.2 MiB;
+nie jest to pomiar całej pamięci procesu ani GPU.
+
+Próba osiągnęła **17 jednostek** w zwykłej rozgrywce S1. Potwierdza budżety
+dla tego scenariusza; nie zastępuje syntetycznego testu 32 jednostek z planu
+S0 ani pomiaru na fizycznym telefonie. Ten test obciążenia należy uzupełnić
+przed zwiększeniem populacji w S2.
+
 - `pixelforge-0.12.0-full.zip`: **13 235 274 bajty**, 626 plików buildu
   oraz manifest; przyrost **83 943 bajty** względem 0.11.0.
   SHA-256: `838e1f9dad346ea20ca256de055f05457ddd507845599affc664ac083ab8ce69`.
@@ -82,6 +116,23 @@ Pierwszy ZIP służy istniejącemu panelowi aktualizacji lub hostingowi
 statycznemu. Drugi jest kompletną pierwszą instalacją w `public_html`.
 [Instrukcja i pobieranie](../downloads/README.md). Instalator pozostaje 1.2.0;
 wcześniejsze wydania 0.11.0 i ich sumy SHA-256 nie zostały zmienione.
+Pobrano też oba nowe archiwa z GitHuba i porównano ich SHA-256 z lokalnymi;
+są identyczne. [Metryki wydania](reports/S1-release.json).
+
+[25 wyników dystrybucji](reports/S1-distribution.json), wszystkie PASS:
+
+| Polecenie              | Przypadki | Sprawdzony przepływ                                                                                                  |
+| ---------------------- | --------: | -------------------------------------------------------------------------------------------------------------------- |
+| `test:updater:browser` |         8 | Atlas 4096/8192, `/` i `/PixelForge/`, desktop/mobile, install/rollback i kamera                                     |
+| `test:panel:browser`   |         2 | HTTPS, logowanie, upload tylko przygotowuje plan, instalacja i rollback                                              |
+| `test:game:browser`    |        10 | Rzeczywisty ZIP 0.12.0: Dżdżownica i Stacja na obu urządzeniach/ścieżkach, Winobranie na desktopie                   |
+| `test:release:browser` |         2 | 0.6.1 → 0.12.0 → rollback → 0.12.0; wznowienie Stacji i Dżdżownicy, również Winobrania na desktopie                  |
+| `test:hosting:browser` |         3 | Nowe `public_html`, setup, aktualizacja i rollback, HTTP 403 plików prywatnych; desktop/mobile i konfiguracja bez JS |
+
+Stacja w tych próbach zamawia paliwo, zapisuje się i po odświeżeniu lub
+ponownej instalacji zachowuje zamówienie oraz postęp. `public_html` używa
+tymczasowego pakietu testowego 0.12.1 o niezmienionym payloadzie 0.12.0;
+to fixture, nie osobne wydanie. Weryfikacja TLS pozostawała włączona.
 
 ## Ograniczenia i kolejny etap
 

@@ -229,9 +229,16 @@ zoom 0.5–2, minimapa, pauza, ×1/×2/×4 i wyciszenie. Brak tutorialu tekstowe
 
 Pełna zmiana przez UI zakończyła się 14 obsłużonymi i zyskiem +371 monet.
 Testy modelu obejmują dwa seedy, momenty budowy, kolejki, braki obsady,
-częściowy rozładunek, wznowienie i bilans zasobów. Raport podaje komplet
-kontroli, pomiary oraz ograniczenia. ZIP `full` służy istniejącemu panelowi,
+częściowy rozładunek, wznowienie i bilans zasobów. 135 Vitest, 15 testów
+paczek, 36 PHP/Python, 12 Apache/PHP i 52 E2E PASS (8 pominięć według
+platformy), w tym naprawiona regresja W3. 25 prób dystrybucji także PASS.
+Pomiar S1 przy ×4 i zoomie 0.5: 56.6 FPS, p95 16.8 ms przy obserwowanych
+17 jednostkach; limit 32 wymaga osobnego testu obciążenia przed S2.
+Raport podaje metody i ograniczenia. ZIP `full` służy istniejącemu panelowi,
 `public-html` pierwszej instalacji. Archiwalne wydania 0.11.0 są niezmienione.
+[PR #18](https://github.com/ankelmarek/PixelForge/pull/18),
+[pełne CI #23 — PASS](https://github.com/ankelmarek/PixelForge/actions/runs/43649290650)
+dla kodu i paczek `f861147`; końcowe uzupełnienie dotyczy wyłącznie dokumentacji.
 
 **S1: REVIEW. S2–S4: TODO.** Następny etap wymaga odbioru i osobnego zlecenia.
 Najem Skoczki, swobodne budowanie, myjnia i trzy zmiany nie są jeszcze
