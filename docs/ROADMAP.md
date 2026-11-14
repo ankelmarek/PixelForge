@@ -93,6 +93,8 @@ czynszu lub 50 + 8% obrotu zamiast przykładowych 450 / 200 + 8% ze specyfikacji
 S3: zmiany 8/12/10 minut, finał ≥60 aut, satysfakcja ≥70%, wartość netto >0.
 
 Wykonane kontrole i ograniczenia zapisano w [raporcie S0](S0-REPORT.md).
+Nowsze CI #20 bazy wykryło timeout E2E pełnej kampanii W3; pozostałe 46
+scenariuszy przeszło. Niestabilność wymaga wyjaśnienia przed odbiorem S1.
 Testy bazy nie potwierdzają jeszcze grywalności Stacji. Runtime, zależności,
 instalator i paczki 0.11.0 pozostają bez zmian; brak nowego wpisu w katalogu.
 Następny zakres po odbiorze: S1a–S1d, bez samoczynnego przejścia do S2.

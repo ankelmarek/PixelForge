@@ -606,6 +606,10 @@ odtworzyć porażkę. Test modelu nie zastąpi przejścia przez UI ani oceny gra
   korygować dane scenariusza wraz z raportem, nie dopisywać ukrytego ratunku.
 - **Regresja silnika:** zgodne rozszerzenia, bez importów gry do engine,
   bez zmian ID/formatów innych gier, bez hurtowej ekstrakcji Winobrania.
+- **Zastany test W3:** CI #20 bazy zakończyło się timeoutem kliknięcia
+  znikającej pielęgnacji (`winery.spec.ts:188`), mimo wcześniejszego PASS
+  tego samego kodu. Przed odbiorem S1 wyjaśnić przebieg i ustabilizować
+  regresję; nie ukrywać problemu pominięciem testu ani zwiększaniem timeoutu.
 - **Rozmiar i zoom:** małe atlasy, jeden sektor marginesu i pomiar pamięci;
   budżet 32 jednostek to początek pomiaru, nie obietnica płynności na telefonie.
 - **Niepołączone PR:** S0 ma jawnie wskazaną bazę #16; PR do main dziedziczy

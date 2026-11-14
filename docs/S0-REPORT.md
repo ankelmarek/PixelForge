@@ -23,6 +23,28 @@ przeszło testy logiki, E2E, instalacji, rollbacku i hostingu.
 Różnice `c295bb0..7f678a1` to tylko cztery pliki dokumentacji.
 S0 dodatkowo uruchamia lokalne kontrole na swojej gałęzi; wyniki poniżej.
 
+**Nowsza regresja nie jest w pełni zielona:** podczas S0 zakończyło się
+[CI #20 dla `7f678a1`](https://github.com/ankelmarek/PixelForge/actions/runs/43636198213).
+Wynik E2E: **46 PASS, 7 SKIP, 1 FAIL**. Test pełnej kampanii W3 przekroczył
+720 s przy `tests/e2e/winery.spec.ts:188`: po sprawdzeniu widoczności i stanu
+przycisku `[data-care]` automat czekał na jego kliknięcie, gdy przycisk stał
+się niewidoczny. To test odziedziczonej bazy, nie Stacji. Kod pomiędzy
+CI #19 i #20 jest identyczny; wynik wskazuje na problem zależny od przebiegu
+czasowego, ale nie uznajemy samego timeoutu za dowód jego dokładnej przyczyny.
+Kolejne kontrole przeglądarkowe instalatora w CI #20 zostały pominięte po
+błędzie E2E. Przed odbiorem S1 należy rozstrzygnąć tę niestabilność.
+
+Lokalna próba testu W3 odtworzyła ten sam timeout. W `trace.zip`:
+`isVisible` zwróciło true przy 471148 ms, `isEnabled` true przy 471251 ms,
+a kliknięcie przy 471343 ms znalazło już `<button hidden data-care>`.
+Potwierdza to zmianę dostępności między sprawdzeniem a akcją automatu.
+Podczas oczekiwania gra doszła do ticka 36000 i ekranu częściowego sukcesu
+(286 butelek), a test nie zakończył swojego scenariusza. Raport nie zalicza
+tej próby jako poprawnego przejścia W3. Trace i kontekst są lokalnie
+w `test-results/winery-W3-*/`; kod testu i gry pozostawiono na etapie S0
+bez zmian. Naprawa powinna obsłużyć zmianę stanu przed kliknięciem i ponownie
+sprawdzić cały finał, bez osłabiania wymaganych asercji.
+
 ## Wynik projektowania
 
 [STACJA-BENZYNOWA-IMPLEMENTATION.md](STACJA-BENZYNOWA-IMPLEMENTATION.md) zawiera:
@@ -73,7 +95,7 @@ niezaimplementowanych mechanik Stacji.
 | `npm run test:hosting`                              | PASS: 12 testów Apache/PHP                                   |
 | `npm run build`                                     | PASS; znane ostrzeżenie Vite o rozmiarze pakietu Phaser      |
 | `npm run lint`                                      | PASS                                                         |
-| `npm run test:e2e`                                  | Uruchomione; wynik zostanie zapisany po zakończeniu          |
+| `npm run test:e2e`                                  | FAIL — odtworzony timeout testu kampanii W3, opis powyżej    |
 | Kontrola odnośników, rachunków i zgodności archiwów | PASS — szczegóły poniżej                                     |
 
 Sprawdzono 73 lokalne odnośniki. Niezależne przeliczenie potwierdza przykład
