@@ -26,10 +26,15 @@ Projekt powstaje z myślą o wielokrotnym wykorzystaniu gotowego silnika i produ
 3. [Roadmapa](./docs/ROADMAP.md): aktualne etapy, zadania, priorytety i kryteria odbioru.
 4. [Aktualizator ZIP](./docs/UPDATER-SPEC.md): bezpieczne wydania, upload, walidacja i rollback.
 5. [Winobranie RTS](./docs/WINOBRANIE-RTS.md): pełne wymagania i etapy strategii ekonomicznej.
+6. [Plan wdrożenia Winobrania RTS](docs/WINOBRANIE-RTS-IMPLEMENTATION.md): kontrakty W0, brakujące usługi, balans wstępny i macierz testów.
 
 ## Stan implementacji
 
 Funkcje silnika powstały w historycznych gałęziach M0–M3 i powiązanych PR, które pozostają do przeglądu i integracji. **Gałąź main nie jest jeszcze opublikowaną wersją kodu.** Stare Winobranie i Leśny sygnał zostały porzucone, natomiast nowy projekt **Winobranie RTS** powstanie w osobnym katalogu na współdzielonym silniku; generyczne moduły pozostają do wykorzystania. Nowe mapy muszą być znacznie większe od historycznej próbki 640 × 416 pikseli.
+
+**Winobranie RTS — W0 wykonane:** [raport](docs/W0-REPORT.md) i plan W1 są na
+`feature/p3-winobranie-rts`, opartej na działającym PR #12. To etap kontraktów
+i inwentaryzacji; nowa gra nie jest jeszcze częścią katalogu ani paczki 0.8.0.
 
 ## Gotowa paczka na hosting
 
@@ -68,8 +73,8 @@ Paczka gry nie wdraża się samodzielnie.
 
 ## Uruchamianie
 
-Gałąź `feature/p3-soil-adventure` rozwija Dżdżownicę w pionowym przekroju gleby
-na bazie instalacji public_html z PR #11. Zawiera grę **Życie Dżdżownicy**, rdzeń P0/P1,
+Gałąź `feature/p3-winobranie-rts` zawiera plan W0 i zachowany kod 0.8.0 z PR #12:
+grę **Życie Dżdżownicy** w pionowym przekroju gleby, rdzeń P0/P1,
 demonstrację **Atlas** i narzędzia U0/U1/U2;
 wcześniejsze PR pozostają zależnościami, bez automatycznego merge.
 Wybierz **Zagraj**, następnie **Nowa gra** lub **Wznów**. Atlas pozostaje
@@ -83,7 +88,7 @@ Pełny zestaw testów obejmuje także PHP **8.2+**, ZipArchive i system Unix/Lin
 Po przełączeniu na bieżącą gałąź:
 
 ```bash
-git clone --branch feature/p3-soil-adventure https://github.com/ankelmarek/PixelForge.git
+git clone --branch feature/p3-winobranie-rts https://github.com/ankelmarek/PixelForge.git
 cd PixelForge
 npm ci
 npm run dev

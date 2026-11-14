@@ -1,6 +1,6 @@
 # PixelForge — aktualna roadmapa 0.3
 
-**Decyzja:** 14 listopada 2026. **Stan:** nowa gra **Winobranie RTS: Trzy sezony** zatwierdzona do projektowania; implementacja nie rozpoczęta. **Główny dokument produkcyjny:** [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md).
+**Decyzja:** 14 listopada 2026. **Stan:** W0 nowej gry **Winobranie RTS: Trzy sezony** wykonane — inwentaryzacja, kontrakty i plan; runtime W1–W4 nie jest rozpoczęty. **Główny dokument produkcyjny:** [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md).
 
 Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md) oraz [archiwum historycznym](./ROADMAP-ARCHIVE-2026-11.md). Oba mają status historyczny. Jeżeli ich zapis przeczy temu dokumentowi lub `docs/WINOBRANIE-RTS.md`, obowiązuje aktualna decyzja z 14 listopada.
 
@@ -30,23 +30,29 @@ Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md
 
 ## 3. Nowy główny cykl: Winobranie RTS
 
-| Etap   | Zakres                                                                                                           | Status |
-| ------ | ---------------------------------------------------------------------------------------------------------------- | ------ |
-| **W0** | Inwentaryzacja kodu, projekt architektury, modele danych i balans wstępny                                        | TODO   |
-| **W1** | Pierwszy grywalny vertical slice: duża mapa, własne rzędy, dwa domki, pracownicy, traktor, zbiór i sprzedaż      | TODO   |
-| **W2** | 6 szczepów, wzrost roślin, pogoda, prognoza, przymrozki i zraszacze z nieprzerwaną pracą                         | TODO   |
-| **W3** | 3 lata, zakup nowych domków, pracowników i traktorów, ekonomia, produkcja wina, warunki wygranej/przegranej      | TODO   |
-| **W4** | 3 warianty kampanii, grafika pixel art, audio, balans, wydajność, testy E2E, pełny ZIP przez dotychczasowy panel | TODO   |
+| Etap   | Zakres                                                                                                           | Status                                 |
+| ------ | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| **W0** | Inwentaryzacja kodu, projekt architektury, modele danych i balans wstępny                                        | DONE — dokumentacja i weryfikacja bazy |
+| **W1** | Pierwszy grywalny vertical slice: duża mapa, własne rzędy, dwa domki, pracownicy, traktor, zbiór i sprzedaż      | TODO                                   |
+| **W2** | 6 szczepów, wzrost roślin, pogoda, prognoza, przymrozki i zraszacze z nieprzerwaną pracą                         | TODO                                   |
+| **W3** | 3 lata, zakup nowych domków, pracowników i traktorów, ekonomia, produkcja wina, warunki wygranej/przegranej      | TODO                                   |
+| **W4** | 3 warianty kampanii, grafika pixel art, audio, balans, wydajność, testy E2E, pełny ZIP przez dotychczasowy panel | TODO                                   |
 
 **Szczegółowe mechaniki, etapy i checklisty znajdują się w [specyfikacji Winobrania RTS](./WINOBRANIE-RTS.md).** Każdy etap powinien być ukończony, przetestowany i zrecenzowany przed kolejnym. Nie deklarować ukończenia całej gry po zbudowaniu pierwszego prototypu.
 
-### Pierwsze zadanie Codexa: W0
+### Wykonane zadanie: W0
 
 1. Sprawdź aktualną bazę kodu z PR #12, stan nowszych PR i działające usługi świata; wybierz bezpieczną gałąź bazową.
 2. Utwórz oddzielną gałąź implementacji `feature/p3-winobranie-rts` z zatwierdzonego kodu, nie ze starej dokumentacyjnej gałęzi bez silnika.
 3. Przeanalizuj `docs/WINOBRANIE-RTS.md` i opracuj `docs/WINOBRANIE-RTS-IMPLEMENTATION.md` opisujący kontrakty, zmiany silnika, dynamiczną nawigację, system parcel i rozmieszczania, model ekonomii i pogody, stany zapisu i kolejność testów.
 4. Na końcu W0 przedstaw plan W1 i granice zależności; bez automatycznego tworzenia pełnej gry W1–W4.
 5. Nie scalaj PR ani nie wgrywaj ZIP na serwer bez zgody.
+
+Wynik: [plan wdrożenia i kontrakty](WINOBRANIE-RTS-IMPLEMENTATION.md),
+[raport W0](W0-REPORT.md). Bazą jest `3385c6c7` / PR #12; bieżące wymagania
+z `main` `cdbe163` włączono tylko do gałęzi roboczej. Runtime i paczki 0.8.0
+pozostają bez zmian. Następny zakres to W1a–W1d, po osobnym zleceniu;
+nowy tytuł nie jest jeszcze dostępny w launcherze ani ZIP-ie.
 
 ## 4. Kolejka pozostałych gier
 
@@ -74,6 +80,20 @@ Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md
 - [ ] Atlas i Dżdżownica przechodzą regresję, zapis gry nie narusza ich zapisów.
 - [ ] ZIP gry przechodzi walidację i może być obsługiwany przez istniejący aktualizator; instalacja na hostingu tylko po decyzji użytkownika.
 
-## 7. Polecenie do rozpoczęcia prac
+## 7. Zrealizowane polecenie W0
 
 > Pracujemy w `ankelmarek/PixelForge`. Użytkownik zatwierdził nowe `Winobranie RTS: Trzy sezony`, zupełnie różne od starego porzuconego prototypu. Przeczytaj `AGENTS.md`, `docs/ROADMAP.md`, `docs/WINOBRANIE-RTS.md` i `docs/LARGE-WORLDS.md` z właściwych gałęzi. Sprawdź najnowszą uruchamialną bazę (PR #12 lub nowsza), nie opieraj nowych prac wyłącznie na dokumentacyjnym main. Zrealizuj tylko **W0**: analizę architektury i plan wdrożenia z kontraktami i testami. Przygotuj osobną gałąź, nie dotykaj kodu innych gier i panelu. Po W0 przedstaw raport oraz plan W1. Nie wykonuj automatycznie W1–W4, nie scalaj do main i nie wdrażaj na serwer.
+
+## 8. Rejestr wykonania — 2026-11-14
+
+- Sprawdzono PR #1–#12; brak nowszej implementacji niż #12. Wybrano działający
+  kod 0.8.0 z potwierdzonym CI, zachowując odrębny odbiór grywalności Dżdżownicy.
+- Utworzono `feature/p3-winobranie-rts`; uzgodniono dokumentację roadmapy 0.3
+  z działającą bazą, zachowano historię wykonania P0–P3 i aktualizatora.
+- Opracowano kontrakty klienta, stan/zapis, transakcje budowania, lokalną
+  invalidację nawigacji, zegar x1/x2/x4, rezerwacje i partie, ekonomię, przymrozek
+  z ciągłym zraszaniem, trzyletni finał oraz macierz testów i przyrosty W1.
+- Ponownie wykonano typecheck, testy logiki/pakietów/PHP, build i E2E bazy.
+  Szczegóły oraz kontrola identyczności źródeł i paczek: [raport W0](W0-REPORT.md).
+- Nie dodano runtime nowej gry, nie rozpoczęto W1–W4/U3/Studio, nie wdrożono
+  niczego na hosting i nie scalono PR do main.

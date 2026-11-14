@@ -16,6 +16,8 @@ Nowym zadaniem infrastrukturalnym jest **bezpieczny aktualizator ZIP** z podglą
 
 **Bieżąca dokumentacja:** `docs/ROADMAP.md` (wersja 0.3), `docs/WINOBRANIE-RTS.md` i dokumenty obecnego engine. Roadmapy 0.2 oraz historyczne są archiwum. Nowe Winobranie RTS jest odrębną grą, stare Winobranie nie może być rozwijane. Nie rozpoczynaj automatycznie implementacji kolejnego etapu.
 
+**Stan W0:** wykonano inwentaryzację i [plan wdrożenia](docs/WINOBRANIE-RTS-IMPLEMENTATION.md) na `feature/p3-winobranie-rts`, bazując na kodzie PR #12. [Raport W0](docs/W0-REPORT.md) oddziela sprawdzone funkcje bazy od projektowanych usług. Następny zakres to W1 po osobnym zleceniu; nie powtarzaj W0 ani nie uznawaj dokumentacji za gotową grę.
+
 **Zmiana koncepcji „Życia Dżdżownicy” na polecenie użytkownika (2026-11-13):** ta gra pokazuje pionowy przekrój gleby z boku, a nie widok z góry. Rośliny rosną na powierzchni, pod nimi są korzenie, pędraki i larwy. Bohater porusza się w obu osiach, drąży i użyźnia glebę. Głębiej rośnie trudność; deszcz przenika od powierzchni w dół. Punkty i stopniowy rozwój prowadzą do dorosłości. Poprzedni pomysł czterech ogrodów i odrodzenia centralnego drzewa jest zastąpiony tą koncepcją. Pozostały rdzeń i laboratorium dużego świata pozostają niezależne od perspektywy tej gry.
 
 ## Gałęzie i pull requesty
@@ -28,7 +30,7 @@ Nowym zadaniem infrastrukturalnym jest **bezpieczny aktualizator ZIP** z podglą
 
 ## Sposób pracy
 
-1. Zacznij od etapu W0 nowej gry w `docs/ROADMAP.md` (wersja 0.3), jeśli użytkownik zleca prace nad Winobraniem RTS; w innym wypadku realizuj wyłącznie wskazany etap bieżącego projektu.
+1. Sprawdź status etapów Winobrania RTS w `docs/ROADMAP.md` (wersja 0.3) i realizuj wyłącznie wskazany zakres. W0 jest udokumentowane; W1–W4 wymagają kolejnych zleceń zgodnie z roadmapą.
 2. Sprawdzaj istniejący kod przed edycją. Nie niszcz działających rozwiązań, nie zastępuj całych modułów bez konieczności.
 3. Wykonuj małe, czytelne zmiany i dodawaj testy. Po każdym etapie uruchamiaj wszystkie dostępne kontrole.
 4. Zakończenie każdego etapu udokumentuj w `docs/ROADMAP.md`: status, istotne decyzje, testy, ograniczenia i następny krok.
@@ -95,8 +97,8 @@ Projektuj pierwsze 30–60 sekund każdego tytułu jako **niewerbalną naukę**:
 
 Nie buduj kont użytkowników, chmury zapisów, multiplayera, sklepu, systemu pluginów instalowanych z internetu, rozbudowanego ECS ani ogólnego edytora grafiki. **Wyjątek:** nowa strategia Winobranie RTS ma wprost zatwierdzone budowanie, zakup parcel i 30-minutową kampanię; te funkcje rozwijaj etapami W1–W4, nie interpretuj starego zakazu MVP jako zakazu tworzenia tej gry.
 
-Pierwszym zadaniem gry jest W0: kontrakty i plan, potem jeden grywalny vertical slice W1; dopiero po odbiorze jego kolejny zakres.
+W0 określiło kontrakty i plan. Następnie powstaje jeden grywalny vertical slice W1; dopiero po jego odbiorze kolejny zakres.
 
 ## Następne polecenie dla Codexa
 
-> Przeczytaj `docs/ROADMAP.md` w wersji 0.3 i `docs/WINOBRANIE-RTS.md`. Rozpocznij wyłącznie W0 nowej gry: wybierz sprawdzoną bazę silnika z aktualnych PR, opracuj kontrakty, fazy wdrażania i strategię testów, opisz dynamiczną nawigację i swobodne rozmieszczanie parcel, mechanikę przymrozku i ciągłego zraszania, gospodarkę oraz finał trzech lat. Starego Winobrania ani Leśnego sygnału nie rozwijaj. Bez automatycznego merge lub instalacji na hostingu.
+> Przed kolejnym zleceniem przeczytaj `docs/ROADMAP.md`, `docs/WINOBRANIE-RTS.md`, `docs/WINOBRANIE-RTS-IMPLEMENTATION.md` i `docs/W0-REPORT.md`. W0 jest zakończone. Jeśli użytkownik zleci W1, realizuj wyłącznie opisany wycinek W1a–W1d z testami kontraktowymi przed rozbudową silnika. Nie rozpoczynaj samodzielnie W2–W4. Starego Winobrania ani Leśnego sygnału nie rozwijaj. Bez automatycznego merge lub instalacji na hostingu.

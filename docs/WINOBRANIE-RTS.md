@@ -180,11 +180,14 @@ Model: deterministyczny seeded RNG, krok stały (np. istniejące 50 ms), praca p
 
 ### W0. Plan techniczny i gra projektowa (bez pełnego runtime)
 
-- [ ] Zbadaj PR #12 / `feature/p3-soil-adventure`, dokument `docs/LARGE-WORLDS.md`, stare PR #4 oraz bieżący instalator. Sprawdź, czy jest nowsza zatwierdzona baza.
-- [ ] Zaproponuj gałąź `feature/p3-winobranie-rts` od ostatniego działającego i zaakceptowanego kodu, **nie od starego dokumentacyjnego main**.
-- [ ] Utwórz `docs/WINOBRANIE-RTS-IMPLEMENTATION.md` z diagramem zależności, modelami stanu, schematami, etapami, zakresem testów i ryzykami.
-- [ ] Wyodrębnij listę funkcji już dostępnych i brakujących (dynamiczna nawigacja, budowanie, agronomia, wieloetapowa produkcja, ekonomia).
-- [ ] Nie przepisywać Dżdżownicy, Atlasu ani aktualizatora.
+- [x] Zbadaj PR #12 / `feature/p3-soil-adventure`, dokument `docs/LARGE-WORLDS.md`, stare PR #4 oraz bieżący instalator. Sprawdź, czy jest nowsza zatwierdzona baza.
+- [x] Zaproponuj gałąź `feature/p3-winobranie-rts` od ostatniego działającego i zaakceptowanego kodu, **nie od starego dokumentacyjnego main**.
+- [x] Utwórz `docs/WINOBRANIE-RTS-IMPLEMENTATION.md` z diagramem zależności, modelami stanu, schematami, etapami, zakresem testów i ryzykami.
+- [x] Wyodrębnij listę funkcji już dostępnych i brakujących (dynamiczna nawigacja, budowanie, agronomia, wieloetapowa produkcja, ekonomia).
+- [x] Nie przepisywać Dżdżownicy, Atlasu ani aktualizatora.
+
+Wykonano 2026-11-14: [kontrakty i plan](WINOBRANIE-RTS-IMPLEMENTATION.md),
+[raport weryfikacji bazy](W0-REPORT.md). Runtime W1–W4 pozostaje do realizacji.
 
 ### W1. Grywalny rdzeń na dużej mapie
 
