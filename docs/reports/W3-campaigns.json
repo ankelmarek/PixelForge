@@ -1,0 +1,78 @@
+{
+  "weather": [
+    {
+      "seed": 49,
+      "dose": 1035,
+      "min": -19,
+      "max": 374
+    },
+    {
+      "seed": 1,
+      "dose": 2504,
+      "min": -32,
+      "max": 369
+    }
+  ],
+  "metrics": [
+    {
+      "policy": 0,
+      "seed": 49,
+      "bottles": 422,
+      "quality": 68.11,
+      "netWorth": 31429.51,
+      "grapes": 802.8,
+      "result": "success",
+      "contracts": 3
+    },
+    {
+      "policy": 0,
+      "seed": 1,
+      "bottles": 420,
+      "quality": 67.25,
+      "netWorth": 32752.33,
+      "grapes": 792,
+      "result": "success",
+      "contracts": 3
+    },
+    {
+      "policy": 1,
+      "seed": 49,
+      "bottles": 311,
+      "quality": 79.67,
+      "netWorth": 15091.66,
+      "grapes": 733,
+      "result": "success",
+      "contracts": 3
+    },
+    {
+      "policy": 1,
+      "seed": 1,
+      "bottles": 333,
+      "quality": 77.86,
+      "netWorth": 15875.16,
+      "grapes": 719.5,
+      "result": "success",
+      "contracts": 3
+    },
+    {
+      "policy": 2,
+      "seed": 49,
+      "bottles": 369,
+      "quality": 68.99,
+      "netWorth": 32214.25,
+      "grapes": 786.8,
+      "result": "success",
+      "contracts": 3
+    },
+    {
+      "policy": 2,
+      "seed": 1,
+      "bottles": 377,
+      "quality": 67.59,
+      "netWorth": 34117.01,
+      "grapes": 782.4,
+      "result": "success",
+      "contracts": 3
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "deterministic": true,
+  "images": [
+    {
+      "name": "truck.png",
+      "width": 1024,
+      "height": 128,
+      "bytes": 6439,
+      "decoded": 524288
+    },
+    {
+      "name": "people.png",
+      "width": 512,
+      "height": 128,
+      "bytes": 2037,
+      "decoded": 262144
+    },
+    {
+      "name": "tree.png",
+      "width": 96,
+      "height": 96,
+      "bytes": 853,
+      "decoded": 36864
+    },
+    {
+      "name": "pump.png",
+      "width": 256,
+      "height": 64,
+      "bytes": 568,
+      "decoded": 65536
+    },
+    {
+      "name": "cars.png",
+      "width": 1024,
+      "height": 256,
+      "bytes": 15914,
+      "decoded": 1048576
+    },
+    {
+      "name": "shop.png",
+      "width": 352,
+      "height": 160,
+      "bytes": 1406,
+      "decoded": 225280
+    },
+    {
+      "name": "cover.png",
+      "width": 640,
+      "height": 360,
+      "bytes": 11970,
+      "decoded": 921600
+    },
+    {
+      "name": "tiles.png",
+      "width": 256,
+      "height": 16,
+      "bytes": 1050,
+      "decoded": 16384
+    }
+  ],
+  "pngBytes": 40237,
+  "decodedBytes": 3100672,
+  "sectorGzipBytes": 11476
+}
