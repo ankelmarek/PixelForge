@@ -56,17 +56,17 @@ Gracz nie musi klikać każdego klienta. Automatyzacja bazowa robi oczywiste rze
 
 ### Budynki i elementy możliwe do zakupu
 
-| Obiekt | Efekt w rozgrywce | Warunki |
-|---|---|---|
-| Dodatkowy dystrybutor | zwiększa liczbę równoległych tankowań | dojazd, miejsce manewrowe, dostępny magazyn paliwa |
-| Zbiornik paliwa | podnosi pojemność dla danego rodzaju paliwa | teren własny, miejsce dostawy |
-| Kasa / stanowisko sklepu | skraca kolejkę zakupową | powierzchnia sklepu i dostępny pracownik |
-| Regały, chłodnia, ekspres | odblokowują napoje, przekąski i kawę | kupione towary, pojemność |
-| Myjnia | dodatkowy przychód i osobna kolejka | wjazd/wyjazd, przyłącza, obsada lub automat |
-| Parking | pozwala zatrzymać większy ruch i klientów sklepu | dostęp do dróg |
-| Duży dystrybutor ON | obsługa ciężarówek, większy ładunek na klienta | większy promień manewrowy |
-| Billboard przy drodze | zwiększa szansę na zjazd klientów | rozsądne limity ruchu, nie generuje aut w nieskończoność |
-| Ulepszenie urządzeń | przyspiesza tankowanie, kasę lub mycie | koszt, krótkie wyłączenie przy montażu |
+| Obiekt                    | Efekt w rozgrywce                                | Warunki                                                  |
+| ------------------------- | ------------------------------------------------ | -------------------------------------------------------- |
+| Dodatkowy dystrybutor     | zwiększa liczbę równoległych tankowań            | dojazd, miejsce manewrowe, dostępny magazyn paliwa       |
+| Zbiornik paliwa           | podnosi pojemność dla danego rodzaju paliwa      | teren własny, miejsce dostawy                            |
+| Kasa / stanowisko sklepu  | skraca kolejkę zakupową                          | powierzchnia sklepu i dostępny pracownik                 |
+| Regały, chłodnia, ekspres | odblokowują napoje, przekąski i kawę             | kupione towary, pojemność                                |
+| Myjnia                    | dodatkowy przychód i osobna kolejka              | wjazd/wyjazd, przyłącza, obsada lub automat              |
+| Parking                   | pozwala zatrzymać większy ruch i klientów sklepu | dostęp do dróg                                           |
+| Duży dystrybutor ON       | obsługa ciężarówek, większy ładunek na klienta   | większy promień manewrowy                                |
+| Billboard przy drodze     | zwiększa szansę na zjazd klientów                | rozsądne limity ruchu, nie generuje aut w nieskończoność |
+| Ulepszenie urządzeń       | przyspiesza tankowanie, kasę lub mycie           | koszt, krótkie wyłączenie przy montażu                   |
 
 Nie wszystkie funkcje muszą być gotowe w pierwszym prototypie. Pierwszy vertical slice obejmuje **paliwa, sklep, dwie kolejki, dostawę i jedną sensowną rozbudowę**. Myjnia i ciężarówki mogą wejść w kolejnych etapach.
 
@@ -80,14 +80,14 @@ Budowanie lub usunięcie drogi aktualizuje lokalnie nawigację. Jeśli nowy ukł
 
 ### Typy klientów
 
-| Typ | Najczęstsze potrzeby | Zachowanie |
-|---|---|---|
-| Dojeżdżający do pracy | E95, szybka obsługa | krótka cierpliwość, unika kolejek |
-| Rodzina / turyści | paliwo, przekąski, toaleta, myjnia | dłuższy pobyt, wyższy koszyk |
-| Kierowca dostawczy | ON, kawa, przekąska | średnia cierpliwość, wraca częściej |
-| Ciężarówka | duży tank ON, odpoczynek | potrzebuje szerokiego przejazdu i miejsca |
-| Autobus wycieczkowy | zbiorowy zakup w sklepie i paliwo | duża, czasowa fala ruchu |
-| Klient ekspresowy | kawa lub zakupy bez tankowania | zajmuje parking, nie dystrybutor |
+| Typ                   | Najczęstsze potrzeby               | Zachowanie                                |
+| --------------------- | ---------------------------------- | ----------------------------------------- |
+| Dojeżdżający do pracy | E95, szybka obsługa                | krótka cierpliwość, unika kolejek         |
+| Rodzina / turyści     | paliwo, przekąski, toaleta, myjnia | dłuższy pobyt, wyższy koszyk              |
+| Kierowca dostawczy    | ON, kawa, przekąska                | średnia cierpliwość, wraca częściej       |
+| Ciężarówka            | duży tank ON, odpoczynek           | potrzebuje szerokiego przejazdu i miejsca |
+| Autobus wycieczkowy   | zbiorowy zakup w sklepie i paliwo  | duża, czasowa fala ruchu                  |
+| Klient ekspresowy     | kawa lub zakupy bez tankowania     | zajmuje parking, nie dystrybutor          |
 
 Cechy generowane deterministycznie z seeda: typ, paliwo, litry, zainteresowanie usługami, budżet, maksymalny czas oczekiwania, reakcja na cenę i jakość obsługi. Nie rób pełnej symulacji psychologicznej, wystarczą proste, przewidywalne reguły.
 
@@ -132,15 +132,15 @@ Nie wprowadzaj trzech równoległych, monotonicznych minigier wymagających spam
 
 **Główna nowa mechanika:** właściciel stacji może wybrać **samodzielny sklep ORLAR** albo **wynająć powierzchnię operatorowi „Skoczka”**. Najem nie jest dodatkiem czysto estetycznym. Zmienia gospodarkę, zarządzanie personelem, sklepowe kolejki, opłacalność parkingu, natężenie ruchu i obciążenie decyzjami gracza.
 
-| Aspekt | Sklep własny ORLAR | Wynajęty sklep Skoczka |
-|---|---|---|
-| Przychody właściciela stacji | pełna marża na rzeczywiście sprzedanych produktach | czynsz i ewentualny udział w obrocie najemcy |
-| Towary i dostawy | gracz kupuje towar, organizuje zapasy | operator sam zaopatruje sklep i rozlicza jego sprzedaż |
-| Personel | kasjer i pracownik obciążają etaty stacji | własna obsługa najemcy, bez ręcznego kierowania przez gracza |
-| Decyzje | ceny, ekspres, chłodnia, dostawy, druga kasa | kontrakt, standard lokalu, reklama, parking, ewentualne wspólne promocje |
-| Ryzyko | zalegające towary, pustki w magazynie, pensje | mniejszy udział w zyskach, możliwe ograniczenie przepustowości i warunki umowy |
-| Wpływ na paliwo | część kierowców dojeżdża po zakupy | operator przyciąga również klientów sklepu, część dodatkowo tankuje |
-| Inwestycje | wyposażenie należące do stacji | lokal, dojazd, wspólna infrastruktura; ruchome wyposażenie zapewnia operator |
+| Aspekt                       | Sklep własny ORLAR                                 | Wynajęty sklep Skoczka                                                         |
+| ---------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Przychody właściciela stacji | pełna marża na rzeczywiście sprzedanych produktach | czynsz i ewentualny udział w obrocie najemcy                                   |
+| Towary i dostawy             | gracz kupuje towar, organizuje zapasy              | operator sam zaopatruje sklep i rozlicza jego sprzedaż                         |
+| Personel                     | kasjer i pracownik obciążają etaty stacji          | własna obsługa najemcy, bez ręcznego kierowania przez gracza                   |
+| Decyzje                      | ceny, ekspres, chłodnia, dostawy, druga kasa       | kontrakt, standard lokalu, reklama, parking, ewentualne wspólne promocje       |
+| Ryzyko                       | zalegające towary, pustki w magazynie, pensje      | mniejszy udział w zyskach, możliwe ograniczenie przepustowości i warunki umowy |
+| Wpływ na paliwo              | część kierowców dojeżdża po zakupy                 | operator przyciąga również klientów sklepu, część dodatkowo tankuje            |
+| Inwestycje                   | wyposażenie należące do stacji                     | lokal, dojazd, wspólna infrastruktura; ruchome wyposażenie zapewnia operator   |
 
 **Nie wolno naliczać równocześnie marży ze sklepu i czynszu jako podwójnego zarobku z tej samej sprzedaży.** W trybie najmu obrót towarowy sklepu jest metryką operatora, a nie przychodem stacji. Paliwo, myjnia i inne usługi ORLAR nadal rozlicza właściciel stacji.
 
@@ -159,7 +159,7 @@ Nie wprowadzaj trzech równoległych, monotonicznych minigier wymagających spam
 
 1. **Autonomiczna działalność**: najemca ma własną obsługę, kolejkę, harmonogram dostaw i ograniczoną pojemność magazynu. Symulacja pozostaje aktywna poza kamerą.
 2. **Wspólny napływ klientów**: klient paliwowy może wejść do Skoczki po zaparkowaniu; klient Skoczki może przyjechać tylko na zakupy i ewentualnie zatankować. Parking i dojazd muszą rzeczywiście istnieć, podobnie jak ścieżka piesza.
-3. **Nie generuj darmowego nieskończonego ruchu**: wpływ renomy sieci to ograniczona, parametryzowana zmiana *prawdopodobieństwa zjazdu* już generowanego ruchu na drodze, a nie nieograniczony spawn aut. Limit klientów, przepustowość wejścia i parkingu obowiązują oba typy sklepu.
+3. **Nie generuj darmowego nieskończonego ruchu**: wpływ renomy sieci to ograniczona, parametryzowana zmiana _prawdopodobieństwa zjazdu_ już generowanego ruchu na drodze, a nie nieograniczony spawn aut. Limit klientów, przepustowość wejścia i parkingu obowiązują oba typy sklepu.
 4. **Niezależne rozliczenie**: każda transakcja najemcy zwiększa \`tenantTurnover\` dokładnie raz; dochód gracza z najmu naliczany jest zgodnie z kontraktem i zaksięgowany osobno, na koniec zmiany lub w ustalonych okresach. Wpływ na satysfakcję / popyt nie jest dodatkowym przychodem księgowym.
 5. **Efekty operacyjne**: jeśli kolejka blokuje wejście lub parking jest pełen, część klientów odjeżdża. Inwestycje gracza w parking, chodnik, oświetlenie lub standard lokalu mogą temu przeciwdziałać, ale nie dają zawsze dodatniej stopy zwrotu.
 6. **Zdarzenia**: dostawczy samochód Skoczki przyjeżdża i rozładowuje towar; promocyjny weekend zwiększa ruch; chwilowa awaria chłodni ogranicza asortyment. Zdarzenia zgodne ze wspólnym schedulerem i nie powinny generować dwóch krytycznych alarmów naraz.
@@ -207,6 +207,7 @@ Rozliczenie okresowe ma posiadać **unikalne ID i ochronę przed ponownym nalicz
 ## 9. Pracownicy i automatyzacja
 
 Start: 2 pracowników, np. jeden do obsługi stacji, drugi do sklepu. Dokupienie kasy, dystrybutora lub myjni stwarza racjonalną potrzebę kolejnych osób. Gracz może:
+
 - przydzielić pracownika do dystrybutorów, kasy, magazynu albo myjni,
 - zatrudnić dodatkowe osoby na zmianę, czasowo lub na całą kampanię,
 - przestawić priorytet zadań (szybka kasa, obsługa ciężarówek, dostawy),
@@ -221,6 +222,7 @@ Prowadź **jeden jawny księgowy ledger** operacji: gotówka, koszt zakupu paliw
 Wszystkie wartości pieniężne w najmniejszych jednostkach liczbowych całkowitych, litry paliwa jako liczby całkowite lub fixed-point. Zakaz pływających błędów sumowania, ujemnych stanów paliwa i zdublowanych transakcji po odświeżeniu.
 
 **Konkurencyjne strategie (w tym wybór modelu sklepu):**
+
 1. **Szybka obsługa:** niskie ceny, dużo pomp, krótka kolejka, duży obrót.
 2. **Sklep premium własny ORLAR:** nieco wyższe ceny, mocny sklep z kawą i przekąskami, spokojniejszy ruch.
 3. **Transport ciężki:** większy dystrybutor ON, parking, wysokie pojedyncze transakcje.
@@ -234,17 +236,18 @@ Warianty muszą być porównywalnie grywalne, a nie tylko dekoracyjnymi „perk-
 
 **Kampania: „Wielki Weekend”**. Trzy skompresowane zmiany bez ręcznego przechodzenia tur, sumarycznie **30 minut przy ×1**:
 
-| Część | Orientacyjny czas realny | Dominujący problem |
-|---|---:|---|
-| **Piątek. Otwarcie** | 8 min | zarobienie pierwszych pieniędzy, sklep, pierwsza dostawa |
-| **Sobota. Rozbudowa** | 12 min | większy ruch turystów, rozbudowa pomp, zatrudnienie i myjnia |
-| **Niedziela. Wielki Powrót** | 10 min | duża fala klientów i aut dostawczych, oddech finansowy oraz finał |
+| Część                        | Orientacyjny czas realny | Dominujący problem                                                |
+| ---------------------------- | -----------------------: | ----------------------------------------------------------------- |
+| **Piątek. Otwarcie**         |                    8 min | zarobienie pierwszych pieniędzy, sklep, pierwsza dostawa          |
+| **Sobota. Rozbudowa**        |                   12 min | większy ruch turystów, rozbudowa pomp, zatrudnienie i myjnia      |
+| **Niedziela. Wielki Powrót** |                   10 min | duża fala klientów i aut dostawczych, oddech finansowy oraz finał |
 
 Na granicy zmiany krótka animacja zmiany światła, godziny i fala dojazdów; nie wymuszaj przejścia do osobnego poziomu. Zmiana pory to płynna kontynuacja mapy i stanu.
 
 Po ostatniej fali gra **zawsze kończy się**, niezależnie od oceny, chyba że gracz dobrowolnie wybrał tryb sandbox (po MVP).
 
 **Wstępne warunki sukcesu (parametry do balansu):**
+
 - Obsłuż minimum 60 samochodów i zdobądź średnią satysfakcję ≥70%.
 - Zakończ z dodatnią wartością netto przedsiębiorstwa; gra nie może wymagać wyłącznie maksymalizacji gotówki, gdy gracz inwestował w trwałe budynki.
 - Za osiągnięcie dodatkowych celów (sklep, myjnia, brak długich kolejek) otrzymaj lepszą ocenę. **Nie jest wymagana jedna jedyna ścieżka zakupów.**
@@ -264,6 +267,7 @@ Warianty korzystają ze wspólnego modelu. Nie implementować trzech pełnych sc
 ## 12. Zdarzenia dynamiczne i rytm
 
 Zdarzenia mają wymuszać wybór, ale nie losowo niszczyć kampanii:
+
 - niespodziewany autokar z klientami sklepu,
 - podwyżka cen hurtowych przed dostawą,
 - deszcz ograniczający ruch do myjni,
@@ -278,6 +282,7 @@ W jednym momencie maksymalnie jedno krytyczne zdarzenie. Każde ma telegraphed s
 ## 13. Oprawa graficzna
 
 Wizualnie gra ma wyglądać jak mały, szczegółowy, przyjazny świat:
+
 - kolorowe, rozpoznawalne auta i ciężarówki, różne sylwetki, lampy, cienie i kierunkowskazy,
 - animowane paliwowe stanowiska, pracownicy, otwierane drzwi samochodów, napełniane zbiorniki,
 - sklep ze światłem wewnątrz, ruchomym klientem i urządzeniami,
@@ -290,6 +295,7 @@ Grafika pixel art 2D z góry 3/4, płynna kamera i stabilny pixel snapping. Nie 
 ## 14. Dźwięk i muzyka
 
 **Dźwięki są obowiązkowe, nie dodatkiem:**
+
 - ambient drogi, wiatr, ptaki, deszcz, odległe silniki i ruch klientów,
 - silnik samochodu: przyjazd, wolna jazda, zatrzymanie, odjazd,
 - pompa, szybki odgłos dystrybutora, terminal płatniczy, kasa, drzwi sklepu, ekspres,
@@ -303,6 +309,7 @@ AudioService z limitami jednoczesnych dźwięków, tłumieniem przez odległoś�
 ### Klient gry
 
 Proponowana struktura:
+
 ```text
 src/games/gas-station/
   index.ts
@@ -345,6 +352,7 @@ Stan: `schemaVersion`, `gameId`, `gameVersion`, seed, zmiana i zegar, status kam
 ## 16. Kamienie milowe dla Codexa
 
 ### S0. Projekt techniczny i gameplay design
+
 - [ ] Przejrzyj najnowszą działającą gałąź silnika, PR #15 lub późniejszy, nie bazuj ślepo na dokumentacyjnym `main`.
 - [ ] Utwórz `docs/STACJA-BENZYNOWA-IMPLEMENTATION.md`: dokładny model stanów, kontrakty, zakres systemów generycznych, schematy, budżet assetów, plan E2E i ryzyka.
 - [ ] Opracuj jednoznaczną tabelę pętli 3 zmian, koszty, marże, wagi satysfakcji i ograniczenia liczby jednostek.
@@ -352,6 +360,7 @@ Stan: `schemaVersion`, `gameId`, `gameVersion`, seed, zmiana i zegar, status kam
 - [ ] Załóż nową gałąź `feature/p3-stacja-benzynowa` od sprawdzonej bazy. Nie scalaj ani nie publikuj automatycznie.
 
 ### S1. Vertical slice 5–8 minut
+
 - [ ] Mapa drogowa i mała stacja, ruch losowanych aut, 2 dystrybutory, E95/ON, zapasy i marże.
 - [ ] Sklep/kasa, 2 pracowników, kolejki tankowania i płatności.
 - [ ] Zamówienie i przyjazd cysterny, rzeczywiste uzupełnienie stanu paliwa.
@@ -361,6 +370,7 @@ Stan: `schemaVersion`, `gameId`, `gameVersion`, seed, zmiana i zegar, status kam
 - [ ] Wszystkie konieczne akcje tylko myszą. Bez dekoracyjnych, nieaktywnych kontrolek.
 
 ### S2. Rozbudowa, ruch i personel
+
 - [ ] Samochody osobowe, dostawcze, ciężarówki; różne dojazdy, kolejki i zachowania.
 - [ ] Kupowanie parcel i swobodne rozmieszczenie dystrybutorów, parkingów, drugiej kasy, drogi.
 - [ ] Pracownicy, płace, zmiany i priorytety.
@@ -369,6 +379,7 @@ Stan: `schemaVersion`, `gameId`, `gameVersion`, seed, zmiana i zegar, status kam
 - [ ] Brak zakleszczeń i regresji regionalnego pathfindingu.
 
 ### S3. Myjnia, ekonomia, trzy zmiany, zakończenie
+
 - [ ] Myjnia z rzeczywistym dojazdem, animacją, kosztami i kolejką.
 - [ ] Dynamiczne wydarzenia, deszcz, fala turystów, awarie i dostawy.
 - [ ] Pełne piątek/sobota/niedziela i nieunikniony finał po trzeciej zmianie.
@@ -376,6 +387,7 @@ Stan: `schemaVersion`, `gameId`, `gameVersion`, seed, zmiana i zegar, status kam
 - [ ] Co najmniej trzy opłacalne strategie, wygrana/częściowy sukces/porażka, bilans ekonomiczny.
 
 ### S4. Dopracowanie i wydanie
+
 - [ ] Trzy scenariusze, pełna grafika, animacje, audio i dynamiczne światło.
 - [ ] Oryginalny branding ORLAR (orzeł) i Skoczka (żabka): odrębny od realnych marek, także w uproszczonych sprite'ach i dźwiękach.
 - [ ] Playtesty z co najmniej 3 osobami, pomiar czasu i problemów z odkrywalnością.
