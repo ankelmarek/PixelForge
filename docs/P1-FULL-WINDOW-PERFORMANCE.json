@@ -1,0 +1,243 @@
+{
+  "measuredAt": "2026-11-13T13:25:53.723Z",
+  "base": "http://127.0.0.1:4197/",
+  "notes": "Headless Chromium, no CPU/network throttling; device emulation is not physical hardware. FPS uses rAF over 20s, 20 camera jumps, simulation active. CDP heap excludes GPU; textureBytes estimates RGBA sector surfaces, not process RSS.",
+  "results": [
+    {
+      "device": "desktop",
+      "size": 4096,
+      "chromium": "158.0.8127.18",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "durationMs": 20008.799999999253,
+      "frames": 1114,
+      "fps": 55.70222808912357,
+      "medianFrameMs": 16.699999999999818,
+      "p95FrameMs": 33.29999999999927,
+      "framesOver50ms": 10,
+      "initialHeap": {
+        "usedSize": 11326120,
+        "totalSize": 19013632,
+        "embedderHeapUsedSize": 3923736,
+        "backingStorageSize": 17026939
+      },
+      "endHeap": {
+        "usedSize": 14229948,
+        "totalSize": 23994368,
+        "embedderHeapUsedSize": 4821496,
+        "backingStorageSize": 53771135
+      },
+      "retainedHeap": {
+        "usedSize": 9234156,
+        "totalSize": 10100736,
+        "embedderHeapUsedSize": 1285712,
+        "backingStorageSize": 24310437
+      },
+      "maxResidentSectors": 48,
+      "maxRenderedSectors": 20,
+      "maxTextureBytes": 20971520,
+      "final": {
+        "width": 4096,
+        "height": 4096,
+        "resident": 48,
+        "pending": 0,
+        "requests": 105,
+        "evictions": 57,
+        "rendered": 16,
+        "missing": 0,
+        "textureBytes": 16777216,
+        "actorsRendered": 0,
+        "nodesRendered": 0,
+        "navigation": [
+          {
+            "regions": 64,
+            "abstractExpanded": 2,
+            "localExpanded": 29,
+            "maxLocalExpanded": 16,
+            "outcome": "found"
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "device": "desktop",
+      "size": 8192,
+      "chromium": "158.0.8127.18",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "durationMs": 20014.899999999256,
+      "frames": 1043,
+      "fps": 52.108834021123315,
+      "medianFrameMs": 16.699999999999818,
+      "p95FrameMs": 33.399999999999636,
+      "framesOver50ms": 17,
+      "initialHeap": {
+        "usedSize": 16444876,
+        "totalSize": 22159360,
+        "embedderHeapUsedSize": 3920328,
+        "backingStorageSize": 17837042
+      },
+      "endHeap": {
+        "usedSize": 17244416,
+        "totalSize": 26615808,
+        "embedderHeapUsedSize": 5584600,
+        "backingStorageSize": 59935287
+      },
+      "retainedHeap": {
+        "usedSize": 11126748,
+        "totalSize": 12460032,
+        "embedderHeapUsedSize": 1237832,
+        "backingStorageSize": 25097741
+      },
+      "maxResidentSectors": 48,
+      "maxRenderedSectors": 20,
+      "maxTextureBytes": 20971520,
+      "final": {
+        "width": 8192,
+        "height": 8192,
+        "resident": 48,
+        "pending": 0,
+        "requests": 240,
+        "evictions": 192,
+        "rendered": 16,
+        "missing": 0,
+        "textureBytes": 16777216,
+        "actorsRendered": 0,
+        "nodesRendered": 0,
+        "navigation": [
+          {
+            "regions": 256,
+            "abstractExpanded": 2,
+            "localExpanded": 29,
+            "maxLocalExpanded": 16,
+            "outcome": "found"
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "device": "mobile",
+      "size": 4096,
+      "chromium": "158.0.8127.18",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "durationMs": 20013.1,
+      "frames": 1018,
+      "fps": 50.859566644517614,
+      "medianFrameMs": 16.699999999999818,
+      "p95FrameMs": 33.399999999999636,
+      "framesOver50ms": 17,
+      "initialHeap": {
+        "usedSize": 10945428,
+        "totalSize": 19013632,
+        "embedderHeapUsedSize": 4512384,
+        "backingStorageSize": 23353004
+      },
+      "endHeap": {
+        "usedSize": 12461172,
+        "totalSize": 25829376,
+        "embedderHeapUsedSize": 1792584,
+        "backingStorageSize": 65260210
+      },
+      "retainedHeap": {
+        "usedSize": 9225136,
+        "totalSize": 9838592,
+        "embedderHeapUsedSize": 1510592,
+        "backingStorageSize": 32699053
+      },
+      "maxResidentSectors": 48,
+      "maxRenderedSectors": 30,
+      "maxTextureBytes": 31457280,
+      "final": {
+        "width": 4096,
+        "height": 4096,
+        "resident": 48,
+        "pending": 0,
+        "requests": 123,
+        "evictions": 75,
+        "rendered": 24,
+        "missing": 0,
+        "textureBytes": 25165824,
+        "actorsRendered": 0,
+        "nodesRendered": 0,
+        "navigation": [
+          {
+            "regions": 64,
+            "abstractExpanded": 2,
+            "localExpanded": 29,
+            "maxLocalExpanded": 16,
+            "outcome": "found"
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "device": "mobile",
+      "size": 8192,
+      "chromium": "158.0.8127.18",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "durationMs": 20004.1,
+      "frames": 909,
+      "fps": 45.451818072722915,
+      "medianFrameMs": 16.699999999999818,
+      "p95FrameMs": 49.900000000001455,
+      "framesOver50ms": 29,
+      "initialHeap": {
+        "usedSize": 15313652,
+        "totalSize": 23207936,
+        "embedderHeapUsedSize": 1899832,
+        "backingStorageSize": 24049496
+      },
+      "endHeap": {
+        "usedSize": 21315980,
+        "totalSize": 38936576,
+        "embedderHeapUsedSize": 6327200,
+        "backingStorageSize": 85158134
+      },
+      "retainedHeap": {
+        "usedSize": 11119064,
+        "totalSize": 11935744,
+        "embedderHeapUsedSize": 1375064,
+        "backingStorageSize": 33487126
+      },
+      "maxResidentSectors": 48,
+      "maxRenderedSectors": 30,
+      "maxTextureBytes": 31457280,
+      "final": {
+        "width": 8192,
+        "height": 8192,
+        "resident": 48,
+        "pending": 0,
+        "requests": 373,
+        "evictions": 322,
+        "rendered": 24,
+        "missing": 0,
+        "textureBytes": 25165824,
+        "actorsRendered": 0,
+        "nodesRendered": 0,
+        "navigation": [
+          {
+            "regions": 256,
+            "abstractExpanded": 2,
+            "localExpanded": 29,
+            "maxLocalExpanded": 16,
+            "outcome": "found"
+          }
+        ]
+      },
+      "errors": []
+    }
+  ]
+}

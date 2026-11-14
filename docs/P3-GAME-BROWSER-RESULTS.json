@@ -1,0 +1,62 @@
+{
+  "archive": "downloads/pixelforge-0.7.0-full.zip",
+  "emulationOnly": true,
+  "results": [
+    {
+      "device": "desktop",
+      "base": "/",
+      "chromium": "158.0.8127.18",
+      "firstRoot": true,
+      "resume": true,
+      "minZoom": 0.5,
+      "meanFps": 59.8,
+      "p95FrameMs": 16.700000000000728,
+      "retainedHeapBytes": 7765484,
+      "textureBytes": 2097152,
+      "sectors": 8,
+      "errors": []
+    },
+    {
+      "device": "desktop",
+      "base": "/PixelForge/",
+      "chromium": "158.0.8127.18",
+      "firstRoot": true,
+      "resume": true,
+      "minZoom": 0.5,
+      "meanFps": 59.7,
+      "p95FrameMs": 16.700000000000728,
+      "retainedHeapBytes": 7707008,
+      "textureBytes": 2097152,
+      "sectors": 8,
+      "errors": []
+    },
+    {
+      "device": "mobile",
+      "base": "/",
+      "chromium": "158.0.8127.18",
+      "firstRoot": true,
+      "resume": true,
+      "minZoom": 0.5,
+      "meanFps": 57.2,
+      "p95FrameMs": 16.800000000000182,
+      "retainedHeapBytes": 7630560,
+      "textureBytes": 7340032,
+      "sectors": 28,
+      "errors": []
+    },
+    {
+      "device": "mobile",
+      "base": "/PixelForge/",
+      "chromium": "158.0.8127.18",
+      "firstRoot": true,
+      "resume": true,
+      "minZoom": 0.5,
+      "meanFps": 37.6,
+      "p95FrameMs": 50,
+      "retainedHeapBytes": 7516212,
+      "textureBytes": 7340032,
+      "sectors": 28,
+      "errors": []
+    }
+  ]
+}
