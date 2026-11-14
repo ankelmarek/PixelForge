@@ -2,6 +2,8 @@
 
 **Decyzja:** 14 listopada 2026. **Stan:** W0 nowej gry **Winobranie RTS: Trzy sezony** wykonane — inwentaryzacja, kontrakty i plan. W1 i W2 są bazą kolejnych zleceń. Po poleceniu „Rób nowy zakres” zaimplementowano W3: trzyletnią kampanię, rozbudowę, ekonomię i produkcję wina. W3 jest do odbioru; W4 nie rozpoczęto. **Główny dokument produkcyjny:** [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md).
 
+**Stacja na Trasie** ma osobny plan S0–S4; implementacja tego tytułu nie jest rozpoczęta.
+
 Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md) oraz [archiwum historycznym](./ROADMAP-ARCHIVE-2026-11.md). Oba mają status historyczny. Jeżeli ich zapis przeczy temu dokumentowi lub `docs/WINOBRANIE-RTS.md`, obowiązuje aktualna decyzja z 14 listopada.
 
 [Archiwum stanu wykonania z PR #12](ROADMAP-ARCHIVE-0.2-RUNTIME.md) zachowuje dodatkowo raporty realizacji P0–P3/U0–U2 i wydania 0.8.0 z gałęzi zawierającej silnik.
@@ -28,7 +30,7 @@ Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md
 
 **Uwaga:** PR-y mogą pozostawać niepołączone z `main`. Codex przed rozpoczęciem W0 musi sprawdzić rzeczywistą aktualną gałąź z najnowszym zaakceptowanym kodem, a nie zakładać, że dokumentacyjny `main` zawiera silnik.
 
-## 3. Nowy główny cykl: Winobranie RTS
+## 3. Główny cykl istniejącej gry: Winobranie RTS
 
 | Etap   | Zakres                                                                                                           | Status                                 |
 | ------ | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
@@ -38,7 +40,7 @@ Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md
 | **W3** | 3 lata, zakup nowych domków, pracowników i traktorów, ekonomia, produkcja wina, warunki wygranej/przegranej      | REVIEW — implementacja i testy         |
 | **W4** | 3 warianty kampanii, grafika pixel art, audio, balans, wydajność, testy E2E, pełny ZIP przez dotychczasowy panel | TODO                                   |
 
-**Szczegółowe mechaniki, etapy i checklisty znajdują się w [specyfikacji Winobrania RTS](./WINOBRANIE-RTS.md).** Każdy etap powinien być ukończony, przetestowany i zrecenzowany przed kolejnym. Nie deklarować ukończenia całej gry po zbudowaniu pierwszego prototypu.
+**Uwaga:** statusy w tej gałęzi uwzględniają implementację W0–W3 z PR #13–#16. Przed kolejnym etapem sprawdź aktualne PR i ich raporty; dokumentacyjny `main` może nie zawierać kodu. Specyfikacja: [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md). Każdy etap powinien być ukończony, przetestowany i zrecenzowany przed kolejnym. Nie deklarować ukończenia całej gry po zbudowaniu pierwszego prototypu.
 
 ### Wykonane zadanie: W0
 
@@ -57,9 +59,23 @@ nowy tytuł nie jest jeszcze dostępny w launcherze ani ZIP-ie.
 ## 4. Kolejka pozostałych gier
 
 - **Miodobranie:** zaakceptowana koncepcja, osobny etap w przyszłości.
-- **Stacja Benzynowa:** zaakceptowana koncepcja, osobny etap w przyszłości.
+- **Stacja na Trasie: Wielki Weekend:** [pełna specyfikacja RTS](./STACJA-BENZYNOWA.md), osobna gra ekonomiczna z ruchem pojazdów, usługami, 3 zmianami i końcem po około 30 minutach. Etapy **S0–S4** są zaplanowane, **programowanie nie rozpoczęte**. Nie wstrzymuje aktualnych prac nad Winobraniem RTS.
 - **Życie Dżdżownicy:** istniejąca produkcja; zachować kompatybilność.
 - Pozostałe koncepcje pozostają propozycjami, nie aktywnymi zadaniami.
+
+### Plan rozwoju Stacji na Trasie (oddzielny cykl)
+
+Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: koncepcja dopracowana, nie wdrażana.
+
+| Etap | Cel                                                                                                   | Status |
+| ---- | ----------------------------------------------------------------------------------------------------- | ------ |
+| S0   | Inwentaryzacja aktualnego PixelForge, architektura symulacji ruchu i kolejek, projekt ekonomii        | TODO   |
+| S1   | Grywalna stacja, dwa dystrybutory, sklep, pracownicy, cysterna, pierwsza sprzedaż i podstawowy dźwięk | TODO   |
+| S2   | Swobodna rozbudowa, ruch samochodów osobowych i ciężarówek, nowe stanowiska, pracownicy i ceny        | TODO   |
+| S3   | Myjnia, ekonomia, zdarzenia i 3 zmiany kończące się wynikiem                                          | TODO   |
+| S4   | Warianty, pixel art, dźwięki, balans, testy, pełny ZIP dla istniejącego panelu                        | TODO   |
+
+**Zależność:** nowa gra używa istniejącego silnika, sektorów, nawigacji i zapisu. Codex przed rozpoczęciem S0 musi sprawdzić ostatni działający kod i PR #15 lub nowszy, ponieważ `main` może zawierać tylko dokumentację. Oddzielna gałąź `feature/p3-stacja-benzynowa`, brak automatycznego scalania i wdrażania. **Nie rozpoczynaj S1 bez akceptacji S0.**
 
 ## 5. Dalsza infrastruktura
 

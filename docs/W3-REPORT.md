@@ -7,7 +7,10 @@ Sprawdzono otwarty PR #15 i jego zakończone sukcesem pełne CI. Dokumentacyjny
 poprzednich PR do `main` i nie instaluje gry na hostingu użytkownika.
 
 Status: **REVIEW — implementacja i kontrole lokalne zakończone**.
-Wynik pełnego CI jest dołączany do PR bieżącej gałęzi. W4 nie rozpoczęto.
+Wynik pełnego CI jest dołączany do [PR #16](https://github.com/ankelmarek/PixelForge/pull/16).
+W4 nie rozpoczęto. Podczas publikacji pobrano nowe dokumenty z `main`
+`6a97fd1`: plan Stacji na Trasie S0–S4. Uzgodniono tylko dokumentację na
+gałęzi W3, zachowując plan nowej gry; kod i opublikowane ZIP-y nie zmieniły się.
 
 ## Kampania i rozwój
 
