@@ -7,6 +7,8 @@
 
 Projekt powstaje z myślą o wielokrotnym wykorzystaniu gotowego silnika i produkowaniu kolejnych, niezależnych tytułów, zamiast pisania całych gier od zera.
 
+**Kolejna zatwierdzona koncepcja:** [Stacja na Trasie: Wielki Weekend](docs/STACJA-BENZYNOWA.md). Osobna strategia ekonomiczna RTS o prowadzeniu stacji paliw, z ruchem, sklepem, dostawami, myjnią, pracownikami i trzyczęściową kampanią. Etapy S0–S4 opisano w [roadmapie](docs/ROADMAP.md); nie są jeszcze zaimplementowane.
+
 ## Główna zasada
 
 **Silnik nie zna fabuły ani nazwy żadnej gry.** Odpowiada za sceny, wejście, fizykę, interakcje, dźwięk, zapis, UI i wspólny kontrakt zawartości. Każda gra dostarcza konfigurację, poziomy, grafikę, dźwięk i opcjonalne moduły mechanik.
