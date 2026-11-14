@@ -1,5 +1,7 @@
 # PixelForge — specyfikacja techniczna i funkcjonalna
 
+> **Doprecyzowanie UX z 14 listopada 2026:** na polecenie użytkownika Winobranie RTS otrzymuje niewielkie, kontekstowe komunikaty „Co teraz?” z celem, następnym krokiem lub przyczyną blokady. Zwijany panel nie zatrzymuje gry i nie wymaga przeklikiwania. Ten wyjątek zastępuje zakaz pisanych podpowiedzi dla tego klienta; szczegóły w [specyfikacji gry](WINOBRANIE-RTS.md#10-ui-i-sterowanie). Pozostałe gry zachowują dotychczasowe zachowanie.
+
 > **Decyzja z 14 listopada 2026:** nowy produkt **Winobranie RTS: Trzy sezony** ma własną [specyfikację](WINOBRANIE-RTS.md) i etapy W0–W4 w [roadmapie 0.3](ROADMAP.md). Dawny prototyp `winobranie` pozostaje porzucony. Zatwierdzone budowanie, etykiety strategiczne, sterowanie myszą i kampania nowej gry mają pierwszeństwo nad historycznymi ograniczeniami poniżej. Dżdżownica zachowuje własny pionowy przekrój gleby.
 
 > **Uwaga z 13 listopada 2026:** to specyfikacja historycznych fundamentów PixelForge. Jej wytyczne o pierwszej platformówce, demie forest-demo, Winobraniu i małych mapach zostały zastąpione przez [bieżącą roadmapę](./ROADMAP.md). Nie rozwijaj tych gier. Nowy priorytet to mapy od 4096 × 4096 pikseli, obsługa myszą i aktualizator według [UPDATER-SPEC.md](./UPDATER-SPEC.md). Zachowaj ogólne kontrakty i użyteczne serwisy.

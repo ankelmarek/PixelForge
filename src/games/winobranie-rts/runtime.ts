@@ -22,6 +22,7 @@ import {
 } from './model';
 import { validateWorld, varieties, riverAt, type Variety } from './world';
 import { registerArt, VineyardViewRenderer } from './view';
+import { guidance } from './guidance';
 
 export function createVineyardRuntime(
   definition: ClientDefinition,
@@ -160,6 +161,7 @@ export function createVineyardRuntime(
         }
         this.clamp();
         this.hover = point(p);
+        this.hint = '';
         this.preview();
       };
       const up = (p: Phaser.Input.Pointer) => {
@@ -167,6 +169,7 @@ export function createVineyardRuntime(
         if (!d) return;
         const q = point(p),
           id = this.hit(q);
+        this.hint = '';
         if (this.tool === 'box' && this.box)
           this.selected = model.state.units
             .filter((u) =>
@@ -337,6 +340,17 @@ export function createVineyardRuntime(
       );
       this.clamp();
     }
+    private guidance() {
+      return this.prepared
+        ? guidance(
+            model.state,
+            world.scenario.goal,
+            this.tool,
+            this.plan,
+            this.hint,
+          )
+        : null;
+    }
     command(command: ClientCommand) {
       if (command.type === 'zoom') this.zoom(command.direction);
       if (command.type === 'focus') {
@@ -348,6 +362,20 @@ export function createVineyardRuntime(
       }
       if (command.type !== 'client-action') return;
       const { action, payload } = command;
+      if (action === 'guidance-focus') {
+        const id = this.guidance()?.target;
+        const target =
+          model.state.units.find((u) => u.id === id) ??
+          model.state.buildings.find((b) => b.id === id);
+        if (target) {
+          this.selected = [target.id];
+          this.tool = 'select';
+          const x = target.x + ('width' in target ? target.width / 2 : 0);
+          const y = target.y + ('height' in target ? target.height / 2 : 0);
+          this.cameras.main.centerOn(x * 16, y * 16);
+          this.clamp();
+        }
+      }
       if (
         action === 'tool' &&
         typeof payload === 'string' &&
@@ -493,6 +521,8 @@ export function createVineyardRuntime(
         cost: this.plan?.cost ?? 0,
         valid: this.plan?.valid ?? true,
         arrears: s.ledger.arrears,
+        goal: world.scenario.goal,
+        guidance: this.guidance(),
         units: s.units.map((u) => ({
           id: u.id,
           icon: u.kind === 'tractor' ? '▰' : '♟',

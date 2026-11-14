@@ -117,7 +117,7 @@ try {
     await page
       .getByRole('button', { name: 'Zaloguj się', exact: true })
       .click();
-    await expect(page.locator('[data-active]')).toHaveText('0.9.2');
+    await expect(page.locator('[data-active]')).toHaveText('0.9.3');
     let game, save;
     if (site.device !== 'no-js') {
       game = await context.newPage();
@@ -169,20 +169,20 @@ try {
       .getByRole('button', { name: 'Sprawdź pakiet', exact: true })
       .click();
     await expect(
-      page.getByRole('heading', { name: '0.9.2 → 0.9.3', exact: true }),
+      page.getByRole('heading', { name: '0.9.3 → 0.9.4', exact: true }),
     ).toBeVisible();
-    await expect(page.locator('[data-active]')).toHaveText('0.9.2');
-    await page
-      .getByRole('button', { name: 'Zainstaluj wydanie 0.9.3', exact: true })
-      .click();
     await expect(page.locator('[data-active]')).toHaveText('0.9.3');
+    await page
+      .getByRole('button', { name: 'Zainstaluj wydanie 0.9.4', exact: true })
+      .click();
+    await expect(page.locator('[data-active]')).toHaveText('0.9.4');
     await page
       .getByRole('link', { name: 'Przywróć poprzednią wersję', exact: true })
       .click();
     await page
       .getByRole('button', { name: 'Potwierdź przywrócenie', exact: true })
       .click();
-    await expect(page.locator('[data-active]')).toHaveText('0.9.2');
+    await expect(page.locator('[data-active]')).toHaveText('0.9.3');
     if (game) {
       expect(
         await game.evaluate(() =>
@@ -238,7 +238,7 @@ try {
       {
         chromium: browser.version(),
         release:
-          '0.9.3 is a temporary fixture with unchanged 0.9.2 payload, not a game release',
+          '0.9.4 is a temporary fixture with unchanged 0.9.3 payload, not a game release',
         results,
       },
       null,

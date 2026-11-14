@@ -3,6 +3,7 @@ import type {
   ClientDefinition,
   Snapshot,
 } from '../../engine/api';
+import type { Guidance } from './guidance';
 export interface VineyardView {
   cash: number;
   seconds: number;
@@ -22,6 +23,8 @@ export interface VineyardView {
   cost: number;
   valid: boolean;
   arrears: number;
+  guidance: Guidance | null;
+  goal: number;
   units: {
     id: string;
     icon: string;
@@ -62,7 +65,8 @@ export const createControls: NonNullable<
     .join(
       '',
     )}</div><button data-rotate="true" aria-label="Obróć domek">↻ <span data-view="rotation">0°</span></button><span data-view="price"></span><button data-cancel="true" aria-label="Anuluj">×</button><output data-view="hint"></output></aside>
-  <aside class="vineyard-selection"><div class="selection-heading"><span class="vineyard-seal">❧</span><div><small>GOSPODARSTWO</small><h2 data-view="label">Winnica</h2></div></div><p data-view="detail"></p><div class="crew" aria-label="Jednostki"></div><nav class="roles" aria-label="Praca">${[
+  <aside class="vineyard-selection"><div class="selection-heading"><span class="vineyard-seal">❧</span><div><small>GOSPODARSTWO</small><h2 data-view="label">Winnica</h2></div></div><p data-view="detail"></p>
+  <div class="crew" aria-label="Jednostki"></div><nav class="roles" aria-label="Praca">${[
     ['auto', '⚙', 'Auto'],
     ['harvest', '✿', 'Zbiór'],
     ['build', '⚒', 'Budowa'],
@@ -75,7 +79,11 @@ export const createControls: NonNullable<
     )
     .join(
       '',
-    )}</nav><button class="must-sale" data-sell="true">♧ Sprzedaj moszcz <strong data-view="must"></strong></button></aside>`;
+    )}</nav><button class="must-sale" data-sell="true">♧ Sprzedaj moszcz <strong data-view="must"></strong></button></aside>
+  <section class="vineyard-guidance" aria-label="Co teraz?">
+    <div class="guidance-heading"><b>Co teraz?</b><button data-guidance-toggle aria-expanded="true" aria-controls="vineyard-guidance-content">Ukryj</button></div>
+    <div id="vineyard-guidance-content"><small data-view="goal"></small><p data-view="guidance" role="status" aria-live="polite" aria-atomic="true"></p><button data-guidance-focus>Pokaż miejsce</button></div>
+  </section>`;
   const get = (name: string) =>
     root.querySelector<HTMLElement>(`[data-view="${name}"]`)!;
   let current: VineyardView | undefined;
@@ -85,6 +93,19 @@ export const createControls: NonNullable<
     );
     if (!button || button.disabled) return;
     const d = button.dataset;
+    if ('guidanceToggle' in d) {
+      const content = root.querySelector<HTMLElement>(
+        '#vineyard-guidance-content',
+      )!;
+      content.hidden = !content.hidden;
+      button.setAttribute('aria-expanded', String(!content.hidden));
+      button.textContent = content.hidden ? 'Pokaż' : 'Ukryj';
+      return;
+    }
+    if ('guidanceFocus' in d) {
+      send({ type: 'client-action', action: 'guidance-focus' });
+      return;
+    }
     for (const action of ['tool', 'variety', 'speed', 'role', 'unit'])
       if (d[action]) {
         send({
@@ -131,6 +152,19 @@ export const createControls: NonNullable<
       ? `Zaległości: ${s.arrears / 100} ◈`
       : s.hint;
     get('hint').classList.toggle('invalid', !s.valid);
+    const guide = root.querySelector<HTMLElement>('.vineyard-guidance')!;
+    guide.hidden = !s.guidance;
+    if (s.guidance) {
+      guide.dataset.tone = s.guidance.tone;
+      guide.dataset.guidance = s.guidance.id;
+      // Only actual text changes should be announced by assistive technology.
+      if (get('guidance').textContent !== s.guidance.text)
+        get('guidance').textContent = s.guidance.text;
+      const goal = `Cel sezonu: sprzedaj ${s.goal / 1000} L moszczu.`;
+      if (get('goal').textContent !== goal) get('goal').textContent = goal;
+      root.querySelector<HTMLButtonElement>('[data-guidance-focus]')!.hidden =
+        !s.guidance.target;
+    }
     root.querySelector<HTMLElement>('.varieties')!.hidden = s.tool !== 'row';
     root.querySelector<HTMLElement>('[data-rotate]')!.hidden =
       s.tool !== 'house' && s.tool !== 'move';

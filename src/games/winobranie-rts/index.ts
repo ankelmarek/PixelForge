@@ -4,7 +4,7 @@ export const winery: ClientDefinition = {
   kind: 'client',
   schemaVersion: 1,
   id: 'winobranie-rts',
-  version: '0.1.2',
+  version: '0.1.3',
   title: 'Winobranie RTS',
   description: 'Twoja ziemia. Pierwszy zbiór. Początek winnicy.',
   viewport: { width: 320, height: 180 },

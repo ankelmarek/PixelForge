@@ -21,17 +21,17 @@ with tempfile.TemporaryDirectory(
     if published.exists():
         assert published.read_bytes() == bundle, "Hosting archive differs from source"
         bundle = published.read_bytes()
-    with zipfile.ZipFile(ROOT / "downloads/pixelforge-0.9.2-full.zip") as archive:
+    with zipfile.ZipFile(ROOT / "downloads/pixelforge-0.9.3-full.zip") as archive:
         files = {
             name: archive.read(name)
             for name in archive.namelist()
             if name != "manifest.json"
         }
-    release = root / "fixture-0.9.3-full.zip"
+    release = root / "fixture-0.9.4-full.zip"
     release.write_bytes(
         fixture(
             files=files,
-            change=lambda value: value.update(releaseVersion="0.9.3"),
+            change=lambda value: value.update(releaseVersion="0.9.4"),
             compression=zipfile.ZIP_DEFLATED,
         )
     )

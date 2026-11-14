@@ -920,6 +920,50 @@ body:has(.lab) {
   pointer-events: auto;
   border: 1px solid #eee1ae;
 }
+.vineyard-guidance {
+  position: absolute;
+  left: 174px;
+  bottom: 20px;
+  width: min(440px, calc(100% - 530px));
+  padding: 10px 12px;
+  pointer-events: auto;
+  border: 1px solid #b2ba91;
+  border-left: 3px solid #708e52;
+  border-radius: 6px;
+  background: #f1e6c7f5;
+  color: #334936;
+  font:
+    12px/1.5 system-ui,
+    sans-serif;
+}
+.vineyard-guidance[data-tone='warning'] {
+  border-left-color: #a65c34;
+}
+.vineyard-guidance[data-tone='success'] {
+  border-left-color: #467747;
+}
+.guidance-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.vineyard-guidance button {
+  min-height: 32px;
+  padding: 4px 8px;
+  font-size: 11px;
+}
+.vineyard-guidance small {
+  margin: 8px 0 0;
+  font-size: 11px;
+  letter-spacing: 0;
+  color: #4e6044;
+}
+.vineyard-guidance p {
+  color: #334936;
+  line-height: 1.5;
+  margin: 8px 0;
+}
 .selection-heading {
   display: flex;
   align-items: center;
@@ -999,6 +1043,14 @@ body:has(.lab) {
   }
 }
 @media (max-width: 700px) {
+  .vineyard-guidance {
+    left: 12px;
+    right: 12px;
+    bottom: 144px;
+    width: auto;
+    max-height: 160px;
+    overflow-y: auto;
+  }
   .vineyard-ledger {
     left: 65px;
     top: 12px;

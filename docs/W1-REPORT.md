@@ -1,5 +1,9 @@
 # W1 — Winobranie RTS: pierwszy sezon
 
+> Aktualizacja po uwadze użytkownika: **0.9.3** dodaje krótkie, kontekstowe
+> komunikaty „Co teraz?”. [Opis zmiany i weryfikacja](W1-GUIDANCE.md).
+> Poniższy raport dokumentuje bazę W1 do 0.9.2.
+
 14 listopada 2026 (Europe/Warsaw). Gałąź `feature/w1-winobranie-rts`, baza
 `f6c4a767` / PR #13 (W0), dziedzicząca działający kod PR #12. W1a–W1d
 zaimplementowano i zweryfikowano lokalnie. [PR #14](https://github.com/ankelmarek/PixelForge/pull/14) pozostaje do odbioru użytkownika. W2–W4 nie

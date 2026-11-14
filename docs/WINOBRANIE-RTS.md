@@ -11,7 +11,7 @@ To **real-time strategy / tycoon** o zarządzaniu winnicą i przetwórstwem wino
 - Duży świat **8192 × 8192 px** (lub równoważna duża mapa sektorowa PixelForge); startowa własność zajmuje tylko część świata. Po zakupie nowych parcel gracz stopniowo rozszerza teren. Kamera nie pokazuje całego świata przy wejściu, ale nie można mieć wrażenia ciasnoty. Możliwość późniejszej mapy 4096 w opcjach jakości, bez ograniczania samego silnika.
 - Widok 2D z góry/3⁄4, czytelny pixel art, pełne okno przeglądarki. Mysz odpowiada za **100% niezbędnych akcji**; klawiatura jest tylko opcjonalna (Esc pauza; R obrót podczas budowy). Touch jako przystosowanie późniejsze, bez blokowania desktopowego MVP.
 - Rozgrywka w czasie rzeczywistym, z przyciskami pauza oraz x1, x2 i x4. Symulacja logiczna niezależna od FPS i widoczności obiektów.
-- Bez tekstowych tutoriali, pop-upów „naciśnij…”, obowiązkowych podpowiedzi i długich instrukcji w trakcie gry. **Dopuszczalne są etykiety gatunków, odmian, ceny, liczby i krótkie nazwy paneli strategicznych.** Akcje tłumaczą ikony, animacje, dźwięk, podświetlenia i natychmiastowa informacja zwrotna.
+- Bez modalnych tutoriali, obowiązkowego przeklikiwania i długich instrukcji w trakcie gry. **Dopuszczalne są etykiety gatunków, odmian, ceny, liczby, krótkie nazwy paneli i kontekstowe komunikaty „Co teraz?”** — doprecyzowanie użytkownika po pierwszej wersji W1, 2026-11-14. Akcje nadal pokazują ikony, animacje, dźwięk i podświetlenia.
 - Nie buduj od razu pełnego edytora gier ani multiplayera. Ta gra ma sprawdzić użyteczność wspólnego silnika, lecz zachować własną, angażującą pętlę decyzyjną.
 
 ## 2. Główna pętla i wygrywanie
@@ -140,7 +140,7 @@ W wersji planistycznej przykładowy budżet startowy **30 000 umownych monet**. 
 - Kółko: zoom z kotwicą pod kursorem.
 - PPM lub ikona: anulowanie bieżącego narzędzia.
 - Ikony: budowa, odmiany, zatrudnienie, flota, budynki, pogoda, finanse, pauza i prędkość.
-- Dopuszczalne liczby, krótkie nazwy i kolorowe piktogramy dla przejrzystości strategii. **Zero pisanych instrukcji sterowania i tutoriali gameplayowych**.
+- Dopuszczalne liczby, krótkie nazwy i kolorowe piktogramy oraz zwijany panel **„Co teraz?”**. Pokazuje cel sezonu i jeden krótki komunikat: następny krok, produkcję, gotową sprzedaż lub sposób usunięcia blokady. Podczas używania narzędzia wyjaśnia gest i błędny podgląd. Bez zatrzymywania gry, okien modalnych i kolejki nieaktualnych alertów. Przycisk „Pokaż miejsce” wybiera obiekt i przesuwa kamerę, bez wydawania rozkazów ani wydawania pieniędzy. Wznowienie oblicza komunikat z aktualnego zapisu; nie zapisuje osobnego postępu tutorialu.
 - Przy kliknięciu zadania podświetl obszar docelowy; nieodpowiednie miejsce na budynek czerwonym obrysem; brak środków monetą z wizualnym wygaśnięciem; przymrozek ikoną ostrzeżenia i dźwiękiem.
 - HUD: sezon/rok, temperatura, prognoza, środki, pracownicy, dostępne traktory, stan produkcji, trzy cele kampanii i widoczny pasek czasu sezonu. Każdy element może pokazać kontekstowy panel bez zatrzymywania całej symulacji.
 - Interfejs ma być czytelny, bez zajmowania połowy mapy rozbudowanymi panelami. Minimapę można kliknąć; alerty kierują kamerę do źródła zdarzenia.
@@ -234,7 +234,7 @@ Pełny przebieg automatyczny przez mysz przy ×4; nie jest to jeszcze
 4. Odmiany różnią się ekonomicznie i agronomicznie. Nowe nasadzenia nie wydają pełnego plonu natychmiast.
 5. Przymrozek wymaga sensownej obrony; przy poprawnym zraszaniu straty są niższe, przerwanie zbyt wcześnie nie daje darmowej ochrony.
 6. Traktor faktycznie przewozi plon, ludzie mają role, wino przechodzi przez łańcuch produkcyjny, bilans ilościowy jest zgodny.
-7. Wszystkie konieczne działania wykonuje się myszą, gra nie zawiera pisanych instrukcji sterowania. Przykładowe nazwy odmian i ceny są dozwolone.
+7. Wszystkie konieczne działania wykonuje się myszą. Krótkie komunikaty są aktualne, można je zwinąć i nie blokują gry. Nazwy odmian, ceny oraz podpowiedzi kontekstowe są dozwolone zgodnie z decyzją użytkownika z 2026-11-14.
 8. Dźwięki i muzyka działają, mają mute i niezależne głośności, nie są głośno nakładane przy wielu jednostkach.
 9. Każda kampania kończy się automatycznie po trzech latach, posiada sukces/częściowy sukces/porażkę i logiczny ekran wyników.
 10. Testy: unit, integracja, E2E, browser, bezpieczeństwo parametrów JSON, deterministyczność x1/x4, zapis/wznowienie, regresja istniejących gier, wydajność i paczka ZIP.

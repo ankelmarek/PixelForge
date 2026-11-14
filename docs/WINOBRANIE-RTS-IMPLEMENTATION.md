@@ -494,8 +494,10 @@ instrukcji z JSON ani `if (gameId === 'winobranie-rts')` w host/aplikacji.
 
 Snapshot strategiczny: czas/rok/tempo, pogoda, finanse, liczba dostępnych ludzi
 i pojazdów, produkcja, cele, wybór/narzędzie oraz alerty z pozycją. To dane do
-prezentacji, nie mutowalny stan modelu. Liczby, ceny i nazwy odmian są dozwolone;
-instrukcje klawiszy, samouczki i opisowe rozwiązania pozostają zabronione.
+prezentacji, nie mutowalny stan modelu. Liczby, ceny i nazwy odmian są dozwolone.
+Po decyzji użytkownika z 2026-11-14 także krótki komunikat „Co teraz?” jest
+projekcją bieżącego stanu klienta. Panel jest zwijany, wskazuje obiekt kamerą,
+nie zatrzymuje gry ani nie wykonuje rozkazów. Modalne samouczki pozostają poza zakresem.
 W1 pokaże tylko działające narzędzia, bez dekoracyjnych przycisków W2/W3.
 
 Nie odkładać całej jakości do W4: już W1 ma czytelny teren, sylwetki ludzi,
@@ -609,7 +611,7 @@ bez uzasadnienia. Małe commity/przeglądy w obrębie W1; W2 dopiero po odbiorze
 | A1 / W2      | Sześć odmian, wiek, suma ciepła, wilgoć, pąki, zbiór raz/rok                                           | Nowa sadzonka nie ma pełnego plonu; mierzalne różnice odmian i stanowisk          |
 | F1 / W2      | Wszystkie warianty zraszania z sekcji 8, poza kamerą i po wznowieniu                                   | Sensowne różnice strat i zgodny bilans wody/energii, brak ochrony jednym clickiem |
 | S1 / W1–W3   | Save podczas budowy, transportu, wsadu, mrozu, ostatniego ticka; uszkodzony lub przyszły format; quota | Atomowe odtworzenie/odrzucenie i zachowany ostatni poprawny rekord; izolacja gier |
-| U1 / W1      | Cała obsługa myszą, gesture cancel, focus, resize, zoom 0.5, wejście/wyjście                           | Pierwsza sprzedaż i wznowienie przez realny UI; brak tekstowych instrukcji        |
+| U1 / W1      | Cała obsługa myszą, gesture cancel, focus, resize, zoom 0.5, wejście/wyjście                           | Pierwsza sprzedaż i wznowienie przez realny UI; aktualne, zwijane komunikaty      |
 | G1 / W3      | 3 lata, 4 warunki wygranej, częściowy sukces, porażka/ratunek, wynik po reload                         | Dokładnie jeden finał, brak darmowego kończenia produkcji, koniec każdej kampanii |
 | G2 / W3/W4   | Trzy polityki, zestaw seedów, łagodna i trudna pogoda                                                  | Pełne kampanie od zera bez cheatów; żadna polityka nie wymaga dopasowanego RNG    |
 | V1 / W4      | Tekstury/sprite'y/heap/ticki, nawigacja w trakcie budowy, x4, dźwięki/pauza/mute                       | Pomiary z podaną maszyną i profilem; limit głosów i brak narastania zasobów       |
@@ -637,8 +639,8 @@ przejścia (średnia i rozrzut). Bez takiego pomiaru 30–35 minut pozostaje cel
    Agregacja rzędów, kolejki wyszukiwania i pomiar poprzedzają większe limity.
 3. **Tempo/ekonomia:** rachunek bez strat nie dowodzi wygranej. W3 wymaga pełnych
    symulacji kilku strategii i kontroli przepustowości, W4 ludzkich playtestów.
-4. **Czytelność bez tutorialu:** preview, ikony, stany blokady i alarmy wymagają
-   obserwacji nowych graczy; nie zastępować tego dopisaniem instrukcji.
+4. **Czytelność bez modalnego tutorialu:** preview, ikony, stany blokady i krótkie
+   komunikaty wymagają obserwacji nowych graczy. Dodanie panelu nie zastępuje playtestu.
 5. **Zmiany API/UI/audio:** wprowadzać addytywnie i z neutralnymi fixture'ami,
    nie przez przerobienie Dżdżownicy lub Atlasu pod RTS.
 6. **Niepołączone PR:** W0 dziedziczy bazę #12; żaden etap nie daje zgody na

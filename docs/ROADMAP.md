@@ -11,7 +11,7 @@ Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md
 1. **Pierwsze, uproszczone Winobranie (PR #4) pozostaje porzucone** jako produkt. Nowe **Winobranie RTS** to osobna, dużo ambitniejsza gra strategiczno-ekonomiczna korzystająca ze wspólnego silnika i osobnego katalogu. Nie przywracaj jego dawnej mapy ani podstawowej pętli jako docelowego produktu.
 2. **Leśny sygnał (platformówka)** pozostaje porzucony. Nie kontynuować.
 3. Nowa gra: 8192×8192, dowolne nasadzenia i rozmieszczenie budynków w obrębie zakupionych parcel, sześć odmian, trzy lata/sezony winiarskie, ryzyko przymrozków i aktywna ochrona zraszaniem, dwa domki winiarskie na start z możliwością dokupienia, traktorki, wynajmowani pracownicy, ekonomia, produkcja, dźwięki i jasny finał.
-4. Sterowanie **w całości myszą**, bez obowiązkowych skrótów i tekstowych tutoriali. Dozwolone krótkie etykiety strategiczne, liczby, odmiany, ceny.
+4. Sterowanie **w całości myszą**, bez obowiązkowych skrótów i modalnych tutoriali. Dozwolone krótkie etykiety strategiczne, liczby, odmiany, ceny oraz — na późniejsze polecenie użytkownika — zwijane komunikaty „Co teraz?” z aktualnym celem, następnym krokiem i przyczyną blokady.
 5. Projekt korzysta z **PixelForge**, z istniejących sektorów, dużych światów, renderera, audio, obsługi ZIP i zapisu. Nie duplikuje silnika.
 6. **Kod na osobnych gałęziach, PR bez automatycznego merge i wdrażania**. Dokumentację wolno aktualizować na main, ale implementacja nie może trafiać tam bez odbioru.
 
@@ -116,3 +116,11 @@ i badanie z osobami nieznającymi gry pozostają osobne. W2 nie jest rozpoczęte
 W1: 85 Vitest, 15 testów paczek, 36 PHP/Python, 12 Apache/PHP,
 45 Playwright PASS (5 uzasadnionych pominięć), build, lint, typecheck oraz
 komplet przeglądarkowych install/rollback/reinstall PASS. [PR #14](https://github.com/ankelmarek/PixelForge/pull/14).
+
+### Poprawka W1 po uwadze użytkownika — 0.9.3
+
+Zwijany panel „Co teraz?” wskazuje aktualny cel, najbliższy krok i przyczynę
+blokady. Potrafi wskazać kamerą domek z gotowym moszczem albo jednostkę
+wymagającą uwagi. Działa także po wznowieniu i nie zmienia formatu zapisu.
+Ta decyzja zastępuje wcześniejszy zakaz podpowiedzi tekstowych dla Winobrania;
+nie zmienia zakresu W2. [Raport poprawki](W1-GUIDANCE.md), bieżący ZIP 0.9.3.

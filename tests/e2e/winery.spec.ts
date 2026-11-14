@@ -62,6 +62,18 @@ test('W1: pełny sezon samą myszą, budowa, rzędy, transport, sprzedaż i wzno
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await open(page);
+  const guide = page.locator('.vineyard-guidance');
+  await expect(guide).toHaveAttribute('data-guidance', 'first-house');
+  await expect(guide).toContainText('Cel sezonu: sprzedaj 40 L moszczu.');
+  await expect(guide).toContainText('Zbuduj domek');
+  await page.screenshot({
+    path: 'test-results/winery-guidance-start.png',
+    style: '#diagnostics { visibility: hidden; }',
+  });
+  await page.locator('[data-guidance-toggle]').click();
+  await expect(page.locator('#vineyard-guidance-content')).toBeHidden();
+  await page.locator('[data-guidance-toggle]').click();
+  await expect(page.locator('#vineyard-guidance-content')).toBeVisible();
   await page.evaluate(() =>
     localStorage.setItem(
       'pixelforge:client:v3:earthworm',
@@ -72,6 +84,8 @@ test('W1: pełny sezon samą myszą, budowa, rzędy, transport, sprzedaż i wzno
   await clickCell(page, 250, 253);
   expect((await state(page)).stats?.buildings).toBe(0);
   expect((await state(page)).stats?.cash).toBe(3000000);
+  await expect(guide).toHaveAttribute('data-guidance', 'placement:Zajęte pole');
+  await expect(guide).toContainText('To miejsce jest zajęte');
   for (const x of [268, 280]) await clickCell(page, x, 253);
   await expect.poll(async () => (await state(page)).stats?.buildings).toBe(2);
   await page.locator('[data-cancel]').click();
@@ -99,6 +113,14 @@ test('W1: pełny sezon samą myszą, budowa, rzędy, transport, sprzedaż i wzno
       timeout: 40000,
     })
     .toBeGreaterThan(0);
+  await expect(guide).toHaveAttribute('data-guidance', 'sale');
+  await page.locator('[data-guidance-focus]').click();
+  await expect(page.locator('[data-sell]')).toBeVisible();
+  await expect(page.locator('[data-sell]')).toBeEnabled();
+  await page.screenshot({
+    path: 'test-results/winery-guidance-sale.png',
+    style: '#diagnostics { visibility: hidden; }',
+  });
   await page.locator('#pause').click();
   const before = await state(page);
   await page.waitForTimeout(300);
@@ -115,6 +137,7 @@ test('W1: pełny sezon samą myszą, budowa, rzędy, transport, sprzedaż i wzno
   await expect.poll(async () => (await state(page)).stats?.ready).toBe(true);
   expect((await state(page)).stats?.buildings).toBe(2);
   expect((await state(page)).stats?.rows).toBe(5);
+  await expect(guide).toHaveAttribute('data-guidance', 'sale');
   await page.locator('[data-speed="4"]').click();
   await focus(page, 262, 250);
   let sold = false;
@@ -151,9 +174,7 @@ test('W1: pełny sezon samą myszą, budowa, rzędy, transport, sprzedaż i wzno
       localStorage.getItem('pixelforge:client:v3:earthworm'),
     ),
   ).toBe('W1-isolation-sentinel');
-  expect(await page.locator('.game-shell').innerText()).not.toMatch(
-    /naciśnij|kliknij|przeciągnij|samouczek/i,
-  );
+  await expect(guide).toBeHidden();
   expect(errors).toEqual([]);
 });
 

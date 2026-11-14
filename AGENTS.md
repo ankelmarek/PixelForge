@@ -60,6 +60,14 @@ Nowym zadaniem infrastrukturalnym jest **bezpieczny aktualizator ZIP** z podglą
 
 ## Stała reguła: sterowanie bez pisanych podpowiedzi
 
+**Wyjątek zatwierdzony przez użytkownika 2026-11-14 — Winobranie RTS:** dodaj
+krótkie, kontekstowe komunikaty mówiące, co warto zrobić w bieżącej sytuacji.
+Jeden zwijany panel „Co teraz?” pokazuje cel, następny krok albo przyczynę
+blokady; może wskazać obiekt kamerą. Bez modalnego samouczka, zatrzymywania
+gry i obowiązkowego przeklikiwania. Treść wynika z aktualnego stanu także po
+wznowieniu, nie z kolejki dawno zakończonych zdarzeń. Ten wyjątek ma
+pierwszeństwo nad zakazami poniżej; pozostałe gry zachowują dotychczasowe UX.
+
 **Obowiązuje wszystkie gry i demo PixelForge od M0.** Gracz nie dostaje żadnych tekstowych instrukcji sterowania, samouczków, dymków typu „Naciśnij Shift”, opisów zagadek, strzałek z podpisami ani pop-upów objaśniających mechanikę. Nie dodawaj także ekranu z listą klawiszy. Mechanikę poznaje przez układ poziomu, animację, reakcję świata, dźwięk i obrazowe symbole. Krótkie nazwy menu i tytuł gry są dopuszczalne, ale nie mogą być instrukcją ani warunkiem rozwiązania zagadki.
 
 **Wspólny schemat klawiszy na desktopie:**
@@ -81,7 +89,7 @@ Projektuj pierwsze 30–60 sekund każdego tytułu jako **niewerbalną naukę**:
 
 - Pixel art bez rozmycia. Rozdzielczość **viewportu** może nadal wynosić 320 × 180, lecz **rozmiar świata** jest niezależny, dla nowych gier minimum 4096 × 4096 z kamerą, chunkami i płynnym zoomem.
 - Pełna obsługa klawiatury i przygotowana abstrakcja pod dotyk/pada. Dotykowe sterowanie podstawowe w MVP.
-- Gry muszą mieć pauzę, restart, wyciszenie, czytelny cel przedstawiony wizualnie i ekran końca. **Nie pokazuj instrukcji sterowania, ekranów tutorialowych ani podpowiedzi pisanych.**
+- Gry muszą mieć pauzę, restart, wyciszenie, czytelny cel przedstawiony wizualnie i ekran końca. **Nie pokazuj ekranów tutorialowych.** Krótkie wskazówki w Winobraniu RTS są dozwolone zgodnie z wyjątkiem powyżej; pozostałe gry zachowują naukę bez pisanych podpowiedzi.
 - Nawet demo powinno wyglądać spójnie: ograniczona paleta barw, animowany bohater, tło, podstawowe efekty i dźwięki. Nie zostawiaj surowych prostokątów debugowych jako finalnej oprawy.
 - Możliwość uruchomienia na Windows w przeglądarce i na smartfonie. Bez stałego połączenia z backendem.
 - Nie dodawaj reklam, analityki, zbędnych uprawnień, zewnętrznych fontów pobieranych w runtime ani elementów naruszających prawa autorskie.
@@ -89,7 +97,7 @@ Projektuj pierwsze 30–60 sekund każdego tytułu jako **niewerbalną naukę**:
 ## Testy wymagane na każdym etapie
 
 - `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`.
-- Po dodaniu demonstracji: `npm run test:e2e` obejmujący start gry, ruch, interakcję, przejście poziomu, pauzę i zapis/wznowienie. Sprawdź także, że w gameplayu nie pojawiają się teksty instruktażowe.
+- Po dodaniu demonstracji: `npm run test:e2e` obejmujący start gry, ruch, interakcję, przejście poziomu, pauzę i zapis/wznowienie. W Winobraniu RTS sprawdź aktualność, zwijanie i wskazywanie komunikatów; w pozostałych grach zachowaj test braku tekstów instruktażowych.
 - Sprawdź obsługę błędnej konfiguracji, brakującego assetu, odświeżenia strony i zapisu uszkodzonego JSON.
 - Zapisuj ograniczenia testów ręcznych; nie udawaj, że testy wykonano, jeśli środowisko na to nie pozwala.
 
