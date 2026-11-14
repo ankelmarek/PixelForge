@@ -98,6 +98,7 @@ export type AnyGameDefinition =
   GameDefinition | SimulationDefinition | import('./client').ClientDefinition;
 export interface Snapshot {
   results?: { label: string; value: string }[];
+  resultTitle?: string;
   client?: import('./client').JsonValue;
   objectiveIcon?: string;
   tokens?: { icon: string; label: string; active: boolean }[];

@@ -10,6 +10,28 @@ import {
 } from '../../src/engine/api/strategy';
 
 describe('neutralne kontrakty dynamicznej strategii', () => {
+  it('wybiera tę samą trasę po lokalnej edycji i odbudowie zapisu', () => {
+    const world = { width: 96, height: 96, terrain: { sectorSize: 16 } };
+    const blocked = new Set<string>();
+    const free = (p: { x: number; y: number }) => !blocked.has(`${p.x},${p.y}`);
+    const edited = new RegionalNavigator(world, free);
+    edited.findPath({ x: 8, y: 8 }, { x: 70, y: 70 });
+    for (const x of [21, 35, 52]) {
+      for (let y = 18; y < 45; y++) blocked.add(`${x},${y}`);
+      edited.invalidate({ x, y: 18, width: 1, height: 27 });
+    }
+    const restored = new RegionalNavigator(world, free);
+    for (const from of [
+      { x: 8, y: 8 },
+      { x: 28, y: 40 },
+      { x: 60, y: 25 },
+    ])
+      for (const to of [
+        { x: 72, y: 72 },
+        { x: 15, y: 60 },
+      ])
+        expect(edited.findPath(from, to)).toEqual(restored.findPath(from, to));
+  });
   it('zmienia tylko lokalne sektory i zachowuje izolację podglądu', () => {
     const blocked = new Set<string>();
     const geometry = { width: 128, height: 64, terrain: { sectorSize: 16 } };

@@ -25,6 +25,15 @@ import { registerArt, VineyardViewRenderer } from './view';
 import { guidance } from './guidance';
 import { seasonView } from './season-view';
 import type { WaterMode } from './water';
+import { campaignView } from './campaign-view';
+import {
+  campaignRules,
+  quality,
+  netWorth,
+  productiveVarieties,
+  type CrewKind,
+  type Upgrade,
+} from './campaign';
 
 export function createVineyardRuntime(
   definition: ClientDefinition,
@@ -32,9 +41,12 @@ export function createVineyardRuntime(
   data: unknown,
 ): ClientRuntime {
   const world = validateWorld(data),
-    model = new VineyardModel(world),
-    save = new VersionedSave(definition.id, 2, (value) =>
+    model = new VineyardModel(world, world.scenario.seed, true),
+    save = new VersionedSave(definition.id, 3, (value) =>
       model.validateSave(value),
+    ),
+    seasonSave = new VersionedSave(definition.id, 2, (value) =>
+      model.migrateV2(value),
     ),
     legacySave = new VersionedSave(definition.id, 1, (value) =>
       model.migrateV1(value),
@@ -42,6 +54,7 @@ export function createVineyardRuntime(
   const placementTools = [
     'row',
     'road',
+    'avenue',
     'house',
     'move',
     'tank',
@@ -320,7 +333,7 @@ export function createVineyardRuntime(
         this.plan = undefined;
         return;
       }
-      const from = ['row', 'road', 'pipe'].includes(this.tool)
+      const from = ['row', 'road', 'avenue', 'pipe'].includes(this.tool)
         ? (this.drag?.cell ?? this.hover)
         : this.hover;
       const signature = JSON.stringify([
@@ -429,6 +442,7 @@ export function createVineyardRuntime(
           'box',
           'row',
           'road',
+          'avenue',
           'house',
           'remove',
           'move',
@@ -483,6 +497,46 @@ export function createVineyardRuntime(
       }
       this.planKey = '';
       this.hint = '';
+      if (
+        [
+          'hire',
+          'upgrade',
+          'cellar-mode',
+          'contract',
+          'loan',
+          'repay',
+          'grapes',
+          'early',
+          'dismiss',
+        ].includes(action)
+      ) {
+        const id = this.selected[0];
+        const ok =
+          action === 'hire' && typeof payload === 'string'
+            ? model.hire(payload as CrewKind)
+            : action === 'upgrade' && id && typeof payload === 'string'
+              ? model.upgrade(id, payload as Upgrade)
+              : action === 'cellar-mode' && id && typeof payload === 'string'
+                ? model.cellarMode(id, payload as 'young' | 'reserve')
+                : action === 'contract' && typeof payload === 'string'
+                  ? model.acceptContract(payload)
+                  : action === 'loan'
+                    ? model.loan()
+                    : action === 'repay'
+                      ? model.loan(true)
+                      : action === 'grapes'
+                        ? model.sellGrapes()
+                        : action === 'early' && id
+                          ? model.earlySale(id)
+                          : action === 'dismiss' && id
+                            ? model.dismiss(id)
+                            : false;
+        context.audio.play(ok ? 'activate' : 'hit');
+        if (ok) persist();
+        else
+          this.hint =
+            model.lastReason || 'Sprawdź gotówkę, dostęp i trwającą pracę.';
+      }
       if (
         ['water-mode', 'refill', 'care'].includes(action) &&
         this.selected[0]
@@ -575,7 +629,7 @@ export function createVineyardRuntime(
             : u
               ? u.kind === 'tractor'
                 ? 'Traktor'
-                : `Pracownik ${u.id.slice(-1)}`
+                : `Pracownik ${u.id.split('-').at(-1)}`
               : this.selected[0] === 'warehouse'
                 ? 'Magazyn'
                 : 'Winnica');
@@ -591,6 +645,7 @@ export function createVineyardRuntime(
         seconds: s.tick / 20,
         duration: model.duration,
         season,
+        campaign: campaignView(s, this.selected[0]),
         speed: model.clock.speed,
         sold: s.sold,
         vouchers: s.vouchers,
@@ -618,11 +673,56 @@ export function createVineyardRuntime(
         })),
       };
       context.state({
+        resultTitle: s.campaign
+          ? {
+              success: 'Trzy udane roczniki',
+              partial: 'Winnica przetrwała — część celów osiągnięta',
+              failure: 'Kampania zakończona',
+            }[s.campaign.result ?? 'partial']
+          : s.completed
+            ? 'Udane winobranie'
+            : 'Sezon zamknięty',
         results: [
-          {
-            label: 'Sprzedany moszcz',
-            value: `${(s.sold / 1000).toFixed(1)} / 40 L`,
-          },
+          ...(s.campaign
+            ? [
+                {
+                  label: 'Sprzedane butelki',
+                  value: `${s.campaign.bottles} / ${campaignRules.bottles}`,
+                },
+                {
+                  label: 'Średnia jakość',
+                  value: `${(quality(s) / 100).toFixed(1)} / 65`,
+                },
+                {
+                  label: 'Wartość netto',
+                  value: `${Math.floor(netWorth(s) / 100)} ◈`,
+                },
+                {
+                  label: 'Szczepy z plonem w roku 3',
+                  value: `${productiveVarieties(s)} / 2`,
+                },
+                {
+                  label: 'Ukończone domki / parcele',
+                  value: `${s.buildings.filter((b) => !b.work).length} / ${s.parcels.length}`,
+                },
+                {
+                  label: 'Zebrany plon',
+                  value: `${(s.grown / 1000).toFixed(1)} kg`,
+                },
+                {
+                  label: 'Kontrakty',
+                  value: String(
+                    s.campaign.contracts.filter((t) => t.status === 'done')
+                      .length,
+                  ),
+                },
+              ]
+            : [
+                {
+                  label: 'Sprzedany moszcz',
+                  value: `${(s.sold / 1000).toFixed(1)} / 40 L`,
+                },
+              ]),
           { label: 'Przychód', value: `${s.ledger.income / 100} ◈` },
           { label: 'Koszty', value: `${s.ledger.costs / 100} ◈` },
           { label: 'Gotówka', value: `${s.ledger.balance / 100} ◈` },
@@ -645,8 +745,8 @@ export function createVineyardRuntime(
         failed: s.failed,
         paused: false,
         objectiveIcon: '❧',
-        collected: s.sold / 1000,
-        total: 40,
+        collected: s.campaign?.bottles ?? s.sold / 1000,
+        total: s.campaign ? campaignRules.bottles : 40,
         elapsed: s.tick / 20,
         x: DEPOT.x * 16,
         y: DEPOT.y * 16,
@@ -692,6 +792,11 @@ export function createVineyardRuntime(
         },
         stats: {
           tick: s.tick,
+          year: s.campaign?.year ?? 1,
+          bottles: s.campaign?.bottles ?? 0,
+          quality: quality(s),
+          campaignResult: s.campaign?.result ?? '',
+          lots: JSON.stringify(s.campaign?.book.lots ?? []),
           cash: s.ledger.balance,
           sold: s.sold,
           processed: s.processed,
@@ -734,8 +839,8 @@ export function createVineyardRuntime(
       model.reset(crypto.getRandomValues(new Uint32Array(1))[0]);
       if (resume) {
         const current = save.inspect();
-        const previous =
-          current.status === 'absent' ? legacySave.inspect() : current;
+        const w2 = current.status === 'absent' ? seasonSave.inspect() : current;
+        const previous = w2.status === 'absent' ? legacySave.inspect() : w2;
         if (previous.status === 'invalid')
           context.message(
             'Zapis Winobrania jest uszkodzony. Rozpoczęto nowy sezon.',

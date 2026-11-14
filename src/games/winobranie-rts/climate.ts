@@ -36,7 +36,16 @@ export function siteAt(seed: number, p: Cell): Site {
 }
 export class VineyardClimate {
   readonly fronts: ClimateEventService<number>;
-  constructor(readonly seed: number) {
+  readonly seed: number;
+  constructor(
+    seed: number,
+    readonly year = 1,
+  ) {
+    this.seed =
+      year === 1
+        ? seed
+        : Math.floor(randomSample(seed, 30, year) * 0x100000000);
+    seed = this.seed;
     const first = (3 + Math.floor(randomSample(seed, 0, 0) * 3)) * DAY_TICKS;
     const second = (7 + Math.floor(randomSample(seed, 0, 1) * 2)) * DAY_TICKS;
     this.fronts = new ClimateEventService([
@@ -57,6 +66,7 @@ export class VineyardClimate {
     ]);
   }
   at(tick: number): Weather {
+    tick = Math.max(0, tick - (this.year - 1) * SEASON_TICKS);
     const day = Math.min(29, Math.floor(tick / DAY_TICKS));
     const warm = day < 9 ? 120 : day < 22 ? 220 : 170;
     const dryStart = 11 + Math.floor(randomSample(this.seed, 1, 100) * 4);
@@ -100,13 +110,14 @@ export class VineyardClimate {
     };
   }
   forecast(tick: number) {
+    tick = Math.max(0, tick - (this.year - 1) * SEASON_TICKS);
     const day = Math.floor(tick / DAY_TICKS);
     return [1, 2, 3]
       .filter((a) => day + a < 30)
       .map((a) => {
         const start = (day + a) * DAY_TICKS;
         const samples = Array.from({ length: 20 }, (_, i) =>
-          this.at(start + i * 20),
+          this.at(start + i * 20 + (this.year - 1) * SEASON_TICKS),
         );
         const low = Math.min(...samples.map((w) => w.temperature)),
           high = Math.max(...samples.map((w) => w.temperature));

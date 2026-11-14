@@ -162,11 +162,14 @@ export function mountGame(
           value.textContent = result.value;
           results.append(term, value);
         }
-      get('result-title').textContent = s.completed
-        ? definition.presentation.completionTitle
-        : s.failed
-          ? definition.presentation.failureTitle
-          : 'Pauza';
+      get('result-title').textContent =
+        over && s.resultTitle
+          ? s.resultTitle
+          : s.completed
+            ? definition.presentation.completionTitle
+            : s.failed
+              ? definition.presentation.failureTitle
+              : 'Pauza';
       root.querySelector('.result-art')!.textContent = s.completed
         ? (s.objectiveIcon ?? '✿')
         : s.failed

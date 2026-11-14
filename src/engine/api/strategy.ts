@@ -1,4 +1,5 @@
 /** Headless, game-independent strategy contracts. */
+export { LotBook, type ResourceLot, type LotState } from '../strategy/lots';
 export { randomSample, ClimateEventService } from '../strategy/climate';
 export { RegionalNavigator } from '../world/navigation';
 export {

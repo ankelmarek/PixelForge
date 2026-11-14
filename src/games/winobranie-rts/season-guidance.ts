@@ -7,7 +7,7 @@ export function seasonGuidance(s: VineyardState): Guidance | null {
   const e = s.environment;
   if (!e) return null;
   if (s.rows.every((r) => r.mature)) return null;
-  const climate = new VineyardClimate(e.seed),
+  const climate = new VineyardClimate(e.seed, s.campaign?.year ?? 1),
     weather = climate.at(s.tick);
   const say = (
     id: string,
@@ -25,7 +25,9 @@ export function seasonGuidance(s: VineyardState): Guidance | null {
       'water-tank',
       'Przygotuj ochronę upraw: postaw zbiornik obok rzędów i zamów wodę w jego panelu. Pogoda zmieni się w trakcie sezonu.',
     );
-  const low = tanks.find((t) => t.volume < 50000 && !t.delivery);
+  const low = tanks.find(
+    (t) => t.volume < (s.campaign ? 350000 : 50000) && !t.delivery,
+  );
   if (low)
     return say(
       'water-low',
@@ -67,7 +69,9 @@ export function seasonGuidance(s: VineyardState): Guidance | null {
   if ((threatened || ice) && s.ledger.balance < 100)
     return say(
       'water-energy',
-      'Brakuje środków na energię pompy. Sprzedaj gotowy moszcz, aby przywrócić dopływ wody.',
+      s.campaign
+        ? 'Brakuje środków na pompy. Sprzedaj zapasy lub skorzystaj z pożyczki w panelu finansów.'
+        : 'Brakuje środków na energię pompy. Sprzedaj gotowy moszcz, aby przywrócić dopływ wody.',
       undefined,
       'warning',
     );

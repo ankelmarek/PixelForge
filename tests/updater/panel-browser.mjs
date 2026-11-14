@@ -12,7 +12,7 @@ const root = resolve(import.meta.dirname, '../..');
 if (process.argv.includes('--release'))
   process.env.PIXELFORGE_TEST_RELEASE = resolve(
     root,
-    'downloads/pixelforge-0.10.0-full.zip',
+    'downloads/pixelforge-0.11.0-full.zip',
   );
 const server = spawn(
   'python3',
@@ -242,7 +242,7 @@ try {
       await expect.poll(async () => (await state()).stats.buildings).toBe(1);
       await game.locator('#pause').click();
       winerySave = await game.evaluate(() =>
-        globalThis.localStorage.getItem('pixelforge:client:v2:winobranie-rts'),
+        globalThis.localStorage.getItem('pixelforge:client:v3:winobranie-rts'),
       );
       keys = await game.evaluate(() =>
         Object.keys(globalThis.localStorage).sort(),
@@ -272,7 +272,7 @@ try {
         expect(
           await game.evaluate(() =>
             globalThis.localStorage.getItem(
-              'pixelforge:client:v2:winobranie-rts',
+              'pixelforge:client:v3:winobranie-rts',
             ),
           ),
         ).toBe(winerySave);

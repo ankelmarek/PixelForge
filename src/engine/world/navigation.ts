@@ -243,7 +243,15 @@ export class RegionalNavigator {
         this.stats.outcome = 'budget';
         return null;
       }
-      for (const portal of this.edges.get(queue[head])!)
+      // Component IDs and insertion order change after local invalidation.
+      // Geometry gives the same route after a save rebuild or a different preview history.
+      for (const portal of [...this.edges.get(queue[head])!].sort(
+        (a, b) =>
+          a.entry.y - b.entry.y ||
+          a.entry.x - b.entry.x ||
+          a.exit.y - b.exit.y ||
+          a.exit.x - b.exit.x,
+      ))
         if (!seen.has(portal.to)) {
           seen.add(portal.to);
           parents.set(portal.to, { parent: queue[head], portal });
@@ -267,7 +275,11 @@ export class RegionalNavigator {
         Math.abs(to.x - p.entry.x) +
         Math.abs(to.y - p.entry.y);
       const p = portal.crossings.reduce((best, next) =>
-        distance(next) < distance(best) ? next : best,
+        (distance(next) - distance(best) ||
+          next.exit.y - best.exit.y ||
+          next.exit.x - best.exit.x) < 0
+          ? next
+          : best,
       );
       const local = this.local(at, p.exit);
       if (!local) return null;

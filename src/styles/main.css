@@ -1102,6 +1102,79 @@ body:has(.lab) {
 .vineyard-ui.inactive {
   pointer-events: none;
 }
+.vineyard-business {
+  position: absolute;
+  right: 18px;
+  top: 106px;
+  width: 306px;
+  max-height: calc(100% - 200px);
+  overflow-y: auto;
+  z-index: 4;
+  padding: 12px;
+  border: 1px solid #aab177;
+  border-radius: 8px;
+  background: #263c30f5;
+  color: #f1e6c7;
+  pointer-events: auto;
+  font:
+    12px/1.5 system-ui,
+    sans-serif;
+}
+.vineyard-business summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.vineyard-business button {
+  width: 100%;
+  margin-top: 6px;
+  font-size: 11px;
+}
+.vineyard-business small,
+.vineyard-cellar small {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0;
+}
+.business-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+}
+.three-seasons .vineyard-selection {
+  max-height: calc(100% - 255px);
+  overflow-y: auto;
+  padding: 12px;
+}
+.three-seasons .crew {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-height: 96px;
+  overflow-y: auto;
+}
+.vineyard-cellar {
+  border-top: 1px solid #a3ae8b;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+.vineyard-cellar nav {
+  display: flex;
+  gap: 4px;
+  margin: 8px 0;
+}
+.vineyard-cellar button {
+  font-size: 10px;
+}
+.vineyard-cellar [data-campaign-view='lots'] {
+  white-space: pre-line;
+  font-size: 10px;
+  line-height: 1.6;
+  max-height: 110px;
+  overflow-y: auto;
+}
+.three-seasons [data-dismiss] {
+  margin-top: 8px;
+  font-size: 10px;
+}
 .vineyard-ui.inactive > * {
   pointer-events: none;
 }

@@ -8,6 +8,7 @@ import {
   lineCells,
   rectCells,
   randomSample,
+  LotBook,
   type Cell,
   type GridRect,
   type LedgerState,
@@ -35,12 +36,37 @@ import {
   type WaterMode,
 } from './water';
 import { validateEnvironment } from './validation';
+import {
+  campaignRules,
+  newCampaign,
+  newCellar,
+  crewCatalog,
+  crew,
+  unitSpec,
+  offers,
+  campaignSuccess,
+  netWorth,
+  recoverable,
+  type CampaignState,
+  type CrewKind,
+  type Upgrade,
+} from './campaign';
+import {
+  recordGrowth,
+  finishPress,
+  stepCellars,
+  needsBottler,
+  bottle,
+  sellProduction,
+} from './production';
+import { validateCampaign } from './campaign-validation';
 
 export type Tool =
   | 'select'
   | 'box'
   | 'row'
   | 'road'
+  | 'avenue'
   | 'house'
   | 'remove'
   | 'move'
@@ -83,7 +109,8 @@ export interface Job {
     | 'load'
     | 'unload'
     | 'move'
-    | 'care';
+    | 'care'
+    | 'cellar';
   target: string;
   goal: Cell;
   progress: number;
@@ -101,8 +128,9 @@ export interface Unit extends Cell {
   routeRevision: number;
 }
 export interface VineyardState {
-  version: 2;
-  revision: 'vineyard-w2';
+  version: 3;
+  revision: 'vineyard-w3';
+  campaign: CampaignState | null;
   environment: EnvironmentState | null;
   tick: number;
   clock: { speed: 1 | 2 | 4; remainder: number };
@@ -192,6 +220,7 @@ export class VineyardModel {
   readonly clock = new ScenarioClock();
   human!: RegionalNavigator;
   vehicle!: RegionalNavigator;
+  hauler!: RegionalNavigator;
   private blocked = new Uint8Array(512 * 512);
   private road = new Uint8Array(512 * 512);
   private reservations = new Reservations();
@@ -201,13 +230,15 @@ export class VineyardModel {
   constructor(
     readonly world: VineyardWorld,
     readonly seed: number | null = world.scenario.seed,
+    readonly fullCampaign = false,
   ) {
     this.reset(seed);
   }
   reset(seed = this.seed) {
     this.state = {
-      version: 2,
-      revision: 'vineyard-w2',
+      version: 3,
+      revision: 'vineyard-w3',
+      campaign: this.fullCampaign && seed !== null ? newCampaign() : null,
       environment: seed === null ? null : newEnvironment(seed),
       tick: 0,
       clock: { speed: 1, remainder: 0 },
@@ -274,7 +305,10 @@ export class VineyardModel {
     this.rebuild();
   }
   private rebuild() {
-    this.climate = new VineyardClimate(this.state.environment?.seed ?? 731);
+    this.climate = new VineyardClimate(
+      this.state.environment?.seed ?? 731,
+      this.state.campaign?.year ?? 1,
+    );
     this.water = this.state.environment
       ? new WaterNetwork(this.state.environment.water)
       : null;
@@ -298,23 +332,26 @@ export class VineyardModel {
     this.vehicle = new RegionalNavigator(this.world, (p) =>
       this.walkable(p, true),
     );
+    this.hauler = new RegionalNavigator(this.world, (p) => this.walkable(p, 2));
     this.reservations = new Reservations();
     for (const u of this.state.units) if (u.job) this.reserve(u, u.job);
   }
   prepare(budget = 4) {
     const a = this.human.prepare(budget),
       b = this.vehicle.prepare(budget);
-    return a && b;
+    const c = !this.state.campaign || this.hauler.prepare(budget);
+    return a && b && c;
   }
   walkable(
     p: Cell,
-    vehicle = false,
+    vehicle: boolean | number = false,
     blocks?: Set<string>,
     roads?: Set<string>,
     cleared?: Set<string>,
   ) {
-    for (let dy = vehicle ? -1 : 0; dy <= (vehicle ? 1 : 0); dy++)
-      for (let dx = vehicle ? -1 : 0; dx <= (vehicle ? 1 : 0); dx++) {
+    const radius = typeof vehicle === 'number' ? vehicle : Number(vehicle);
+    for (let dy = -radius; dy <= radius; dy++)
+      for (let dx = -radius; dx <= radius; dx++) {
         const q = { x: p.x + dx, y: p.y + dy },
           i = q.y * 512 + q.x;
         if (
@@ -351,6 +388,7 @@ export class VineyardModel {
       ![
         'row',
         'road',
+        'avenue',
         'house',
         'move',
         'tank',
@@ -405,9 +443,14 @@ export class VineyardModel {
     }
     if (tool === 'house' || tool === 'move') {
       cells = rectCells(building);
-      cost = tool === 'move' ? 100000 : 0;
+      cost =
+        tool === 'move'
+          ? 100000
+          : this.state.vouchers
+            ? 0
+            : campaignRules.house;
     }
-    if (tool === 'row' || tool === 'road') {
+    if (tool === 'row' || tool === 'road' || tool === 'avenue') {
       if (Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y)) > 63)
         reason = 'Maks. 64 pola';
       else cells = lineCells(a, b);
@@ -429,8 +472,16 @@ export class VineyardModel {
             : [point];
         });
         for (const p of centers)
-          for (let dy = -1; dy <= 1; dy++)
-            for (let dx = -1; dx <= 1; dx++) {
+          for (
+            let dy = tool === 'avenue' ? -2 : -1;
+            dy <= (tool === 'avenue' ? 2 : 1);
+            dy++
+          )
+            for (
+              let dx = tool === 'avenue' ? -2 : -1;
+              dx <= (tool === 'avenue' ? 2 : 1);
+              dx++
+            ) {
               const q = { x: p.x + dx, y: p.y + dy };
               expanded.set(key(q), q);
             }
@@ -462,12 +513,16 @@ export class VineyardModel {
       return reject('Sezon zakończony');
     if (
       tool === 'house' &&
-      (!this.state.vouchers || this.state.buildings.length >= 32)
+      ((!this.state.vouchers && !this.state.campaign) ||
+        this.state.buildings.length >= 32)
     )
       return reject('Brak uprawnień');
     if (tool === 'row' && this.state.rows.length >= 64)
       return reject('Limit rzędów');
-    if (tool === 'road' && this.state.roads.length + cells.length > 10000)
+    if (
+      ['road', 'avenue'].includes(tool) &&
+      this.state.roads.length + cells.length > 10000
+    )
       return reject('Limit dróg');
     if (cost > this.state.ledger.balance) return reject('Brak środków');
     // Underground pipes may cross roads and planted rows, without affecting navigation.
@@ -483,7 +538,7 @@ export class VineyardModel {
       cells.some(
         (p) =>
           !this.walkable(p, false, undefined, undefined, cleared) ||
-          (tool !== 'road' && this.road[p.y * 512 + p.x]),
+          (!['road', 'avenue'].includes(tool) && this.road[p.y * 512 + p.x]),
       )
     )
       return reject('Zajęte pole');
@@ -492,23 +547,28 @@ export class VineyardModel {
       this.state.units.some((u) =>
         cells.some(
           (p) =>
-            Math.abs(p.x - u.x) <= (u.kind === 'tractor' ? 1.5 : 0.6) &&
-            Math.abs(p.y - u.y) <= (u.kind === 'tractor' ? 1.5 : 0.6),
+            Math.abs(p.x - u.x) <= unitSpec(this.state, u).radius + 0.6 &&
+            Math.abs(p.y - u.y) <= unitSpec(this.state, u).radius + 0.6,
         ),
       )
     )
       return reject('Jednostka na placu');
-    const blocks = new Set(tool === 'road' ? [] : cells.map(key)),
-      roads = new Set(tool === 'road' ? cells.map(key) : []);
+    const isRoad = ['road', 'avenue'].includes(tool);
+    const blocks = new Set(isRoad ? [] : cells.map(key)),
+      roads = new Set(isRoad ? cells.map(key) : []);
     const human = this.human.fork((p) =>
       this.walkable(p, false, blocks, roads, cleared),
     );
     const vehicle = this.vehicle.fork((p) =>
       this.walkable(p, true, blocks, roads, cleared),
     );
+    const hauler = this.hauler.fork((p) =>
+      this.walkable(p, 2, blocks, roads, cleared),
+    );
     for (const area of old ? [bounds(cells), old] : [bounds(cells)]) {
       human.invalidate(area);
       vehicle.invalidate(area, 1);
+      hauler.invalidate(area, 2);
     }
     const ports = this.state.buildings.filter((item) => item.id !== moving);
     if (tool === 'house' || tool === 'move') ports.push(building);
@@ -519,8 +579,21 @@ export class VineyardModel {
       )
         return reject('Brak dojazdu');
     for (const u of this.state.units)
-      if (!(u.kind === 'tractor' ? vehicle : human).findPath(rounded(u), DEPOT))
+      if (
+        !(
+          unitSpec(this.state, u).radius === 2
+            ? hauler
+            : u.kind === 'tractor'
+              ? vehicle
+              : human
+        ).findPath(rounded(u), DEPOT)
+      )
         return reject('Odcięta jednostka');
+    if (
+      this.state.units.some((u) => unitSpec(this.state, u).radius === 2) &&
+      ports.some((b) => !hauler.findPath(DEPOT, b.dock))
+    )
+      return reject('Duża przyczepa potrzebuje drogi 5 pól');
     for (const row of this.state.rows)
       if (!human.findPath(DEPOT, row.access)) return reject('Odcięty rząd');
     let access: Cell | undefined;
@@ -573,8 +646,10 @@ export class VineyardModel {
         this.state.buildings = this.state.buildings.filter(
           (item) => item !== old,
         );
-      } else this.state.vouchers--;
+      } else if (this.state.vouchers) this.state.vouchers--;
       this.state.buildings.push(b);
+      if (this.state.campaign && plan.tool !== 'move')
+        this.state.campaign.cellars[b.id] = newCellar();
     } else if (plan.tool === 'row') {
       this.state.rows.push({
         id,
@@ -589,7 +664,8 @@ export class VineyardModel {
       });
       if (this.state.environment)
         this.state.environment.crops[id] = newCrop(this.state.rows.at(-1)!, 0);
-    } else if (plan.tool === 'road') this.state.roads.push(...cells);
+    } else if (['road', 'avenue'].includes(plan.tool))
+      this.state.roads.push(...cells);
     else if (this.state.environment) {
       const w = this.state.environment.water;
       if (plan.tool === 'pipe') w.pipes.push(...cells);
@@ -612,7 +688,9 @@ export class VineyardModel {
       return true;
     }
     for (const p of cells)
-      (plan.tool === 'road' ? this.road : this.blocked)[p.y * 512 + p.x] = 1;
+      (['road', 'avenue'].includes(plan.tool) ? this.road : this.blocked)[
+        p.y * 512 + p.x
+      ] = 1;
     this.changed(...areas);
     return true;
   }
@@ -621,6 +699,7 @@ export class VineyardModel {
     for (const area of areas) {
       this.human.invalidate(area);
       this.vehicle.invalidate(area, 1);
+      this.hauler.invalidate(area, 2);
     }
     for (const u of this.state.units) {
       const touched = [u, ...u.path, ...(u.job ? [u.job.goal] : [])].some((p) =>
@@ -642,6 +721,11 @@ export class VineyardModel {
       !b.batch &&
       !total(b.stock) &&
       !total(b.must) &&
+      (!this.state.campaign ||
+        (!this.state.campaign.cellars[b.id].process &&
+          !this.state.campaign.book.lots.some((l) =>
+            l.owner.endsWith(`:${b.id}`),
+          ))) &&
       !this.state.units.some((u) => u.job?.target === b.id)
     );
   }
@@ -666,7 +750,9 @@ export class VineyardModel {
       (!this.state.environment || this.state.environment.crops[id]?.age === 0)
         ? row.vines *
           (this.state.environment ? varieties[row.variety].cost / 10 : 300)
-        : 0;
+        : b && this.state.campaign && !b.work
+          ? 400000
+          : 0;
     if (
       (!row && !b) ||
       (b && !this.idle(b)) ||
@@ -676,9 +762,18 @@ export class VineyardModel {
     const cells = row ? row.cells : rectCells(b!);
     if (row) {
       this.state.lost += row.stock;
+      if (this.state.campaign)
+        this.state.campaign.book.lots = this.state.campaign.book.lots.filter(
+          (l) => l.owner !== row.id,
+        );
       this.state.rows = this.state.rows.filter((r) => r !== row);
       if (this.state.environment) delete this.state.environment.crops[row.id];
-    } else this.state.buildings = this.state.buildings.filter((r) => r !== b);
+    } else {
+      this.state.buildings = this.state.buildings.filter((r) => r !== b);
+      if (this.state.campaign) delete this.state.campaign.cellars[id];
+      for (const u of Object.values(this.state.campaign?.crew ?? {}))
+        if (u.deliveryTo === id) u.deliveryTo = null;
+    }
     new Ledger(this.state.ledger).transact(
       `remove-${this.state.serial++}`,
       refund,
@@ -783,11 +878,29 @@ export class VineyardModel {
       return this.walkable(q, true);
     });
     nav.invalidate(bounds(cells), 1);
+    const wide = this.hauler.fork((q) => {
+      for (let dy = -2; dy <= 2; dy++)
+        for (let dx = -2; dx <= 2; dx++)
+          if (
+            !publicRoad(q.x + dx, q.y + dy) &&
+            !remaining.has(key({ x: q.x + dx, y: q.y + dy }))
+          )
+            return false;
+      return this.walkable(q, 2);
+    });
+    wide.invalidate(bounds(cells), 2);
     if (
       this.state.buildings.some((b) => !nav.findPath(DEPOT, b.dock)) ||
       this.state.units.some(
         (u) => u.kind === 'tractor' && !nav.findPath(rounded(u), DEPOT),
-      )
+      ) ||
+      (this.state.units.some((u) => unitSpec(this.state, u).radius === 2) &&
+        (this.state.buildings.some((b) => !wide.findPath(DEPOT, b.dock)) ||
+          this.state.units.some(
+            (u) =>
+              unitSpec(this.state, u).radius === 2 &&
+              !wide.findPath(rounded(u), DEPOT),
+          )))
     )
       return false;
     this.state.roads = this.state.roads.filter((q) => remaining.has(key(q)));
@@ -829,6 +942,14 @@ export class VineyardModel {
   }
   sell(id: string) {
     if (this.state.completed || this.state.failed) return false;
+    if (this.state.campaign) {
+      const b = this.state.buildings.find((b) => b.id === id);
+      return (
+        !!b &&
+        !!this.vehicle.findPath(DEPOT, b.dock) &&
+        sellProduction(this.state, id)
+      );
+    }
     const b = this.state.buildings.find((item) => item.id === id);
     if (!b || !total(b.must) || !this.vehicle.findPath(DEPOT, b.dock))
       return false;
@@ -849,6 +970,174 @@ export class VineyardModel {
     this.state.sold += amount;
     return true;
   }
+  hire(kind: CrewKind) {
+    const s = this.state,
+      c = s.campaign;
+    if (
+      !c ||
+      s.completed ||
+      s.failed ||
+      !Object.hasOwn(crewCatalog, kind) ||
+      s.units.length >= 24
+    )
+      return false;
+    const spec = crewCatalog[kind],
+      tractor = spec.radius > 0;
+    const nav =
+      spec.radius === 2 ? this.hauler : tractor ? this.vehicle : this.human;
+    if (tractor && s.buildings.some((b) => !nav.findPath(DEPOT, b.dock))) {
+      this.lastReason = 'Najpierw zapewnij dojazd do domków';
+      return false;
+    }
+    let point: Cell | undefined;
+    for (let offset = 0; offset < 40 && !point; offset++) {
+      const p = { x: DEPOT.x - 8 + offset, y: tractor ? 258 : 254 };
+      if (
+        this.walkable(p, spec.radius) &&
+        !s.units.some(
+          (u) =>
+            Math.hypot(u.x - p.x, u.y - p.y) <
+            spec.radius + unitSpec(s, u).radius + 1,
+        ) &&
+        nav.findPath(p, DEPOT)
+      )
+        point = p;
+    }
+    if (!point) {
+      this.lastReason = 'Brak miejsca przy magazynie';
+      return false;
+    }
+    if (!new Ledger(s.ledger).transact(`hire-${s.serial}`, -spec.cost))
+      return false;
+    const id = `${tractor ? 'tractor' : 'worker'}-${s.serial++}`;
+    s.units.push({
+      id,
+      kind: tractor ? 'tractor' : 'worker',
+      ...point,
+      role: 'auto',
+      cargo: {},
+      job: null,
+      path: [],
+      blocked: false,
+      routeRevision: s.topology,
+    });
+    c.crew[id] = crew(kind, c.year);
+    return true;
+  }
+  dismiss(id: string) {
+    const s = this.state,
+      c = s.campaign,
+      u = s.units.find((u) => u.id === id);
+    if (!c || !u || s.completed || s.failed) return false;
+    c.crew[id].retiring = true;
+    this.finish(u);
+    u.role = 'rest';
+    if (total(u.cargo)) this.assign(u, this.job('deposit', 'warehouse', DEPOT));
+    return true;
+  }
+  upgrade(id: string, upgrade: Upgrade) {
+    const s = this.state,
+      c = s.campaign,
+      b = s.buildings.find((b) => b.id === id);
+    if (
+      !c ||
+      !b ||
+      b.work ||
+      s.completed ||
+      s.failed ||
+      !Object.hasOwn(campaignRules.upgrades, upgrade) ||
+      c.cellars[id].upgrades[upgrade]
+    )
+      return false;
+    if (
+      !new Ledger(s.ledger).transact(
+        `upgrade-${s.serial}`,
+        -campaignRules.upgrades[upgrade],
+      )
+    )
+      return false;
+    s.serial++;
+    c.cellars[id].upgrades[upgrade] = true;
+    return true;
+  }
+  cellarMode(id: string, mode: 'young' | 'reserve') {
+    const c = this.state.campaign;
+    if (
+      !c ||
+      !c.cellars[id] ||
+      this.state.completed ||
+      this.state.failed ||
+      !['young', 'reserve'].includes(mode)
+    )
+      return false;
+    c.cellars[id].mode = mode;
+    return true;
+  }
+  earlySale(id: string) {
+    const s = this.state,
+      b = s.buildings.find((b) => b.id === id);
+    return (
+      !!s.campaign &&
+      !s.completed &&
+      !s.failed &&
+      !!b &&
+      !!this.vehicle.findPath(DEPOT, b.dock) &&
+      sellProduction(s, id, true)
+    );
+  }
+  sellGrapes() {
+    const s = this.state,
+      c = s.campaign;
+    if (!c || s.completed || s.failed || !total(s.warehouse)) return false;
+    const n = total(s.warehouse),
+      value = n; // 10 monet/kg, below processed wine.
+    const book = new LotBook(c.book);
+    for (const l of book.list('warehouse')) book.take(l.id, l.quantity);
+    c.grapeSales += n;
+    c.salesRevenue += value;
+    s.warehouse = {};
+    new Ledger(s.ledger).transact(`grapes-${s.serial++}`, value);
+    return true;
+  }
+  loan(repay = false) {
+    const s = this.state,
+      c = s.campaign;
+    if (!c || s.completed || s.failed) return false;
+    if (repay) {
+      const principal = c.borrowed - c.principalPaid,
+        interest = c.borrowed ? campaignRules.interest - c.interestPaid : 0;
+      if (!principal || s.ledger.balance < principal + interest) return false;
+      s.ledger.balance -= principal;
+      c.principalPaid += principal;
+      new Ledger(s.ledger).transact(`interest-${s.serial++}`, -interest);
+      c.interestPaid += interest;
+      return true;
+    }
+    if (c.borrowed) return false;
+    c.borrowed = campaignRules.loan;
+    c.loanDue = Math.min(36000, s.tick + 12000);
+    const paid = Math.min(s.ledger.arrears, c.borrowed);
+    s.ledger.arrears -= paid;
+    s.ledger.balance += c.borrowed - paid;
+    return true;
+  }
+  acceptContract(id: string) {
+    const s = this.state,
+      c = s.campaign,
+      t = c?.contracts.find((t) => t.id === id);
+    if (
+      !c ||
+      !t ||
+      s.completed ||
+      s.failed ||
+      t.year !== c.year ||
+      t.status !== 'offered' ||
+      c.contracts.some((t) => t.year === c.year && t.status !== 'offered')
+    )
+      return false;
+    t.status = 'active';
+    return true;
+  }
   role(ids: string[], role: Role) {
     if (this.state.completed || this.state.failed) return;
     for (const u of this.state.units.filter((u) => ids.includes(u.id))) {
@@ -856,6 +1145,7 @@ export class VineyardModel {
       u.job = null;
       u.path = [];
       u.role = role;
+      if (this.state.campaign) this.state.campaign.crew[u.id].deliveryTo = null;
       u.blocked = false;
       if (total(u.cargo))
         this.assign(u, this.job('deposit', 'warehouse', DEPOT));
@@ -885,8 +1175,11 @@ export class VineyardModel {
         );
       } else if (u.kind === 'worker' && b) {
         u.role = b.work ? 'build' : 'press';
-      } else if (u.kind === 'tractor' && b) u.role = 'auto';
-      else {
+      } else if (u.kind === 'tractor' && b) {
+        u.role = 'auto';
+        if (this.state.campaign)
+          this.state.campaign.crew[u.id].deliveryTo = b.id;
+      } else {
         u.role = 'rest';
         this.assign(u, this.job('move', '', rounded(point)));
       }
@@ -902,6 +1195,8 @@ export class VineyardModel {
     return { kind, target, goal: { ...goal }, progress: 0, amount, variety };
   }
   private reserve(u: Unit, j: Job) {
+    if (this.state.campaign && (j.kind === 'load' || j.kind === 'unload'))
+      return this.reservations.reserve(u.id, `dock-${j.target}`, 1, 1);
     if (j.kind === 'harvest')
       return this.reservations.reserve(
         u.id,
@@ -909,8 +1204,13 @@ export class VineyardModel {
         j.amount,
         this.state.rows.find((r) => r.id === j.target)?.stock ?? 0,
       );
-    if (j.kind === 'build' || j.kind === 'press' || j.kind === 'care')
-      return this.reservations.reserve(u.id, j.target, 1, 1);
+    if (
+      j.kind === 'build' ||
+      j.kind === 'press' ||
+      j.kind === 'care' ||
+      j.kind === 'cellar'
+    )
+      return this.reservations.reserve(u.id, `work-${j.target}`, 1, 1);
     return true;
   }
   private assign(u: Unit, job: Job) {
@@ -921,7 +1221,12 @@ export class VineyardModel {
   }
   private route(u: Unit) {
     if (!u.job) return;
-    const nav = u.kind === 'tractor' ? this.vehicle : this.human;
+    const nav =
+      unitSpec(this.state, u).radius === 2
+        ? this.hauler
+        : u.kind === 'tractor'
+          ? this.vehicle
+          : this.human;
     const path = nav.findPath(rounded(u), u.job.goal);
     u.routeRevision = this.state.topology;
     u.blocked = !path;
@@ -939,7 +1244,15 @@ export class VineyardModel {
     if (total(u.cargo)) {
       if (u.kind === 'tractor') {
         const b = this.state.buildings
-          .filter((b) => !b.work && total(b.stock) + total(u.cargo) <= 48000)
+          .filter(
+            (b) =>
+              !b.work &&
+              (!this.state.campaign?.crew[u.id].deliveryTo ||
+                this.state.campaign.crew[u.id].deliveryTo === b.id) &&
+              total(b.stock) + total(u.cargo) <= 48000 &&
+              (!this.state.campaign ||
+                !this.reservations.amount(`dock-${b.id}`)),
+          )
           .sort((a, b) => total(a.stock) - total(b.stock))[0];
         if (b) this.assign(u, this.job('unload', b.id, b.dock));
       } else this.assign(u, this.job('deposit', 'warehouse', DEPOT));
@@ -970,6 +1283,12 @@ export class VineyardModel {
           return;
     }
     if (u.role === 'auto' || u.role === 'press') {
+      for (const b of this.state.buildings)
+        if (
+          needsBottler(this.state, b) &&
+          this.assign(u, this.job('cellar', b.id, b.access))
+        )
+          return;
       for (const b of this.state.buildings)
         if (
           !b.work &&
@@ -1004,10 +1323,91 @@ export class VineyardModel {
   advance(ms: number) {
     this.clock.advance(ms, () => this.tick());
   }
+  private campaignTick() {
+    const s = this.state,
+      c = s.campaign!;
+    for (const u of [...s.units]) {
+      const contract = c.crew[u.id];
+      if (contract.until && s.tick >= contract.until && !contract.retiring)
+        this.dismiss(u.id);
+      if (contract.retiring && !total(u.cargo) && !u.job) {
+        this.finish(u);
+        s.units = s.units.filter((other) => other !== u);
+        if (u.kind === 'tractor')
+          new Ledger(s.ledger).transact(
+            `vehicle-sale-${s.serial++}`,
+            Math.floor(crewCatalog[contract.kind].cost / 2),
+          );
+        delete c.crew[u.id];
+      }
+    }
+    if (s.tick % 400 === 0) {
+      const cost =
+        Object.values(c.crew).reduce(
+          (n, u) => n + crewCatalog[u.kind].daily,
+          0,
+        ) +
+        s.buildings.length * 300;
+      new Ledger(s.ledger).transact(`wages-${s.tick}`, -cost, true);
+    }
+    if (c.borrowed > c.principalPaid && s.tick >= c.loanDue) this.loan(true);
+    const crisis =
+      s.ledger.arrears > 0 ||
+      (c.borrowed > c.principalPaid && s.tick >= c.loanDue) ||
+      (!s.rows.length && s.ledger.balance < 12400 && !recoverable(s));
+    if (crisis) c.crisisSince ??= s.tick;
+    else c.crisisSince = null;
+    if (
+      c.crisisSince !== null &&
+      s.tick - c.crisisSince >= campaignRules.warningTicks &&
+      !recoverable(s)
+    ) {
+      c.result = 'failure';
+      s.failed = true;
+      return;
+    }
+    if (s.tick % SEASON_TICKS !== 0) return;
+    for (const t of c.contracts.filter(
+      (t) => t.year === c.year && t.status === 'active',
+    )) {
+      t.status = 'missed';
+      new Ledger(s.ledger).transact(`contract-${t.id}`, -20000, true);
+    }
+    if (c.year === 3) {
+      c.result = campaignSuccess(s)
+        ? 'success'
+        : s.rows.some((r) => !r.work) &&
+            s.units.some((u) => u.kind === 'worker') &&
+            s.buildings.some((b) => !b.work) &&
+            netWorth(s) >= 0
+          ? 'partial'
+          : 'failure';
+      s.completed = c.result !== 'failure';
+      s.failed = !s.completed;
+      return;
+    }
+    for (const u of s.units)
+      if (u.job?.kind === 'harvest' || u.job?.kind === 'care') this.finish(u);
+    const book = new LotBook(c.book),
+      env = s.environment!;
+    for (const row of s.rows) {
+      s.lost += row.stock;
+      row.stock = 0;
+      row.mature = false;
+      for (const lot of book.list(row.id)) book.take(lot.id, lot.quantity);
+      env.crops[row.id] = newCrop(
+        row,
+        Math.min(3, env.crops[row.id].age + (row.work ? 0 : 1)),
+      );
+    }
+    c.year++;
+    c.contracts.push(...offers(c.year));
+    this.climate = new VineyardClimate(env.seed, c.year);
+  }
   tick() {
     if (this.state.completed || this.state.failed) return;
     this.state.tick++;
-    if (this.state.tick % 240 === 0)
+    if (!this.state.campaign && this.state.tick % 240 === 0)
       new Ledger(this.state.ledger).transact(
         `day-${this.state.tick / 240}`,
         -(2000 + 300 * this.state.buildings.length),
@@ -1033,8 +1433,8 @@ export class VineyardModel {
         );
         env.water.paidEnergy = env.water.energy;
       }
-      for (const r of this.state.rows)
-        this.state.grown += stepCrop(
+      for (const r of this.state.rows) {
+        const grown = stepCrop(
           r,
           env.crops[r.id],
           env,
@@ -1042,6 +1442,9 @@ export class VineyardModel {
           this.water,
           this.state.tick,
         );
+        this.state.grown += grown;
+        if (grown && this.state.campaign) recordGrowth(this.state, r, grown);
+      }
     } else
       for (const r of this.state.rows)
         if (
@@ -1058,8 +1461,10 @@ export class VineyardModel {
         const amount = b.batch.amount * 0.6;
         b.must[b.batch.variety] = (b.must[b.batch.variety] ?? 0) + amount;
         this.state.processed += b.batch.amount;
+        if (this.state.campaign) finishPress(this.state, b);
         b.batch = null;
       }
+    if (this.state.campaign) stepCellars(this.state);
     for (const u of this.state.units) {
       if (!u.job) {
         this.choose(u);
@@ -1070,7 +1475,25 @@ export class VineyardModel {
       if (u.path.length) {
         const next = u.path[0],
           distance = Math.hypot(next.x - u.x, next.y - u.y),
-          step = (u.kind === 'tractor' ? 9 : 5) * 0.05;
+          step = unitSpec(this.state, u).speed * 0.05;
+        const contract = this.state.campaign?.crew[u.id];
+        if (contract && u.kind === 'tractor') {
+          if (contract.turn > 0) {
+            contract.turn--;
+            continue;
+          }
+          const heading = `${Math.sign(next.x - u.x)},${Math.sign(next.y - u.y)}`;
+          if (
+            contract.heading &&
+            contract.heading !== heading &&
+            distance > 0.01
+          ) {
+            contract.heading = heading;
+            contract.turn = unitSpec(this.state, u).radius === 2 ? 6 : 2;
+            continue;
+          }
+          contract.heading = heading;
+        }
         if (distance <= step) {
           u.x = next.x;
           u.y = next.y;
@@ -1095,6 +1518,9 @@ export class VineyardModel {
             plot.mildew = Math.max(0, plot.mildew - 2500);
           this.finish(u);
         }
+      } else if (j.kind === 'cellar') {
+        const b = this.state.buildings.find((b) => b.id === j.target)!;
+        if (bottle(this.state, b)) this.finish(u);
       } else if (j.kind === 'build') {
         const item = [...this.state.rows, ...this.state.buildings].find(
           (b) => b.id === j.target,
@@ -1112,6 +1538,14 @@ export class VineyardModel {
           j.amount,
         );
         row.stock -= j.amount;
+        if (this.state.campaign)
+          new LotBook(this.state.campaign.book).transfer(
+            row.id,
+            u.id,
+            'grapes',
+            j.variety,
+            j.amount,
+          );
         const v = j.variety;
         this.finish(u);
         const available = row.stock - this.reservations.amount(row.id);
@@ -1139,6 +1573,19 @@ export class VineyardModel {
           const amount = Math.min(10000, b.stock[v]);
           b.stock[v] -= amount;
           b.batch = { variety: v, amount, work: 60, remaining: 100 };
+          if (this.state.campaign) {
+            new LotBook(this.state.campaign.book).transfer(
+              b.id,
+              `press:${b.id}`,
+              'grapes',
+              v,
+              amount,
+            );
+            if (this.state.campaign.cellars[b.id].upgrades.press) {
+              b.batch.work = 30;
+              b.batch.remaining = 50;
+            }
+          }
         }
         if (--b.batch.work <= 0) this.finish(u);
       } else if (
@@ -1154,20 +1601,38 @@ export class VineyardModel {
               ? b!.stock
               : this.state.warehouse;
         const capacity =
-          j.kind === 'load' ? 24000 : j.kind === 'unload' ? 48000 : 200000;
+          j.kind === 'load'
+            ? unitSpec(this.state, u).capacity
+            : j.kind === 'unload'
+              ? 48000
+              : 200000;
         for (const [v, amount] of Object.entries(source)) {
           const n = Math.min(amount, capacity - total(dest));
-          if (n > 0)
+          if (n > 0) {
             new Inventory(source, 200000).transfer(
               new Inventory(dest, capacity),
               v,
               n,
             );
+            if (this.state.campaign)
+              new LotBook(this.state.campaign.book).transfer(
+                j.kind === 'load' ? 'warehouse' : u.id,
+                j.kind === 'load'
+                  ? u.id
+                  : j.kind === 'unload'
+                    ? b!.id
+                    : 'warehouse',
+                'grapes',
+                v,
+                n,
+              );
+          }
         }
         this.finish(u);
       }
     }
-    if (this.state.tick >= this.duration * 20) {
+    if (this.state.campaign) this.campaignTick();
+    else if (this.state.tick >= this.duration * 20) {
       this.state.completed =
         this.state.sold >= this.world.scenario.goal &&
         !this.state.ledger.arrears;
@@ -1175,7 +1640,11 @@ export class VineyardModel {
     }
   }
   get duration() {
-    return this.state.environment ? SEASON_TICKS / 20 : 360;
+    return this.state.campaign
+      ? 1800
+      : this.state.environment
+        ? SEASON_TICKS / 20
+        : 360;
   }
   get balanceGrams() {
     return (
@@ -1186,7 +1655,8 @@ export class VineyardModel {
         .map((b) => total(b.stock) + (b.batch?.amount ?? 0))
         .reduce(sum, 0) +
       this.state.processed +
-      this.state.lost
+      this.state.lost +
+      (this.state.campaign?.grapeSales ?? 0)
     );
   }
   snapshot() {
@@ -1218,9 +1688,12 @@ export class VineyardModel {
       ) &&
       total(x) <= cap;
     if (
-      s.version !== 2 ||
-      s.revision !== 'vineyard-w2' ||
-      !int(s.tick, s.environment === null ? 7200 : SEASON_TICKS) ||
+      s.version !== 3 ||
+      s.revision !== 'vineyard-w3' ||
+      !int(
+        s.tick,
+        s.campaign ? 36000 : s.environment === null ? 7200 : SEASON_TICKS,
+      ) ||
       !int(s.serial, 100000) ||
       !int(s.topology, 100000) ||
       !int(s.vouchers, 2) ||
@@ -1240,11 +1713,12 @@ export class VineyardModel {
       !Array.isArray(s.parcels) ||
       s.parcels.length > 16 ||
       !Array.isArray(s.units) ||
-      s.units.length !== 3 ||
+      (s.campaign ? s.units.length > 24 : s.units.length !== 3) ||
       !stock(s.warehouse, 200000)
     )
       return fail();
     validateEnvironment(s);
+    validateCampaign(s);
     if (
       !s.ledger ||
       ![
@@ -1259,7 +1733,10 @@ export class VineyardModel {
         (id) => typeof id === 'string' && /^[\w-]{1,80}$/.test(id),
       ) ||
       new Set(s.ledger.ids).size !== s.ledger.ids.length ||
-      3000000 + s.ledger.income - s.ledger.costs !==
+      3000000 +
+        s.ledger.income -
+        s.ledger.costs +
+        (s.campaign ? s.campaign.borrowed - s.campaign.principalPaid : 0) !==
         s.ledger.balance - s.ledger.arrears
     )
       return fail();
@@ -1392,11 +1869,12 @@ export class VineyardModel {
       return fail();
     for (const [i, u] of s.units.entries()) {
       if (
-        u.id !== ['worker-1', 'worker-2', 'tractor-1'][i] ||
-        u.kind !== (i === 2 ? 'tractor' : 'worker') ||
+        (!s.campaign && u.id !== ['worker-1', 'worker-2', 'tractor-1'][i]) ||
+        (!s.campaign && u.kind !== (i === 2 ? 'tractor' : 'worker')) ||
+        !['worker', 'tractor'].includes(u.kind) ||
         ![u.x, u.y].every((n) => Number.isFinite(n) && n >= 0 && n < 512) ||
         !['auto', 'harvest', 'press', 'build', 'rest'].includes(u.role) ||
-        !stock(u.cargo, i === 2 ? 24000 : 8000) ||
+        !stock(u.cargo, unitSpec(s, u).capacity) ||
         !Array.isArray(u.path) ||
         u.path.length > 4096 ||
         !u.path.every(cell) ||
@@ -1415,6 +1893,7 @@ export class VineyardModel {
           'unload',
           'move',
           'care',
+          'cellar',
         ].includes(u.job.kind) ||
           !cell(u.job.goal) ||
           !int(u.job.progress, 100000) ||
@@ -1445,15 +1924,24 @@ export class VineyardModel {
           (!(row || building) ||
             u.kind !== 'worker' ||
             key(j.goal) !== key((row || building)!.access) ||
-            !reservations.reserve(u.id, j.target, 1, 1))
+            !reservations.reserve(u.id, `work-${j.target}`, 1, 1))
         )
           return fail();
         if (
-          j.kind === 'press' &&
+          (j.kind === 'press' || j.kind === 'cellar') &&
           (!building ||
+            (j.kind === 'cellar' &&
+              (!s.campaign ||
+                s.campaign.cellars[j.target].process?.stage !== 'bottle')) ||
             u.kind !== 'worker' ||
             key(j.goal) !== key(building.access) ||
-            !reservations.reserve(u.id, j.target, 1, 1))
+            !reservations.reserve(u.id, `work-${j.target}`, 1, 1))
+        )
+          return fail();
+        if (
+          s.campaign &&
+          (j.kind === 'load' || j.kind === 'unload') &&
+          !reservations.reserve(u.id, `dock-${j.target}`, 1, 1)
         )
           return fail();
         if (
@@ -1462,7 +1950,7 @@ export class VineyardModel {
             u.kind !== 'worker' ||
             !s.environment?.crops[row.id].care ||
             key(j.goal) !== key(row.access) ||
-            !reservations.reserve(u.id, j.target, 1, 1))
+            !reservations.reserve(u.id, `work-${j.target}`, 1, 1))
         )
           return fail();
         if (
@@ -1499,17 +1987,19 @@ export class VineyardModel {
         .map((b) => total(b.stock) + (b.batch?.amount ?? 0))
         .reduce(sum, 0) +
       s.processed +
-      s.lost;
+      s.lost +
+      (s.campaign?.grapeSales ?? 0);
     if (
       grams !== s.grown ||
-      s.sold + s.buildings.map((b) => total(b.must)).reduce(sum, 0) !==
-        s.processed * 0.6 ||
-      (s.completed || s.failed) !==
-        (s.tick === (s.environment ? SEASON_TICKS : 7200)) ||
-      s.completed !==
-        (s.tick === (s.environment ? SEASON_TICKS : 7200) &&
-          s.sold >= 40000 &&
-          !s.ledger.arrears)
+      (!s.campaign &&
+        (s.sold + s.buildings.map((b) => total(b.must)).reduce(sum, 0) !==
+          s.processed * 0.6 ||
+          (s.completed || s.failed) !==
+            (s.tick === (s.environment ? SEASON_TICKS : 7200)) ||
+          s.completed !==
+            (s.tick === (s.environment ? SEASON_TICKS : 7200) &&
+              s.sold >= 40000 &&
+              !s.ledger.arrears)))
     )
       return fail();
     return s;
@@ -1526,9 +2016,27 @@ export class VineyardModel {
       throw Error('Winobranie RTS: uszkodzony zapis W1');
     return this.validateSave({
       ...raw,
-      version: 2,
-      revision: 'vineyard-w2',
+      version: 3,
+      revision: 'vineyard-w3',
+      campaign: null,
       environment: null,
+    });
+  }
+  migrateV2(raw: unknown) {
+    if (
+      !raw ||
+      typeof raw !== 'object' ||
+      !('version' in raw) ||
+      raw.version !== 2 ||
+      !('revision' in raw) ||
+      raw.revision !== 'vineyard-w2'
+    )
+      throw Error('Winobranie RTS: uszkodzony zapis W2');
+    return this.validateSave({
+      ...raw,
+      version: 3,
+      revision: 'vineyard-w3',
+      campaign: null,
     });
   }
   restore(value: unknown) {
@@ -1538,8 +2046,8 @@ export class VineyardModel {
     candidate.rebuild();
     for (const u of valid.units)
       if (
-        !candidate.walkable(rounded(u), u.kind === 'tractor') ||
-        u.path.some((p) => !candidate.walkable(p, u.kind === 'tractor'))
+        !candidate.walkable(rounded(u), unitSpec(valid, u).radius) ||
+        u.path.some((p) => !candidate.walkable(p, unitSpec(valid, u).radius))
       )
         throw Error('Winobranie RTS: niepoprawna trasa zapisu');
     for (const r of valid.rows)
@@ -1548,7 +2056,9 @@ export class VineyardModel {
     for (const b of valid.buildings)
       if (
         !candidate.human.findPath(DEPOT, b.access) ||
-        !candidate.vehicle.findPath(DEPOT, b.dock)
+        !candidate.vehicle.findPath(DEPOT, b.dock) ||
+        (valid.units.some((u) => unitSpec(valid, u).radius === 2) &&
+          !candidate.hauler.findPath(DEPOT, b.dock))
       )
         throw Error('Winobranie RTS: odcięty port zapisu');
     this.state = valid;

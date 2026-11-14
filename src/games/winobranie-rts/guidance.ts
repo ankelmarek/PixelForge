@@ -1,5 +1,6 @@
 import type { Plan, Tool, VineyardState } from './model';
 import { seasonGuidance } from './season-guidance';
+import { campaignGuidance } from './campaign-guidance';
 
 export interface Guidance {
   id: string;
@@ -41,6 +42,8 @@ const toolHelp: Partial<Record<Tool, string>> = {
   house:
     'Postaw domek przy drodze. Zielony podgląd potwierdza miejsce i dojazd; obrót zmienia stronę rozładunku.',
   road: 'Przeciągnij drogę od istniejącego dojazdu do miejsca rozładunku przy domku.',
+  avenue:
+    'Przeciągnij drogę szerokości 5 pól. Duża przyczepa potrzebuje takiego przejazdu i przestrzeni na zakrętach.',
   row: 'Wybierz odmianę i przeciągnij rząd na swojej ziemi. Nowe krzewy potrzebują czasu na wzrost.',
   move: 'Wybierz pusty domek, a potem nowe miejsce. Przenosiny kosztują 1000 monet i wymagają ponownej budowy.',
   remove:
@@ -77,7 +80,7 @@ export function guidance(
       'warning',
     );
   if (toolHelp[tool]) return say(`tool:${tool}`, toolHelp[tool]!);
-  if (s.sold >= goal && !s.ledger.arrears)
+  if (!s.campaign && s.sold >= goal && !s.ledger.arrears)
     return say(
       'goal',
       'Cel sprzedaży osiągnięty! Utrzymaj gospodarstwo bez zaległości do końca sezonu.',
@@ -98,7 +101,7 @@ export function guidance(
   )
     return seasonal;
 
-  const ready = s.buildings.find((b) => total(b.must) > 0);
+  const ready = !s.campaign && s.buildings.find((b) => total(b.must) > 0);
   if (ready)
     return say(
       'sale',
@@ -124,6 +127,8 @@ export function guidance(
       'Zbuduj domek przy drodze narzędziem „Domek”. W nim wytłoczysz moszcz z zebranych gron.',
     );
   if (seasonal) return seasonal;
+  const campaign = campaignGuidance(s);
+  if (campaign) return campaign;
 
   const workers = s.units.filter((u) => u.kind === 'worker');
   const canWork = (role: 'build' | 'press' | 'harvest') =>
@@ -178,7 +183,9 @@ export function guidance(
   if (s.buildings.some((b) => b.batch) || press)
     return say(
       'pressing',
-      'Trwa tłoczenie moszczu. Gotową partię sprzedasz w panelu domku.',
+      s.campaign
+        ? 'Trwa tłoczenie. Moszcz trafi do fermentatora, a pracownik zabutelkuje gotowe wino.'
+        : 'Trwa tłoczenie moszczu. Gotową partię sprzedasz w panelu domku.',
     );
   if (total(s.warehouse) || s.units.some((u) => total(u.cargo)))
     return say(

@@ -6,11 +6,17 @@ import type {
 import type { Guidance } from './guidance';
 import { varieties } from './cultivars';
 import type { SeasonView } from './season-view';
+import {
+  campaignMarkup,
+  updateCampaign,
+  type CampaignView,
+} from './campaign-view';
 export interface VineyardView {
   cash: number;
   seconds: number;
   duration: number;
   season: SeasonView;
+  campaign: CampaignView;
   speed: number;
   sold: number;
   vouchers: number;
@@ -50,6 +56,7 @@ export const createControls: NonNullable<
     ['box', '▧', 'Grupa'],
     ['row', '❧', 'Winorośl'],
     ['road', '═', 'Droga'],
+    ['avenue', '≡', 'Droga 5 pól'],
     ['house', '⌂', 'Domek'],
     ['tank', '▥', 'Zbiornik'],
     ['pump', '⚙', 'Pompa'],
@@ -97,11 +104,17 @@ export const createControls: NonNullable<
     .map(([id, label]) => `<button data-water-mode="${id}">${label}</button>`)
     .join(
       '',
-    )}</nav><button data-refill></button><button data-care>Pielęgnacja · 100 ◈</button><small data-view="care-pending"></small><button class="must-sale" data-sell="true">♧ Sprzedaj moszcz <strong data-view="must"></strong></button></aside>
+    )}</nav><button data-refill></button><button data-care>Pielęgnacja · 100 ◈</button><small data-view="care-pending"></small><button class="must-sale" data-sell="true"><span data-view="sale-label">♧ Sprzedaj moszcz</span> <strong data-view="must"></strong></button></aside>
   <section class="vineyard-guidance" aria-label="Co teraz?">
     <div class="guidance-heading"><b>Co teraz?</b><button data-guidance-toggle aria-expanded="true" aria-controls="vineyard-guidance-content">Ukryj</button></div>
     <div id="vineyard-guidance-content"><small data-view="goal"></small><p data-view="guidance" role="status" aria-live="polite" aria-atomic="true"></p><button data-guidance-focus>Pokaż miejsce</button></div>
   </section>`;
+  const business = document.createElement('div');
+  business.innerHTML = campaignMarkup;
+  root.append(business.querySelector('[data-campaign]')!);
+  root
+    .querySelector('.vineyard-selection')!
+    .append(...Array.from(business.children));
   const get = (name: string) =>
     root.querySelector<HTMLElement>(`[data-view="${name}"]`)!;
   let current: VineyardView | undefined;
@@ -111,6 +124,20 @@ export const createControls: NonNullable<
     );
     if (!button || button.disabled) return;
     const d = button.dataset;
+    for (const action of ['hire', 'upgrade', 'cellarMode', 'contract'])
+      if (d[action]) {
+        send({
+          type: 'client-action',
+          action: action === 'cellarMode' ? 'cellar-mode' : action,
+          payload: d[action],
+        });
+        return;
+      }
+    for (const action of ['loan', 'repay', 'grapes', 'early', 'dismiss'])
+      if (action in d) {
+        send({ type: 'client-action', action });
+        return;
+      }
     if ('guidanceToggle' in d) {
       const content = root.querySelector<HTMLElement>(
         '#vineyard-guidance-content',
@@ -166,11 +193,22 @@ export const createControls: NonNullable<
     );
     get('cash').textContent =
       `${Math.floor(s.cash / 100).toLocaleString('pl-PL')} ◈`;
-    get('sold').textContent = `${(s.sold / 1000).toFixed(1)} / 40 L`;
-    root.querySelector('progress')!.value = s.sold / 1000;
+    const campaign = s.campaign;
+    updateCampaign(root, campaign, s.cash, s.units.length);
+    root.classList.toggle('three-seasons', !!campaign);
+    root.querySelector<HTMLElement>('[data-tool="avenue"]')!.hidden = !campaign;
+    root.querySelector<HTMLElement>('.vineyard-brand small')!.textContent =
+      campaign ? 'TRZY SEZONY' : 'ŻYWY SEZON';
+    root.querySelector<HTMLElement>('.season-goal small')!.textContent =
+      campaign ? 'BUTELKI' : 'MOSZCZ';
+    get('sold').textContent = campaign
+      ? `${campaign.bottles} / ${campaign.goal}`
+      : `${(s.sold / 1000).toFixed(1)} / 40 L`;
+    root.querySelector('progress')!.max = campaign?.goal ?? 40;
+    root.querySelector('progress')!.value = campaign?.bottles ?? s.sold / 1000;
     const remaining = Math.max(0, s.duration - Math.floor(s.seconds));
     get('time').textContent =
-      `${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, '0')}`;
+      `${campaign ? `Rok ${campaign.year}/3 · ` : ''}${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, '0')}`;
     get('label').textContent = s.label;
     get('detail').textContent = s.detail;
     const season = s.season;
@@ -230,10 +268,19 @@ export const createControls: NonNullable<
         node.title = f ? `Pewność prognozy: ${f.confidence}` : '';
       }
     }
-    get('must').textContent = `${(s.must / 1000).toFixed(1)} L`;
+    get('sale-label').textContent = campaign
+      ? '♧ Sprzedaj butelki'
+      : '♧ Sprzedaj moszcz';
+    get('must').textContent = campaign
+      ? `${campaign.cellar?.bottles ?? 0} szt.`
+      : `${(s.must / 1000).toFixed(1)} L`;
     get('price').textContent =
       s.tool === 'house'
-        ? `${s.vouchers} / 2 ⌂`
+        ? s.vouchers
+          ? `${s.vouchers} / 2 ⌂`
+          : campaign
+            ? '8000 ◈'
+            : '0 / 2 ⌂'
         : s.tool === 'parcel'
           ? '6000 ◈'
           : `${s.cost / 100} ◈`;
@@ -251,7 +298,9 @@ export const createControls: NonNullable<
       // Only actual text changes should be announced by assistive technology.
       if (get('guidance').textContent !== s.guidance.text)
         get('guidance').textContent = s.guidance.text;
-      const goal = `Cel sezonu: sprzedaj ${s.goal / 1000} L moszczu.`;
+      const goal = campaign
+        ? `Cel: ${campaign.goal} butelek · jakość 65 · 2 szczepy w roku 3 · wartość netto ≥0.`
+        : `Cel sezonu: sprzedaj ${s.goal / 1000} L moszczu.`;
       if (get('goal').textContent !== goal) get('goal').textContent = goal;
       root.querySelector<HTMLButtonElement>('[data-guidance-focus]')!.hidden =
         !s.guidance.target;
@@ -262,8 +311,9 @@ export const createControls: NonNullable<
     root.querySelector<HTMLElement>('.vineyard-options')!.hidden =
       ['select', 'box'].includes(s.tool) && !s.arrears && !s.selection.length;
     root.querySelector<HTMLButtonElement>('[data-sell]')!.hidden = !s.sellable;
-    root.querySelector<HTMLButtonElement>('[data-sell]')!.disabled =
-      s.must <= 0;
+    root.querySelector<HTMLButtonElement>('[data-sell]')!.disabled = campaign
+      ? (campaign.cellar?.bottles ?? 0) <= 0
+      : s.must <= 0;
     const roles = root.querySelector<HTMLElement>('.roles')!;
     roles.hidden = !s.selection.some((id) => s.units.some((u) => u.id === id));
     for (const button of Array.from(
@@ -286,23 +336,28 @@ export const createControls: NonNullable<
       );
     }
     const crew = root.querySelector<HTMLElement>('.crew')!;
-    if (!crew.children.length)
-      for (const unit of s.units) {
-        const button = document.createElement('button');
-        button.dataset.unit = unit.id;
-        button.setAttribute(
-          'aria-label',
-          unit.id === 'tractor-1'
-            ? 'Traktor'
-            : `Pracownik ${unit.id.slice(-1)}`,
-        );
-        crew.append(button);
-      }
+    for (const button of Array.from(
+      crew.querySelectorAll<HTMLButtonElement>('[data-unit]'),
+    ))
+      if (!s.units.some((u) => u.id === button.dataset.unit)) button.remove();
+    for (const unit of s.units.filter(
+      (u) => !crew.querySelector(`[data-unit="${u.id}"]`),
+    )) {
+      const button = document.createElement('button');
+      button.dataset.unit = unit.id;
+      button.setAttribute(
+        'aria-label',
+        unit.id === 'tractor-1'
+          ? 'Traktor'
+          : `${unit.id.startsWith('tractor') ? 'Traktor' : 'Pracownik'} ${unit.id.split('-').at(-1)}`,
+      );
+      crew.append(button);
+    }
     for (const unit of s.units) {
       const button = crew.querySelector<HTMLButtonElement>(
         `[data-unit="${unit.id}"]`,
       )!;
-      button.textContent = `${unit.icon} ${unit.id.slice(-1)} ${unit.cargo ? `${unit.cargo / 1000} kg` : unit.busy ? '●' : '◌'}`;
+      button.textContent = `${unit.icon} ${unit.id.split('-').at(-1)} ${unit.cargo ? `${unit.cargo / 1000} kg` : unit.busy ? '●' : '◌'}`;
       button.setAttribute(
         'aria-pressed',
         String(s.selection.includes(unit.id)),

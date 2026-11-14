@@ -4,6 +4,7 @@ import { type VineyardModel, type Plan, STORE, houseAt } from './model';
 import { varieties, riverAt } from './world';
 import { SeasonRenderer } from './season-art';
 import { siteAt } from './climate';
+import { unitSpec } from './campaign';
 
 export function registerArt(scene: Phaser.Scene) {
   const objects = scene.textures.get('objects'),
@@ -276,6 +277,47 @@ export class VineyardViewRenderer {
         grapes = Object.values(b.stock).reduce((a, n) => a + n, 0);
       if (amount) sprite(`${b.id}-barrel`, x + 34, y + 26, 13, 28, 33);
       if (grapes) sprite(`${b.id}-crate`, x - 34, y + 30, 12, 27, 25);
+      const cellar = state.campaign?.cellars[b.id];
+      if (cellar) {
+        const ready = state
+          .campaign!.book.lots.filter((l) => l.owner === `bottles:${b.id}`)
+          .reduce((n, l) => n + l.quantity, 0);
+        if (ready)
+          for (let i = 0; i < Math.min(4, ready); i++) {
+            const bx = x - 12 + i * 8,
+              by = y + 30;
+            e.fillStyle(0x2c5945);
+            e.fillRect(bx, by, 5, 12);
+            e.fillRect(bx + 1, by - 4, 3, 4);
+            e.fillStyle(0xe8d7a1);
+            e.fillRect(bx + 1, by + 3, 3, 5);
+            e.fillStyle(0xa6654e);
+            e.fillRect(bx + 1, by - 5, 3, 2);
+          }
+        if (cellar.process) {
+          sprite(`${b.id}-ferment`, x + 34, y + 26, 13, 28, 33);
+          const phase = (state.tick % 30) / 30;
+          e.fillStyle(
+            cellar.mode === 'reserve' ? 0xe8c56c : 0xc6dba0,
+            1 - phase,
+          );
+          e.fillRect(x + 31, y + 7 - phase * 12, 3, 3);
+          e.fillStyle(0x263d30);
+          e.fillRect(x - 22, y - 63, 44, 4);
+          e.fillStyle(0xc6a8ce);
+          e.fillRect(
+            x - 21,
+            y - 62,
+            42 *
+              (cellar.process.stage === 'bottle'
+                ? 1 - cellar.process.work / 60
+                : 1 -
+                  cellar.process.remaining /
+                    (cellar.process.reserve ? 1800 : 600)),
+            2,
+          );
+        }
+      }
       if (b.work || b.batch) {
         const p = b.work
           ? 1 - b.work / 120
@@ -322,10 +364,19 @@ export class VineyardViewRenderer {
         x,
         y - 6 + bob,
         frame,
-        u.kind === 'tractor' ? 64 : 40,
-        u.kind === 'tractor' ? 52 : 42,
+        u.kind === 'tractor' ? (unitSpec(state, u).radius === 2 ? 80 : 64) : 40,
+        u.kind === 'tractor' ? (unitSpec(state, u).radius === 2 ? 64 : 52) : 42,
       );
-      if (s) s.setFlipX((u.path[0]?.x ?? u.x) < u.x);
+      if (s) {
+        s.setFlipX((u.path[0]?.x ?? u.x) < u.x);
+        s.setTint(
+          state.campaign?.crew[u.id].kind === 'strong'
+            ? 0xe8c788
+            : state.campaign?.crew[u.id].kind === 'hauler'
+              ? 0xb0c7e5
+              : 0xffffff,
+        );
+      }
       if (carrying && u.kind === 'tractor')
         sprite(`${u.id}-cargo`, x + 15, y - 9, 12, 20, 19);
       if (selection.includes(u.id)) {
