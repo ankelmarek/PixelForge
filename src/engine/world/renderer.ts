@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import type {
   SectorData,
   SectorReference,
-  WorldLevel,
+  TerrainWorld,
 } from '../simulation/types';
 import { SectorCache, sectorsInView, type WorldView } from './sectors';
 export function cameraView(camera: Phaser.Cameras.Scene2D.Camera): WorldView {
@@ -21,7 +21,7 @@ export class SectorRenderer {
   private missing = 0;
   constructor(
     private scene: Phaser.Scene,
-    readonly level: WorldLevel,
+    readonly level: TerrainWorld,
     levelUrl: string,
     error: (message: string) => void,
   ) {

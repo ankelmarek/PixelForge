@@ -1,7 +1,7 @@
 import type {
   SectorData,
   SectorReference,
-  WorldLevel,
+  TerrainWorld,
 } from '../simulation/types';
 
 export interface WorldLimits {
@@ -104,7 +104,7 @@ export function validateWorldTerrain(
 
 export function validateSector(
   raw: unknown,
-  world: WorldLevel,
+  world: TerrainWorld,
   ref: SectorReference,
 ): SectorData {
   const d = record(raw),

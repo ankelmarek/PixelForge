@@ -36,5 +36,7 @@ export { createFlowScenes } from '../scenes/flow';
 export { VersionedSave } from '../systems/versioned-save';
 export { MutableGrid } from '../world/mutable-grid';
 export { MutableTerrainRenderer } from '../world/mutable-renderer';
-export { cameraView } from '../world/renderer';
+export { cameraView, SectorRenderer } from '../world/renderer';
+export type { TerrainWorld } from '../simulation/types';
+export type { ClientControls, JsonValue } from './client';
 export { pixelAlignedScroll } from '../simulation/camera';

@@ -12,18 +12,26 @@ export class VersionedSave<T> {
     this.key = `pixelforge:client:v${schemaVersion}:${gameId}`;
   }
   read(): T | undefined {
+    const result = this.inspect();
+    return result.status === 'ready' ? result.value : undefined;
+  }
+  inspect():
+    | { status: 'absent' }
+    | { status: 'invalid' }
+    | { status: 'ready'; value: T } {
     try {
       const raw = this.storage.readRaw(this.key);
-      if (!raw || raw.length > 4000000) return;
+      if (!raw) return { status: 'absent' };
+      if (raw.length > 4000000) return { status: 'invalid' };
       const data = JSON.parse(raw);
       if (
         data.gameId !== this.gameId ||
         data.schemaVersion !== this.schemaVersion
       )
-        return;
-      return this.validate(data.state);
+        return { status: 'invalid' };
+      return { status: 'ready', value: this.validate(data.state) };
     } catch {
-      return;
+      return { status: 'invalid' };
     }
   }
   write(state: T): boolean {

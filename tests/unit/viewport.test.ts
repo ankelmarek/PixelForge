@@ -52,3 +52,18 @@ it('kamera zachowuje fazę pikseli i granice przy zoomie 0.5, także dla nieparz
     }
   }
 });
+
+it('gęstszy widok klienta pozostaje w istniejącym budżecie sektorów', () => {
+  for (const [width, height] of [
+    [1440, 900],
+    [7680, 4320],
+    [412, 915],
+    [200, 5000],
+  ]) {
+    const view = fillViewport(width, height, { width: 640, height: 360 });
+    expect(view.width).toBeLessThanOrEqual(640);
+    expect(view.height).toBeLessThanOrEqual(960);
+    expect(view.width * view.scale).toBeGreaterThanOrEqual(width);
+    expect(view.height * view.scale).toBeGreaterThanOrEqual(height);
+  }
+});

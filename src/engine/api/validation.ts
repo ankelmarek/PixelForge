@@ -275,6 +275,18 @@ export function validateDefinition(
       throw new Error('music: nieprawidłowa głośność/tempo');
   }
   if (g.kind === 'client') {
+    if (g.preferredViewport !== undefined) {
+      const v = record(g.preferredViewport, 'preferredViewport');
+      if (
+        !Number.isInteger(v.width) ||
+        !Number.isInteger(v.height) ||
+        Number(v.width) < 320 ||
+        Number(v.width) > 640 ||
+        Number(v.height) < 180 ||
+        Number(v.height) > 960
+      )
+        throw Error('preferredViewport: przekroczony budżet');
+    }
     if (typeof g.createRuntime !== 'function')
       throw new Error('createRuntime: wymagany zaufany moduł TypeScript');
     const p = record(g.presentation, 'presentation');

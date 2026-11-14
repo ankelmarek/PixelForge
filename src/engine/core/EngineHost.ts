@@ -270,7 +270,14 @@ export class EngineHost {
     this.resize = new ResizeObserver(() => {
       const parent = this.options.parent;
       if (this.options.display === 'fill') {
-        const view = fillViewport(parent.clientWidth, parent.clientHeight);
+        const definition = this.options.definition;
+        const view = fillViewport(
+          parent.clientWidth,
+          parent.clientHeight,
+          definition.kind === 'client'
+            ? definition.preferredViewport
+            : undefined,
+        );
         if (canvas.width !== view.width || canvas.height !== view.height)
           this.game!.scale.resize(view.width, view.height);
         // Exact integer scaling; at most scale - 1 CSS pixels are clipped at an edge.

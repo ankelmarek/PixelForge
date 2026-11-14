@@ -1,4 +1,4 @@
-import type { Cell, WorldLevel } from '../simulation/types';
+import type { Cell, GridRect } from '../simulation/types';
 interface Portal {
   to: number;
   exit: Cell;
@@ -9,6 +9,8 @@ interface Region {
   x: number;
   y: number;
   labels: Int32Array;
+  revision: number;
+  components: number[];
 }
 export interface NavigationStats {
   regions: number;
@@ -31,8 +33,15 @@ export class RegionalNavigator {
   private edges = new Map<number, Portal[]>();
   private size: number;
   private built = false;
+  private serial = 0;
+  private revision = 0;
+  lastRebuilt = 0;
   constructor(
-    readonly level: WorldLevel,
+    readonly level: {
+      width: number;
+      height: number;
+      terrain: { sectorSize: number };
+    },
     private walkable: (p: Cell) => boolean,
     private budget = { abstract: 8192, local: 65536 },
   ) {
@@ -47,82 +56,175 @@ export class RegionalNavigator {
     const r = this.region(p);
     return r?.labels[(p.y - r.y) * this.size + p.x - r.x] ?? 0;
   }
-  private build() {
-    if (this.built) return;
+  /** Builds a bounded number of regions during loading; commands never scan world cells. */
+  prepare(regionBudget = 4): boolean {
+    if (this.built) return true;
+    const columns = Math.ceil(this.level.width / this.size);
+    const total = columns * Math.ceil(this.level.height / this.size);
+    for (let n = 0; n < regionBudget && this.regions.size < total; n++) {
+      const index = this.regions.size;
+      this.buildRegion(
+        (index % columns) * this.size,
+        Math.floor(index / columns) * this.size,
+      );
+    }
+    if (this.regions.size < total) return false;
+    for (const r of this.regions.values()) this.linkRegion(r, false);
     this.built = true;
-    const s = this.size;
-    let serial = 0;
-    for (let y = 0; y < this.level.height; y += s)
-      for (let x = 0; x < this.level.width; x += s) {
-        const labels = new Int32Array(s * s);
-        for (let i = 0; i < labels.length; i++)
-          labels[i] = this.walkable({
-            x: x + (i % s),
-            y: y + Math.floor(i / s),
-          })
-            ? -1
-            : 0;
-        for (let i = 0; i < labels.length; i++) {
-          if (labels[i] !== -1) continue;
-          const id = ++serial,
-            queue = [i];
-          labels[i] = id;
-          this.edges.set(id, []);
-          for (let head = 0; head < queue.length; head++) {
-            const at = queue[head],
-              cx = at % s,
-              cy = Math.floor(at / s);
-            for (const [dx, dy] of directions) {
-              const nx = cx + dx,
-                ny = cy + dy,
-                next = ny * s + nx;
-              if (nx < 0 || ny < 0 || nx >= s || ny >= s || labels[next] !== -1)
-                continue;
-              labels[next] = id;
-              queue.push(next);
-            }
-          }
-        }
-        this.regions.set(`${x / s},${y / s}`, { x, y, labels });
-      }
-    // One graph edge per connected component pair, with all legal crossings.
-    // Choose a nearby crossing at query time to avoid detours to region corners.
-    const connected = new Map<string, [Portal, Portal]>();
-    const link = (a: Cell, b: Cell) => {
-      const left = this.label(a),
-        right = this.label(b),
-        key = `${left}:${right}`;
-      if (!left || !right) return;
-      let pair = connected.get(key);
-      if (!pair) {
-        pair = [
-          { to: right, exit: a, entry: b, crossings: [] },
-          { to: left, exit: b, entry: a, crossings: [] },
-        ];
-        connected.set(key, pair);
-        this.edges.get(left)!.push(pair[0]);
-        this.edges.get(right)!.push(pair[1]);
-      }
-      pair[0].crossings.push({ exit: a, entry: b });
-      pair[1].crossings.push({ exit: b, entry: a });
-    };
-    for (const r of this.regions.values())
-      for (let offset = 0; offset < s; offset++) {
-        if (r.x + s < this.level.width)
-          link(
-            { x: r.x + s - 1, y: r.y + offset },
-            { x: r.x + s, y: r.y + offset },
-          );
-        if (r.y + s < this.level.height)
-          link(
-            { x: r.x + offset, y: r.y + s - 1 },
-            { x: r.x + offset, y: r.y + s },
-          );
-      }
     this.stats.regions = this.regions.size;
+    return true;
+  }
+  private build() {
+    while (!this.prepare(32)) {
+      /* compatibility for synchronous clients */
+    }
+  }
+  private buildRegion(x: number, y: number) {
+    const s = this.size,
+      labels = new Int32Array(s * s),
+      components: number[] = [];
+    for (let i = 0; i < labels.length; i++) {
+      const p = { x: x + (i % s), y: y + Math.floor(i / s) };
+      labels[i] =
+        p.x < this.level.width && p.y < this.level.height && this.walkable(p)
+          ? -1
+          : 0;
+    }
+    for (let i = 0; i < labels.length; i++) {
+      if (labels[i] !== -1) continue;
+      const id = ++this.serial,
+        queue = [i];
+      labels[i] = id;
+      components.push(id);
+      this.edges.set(id, []);
+      for (let head = 0; head < queue.length; head++) {
+        const at = queue[head],
+          cx = at % s,
+          cy = Math.floor(at / s);
+        for (const [dx, dy] of directions) {
+          const nx = cx + dx,
+            ny = cy + dy,
+            next = ny * s + nx;
+          if (nx < 0 || ny < 0 || nx >= s || ny >= s || labels[next] !== -1)
+            continue;
+          labels[next] = id;
+          queue.push(next);
+        }
+      }
+    }
+    this.regions.set(`${x / s},${y / s}`, {
+      x,
+      y,
+      labels,
+      components,
+      revision: ++this.revision,
+    });
+  }
+  private linkRegion(r: Region, allSides: boolean) {
+    const s = this.size;
+    const neighbors = allSides ? directions : directions.slice(0, 2);
+    for (const [dx, dy] of neighbors) {
+      const neighbor = this.regions.get(`${r.x / s + dx},${r.y / s + dy}`);
+      if (!neighbor) continue;
+      const pairs = new Map<string, [Portal, Portal]>();
+      for (let i = 0; i < s; i++) {
+        const a = {
+          x: r.x + (dx ? (dx > 0 ? s - 1 : 0) : i),
+          y: r.y + (dy ? (dy > 0 ? s - 1 : 0) : i),
+        };
+        const b = { x: a.x + dx, y: a.y + dy },
+          left = this.label(a),
+          right = this.label(b);
+        if (
+          !left ||
+          !right ||
+          this.edges.get(left)!.some((e) => e.to === right)
+        )
+          continue;
+        const key = `${left}:${right}`;
+        let pair = pairs.get(key);
+        if (!pair) {
+          pair = [
+            { to: right, exit: a, entry: b, crossings: [] },
+            { to: left, exit: b, entry: a, crossings: [] },
+          ];
+          pairs.set(key, pair);
+        }
+        pair[0].crossings.push({ exit: a, entry: b });
+        pair[1].crossings.push({ exit: b, entry: a });
+      }
+      for (const [a, b] of pairs.values()) {
+        this.edges.set(b.to, [...this.edges.get(b.to)!, a]);
+        this.edges.set(a.to, [...this.edges.get(a.to)!, b]);
+      }
+    }
+  }
+  revisionAt(p: Cell) {
+    return this.region(p)?.revision ?? 0;
+  }
+  /** Labels/portals are immutable after publication, so previews share unaffected sectors. */
+  fork(walkable: (p: Cell) => boolean) {
+    this.build();
+    const copy = new RegionalNavigator(this.level, walkable, this.budget);
+    copy.regions = new Map(this.regions);
+    copy.edges = new Map(this.edges);
+    copy.built = true;
+    copy.serial = this.serial;
+    copy.revision = this.revision;
+    copy.stats = { ...this.stats };
+    return copy;
+  }
+  invalidate(bounds: GridRect, halo = 0) {
+    this.build();
+    const affected: Region[] = [];
+    const s = this.size;
+    for (
+      let y = Math.max(0, Math.floor((bounds.y - halo) / s));
+      y <=
+      Math.min(
+        Math.ceil(this.level.height / s) - 1,
+        Math.floor((bounds.y + bounds.height - 1 + halo) / s),
+      );
+      y++
+    )
+      for (
+        let x = Math.max(0, Math.floor((bounds.x - halo) / s));
+        x <=
+        Math.min(
+          Math.ceil(this.level.width / s) - 1,
+          Math.floor((bounds.x + bounds.width - 1 + halo) / s),
+        );
+        x++
+      ) {
+        const r = this.regions.get(`${x},${y}`)!;
+        affected.push(r);
+        for (const id of r.components) {
+          for (const edge of this.edges.get(id) ?? [])
+            this.edges.set(
+              edge.to,
+              (this.edges.get(edge.to) ?? []).filter((e) => e.to !== id),
+            );
+          this.edges.delete(id);
+        }
+      }
+    for (const r of affected) this.buildRegion(r.x, r.y);
+    for (const r of affected) this.linkRegion(this.region(r), true);
+    this.lastRebuilt = affected.length;
   }
   findPath(from: Cell, to: Cell): Cell[] | null {
     this.build();
+    if (
+      ![from, to].every(
+        (p) =>
+          Number.isInteger(p.x) &&
+          Number.isInteger(p.y) &&
+          p.x >= 0 &&
+          p.y >= 0 &&
+          p.x < this.level.width &&
+          p.y < this.level.height,
+      )
+    )
+      return null;
     this.stats = {
       ...this.stats,
       abstractExpanded: 0,

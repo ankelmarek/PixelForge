@@ -2,6 +2,7 @@ import {
   EngineHost,
   type ClientDefinition,
   type Snapshot,
+  type ClientControls,
 } from '../engine/api';
 
 /** Shared full-window presentation for bundled game clients. */
@@ -20,7 +21,7 @@ export function mountGame(
     <div><button id="focus" aria-label="Śledź bohatera">⌖</button><button id="zoom-out" aria-label="Oddal">−</button><button id="zoom-in" aria-label="Przybliż">+</button></div></div>
     <div class="direction-pad" aria-label="Ruch"><button data-action="up" aria-label="W górę">↑</button><button data-action="left" aria-label="W lewo">←</button><button data-action="down" aria-label="W dół">↓</button><button data-action="right" aria-label="W prawo">→</button></div>
     <div id="menu" class="lab-menu game-menu"><div class="title-art"></div><div class="menu-content"><p class="eyebrow">PIXELFORGE</p><h1 id="title"></h1><button id="start" disabled>Nowa gra</button><button id="resume" disabled>Wznów</button></div></div>
-    <div id="session-menu" class="lab-menu" hidden><div class="result-art" aria-hidden="true">✿</div><h2 id="result-title">Pauza</h2><button id="continue">Wznów</button><button id="restart">Nowa gra</button><button id="leave">Katalog</button></div>
+    <div id="session-menu" class="lab-menu" hidden><div class="result-art" aria-hidden="true">✿</div><h2 id="result-title">Pauza</h2><dl id="result-values" hidden></dl><button id="continue">Wznów</button><button id="restart">Nowa gra</button><button id="leave">Katalog</button></div>
     <p id="message" role="status"></p><p id="error" role="alert"></p><pre id="diagnostics" hidden></pre>
   </main>`;
   const get = <T extends HTMLElement = HTMLElement>(id: string) =>
@@ -44,6 +45,7 @@ export function mountGame(
     dead = false,
     running = false;
   const diagnostic = new URLSearchParams(location.search).has('diagnostics');
+  let controls: ClientControls | undefined;
   const drawMap = (s: Snapshot) => {
     if (!s.map) return;
     ctx.fillStyle = '#352e37';
@@ -94,6 +96,7 @@ export function mountGame(
       const wasPaused = state?.paused,
         wasOver = state?.completed || state?.failed;
       state = s;
+      controls?.update(s);
       get('goal').textContent =
         `${s.objectiveIcon ?? '✿'} ${s.collected ?? 0} / ${s.total ?? 0}`;
       const tokens = get('game-tokens');
@@ -148,6 +151,17 @@ export function mountGame(
       const over = s.completed || s.failed;
       get('session-menu').hidden = !s.paused && !over;
       get('continue').hidden = !!over;
+      const results = get('result-values');
+      results.hidden = !over || !s.results?.length;
+      results.replaceChildren();
+      if (over)
+        for (const result of s.results ?? []) {
+          const term = document.createElement('dt'),
+            value = document.createElement('dd');
+          term.textContent = result.label;
+          value.textContent = result.value;
+          results.append(term, value);
+        }
       get('result-title').textContent = s.completed
         ? definition.presentation.completionTitle
         : s.failed
@@ -176,6 +190,21 @@ export function mountGame(
       if (!dead) get('error').textContent = message;
     },
   });
+  if (definition.createControls) {
+    root.querySelector('.game-shell')!.classList.add('custom-controls');
+    const panel = document.createElement('div');
+    panel.className = 'client-controls';
+    panel.hidden = true;
+    root.querySelector('.game-shell')!.append(panel);
+    controls = definition.createControls({
+      root: panel,
+      send: (command) => {
+        if (running && !state?.paused && !state?.completed && !state?.failed)
+          host.clientCommand(command);
+      },
+    });
+    get('focus').setAttribute('aria-label', 'Centrum świata');
+  }
   const bind = (id: string, fn: () => void) => {
     get(id).addEventListener('pointerdown', (e) => e.preventDefault());
     get(id).addEventListener('click', fn);
@@ -186,6 +215,8 @@ export function mountGame(
     get('session-menu').hidden = true;
     get('error').textContent = '';
     running = true;
+    const panel = root.querySelector<HTMLElement>('.client-controls');
+    if (panel) panel.hidden = false;
     host.start(resume);
   };
   bind('start', () => start(false));
@@ -231,6 +262,7 @@ export function mountGame(
   const destroy = () => {
     if (dead) return;
     dead = true;
+    controls?.destroy();
     host.destroy();
     window.removeEventListener('pagehide', destroy);
     root.removeEventListener('keydown', keys);

@@ -35,3 +35,28 @@ funkcję rysującą komórkę, utrzymuje wyłącznie tekstury widocznych sektor�
 i odświeża sektory zmienione. Funkcja malująca może sprawdzać sąsiednie komórki;
 zmiana przy szwie unieważnia również sąsiada. To moduły wspólne, bez wiedzy
 o tunelach, dżdżownicach, pogodzie lub roślinach.
+
+## Rozszerzenia W1 (addytywne)
+
+`createControls({ root, send })` jest opcjonalną fabryką panelu klienta.
+Zwraca `update(snapshot)` i `destroy()`. Host zachowuje wspólne start, pauzę,
+wyciszenie, minimapę i wynik; aplikacja ukrywa domyślny krzyżak/HUD, gdy klient
+ma własny panel. `client-action` niesie nazwę akcji i opcjonalny `JsonValue`.
+Klient przyjmuje tylko zamknięty katalog akcji i waliduje dane; żaden JSON nie
+wykonuje skryptów. `Snapshot.client` to projekcja prezentacji, `results` to
+pary etykieta/wartość do wspólnego ekranu końca. Cleanup usuwa listenery DOM.
+
+`preferredViewport` pozwala klientowi wybrać gęstszy widok, nadal ograniczony
+do 640 × 960 logicznych pikseli i całkowitego skalowania canvasu.
+Domyślne zachowanie Atlasu i Dżdżownicy nie ulega zmianie.
+
+`TerrainWorld` odłącza teren i kamerę od statycznych aktorów/receptur.
+`SectorRenderer` jest dostępny publicznie. Headless `engine/api/strategy`
+udostępnia regionalną nawigację, `ScenarioClock`, `Ledger`, `Inventory`,
+`Reservations` oraz geometrię własności. `prepare(n)` indeksuje ograniczoną
+liczbę regionów, `fork()` izoluje podgląd, `invalidate(rect, halo)` wymienia
+wyłącznie komponenty zmienionych sektorów i ich portale. Nie uruchamia A* na
+całej mapie. Zegar ma stały tick 50 ms i tempo 1/2/4; logika działa bez renderera.
+
+`VersionedSave.inspect()` rozróżnia `absent`, `invalid`, `ready`, zachowując
+zgodność dotychczasowego `read()`. Nowa gra nie odczytuje zapisów innych tytułów.

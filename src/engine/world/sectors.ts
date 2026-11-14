@@ -1,7 +1,7 @@
 import type {
   SectorData,
   SectorReference,
-  WorldLevel,
+  TerrainWorld,
 } from '../simulation/types';
 import { validateSector } from './validation';
 export interface WorldView {
@@ -11,7 +11,7 @@ export interface WorldView {
   height: number;
 }
 export function sectorsInView(
-  level: WorldLevel,
+  level: TerrainWorld,
   view: WorldView,
   margin = 1,
 ): SectorReference[] {
@@ -50,7 +50,7 @@ export class SectorCache {
   requests = 0;
   evictions = 0;
   constructor(
-    private level: WorldLevel,
+    private level: TerrainWorld,
     private load: SectorLoader,
     private error: (message: string) => void,
     private concurrency = 4,

@@ -77,10 +77,16 @@ export interface WorldTerrain {
 }
 export type SimulationLevel = SimulationLevelData &
   ({ schemaVersion: 1 } | { schemaVersion: 2; terrain: WorldTerrain });
-export type WorldLevel = SimulationLevelData & {
+export interface TerrainWorld {
+  id: string;
+  width: number;
+  height: number;
+  tileSize: number;
+  camera: SimulationLevelData['camera'];
   schemaVersion: 2;
   terrain: WorldTerrain;
-};
+}
+export type WorldLevel = SimulationLevelData & TerrainWorld;
 export interface SectorData {
   schemaVersion: 1;
   id: string;
