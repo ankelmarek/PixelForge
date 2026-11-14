@@ -16,6 +16,14 @@ Nowym zadaniem infrastrukturalnym jest **bezpieczny aktualizator ZIP** z podglą
 
 **Bieżąca dokumentacja:** `docs/ROADMAP.md` (wersja 0.3), `docs/WINOBRANIE-RTS.md` i dokumenty obecnego engine. Roadmapy 0.2 oraz historyczne są archiwum. Nowe Winobranie RTS jest odrębną grą, stare Winobranie nie może być rozwijane. Nie rozpoczynaj automatycznie implementacji kolejnego etapu.
 
+## Zaplanowana nowa gra: Stacja na Trasie (2026-11-14)
+
+Użytkownik zlecił szczegółowy projekt nowej strategii ekonomicznej **„Stacja na Trasie: Wielki Weekend”**, nie jej natychmiastową implementację. Dokument obowiązujący: [docs/STACJA-BENZYNOWA.md](docs/STACJA-BENZYNOWA.md). Roadmapa zawiera etapy S0–S4.
+
+Gra ma korzystać z PixelForge, obsługi dużych map, dynamicznych dróg i nawigacji, systemów zadań i zapisu oraz istniejącego aktualizatora ZIP. Pierwszoplanowe mechaniki: ruch samochodów, kolejki do paliwa i sklepu, dostawy cysterną, własna rozbudowa stacji, pracownicy, myjnia, ekonomia i trzy skompresowane zmiany z zakończeniem. Pełna obsługa myszą, dopracowany pixel art i dźwięki, bez obowiązkowego tekstowego tutorialu.
+
+Przy poleceniu rozpoczęcia tego tytułu wykonaj **wyłącznie S0**, po sprawdzeniu aktualnej działającej bazy i PR #15 lub nowszych. Nie przerywaj, nie przepisuj i nie scalaj automatycznie bieżących prac nad Winobraniem RTS. Nie wdrażaj gry na hosting bez osobnego polecenia.
+
 ## Gałęzie i pull requesty
 
 - `main` jest gałęzią stabilną. Dokumentacja bazowa może w niej pozostać, ale **implementacja kodu każdego etapu musi być wykonywana na osobnej gałęzi roboczej**.
