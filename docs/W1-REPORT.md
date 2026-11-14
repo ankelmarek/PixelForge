@@ -2,7 +2,7 @@
 
 14 listopada 2026 (Europe/Warsaw). Gałąź `feature/w1-winobranie-rts`, baza
 `f6c4a767` / PR #13 (W0), dziedzicząca działający kod PR #12. W1a–W1d
-zaimplementowano; końcowa weryfikacja wydania i PR jest w toku. W2–W4 nie
+zaimplementowano i zweryfikowano lokalnie. [PR #14](https://github.com/ankelmarek/PixelForge/pull/14) pozostaje do odbioru użytkownika. W2–W4 nie
 rozpoczęto. Nie wykonano merge ani instalacji na hostingu użytkownika.
 
 ![Winobranie RTS W1 — pracownicy, domki i traktor](reports/W1-desktop.png)
@@ -69,10 +69,10 @@ Winobrania został zawężony do dokładnego ID, bez zakazu nowego produktu.
 | Aktualizator/panel (PHP/Python)                 | 36 PASS                                                 |
 | Hosting Apache/PHP                              | 12 PASS                                                 |
 | Build produkcyjny                               | PASS; istniejące ostrzeżenie Vite o dużym module Phaser |
-| Playwright — cały projekt                       | W toku                                                  |
-| ZIP w `/` i `/PixelForge/`                      | W toku                                                  |
-| Panel: instalacja, rollback, ponowna instalacja | W toku                                                  |
-| Zestaw `public_html` przez HTTPS/Apache         | W toku                                                  |
+| Playwright — cały projekt                       | 45 PASS, 5 pominięć zgodnie z platformą                 |
+| ZIP w `/` i `/PixelForge/`                      | PASS                                                    |
+| Panel: instalacja, rollback, ponowna instalacja | PASS                                                    |
+| Zestaw `public_html` przez HTTPS/Apache         | PASS                                                    |
 
 Osobny pełny przebieg W1 przez prawdziwy UI już przeszedł: dwa domki,
 droga, rząd Regent, rzeczywista produkcja, pauza, wznowienie w trakcie pracy,
@@ -123,4 +123,45 @@ przesyła się ten ZIP bez rozpakowywania. Zestaw
 w `public_html`. Aktualizator 1.2.0 oraz poprzednie ZIP-y pozostają niezmienione.
 Sumy SHA-256 są obok archiwów w `downloads/`.
 
-Weryfikacja dystrybucji i link PR zostaną dopisane po zakończeniu kontroli.
+[PR #14](https://github.com/ankelmarek/PixelForge/pull/14), bez merge.
+Pobrano oba ZIP-y ponownie przez publiczne linki GitHub i porównano całe bajty.
+
+| Paczka                    |      Bajty | SHA-256                                                            |
+| ------------------------- | ---------: | ------------------------------------------------------------------ |
+| Full 0.9.0                | 13 125 842 | `f801a9c81d9ee4e1abee4619805a81632bdd7506b02b8c8fc9c7de629170c3a2` |
+| Public_html 0.9.0 + 1.2.0 | 13 216 124 | `e449bec2439705dd7c31ca8c42de2cd4a2fe9fb5794e52c1bcc7c15f01a77b0b` |
+
+Walidator potwierdził 551 plików full ZIP, 16 570 922 bajty po rozpakowaniu.
+Archiwa full/startowe 0.8.0 mają identyczne SHA-256 jak w W0.
+Wszystkie testy dystrybucji przeszły. [Statyczny ZIP](reports/W1-GAME-BROWSER-RESULTS.json):
+Dżdżownica na desktopie/emulacji telefonu pod `/` i `/PixelForge/`;
+Winobranie na desktopie w obu ścieżkach, budowa, fizyczna produkcja i resume.
+[Panel HTTPS](reports/W1-INSTALLER-BROWSER-RESULTS.json): instalacja
+0.6.1 → 0.9.0, rollback → 0.6.1, ponowna instalacja → 0.9.0, wznowienie
+Dżdżownicy i Winobrania, izolacja save i brak błędów JS/HTTP.
+[Public_html](reports/W1-HOSTING-BROWSER-RESULTS.json): konfiguracja,
+403 prywatnego katalogu, instalacja/rollback, desktop, emulacja telefonu i no-JS.
+Przyszły numer 0.9.1 w tym teście jest wyłącznie tymczasowym fixture
+z niezmienioną zawartością gry, nie opublikowanym wydaniem.
+
+Kontrole GitHub Actions są dostępne w [zakładce Checks PR](https://github.com/ankelmarek/PixelForge/pull/14/checks).
+Powyższe liczby opisują ukończone kontrole lokalne, niezależnie od czasu kolejki CI.
+
+## Główne pliki
+
+- `src/engine/world/navigation.ts`, `simulation/types.ts`, `strategy/services.ts`,
+  `api/strategy.ts`: neutralne kontrakty, indeks terenu i transakcje.
+- `src/engine/api/client.ts`, `core/viewport.ts`, `systems/versioned-save.ts`,
+  `src/app/game.ts`: rozszerzenia publicznego klienta i prezentacji.
+- `src/games/winobranie-rts/`: osobne model, walidacja świata, runtime,
+  renderowanie, panele i definicja. `src/games/registry.ts` rejestruje klienta.
+- `public/assets/games/winobranie-rts/`, `tools/generate-winery.py`: grafika,
+  deklaracja scenariusza, sektory i generator danych.
+- `tests/unit/strategy.test.ts`, `winery.test.ts`, `viewport.test.ts`,
+  `tests/e2e/winery.spec.ts`: kontrakty, bilans, zapis i pełny przebieg UI.
+- Testy `packages`, `updater`, `hosting`, workflow CI i `downloads/`: kontrola
+  produkcyjnego wydania i kompatybilności panelu.
+
+Nie zmieniono źródeł Dżdżownicy, Atlasu ani aktualizatora. Drobne zmiany
+w istniejących testach ograniczają zakaz do dokładnego starego ID oraz
+wybierają nowe archiwum, zachowując poprzednie kryteria regresji.
