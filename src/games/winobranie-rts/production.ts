@@ -137,7 +137,11 @@ export function bottle(s: VineyardState, b: Building) {
     c.bottledML += n * 750;
     space -= n;
   }
-  cellar.process = null;
+  // A full store releases the worker, but keeps this batch pending until a sale.
+  // Only sub-bottle leftovers may wait for the next compatible fermentation.
+  if (book.list(`wine:${b.id}`).some((l) => l.quantity >= 750))
+    cellar.process.work = 60;
+  else cellar.process = null;
   return true;
 }
 export function sellProduction(s: VineyardState, id: string, early = false) {

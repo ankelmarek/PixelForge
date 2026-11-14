@@ -9,6 +9,12 @@ import {
 import { LotBook, Ledger } from '../../src/engine/api/strategy';
 import { quality, netWorth } from '../../src/games/winobranie-rts/campaign';
 import { VineyardClimate } from '../../src/games/winobranie-rts/climate';
+import {
+  bottle,
+  needsBottler,
+  sellProduction,
+  stepCellars,
+} from '../../src/games/winobranie-rts/production';
 const metrics: unknown[] = [];
 const climates = Array.from({ length: 64 }, (_, seed) => {
   let dose = 0,
@@ -208,6 +214,54 @@ describe('W3 campaign', () => {
     expect(m.state.ledger.balance).toBe(initial - 50000);
     expect(m.state.ledger.costs).toBe(50000);
     m.validateSave(m.snapshot());
+  });
+  it('keeps overflow wine pending and resumes bottling after a sale without new must', () => {
+    const m = create();
+    place(m, 'house', 268, 253);
+    const b = m.state.buildings[0],
+      c = m.state.campaign!;
+    b.work = 0;
+    // Isolated production-capacity fixture, not a campaign balance run.
+    const book = new LotBook(c.book);
+    for (const [resource, quantity] of [
+      ['bottles', 127],
+      ['wine', 2250],
+    ] as const)
+      book.add({
+        owner: `${resource}:${b.id}`,
+        resource,
+        kind: 'solaris',
+        vintage: 1,
+        quantity,
+        qualityMass: quantity * 7000,
+        origins: ['row-1-year-1'],
+      });
+    c.bottledML = 127 * 750;
+    c.cellars[b.id].process = {
+      stage: 'bottle',
+      remaining: 0,
+      work: 1,
+      reserve: false,
+    };
+    expect(bottle(m.state, b)).toBe(true);
+    expect(book.list(`bottles:${b.id}`)[0].quantity).toBe(128);
+    expect(book.list(`wine:${b.id}`)[0].quantity).toBe(1500);
+    expect(c.cellars[b.id].process?.stage).toBe('bottle');
+    expect(needsBottler(m.state, b)).toBe(false);
+    const waiting = structuredClone(c);
+    for (let i = 0; i < 100; i++) stepCellars(m.state);
+    expect(c).toEqual(waiting);
+    const saved = structuredClone(m.state),
+      restored = new LotBook(saved.campaign!.book);
+    expect(sellProduction(saved, b.id)).toBe(true);
+    expect(needsBottler(saved, b)).toBe(true);
+    for (let i = 0; i < 59; i++) expect(bottle(saved, b)).toBe(false);
+    expect(bottle(saved, b)).toBe(true);
+    expect(restored.list(`bottles:${b.id}`)[0].quantity).toBe(2);
+    expect(restored.list(`wine:${b.id}`)).toHaveLength(0);
+    expect(saved.campaign!.bottledML).toBe(130 * 750);
+    expect(saved.campaign!.bottles).toBe(128);
+    expect(saved.campaign!.cellars[b.id].process).toBeNull();
   });
   it('purchases houses, staff and vehicles atomically, pays wages and retires safely', () => {
     const m = create();
