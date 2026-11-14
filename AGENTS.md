@@ -16,6 +16,10 @@ Nowym zadaniem infrastrukturalnym jest **bezpieczny aktualizator ZIP** z podglą
 
 **Bieżąca dokumentacja:** `docs/ROADMAP.md` (wersja 0.3), `docs/WINOBRANIE-RTS.md` i dokumenty obecnego engine. Roadmapy 0.2 oraz historyczne są archiwum. Nowe Winobranie RTS jest odrębną grą, stare Winobranie nie może być rozwijane. Nie rozpoczynaj automatycznie implementacji kolejnego etapu.
 
+**Stan W0:** wykonano inwentaryzację i [plan wdrożenia](docs/WINOBRANIE-RTS-IMPLEMENTATION.md) na `feature/p3-winobranie-rts`, bazując na kodzie PR #12. [Raport W0](docs/W0-REPORT.md) oddziela sprawdzone funkcje bazy od projektowanych usług. W1 został następnie zlecony i zaimplementowany na `feature/w1-winobranie-rts`; [raport W1](docs/W1-REPORT.md) opisuje weryfikację. Użytkownik następnie zlecił W2: „ok, teraz rozwiń grę, zróżnicuj, losuj, zrób ciekawszą”. W2 jest zaimplementowane na `feature/w2-winobranie-seasons`; [raport W2](docs/W2-REPORT.md) dokumentuje wynik. Użytkownik następnie zlecił W3: „Rób nowy zakres”. W3 jest zaimplementowane na `feature/w3-winobranie-campaign`; [raport W3](docs/W3-REPORT.md) podaje stan weryfikacji. Nie rozpoczynaj W4 bez następnego polecenia.
+
+**Zmiana koncepcji „Życia Dżdżownicy” na polecenie użytkownika (2026-11-13):** ta gra pokazuje pionowy przekrój gleby z boku, a nie widok z góry. Rośliny rosną na powierzchni, pod nimi są korzenie, pędraki i larwy. Bohater porusza się w obu osiach, drąży i użyźnia glebę. Głębiej rośnie trudność; deszcz przenika od powierzchni w dół. Punkty i stopniowy rozwój prowadzą do dorosłości. Poprzedni pomysł czterech ogrodów i odrodzenia centralnego drzewa jest zastąpiony tą koncepcją. Pozostały rdzeń i laboratorium dużego świata pozostają niezależne od perspektywy tej gry.
+
 ## Zaplanowana nowa gra: Stacja na Trasie (2026-11-14)
 
 Użytkownik zlecił szczegółowy projekt nowej strategii ekonomicznej **„Stacja na Trasie: Wielki Weekend”**, nie jej natychmiastową implementację. Dokument obowiązujący: [docs/STACJA-BENZYNOWA.md](docs/STACJA-BENZYNOWA.md). Roadmapa zawiera etapy S0–S4.
@@ -23,6 +27,8 @@ Użytkownik zlecił szczegółowy projekt nowej strategii ekonomicznej **„Stac
 Gra ma korzystać z PixelForge, obsługi dużych map, dynamicznych dróg i nawigacji, systemów zadań i zapisu oraz istniejącego aktualizatora ZIP. Pierwszoplanowe mechaniki: ruch samochodów, kolejki do paliwa i sklepu, dostawy cysterną, własna rozbudowa stacji, pracownicy, myjnia, ekonomia i trzy skompresowane zmiany z zakończeniem. Pełna obsługa myszą, dopracowany pixel art i dźwięki, bez obowiązkowego tekstowego tutorialu.
 
 Przy poleceniu rozpoczęcia tego tytułu wykonaj **wyłącznie S0**, po sprawdzeniu aktualnej działającej bazy i PR #15 lub nowszych. Nie przerywaj, nie przepisuj i nie scalaj automatycznie bieżących prac nad Winobraniem RTS. Nie wdrażaj gry na hosting bez osobnego polecenia.
+
+**Stan S0:** po poleceniu „możesz budowac stację benzunową, zerknij w roadmapę” przygotowano [projekt wdrożenia](docs/STACJA-BENZYNOWA-IMPLEMENTATION.md) i [raport S0](docs/S0-REPORT.md) na `feature/p3-stacja-benzynowa`, z bazy `7f678a1` / PR #16. S0 jest do odbioru; Stacja nie ma jeszcze runtime ani ZIP-a. Przy następnym zleceniu sprawdź te dokumenty i aktualny PR. S1 wymaga akceptacji S0; najem Skoczki pozostaje S2, pełna kampania S3. Nie rozpoczynaj ich automatycznie.
 
 **Uzupełnienie dla Stacji na Trasie (14.11.2026):** robocze marki to **ORLAR** (stacja z orłem) oraz **Skoczka** (fikcyjna sieć niewielkich sklepów z motywem żabki). Gracz ma móc **prowadzić sklep sam lub oddać lokal w najem Skoczce**. W najmie przychód stacji to czynsz oraz umówiony udział, a nie pełny obrót sklepu; najemca zapewnia swoich pracowników i towary. Zadbaj o parking, oddzielne kolejki, realną animację dostaw i wpływ sklepu na ruch. Mechanikę implementować w S2 po S0 i S1, zgodnie z sekcją 8.1 `docs/STACJA-BENZYNOWA.md`. Nazwy i znaki są robocze, nie kopiuj oznaczeń ORLEN ani Żabka, sprawdź odróżnialność przed publikacją.
 
@@ -36,7 +42,7 @@ Przy poleceniu rozpoczęcia tego tytułu wykonaj **wyłącznie S0**, po sprawdze
 
 ## Sposób pracy
 
-1. Zacznij od etapu W0 nowej gry w `docs/ROADMAP.md` (wersja 0.3), jeśli użytkownik zleca prace nad Winobraniem RTS; w innym wypadku realizuj wyłącznie wskazany etap bieżącego projektu.
+1. Sprawdź status etapów Winobrania RTS w `docs/ROADMAP.md` (wersja 0.3) i realizuj wyłącznie wskazany zakres. W0 jest udokumentowane; W1–W4 wymagają kolejnych zleceń zgodnie z roadmapą.
 2. Sprawdzaj istniejący kod przed edycją. Nie niszcz działających rozwiązań, nie zastępuj całych modułów bez konieczności.
 3. Wykonuj małe, czytelne zmiany i dodawaj testy. Po każdym etapie uruchamiaj wszystkie dostępne kontrole.
 4. Zakończenie każdego etapu udokumentuj w `docs/ROADMAP.md`: status, istotne decyzje, testy, ograniczenia i następny krok.
@@ -66,9 +72,18 @@ Przy poleceniu rozpoczęcia tego tytułu wykonaj **wyłącznie S0**, po sprawdze
 
 ## Stała reguła: sterowanie bez pisanych podpowiedzi
 
+**Wyjątek zatwierdzony przez użytkownika 2026-11-14 — Winobranie RTS:** dodaj
+krótkie, kontekstowe komunikaty mówiące, co warto zrobić w bieżącej sytuacji.
+Jeden zwijany panel „Co teraz?” pokazuje cel, następny krok albo przyczynę
+blokady; może wskazać obiekt kamerą. Bez modalnego samouczka, zatrzymywania
+gry i obowiązkowego przeklikiwania. Treść wynika z aktualnego stanu także po
+wznowieniu, nie z kolejki dawno zakończonych zdarzeń. Ten wyjątek ma
+pierwszeństwo nad zakazami poniżej; pozostałe gry zachowują dotychczasowe UX.
+
 **Obowiązuje wszystkie gry i demo PixelForge od M0.** Gracz nie dostaje żadnych tekstowych instrukcji sterowania, samouczków, dymków typu „Naciśnij Shift”, opisów zagadek, strzałek z podpisami ani pop-upów objaśniających mechanikę. Nie dodawaj także ekranu z listą klawiszy. Mechanikę poznaje przez układ poziomu, animację, reakcję świata, dźwięk i obrazowe symbole. Krótkie nazwy menu i tytuł gry są dopuszczalne, ale nie mogą być instrukcją ani warunkiem rozwiązania zagadki.
 
 **Wspólny schemat klawiszy na desktopie:**
+
 - `←/→` lub `A/D`: ruch poziomy; `↑/↓` lub `W/S`: ruch pionowy tylko w gatunkach, które go wymagają.
 - `Spacja`: skok podczas platformówki; na ekranie startu/wyniku potwierdzenie lub ponowne rozpoczęcie, gdy nie ma skakania.
 - `Shift`: jedna kontekstowa akcja, np. użyj, podnieś, pociągnij lub włącz/wyłącz przełącznik. **Krótkie naciśnięcie**, a nie przytrzymywanie, jeśli akcja ma zmienić stan. Brak konieczności używania osobnego przycisku dla każdej zagadki.
@@ -86,7 +101,7 @@ Projektuj pierwsze 30–60 sekund każdego tytułu jako **niewerbalną naukę**:
 
 - Pixel art bez rozmycia. Rozdzielczość **viewportu** może nadal wynosić 320 × 180, lecz **rozmiar świata** jest niezależny, dla nowych gier minimum 4096 × 4096 z kamerą, chunkami i płynnym zoomem.
 - Pełna obsługa klawiatury i przygotowana abstrakcja pod dotyk/pada. Dotykowe sterowanie podstawowe w MVP.
-- Gry muszą mieć pauzę, restart, wyciszenie, czytelny cel przedstawiony wizualnie i ekran końca. **Nie pokazuj instrukcji sterowania, ekranów tutorialowych ani podpowiedzi pisanych.**
+- Gry muszą mieć pauzę, restart, wyciszenie, czytelny cel przedstawiony wizualnie i ekran końca. **Nie pokazuj ekranów tutorialowych.** Krótkie wskazówki w Winobraniu RTS są dozwolone zgodnie z wyjątkiem powyżej; pozostałe gry zachowują naukę bez pisanych podpowiedzi.
 - Nawet demo powinno wyglądać spójnie: ograniczona paleta barw, animowany bohater, tło, podstawowe efekty i dźwięki. Nie zostawiaj surowych prostokątów debugowych jako finalnej oprawy.
 - Możliwość uruchomienia na Windows w przeglądarce i na smartfonie. Bez stałego połączenia z backendem.
 - Nie dodawaj reklam, analityki, zbędnych uprawnień, zewnętrznych fontów pobieranych w runtime ani elementów naruszających prawa autorskie.
@@ -94,7 +109,7 @@ Projektuj pierwsze 30–60 sekund każdego tytułu jako **niewerbalną naukę**:
 ## Testy wymagane na każdym etapie
 
 - `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`.
-- Po dodaniu demonstracji: `npm run test:e2e` obejmujący start gry, ruch, interakcję, przejście poziomu, pauzę i zapis/wznowienie. Sprawdź także, że w gameplayu nie pojawiają się teksty instruktażowe.
+- Po dodaniu demonstracji: `npm run test:e2e` obejmujący start gry, ruch, interakcję, przejście poziomu, pauzę i zapis/wznowienie. W Winobraniu RTS sprawdź aktualność, zwijanie i wskazywanie komunikatów; w pozostałych grach zachowaj test braku tekstów instruktażowych.
 - Sprawdź obsługę błędnej konfiguracji, brakującego assetu, odświeżenia strony i zapisu uszkodzonego JSON.
 - Zapisuj ograniczenia testów ręcznych; nie udawaj, że testy wykonano, jeśli środowisko na to nie pozwala.
 
@@ -102,8 +117,8 @@ Projektuj pierwsze 30–60 sekund każdego tytułu jako **niewerbalną naukę**:
 
 Nie buduj kont użytkowników, chmury zapisów, multiplayera, sklepu, systemu pluginów instalowanych z internetu, rozbudowanego ECS ani ogólnego edytora grafiki. **Wyjątek:** nowa strategia Winobranie RTS ma wprost zatwierdzone budowanie, zakup parcel i 30-minutową kampanię; te funkcje rozwijaj etapami W1–W4, nie interpretuj starego zakazu MVP jako zakazu tworzenia tej gry.
 
-Pierwszym zadaniem gry jest W0: kontrakty i plan, potem jeden grywalny vertical slice W1; dopiero po odbiorze jego kolejny zakres.
+W0 określiło kontrakty i plan. Następnie powstaje jeden grywalny vertical slice W1; dopiero po jego odbiorze kolejny zakres.
 
 ## Następne polecenie dla Codexa
 
-> Przeczytaj `docs/ROADMAP.md` w wersji 0.3 i `docs/WINOBRANIE-RTS.md`. Rozpocznij wyłącznie W0 nowej gry: wybierz sprawdzoną bazę silnika z aktualnych PR, opracuj kontrakty, fazy wdrażania i strategię testów, opisz dynamiczną nawigację i swobodne rozmieszczanie parcel, mechanikę przymrozku i ciągłego zraszania, gospodarkę oraz finał trzech lat. Starego Winobrania ani Leśnego sygnału nie rozwijaj. Bez automatycznego merge lub instalacji na hostingu.
+> Przed kolejnym zleceniem przeczytaj `docs/ROADMAP.md`, `docs/WINOBRANIE-RTS.md`, `docs/WINOBRANIE-RTS-IMPLEMENTATION.md` i `docs/W0-REPORT.md`. W0 i implementacja W1 są zakończone. Sprawdź raport W1 oraz jego PR; poprawki W1 prowadź na tej samej gałęzi. W2 zostało osobno zlecone i jest zaimplementowane na `feature/w2-winobranie-seasons`. Przeczytaj raport W2 i jego PR; poprawki prowadź na tej samej gałęzi. W3 zostało następnie zlecone: „Rób nowy zakres”; sprawdź `docs/W3-REPORT.md` i jego PR. Nie rozpoczynaj samodzielnie W4. Starego Winobrania ani Leśnego sygnału nie rozwijaj. Bez automatycznego merge lub instalacji na hostingu.

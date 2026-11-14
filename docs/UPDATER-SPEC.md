@@ -1,6 +1,6 @@
 # PixelForge — projekt aktualizatora ZIP
 
-**Status:** zatwierdzony kierunek do przyszłej implementacji, bez wdrożenia. **Data decyzji:** 2026-11-13.
+**Status:** U0–U2 oraz dodatkowy wariant instalacji całego projektu w `public_html` zaimplementowane; U3 zaplanowane, bez wdrożenia na hosting. **Data decyzji:** 2026-11-13.
 
 ## 1. Cel
 
@@ -46,7 +46,11 @@ Pakiet zawiera pliki statycznej dystrybucji oraz maszynowo sprawdzalny manifest,
   "engineSchemaVersion": 1,
   "files": [
     { "path": "index.html", "size": 1234, "sha256": "<64 hex chars>" },
-    { "path": "assets/index-1234.js", "size": 45678, "sha256": "<64 hex chars>" }
+    {
+      "path": "assets/index-1234.js",
+      "size": 45678,
+      "sha256": "<64 hex chars>"
+    }
   ],
   "deletions": []
 }
@@ -69,7 +73,7 @@ Rodzaje wydań:
 - Przyjmuj wyłącznie pliki z listy dozwolonych ścieżek i rozszerzeń **statycznego buildu**. Nigdy nie nadpisuj `admin-updater/`, `storage/`, `backups/`, plików konfiguracji serwera, .env, .htaccess, .user.ini ani wykonywalnych skryptów serwerowych.
 - Nie wykonuj skryptów z ZIP-a, komend powłoki ani migracji bazy zadeklarowanych przez paczkę.
 - Sprawdzaj SHA-256 każdego pliku, wersję, identyfikator projektu i zgodność formatu. Sumy kontrolne wykrywają uszkodzenie, ale nie dowodzą autentyczności; w razie zdalnego dystrybuowania paczek rozważ podpisy cyfrowe oraz zaufany klucz publiczny.
-- Upload przechowuj poza publicznym katalogiem WWW; usuń pliki tymczasowe także po błędach i nie udostępniaj logów publicznie.
+- Domyślnie upload przechowuj poza publicznym katalogiem WWW. Na wyraźne polecenie użytkownika z 13.11.2026 dopuszczono odrębny wariant `public_html/_pixelforge`: cały podkatalog blokowany przez `.htaccess` Apache/LiteSpeed, z aktywnym sprawdzeniem HTTP 403 przez HTTPS przed konfiguracją konta i przy żądaniach panelu. Brak ochrony zatrzymuje pracę; samo chmod nie wystarcza. Usuń pliki tymczasowe także po błędach i nie udostępniaj logów publicznie.
 - Nie udzielaj uprawnień zapisu do całego hostingu. Proces aktualizatora może zapisywać tylko wskazany katalog wydań i prywatne katalogi robocze.
 
 ## 6. Przebieg instalacji
@@ -95,22 +99,50 @@ Zapis gier w localStorage/IndexedDB nie jest aktualizowany przez serwerowy ZIP, 
 
 ### U0: format paczki i walidator offline
 
-- [ ] Generowanie `full` ZIP z manifestem i kontrolą SHA-256.
-- [ ] Walidator, który odrzuca naruszenia formatu, wersji, ścieżek, limitów i sum.
-- [ ] Testy jednostkowe i fixture z poprawnym oraz celowo uszkodzonym archiwum.
+- [x] Generowanie `full` ZIP z manifestem i kontrolą SHA-256.
+- [x] Walidator, który odrzuca naruszenia formatu, wersji, ścieżek, limitów i sum.
+- [x] Testy jednostkowe i fixture z poprawnym oraz celowo uszkodzonym archiwum.
+
+Implementacja: [format i CLI](RELEASE-PACKAGES.md), [raport U0](U0-REPORT.md).
+Wersja wydania 0.6.1; manifest v1, kontrakt silnika 2, narzędzie 1.0.0.
 
 ### U1: bezpieczny mechanizm instalacji i rollback
 
-- [ ] Prywatny staging, blokada i limit przestrzeni.
-- [ ] Wersjonowane wydania i wskazanie aktywnej wersji lub bezpieczny fallback dla wybranego hostingu.
-- [ ] Test pełnego wdrożenia, przerwanego wdrożenia i przywracania poprzedniej wersji.
-- [ ] Zależnie od hostingu: adapter PHP z `ZipArchive` albo narzędzie CLI.
+- [x] Prywatny staging, blokada i limit przestrzeni.
+- [x] Wersjonowane wydania i wskazanie aktywnej wersji lub bezpieczny fallback dla wybranego hostingu.
+- [x] Test pełnego wdrożenia, przerwanego wdrożenia i przywracania poprzedniej wersji.
+- [x] Zależnie od hostingu: adapter PHP z `ZipArchive` albo narzędzie CLI.
+
+Implementacja: PHP 8.2+ / ZipArchive, lokalna komenda administratora oraz
+biblioteka wykorzystywana przez panel U2. Publiczna strona rozumisie.pl zgłasza PHP
+8.5.12; wybór PHP nie oznacza potwierdzenia rozszerzeń ani praw konkretnego konta.
+`doctor` sprawdza środowisko przed instalacją. U1 nie udostępnia HTTP uploadu.
+
+Fallback używa dwóch rename katalogów na jednym systemie plików: krótkie
+okno niedostępności 404 jest jawne, a po zabiciu procesu w tym oknie wymagane
+jest `recover`. Stan i prywatna poprzednia wersja umożliwiają odzyskanie.
+[Instrukcja](../admin-updater/README.md), [raport i ograniczenia](U1-REPORT.md).
 
 ### U2: panel WWW do uploadu
 
-- [ ] Logowanie, HTTPS, CSRF, kontrola uprawnień.
-- [ ] Upload, analiza, podgląd plików, osobne zatwierdzenie instalacji, wynik i rollback.
-- [ ] Panel pozostaje niezależny od statycznego buildu PixelForge.
+- [x] Logowanie, HTTPS, CSRF, kontrola uprawnień.
+- [x] Upload, analiza, podgląd plików, osobne zatwierdzenie instalacji, wynik i rollback.
+- [x] Panel pozostaje niezależny od statycznego buildu PixelForge.
+
+Implementacja: panel PHP 8.2+ z prywatną konfiguracją, HTTPS, sesją, CSRF
+oraz limitem logowania. Jednorazowy setup przez CLI, codzienna obsługa przez WWW.
+Podgląd GET nie uruchamia recovery; wszystkie zmiany wymagają zatwierdzonego POST.
+[Instrukcja](../admin-updater/README.md), [raport U2](U2-REPORT.md).
+Nie wdrożono panelu na publiczny hosting.
+
+**Rozszerzenie U2, odrębne polecenie:** jedna paczka pierwszej instalacji
+z grą 0.7.0 i narzędziem 1.2.0. Konfiguracja WWW bez SSH, z potwierdzeniem
+własności przez plik z losowym kluczem. Konto bez domyślnego hasła,
+setup zamykany po sukcesie. Wszystkie dane w chronionym `_pixelforge/`
+pod `public_html`; gra w niezależnym `/PixelForge/`. Domyślny wariant z danymi
+poza documentRoot nadal działa. Paczka startowa nie jest paczką aktualizacji
+gry i nie jest akceptowana przez formularz `full`.
+[Instrukcja](PUBLIC-HTML-INSTALL.txt), [raport](PUBLIC-HTML-REPORT.md).
 
 ### U3: paczki delta i testy regresji
 
@@ -122,4 +154,7 @@ Zapis gier w localStorage/IndexedDB nie jest aktualizowany przez serwerowy ZIP, 
 
 Administrator potrafi zainstalować pełną paczkę ZIP bez FTP i bez ręcznego kopiowania plików, zobaczyć wynik walidacji przed instalacją, a następnie w razie problemu jednym działaniem wrócić do poprzedniej działającej wersji. Gracze nie dostają dostępu do panelu, a ich lokalne zapisy pozostają nienaruszone.
 
-**Uwaga realizacyjna:** wyboru adaptera PHP/CLI dokonamy po potwierdzeniu środowiska docelowego. Nie zmieniaj statycznego runtime gry tylko po to, aby umożliwić upload na serwer.
+**Uwaga realizacyjna:** wybrano adapter PHP z wejściem CLI dla U1. Wdrożenie na
+konkretnym koncie wymaga poprawnych ścieżek i pozytywnego wyniku `doctor`.
+Panel WWW U2 jest gotowy na osobnej gałęzi / PR #9. Statyczny runtime gry
+pozostaje niezależny. U3 nie zostało rozpoczęte.

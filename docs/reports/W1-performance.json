@@ -1,0 +1,30 @@
+{
+  "chromium": "158.0.8127.18",
+  "profile": "Linux headless Chromium, software rendering, 1440x900, x4, zoom 0.5; W1 3 actors / 48 vines / 2 wineries",
+  "meanFps": 60.00200006666889,
+  "p50FrameMs": 16.69999999999891,
+  "p95FrameMs": 16.799999999999272,
+  "placementViaPlaywrightMs": [47.78495500000008, 21.37752300000011],
+  "retainedHeapBytes": 11825360,
+  "stats": {
+    "tick": 1011,
+    "cash": 2989600,
+    "sold": 0,
+    "processed": 0,
+    "grams": 96000,
+    "grown": 96000,
+    "rows": 3,
+    "buildings": 2,
+    "roadCells": 0,
+    "units": "[{\"id\":\"worker-1\",\"x\":248,\"y\":258,\"cargo\":{\"solaris\":8000},\"job\":\"deposit\",\"blocked\":false},{\"id\":\"worker-2\",\"x\":232,\"y\":250.5,\"cargo\":{\"solaris\":8000},\"job\":\"deposit\",\"blocked\":false},{\"id\":\"tractor-1\",\"x\":268,\"y\":258,\"cargo\":{\"solaris\":0},\"blocked\":false}]",
+    "ready": true,
+    "rendered": 84,
+    "terrainTextures": 20971520,
+    "resident": 20,
+    "missing": 0,
+    "topology": 2,
+    "maxPlacementMs": 11.700000002980232,
+    "maxAdvanceMs": 1.9000000059604645
+  },
+  "errors": []
+}
