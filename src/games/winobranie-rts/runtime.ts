@@ -64,6 +64,7 @@ export function createVineyardRuntime(
     };
     private box?: { x: number; y: number; width: number; height: number };
     private prepared = false;
+    private ended = false;
     private elapsed = 0;
     private hint = '';
     private maxPlacementMs = 0;
@@ -83,6 +84,7 @@ export function createVineyardRuntime(
       this.drag = undefined;
       this.box = undefined;
       this.prepared = false;
+      this.ended = false;
       this.planKey = '';
       this.hint = '';
       this.elapsed = 0;
@@ -409,7 +411,7 @@ export function createVineyardRuntime(
     }
     update(_time: number, delta: number) {
       if (!this.prepared) this.prepared = model.prepare(8);
-      else {
+      else if (!model.state.completed && !model.state.failed) {
         const start = performance.now();
         model.advance(delta);
         this.maxAdvanceMs = Math.max(
@@ -428,7 +430,11 @@ export function createVineyardRuntime(
         this.previousSold = model.state.sold;
         context.audio.play('collect');
       }
-      if (model.state.tick - lastSave >= 200) persist();
+      if ((model.state.completed || model.state.failed) && !this.ended) {
+        this.ended = true;
+        context.audio.play(model.state.completed ? 'complete' : 'hit');
+        persist();
+      } else if (model.state.tick - lastSave >= 200) persist();
       this.elapsed += delta;
       if (this.elapsed >= 100) {
         this.elapsed = 0;

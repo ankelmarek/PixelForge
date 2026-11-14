@@ -1,5 +1,5 @@
 {
-  "archive": "downloads/pixelforge-0.9.0-full.zip",
+  "archive": "downloads/pixelforge-0.9.1-full.zip",
   "emulationOnly": true,
   "results": [
     {
@@ -9,9 +9,9 @@
       "firstRoot": true,
       "resume": true,
       "minZoom": 0.5,
-      "meanFps": 59.7,
-      "p95FrameMs": 16.799999999999727,
-      "retainedHeapBytes": 9538904,
+      "meanFps": 59.8,
+      "p95FrameMs": 16.700000000000728,
+      "retainedHeapBytes": 9401888,
       "textureBytes": 2097152,
       "sectors": 8,
       "errors": []
@@ -33,9 +33,9 @@
       "firstRoot": true,
       "resume": true,
       "minZoom": 0.5,
-      "meanFps": 59.8,
-      "p95FrameMs": 16.700000000000728,
-      "retainedHeapBytes": 7881760,
+      "meanFps": 59.7,
+      "p95FrameMs": 16.799999999999727,
+      "retainedHeapBytes": 9569208,
       "textureBytes": 2097152,
       "sectors": 8,
       "errors": []
@@ -57,9 +57,9 @@
       "firstRoot": true,
       "resume": true,
       "minZoom": 0.5,
-      "meanFps": 59.8,
+      "meanFps": 59.3,
       "p95FrameMs": 16.700000000000728,
-      "retainedHeapBytes": 8754796,
+      "retainedHeapBytes": 8762076,
       "textureBytes": 7340032,
       "sectors": 28,
       "errors": []
@@ -71,9 +71,9 @@
       "firstRoot": true,
       "resume": true,
       "minZoom": 0.5,
-      "meanFps": 59.8,
-      "p95FrameMs": 16.799999999999272,
-      "retainedHeapBytes": 8057164,
+      "meanFps": 59.7,
+      "p95FrameMs": 16.700000000000728,
+      "retainedHeapBytes": 8550936,
       "textureBytes": 7340032,
       "sectors": 28,
       "errors": []

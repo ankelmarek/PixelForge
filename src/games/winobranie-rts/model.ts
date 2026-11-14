@@ -100,6 +100,7 @@ export interface Plan {
   rotation: number;
   variety: Variety;
   moving?: string;
+  access?: Cell;
 }
 export const DEPOT = { x: 248, y: 258 },
   STORE: GridRect = { x: 244, y: 250, width: 8, height: 6 };
@@ -406,9 +407,22 @@ export class VineyardModel {
         return reject('Odcięta jednostka');
     for (const row of this.state.rows)
       if (!human.findPath(DEPOT, row.access)) return reject('Odcięty rząd');
-    if (tool === 'row' && !human.findPath(DEPOT, { x: a.x, y: a.y + 1 }))
-      return reject('Brak dojścia');
-    return { ...plan, valid: true, reason: '' };
+    let access: Cell | undefined;
+    if (tool === 'row') {
+      for (const cell of cells) {
+        access = [
+          [0, 1],
+          [-1, 0],
+          [1, 0],
+          [0, -1],
+        ]
+          .map(([dx, dy]) => ({ x: cell.x + dx, y: cell.y + dy }))
+          .find((point) => human.findPath(DEPOT, point) !== null);
+        if (access) break;
+      }
+      if (!access) return reject('Brak dojścia');
+    }
+    return { ...plan, access, valid: true, reason: '' };
   }
   commit(plan: Plan) {
     if (plan.revision !== this.state.topology) return false;
@@ -455,7 +469,7 @@ export class VineyardModel {
         work: Math.ceil(cells.length / 2) * 8,
         planted: -1,
         mature: false,
-        access: { x: plan.from.x, y: plan.from.y + 1 },
+        access: current.access!,
       });
     } else if (plan.tool === 'road') this.state.roads.push(...cells);
     for (const p of cells)

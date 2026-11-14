@@ -85,6 +85,8 @@ test('W1: pełny sezon samą myszą, budowa, rzędy, transport, sprzedaż i wzno
   await page.locator('[data-variety="regent"]').click();
   await paint(page, { x: 234, y: 268 }, { x: 244, y: 268 });
   await expect.poll(async () => (await state(page)).stats?.rows).toBe(4);
+  await paint(page, { x: 248, y: 268 }, { x: 248, y: 274 });
+  await expect.poll(async () => (await state(page)).stats?.rows).toBe(5);
   await page.locator('[data-cancel]').click();
   await page.locator('[data-speed="4"]').click();
   await expect
@@ -107,7 +109,7 @@ test('W1: pełny sezon samą myszą, budowa, rzędy, transport, sprzedaż i wzno
   await page.locator('#resume').click();
   await expect.poll(async () => (await state(page)).stats?.ready).toBe(true);
   expect((await state(page)).stats?.buildings).toBe(2);
-  expect((await state(page)).stats?.rows).toBe(4);
+  expect((await state(page)).stats?.rows).toBe(5);
   await page.locator('[data-speed="4"]').click();
   await focus(page, 262, 250);
   let sold = false;
@@ -125,6 +127,12 @@ test('W1: pełny sezon samą myszą, budowa, rzędy, transport, sprzedaż i wzno
       await page.waitForTimeout(2500);
   }
   expect(sold).toBe(true);
+  const finalSave = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key)!).state,
+    saveKey,
+  );
+  expect(finalSave.completed).toBe(true);
+  expect(finalSave.tick).toBe(7200);
   expect((await state(page)).completed).toBe(true);
   expect(Number((await state(page)).stats?.sold)).toBeGreaterThanOrEqual(40000);
   await expect(page.locator('#result-title')).toHaveText(

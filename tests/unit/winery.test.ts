@@ -156,3 +156,26 @@ it('droga, obrót, przenosiny pustego domku i usunięcie nie naruszają aktywnej
   expect(m.state.buildings).toHaveLength(0);
   expect(m.removeRoad({ x: 258, y: 276 })).toBe(true);
 });
+
+it('pionowy rząd ma osiągalne stanowisko niezależnie od kierunku przeciągania', () => {
+  for (const [from, to] of [
+    [
+      { x: 274, y: 270 },
+      { x: 274, y: 282 },
+    ],
+    [
+      { x: 274, y: 282 },
+      { x: 274, y: 270 },
+    ],
+  ]) {
+    const m = create(),
+      plan = m.preview('row', from, to);
+    expect(plan.valid, plan.reason).toBe(true);
+    expect(m.commit(plan)).toBe(true);
+    const row = m.state.rows.at(-1)!;
+    expect(
+      row.cells.some((p) => p.x === row.access.x && p.y === row.access.y),
+    ).toBe(false);
+    expect(m.human.findPath({ x: 248, y: 258 }, row.access)).not.toBeNull();
+  }
+});

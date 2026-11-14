@@ -9,7 +9,7 @@ rozpoczęto. Nie wykonano merge ani instalacji na hostingu użytkownika.
 
 ## Co działa
 
-- Nowy, osobny klient `winobranie-rts` 0.1.0 w katalogu PixelForge 0.9.0.
+- Nowy, osobny klient `winobranie-rts` 0.1.1 w katalogu PixelForge 0.9.1.
   Stare `winobranie` z PR #4 pozostaje nieaktywne.
 - 8192 × 8192 px, 256 sektorów po 512 px; streaming RLE, culling sprite'ów,
   minimapa, przeciąganie kamery, zoom 0.5–2 z wyrównaniem do pikseli.
@@ -64,7 +64,7 @@ Winobrania został zawężony do dokładnego ID, bez zakazu nowego produktu.
 | ----------------------------------------------- | ------------------------------------------------------- |
 | TypeScript strict                               | PASS                                                    |
 | ESLint + Prettier                               | PASS                                                    |
-| Vitest                                          | 83 PASS                                                 |
+| Vitest                                          | 84 PASS                                                 |
 | Paczki U0 (Python)                              | 15 PASS                                                 |
 | Aktualizator/panel (PHP/Python)                 | 36 PASS                                                 |
 | Hosting Apache/PHP                              | 12 PASS                                                 |
@@ -116,32 +116,32 @@ w środowisku testowym; nie wykonano testu na prawdziwym telefonie/LiteSpeed.
 
 ## Paczki i GitHub
 
-`pixelforge-0.9.0-full.zip` zawiera cały frontend (W1 + Dżdżownica + Atlas)
+`pixelforge-0.9.1-full.zip` zawiera cały frontend (W1 + Dżdżownica + Atlas)
 i manifest full v1 / engineSchemaVersion 2. Do skonfigurowanego panelu
 przesyła się ten ZIP bez rozpakowywania. Zestaw
-`pixelforge-public-html-0.9.0-installer-1.2.0.zip` służy pierwszej instalacji
+`pixelforge-public-html-0.9.1-installer-1.2.0.zip` służy pierwszej instalacji
 w `public_html`. Aktualizator 1.2.0 oraz poprzednie ZIP-y pozostają niezmienione.
 Sumy SHA-256 są obok archiwów w `downloads/`.
 
 [PR #14](https://github.com/ankelmarek/PixelForge/pull/14), bez merge.
-Pobrano oba ZIP-y ponownie przez publiczne linki GitHub i porównano całe bajty.
+Oba ZIP-y są w repozytorium wraz z plikami sum SHA-256.
 
 | Paczka                    |      Bajty | SHA-256                                                            |
 | ------------------------- | ---------: | ------------------------------------------------------------------ |
-| Full 0.9.0                | 13 125 842 | `f801a9c81d9ee4e1abee4619805a81632bdd7506b02b8c8fc9c7de629170c3a2` |
-| Public_html 0.9.0 + 1.2.0 | 13 216 124 | `e449bec2439705dd7c31ca8c42de2cd4a2fe9fb5794e52c1bcc7c15f01a77b0b` |
+| Full 0.9.1                | 13 125 961 | `40959c8092cd0672c7e30f9fb7447d2cc864355a059b7a9f2d0245a9d026aa37` |
+| Public_html 0.9.1 + 1.2.0 | 13 216 245 | `ddb289acde6b6a7278a7d43f958c6753f25048dd61b396377b3c21fc3dbd0e61` |
 
-Walidator potwierdził 551 plików full ZIP, 16 570 922 bajty po rozpakowaniu.
+Walidator potwierdził 551 plików full ZIP, 16 571 209 bajty po rozpakowaniu.
 Archiwa full/startowe 0.8.0 mają identyczne SHA-256 jak w W0.
 Wszystkie testy dystrybucji przeszły. [Statyczny ZIP](reports/W1-GAME-BROWSER-RESULTS.json):
 Dżdżownica na desktopie/emulacji telefonu pod `/` i `/PixelForge/`;
 Winobranie na desktopie w obu ścieżkach, budowa, fizyczna produkcja i resume.
 [Panel HTTPS](reports/W1-INSTALLER-BROWSER-RESULTS.json): instalacja
-0.6.1 → 0.9.0, rollback → 0.6.1, ponowna instalacja → 0.9.0, wznowienie
+0.6.1 → 0.9.1, rollback → 0.6.1, ponowna instalacja → 0.9.1, wznowienie
 Dżdżownicy i Winobrania, izolacja save i brak błędów JS/HTTP.
 [Public_html](reports/W1-HOSTING-BROWSER-RESULTS.json): konfiguracja,
 403 prywatnego katalogu, instalacja/rollback, desktop, emulacja telefonu i no-JS.
-Przyszły numer 0.9.1 w tym teście jest wyłącznie tymczasowym fixture
+Przyszły numer 0.9.2 w tym teście jest wyłącznie tymczasowym fixture
 z niezmienioną zawartością gry, nie opublikowanym wydaniem.
 
 Kontrole GitHub Actions są dostępne w [zakładce Checks PR](https://github.com/ankelmarek/PixelForge/pull/14/checks).
@@ -165,3 +165,19 @@ Powyższe liczby opisują ukończone kontrole lokalne, niezależnie od czasu kol
 Nie zmieniono źródeł Dżdżownicy, Atlasu ani aktualizatora. Drobne zmiany
 w istniejących testach ograniczają zakaz do dokładnego starego ID oraz
 wybierają nowe archiwum, zachowując poprzednie kryteria regresji.
+
+### Poprawka końcowa 0.9.1
+
+Test regresji wykazał, że punkt pracy pionowego rzędu wyznaczanego z góry
+w dół wypadał na krzewie. Wybór osiągalnego sąsiedniego punktu usuwa
+zależność od kierunku gestu; unit obejmuje oba kierunki, E2E sadzi również
+pionowy rząd. Finał jest zapisywany natychmiast i zatrzymuje akumulator zegara.
+Opublikowane wcześniej archiwa 0.9.0 zachowano bez zmiany bajtów; aktualne
+linki prowadzą do 0.9.1. Pomiar renderera wykonano na 0.9.0 przed tą poprawką;
+renderer i grafika nie zmieniły się w 0.9.1.
+
+Po poprawce ponownie przeszły wszystkie 84 testy Vitest, trzy scenariusze
+Playwright Winobrania (2.0 min), build, lint/typecheck, walidacja nowych ZIP-ów,
+12 testów hostingu i pełne przeglądarkowe scenariusze paczek/install/rollback
+na 0.9.1. Pełna regresja 45 + 5 została wykonana przed poprawką klienta;
+workflow PR ponawia cały zestaw na końcowym commicie.
