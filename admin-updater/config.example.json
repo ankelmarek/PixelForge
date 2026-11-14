@@ -1,0 +1,8 @@
+{
+  "documentRoot": "/home/ACCOUNT/domains/rozumisie.pl/public_html",
+  "target": "/home/ACCOUNT/domains/rozumisie.pl/public_html/PixelForge",
+  "privateRoot": "/home/ACCOUNT/pixelforge-private",
+  "maxStorageBytes": 1073741824,
+  "reserveBytes": 33554432,
+  "limits": {}
+}

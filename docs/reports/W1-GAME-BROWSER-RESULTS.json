@@ -1,0 +1,82 @@
+{
+  "archive": "downloads/pixelforge-0.9.2-full.zip",
+  "emulationOnly": true,
+  "results": [
+    {
+      "device": "desktop",
+      "base": "/",
+      "chromium": "158.0.8127.18",
+      "firstRoot": true,
+      "resume": true,
+      "minZoom": 0.5,
+      "meanFps": 59.8,
+      "p95FrameMs": 16.700000000000728,
+      "retainedHeapBytes": 9229556,
+      "textureBytes": 2097152,
+      "sectors": 8,
+      "errors": []
+    },
+    {
+      "game": "winobranie-rts",
+      "device": "desktop",
+      "base": "/",
+      "installedFromArchive": true,
+      "constructed": true,
+      "physicalProcessing": true,
+      "resumed": true,
+      "errors": []
+    },
+    {
+      "device": "desktop",
+      "base": "/PixelForge/",
+      "chromium": "158.0.8127.18",
+      "firstRoot": true,
+      "resume": true,
+      "minZoom": 0.5,
+      "meanFps": 59.7,
+      "p95FrameMs": 16.700000000000728,
+      "retainedHeapBytes": 9584496,
+      "textureBytes": 2097152,
+      "sectors": 8,
+      "errors": []
+    },
+    {
+      "game": "winobranie-rts",
+      "device": "desktop",
+      "base": "/PixelForge/",
+      "installedFromArchive": true,
+      "constructed": true,
+      "physicalProcessing": true,
+      "resumed": true,
+      "errors": []
+    },
+    {
+      "device": "mobile",
+      "base": "/",
+      "chromium": "158.0.8127.18",
+      "firstRoot": true,
+      "resume": true,
+      "minZoom": 0.5,
+      "meanFps": 59.7,
+      "p95FrameMs": 16.799999999999727,
+      "retainedHeapBytes": 8597736,
+      "textureBytes": 7340032,
+      "sectors": 28,
+      "errors": []
+    },
+    {
+      "device": "mobile",
+      "base": "/PixelForge/",
+      "chromium": "158.0.8127.18",
+      "firstRoot": true,
+      "resume": true,
+      "minZoom": 0.5,
+      "meanFps": 59.8,
+      "p95FrameMs": 16.700000000000728,
+      "retainedHeapBytes": 8599540,
+      "textureBytes": 7340032,
+      "sectors": 28,
+      "errors": []
+    }
+  ]
+}

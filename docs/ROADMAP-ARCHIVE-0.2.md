@@ -22,12 +22,12 @@ To historyczny zapis decyzji o porzuceniu pierwszego prototypu „Winobranie”.
 
 `main` zawiera przede wszystkim dokumentację. Implementacje etapów są w gałęziach i PR:
 
-| Etap historyczny | Istniejący kod | Postępowanie |
-|---|---|---|
-| M0 | PR [#1](https://github.com/ankelmarek/PixelForge/pull/1) | Zachować działający fundament silnika, nie rozwijać gry demonstracyjnej |
-| M1 | PR [#2](https://github.com/ankelmarek/PixelForge/pull/2) | Rozważyć włączenie generycznych usług, zachować testy |
-| M2 | PR [#3](https://github.com/ankelmarek/PixelForge/pull/3) | **Zamrozić** platformówkę i jej rozwój; nie uznawać jej za przyszły produkt |
-| M3 | PR [#4](https://github.com/ankelmarek/PixelForge/pull/4) | **Nie rozwijać Winobrania**; odzyskać generyczny TopDown Simulator, A*, zadania, audio, zapis i model zasobów |
+| Etap historyczny | Istniejący kod                                           | Postępowanie                                                                                                  |
+| ---------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| M0               | PR [#1](https://github.com/ankelmarek/PixelForge/pull/1) | Zachować działający fundament silnika, nie rozwijać gry demonstracyjnej                                       |
+| M1               | PR [#2](https://github.com/ankelmarek/PixelForge/pull/2) | Rozważyć włączenie generycznych usług, zachować testy                                                         |
+| M2               | PR [#3](https://github.com/ankelmarek/PixelForge/pull/3) | **Zamrozić** platformówkę i jej rozwój; nie uznawać jej za przyszły produkt                                   |
+| M3               | PR [#4](https://github.com/ankelmarek/PixelForge/pull/4) | **Nie rozwijać Winobrania**; odzyskać generyczny TopDown Simulator, A*, zadania, audio, zapis i model zasobów |
 
 Kod M3 był technicznie testowany, ale **produkt nie został zaakceptowany pod względem grywalności**. Raporty dawnych etapów pozostają materiałem historycznym. **Nie scalać mechanicznie całego stosu PR #1–#4**, jeśli oznaczałoby to przywrócenie porzuconych tytułów jako aktywnych gier. Najpierw przegląd i uporządkowanie integracji; nie usuwać wartościowego kodu ani historii Git.
 
