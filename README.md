@@ -6,7 +6,7 @@
 
 Projekt powstaje z myślą o wielokrotnym wykorzystaniu gotowego silnika i produkowaniu kolejnych, niezależnych tytułów, zamiast pisania całych gier od zera.
 
-**Kolejna zatwierdzona koncepcja:** [Stacja na Trasie: Wielki Weekend](docs/STACJA-BENZYNOWA.md). Osobna strategia ekonomiczna RTS o prowadzeniu stacji paliw, z ruchem, sklepem, dostawami, myjnią, pracownikami i trzyczęściową kampanią. Etapy S0–S4 opisano w [roadmapie](docs/ROADMAP.md); nie są jeszcze zaimplementowane.
+**Stacja na Trasie: Wielki Weekend — S0 do odbioru:** [specyfikacja](docs/STACJA-BENZYNOWA.md), [projekt wdrożenia](docs/STACJA-BENZYNOWA-IMPLEMENTATION.md) i [raport S0](docs/S0-REPORT.md). Przygotowano architekturę ruchu, kolejek, dostaw, ekonomii oraz własnego sklepu ORLAR i najmu Skoczki. Gałąź `feature/p3-stacja-benzynowa` bazuje na Winobraniu W3 z PR #16. S1 będzie pierwszą grywalną stacją; obecny katalog i ZIP 0.11.0 jeszcze jej nie zawierają. Dalsze etapy opisuje [roadmapa](docs/ROADMAP.md).
 
 ## Główna zasada
 
@@ -29,6 +29,7 @@ Projekt powstaje z myślą o wielokrotnym wykorzystaniu gotowego silnika i produ
 4. [Aktualizator ZIP](./docs/UPDATER-SPEC.md): bezpieczne wydania, upload, walidacja i rollback.
 5. [Winobranie RTS](./docs/WINOBRANIE-RTS.md): pełne wymagania i etapy strategii ekonomicznej.
 6. [Plan wdrożenia Winobrania RTS](docs/WINOBRANIE-RTS-IMPLEMENTATION.md): kontrakty W0, brakujące usługi, balans wstępny i macierz testów.
+7. [Plan wdrożenia Stacji na Trasie](docs/STACJA-BENZYNOWA-IMPLEMENTATION.md): inwentaryzacja S0, ruch i kolejki, finanse, najem, zapis, budżety i plan S1.
 
 ## Stan implementacji
 

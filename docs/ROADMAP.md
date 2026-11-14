@@ -2,7 +2,7 @@
 
 **Decyzja:** 14 listopada 2026. **Stan:** W0 nowej gry **Winobranie RTS: Trzy sezony** wykonane — inwentaryzacja, kontrakty i plan. W1 i W2 są bazą kolejnych zleceń. Po poleceniu „Rób nowy zakres” zaimplementowano W3: trzyletnią kampanię, rozbudowę, ekonomię i produkcję wina. W3 jest do odbioru; W4 nie rozpoczęto. **Główny dokument produkcyjny:** [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md).
 
-**Stacja na Trasie** ma osobny plan S0–S4; implementacja tego tytułu nie jest rozpoczęta.
+**Stacja na Trasie:** S0 wykonane i do odbioru — [projekt wdrożenia](STACJA-BENZYNOWA-IMPLEMENTATION.md), [raport](S0-REPORT.md). S1–S4 i runtime gry nie są rozpoczęte.
 
 Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md) oraz [archiwum historycznym](./ROADMAP-ARCHIVE-2026-11.md). Oba mają status historyczny. Jeżeli ich zapis przeczy temu dokumentowi lub `docs/WINOBRANIE-RTS.md`, obowiązuje aktualna decyzja z 14 listopada.
 
@@ -59,23 +59,43 @@ nowy tytuł nie jest jeszcze dostępny w launcherze ani ZIP-ie.
 ## 4. Kolejka pozostałych gier
 
 - **Miodobranie:** zaakceptowana koncepcja, osobny etap w przyszłości.
-- **Stacja na Trasie: Wielki Weekend:** [pełna specyfikacja RTS](./STACJA-BENZYNOWA.md), osobna gra ekonomiczna z ruchem pojazdów, usługami, 3 zmianami i końcem po około 30 minutach. Etapy **S0–S4** są zaplanowane, **programowanie nie rozpoczęte**. Nie wstrzymuje aktualnych prac nad Winobraniem RTS.
+- **Stacja na Trasie: Wielki Weekend:** [pełna specyfikacja RTS](./STACJA-BENZYNOWA.md), osobna gra ekonomiczna z ruchem pojazdów, usługami, 3 zmianami i końcem po około 30 minutach. **S0 do odbioru**, programowanie S1–S4 nie rozpoczęte. Nie wstrzymuje aktualnych prac nad Winobraniem RTS.
 - **Życie Dżdżownicy:** istniejąca produkcja; zachować kompatybilność.
 - Pozostałe koncepcje pozostają propozycjami, nie aktywnymi zadaniami.
 
 ### Plan rozwoju Stacji na Trasie (oddzielny cykl)
 
-Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: koncepcja dopracowana, nie wdrażana. **Nowy wariant ekonomiczny:** fikcyjna polska stacja **ORLAR** ma możliwość prowadzenia własnego sklepu lub wynajęcia go sieci **Skoczka**, z czynszem, kontraktem, odmiennymi obowiązkami i ruchem klientów. Funkcja zaplanowana do S2; branding autorski, bez kopiowania realnych znaków ORLEN i Żabka.
+Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: S0 zaprojektowane na bazie PR #16; [kontrakty i plan S1](STACJA-BENZYNOWA-IMPLEMENTATION.md). **Nowy wariant ekonomiczny:** fikcyjna polska stacja **ORLAR** ma możliwość prowadzenia własnego sklepu lub wynajęcia go sieci **Skoczka**, z czynszem, kontraktem, odmiennymi obowiązkami i ruchem klientów. Funkcja zaplanowana do S2; branding autorski, bez kopiowania realnych znaków ORLEN i Żabka.
 
-| Etap | Cel                                                                                                   | Status |
-| ---- | ----------------------------------------------------------------------------------------------------- | ------ |
-| S0   | Inwentaryzacja aktualnego PixelForge, architektura symulacji ruchu i kolejek, projekt ekonomii        | TODO   |
-| S1   | Grywalna stacja, dwa dystrybutory, sklep, pracownicy, cysterna, pierwsza sprzedaż i podstawowy dźwięk | TODO   |
-| S2   | Swobodna rozbudowa, ruch samochodów, pracownicy, ceny oraz **najem sklepu fikcyjnej sieci Skoczka**   | TODO   |
-| S3   | Myjnia, ekonomia, zdarzenia i 3 zmiany kończące się wynikiem                                          | TODO   |
-| S4   | Warianty, pixel art, dźwięki, balans, testy, pełny ZIP dla istniejącego panelu                        | TODO   |
+| Etap | Cel                                                                                                   | Status                              |
+| ---- | ----------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| S0   | Inwentaryzacja aktualnego PixelForge, architektura symulacji ruchu i kolejek, projekt ekonomii        | REVIEW — projekt i weryfikacja bazy |
+| S1   | Grywalna stacja, dwa dystrybutory, sklep, pracownicy, cysterna, pierwsza sprzedaż i podstawowy dźwięk | TODO                                |
+| S2   | Swobodna rozbudowa, ruch samochodów, pracownicy, ceny oraz **najem sklepu fikcyjnej sieci Skoczka**   | TODO                                |
+| S3   | Myjnia, ekonomia, zdarzenia i 3 zmiany kończące się wynikiem                                          | TODO                                |
+| S4   | Warianty, pixel art, dźwięki, balans, testy, pełny ZIP dla istniejącego panelu                        | TODO                                |
 
 **Zależność:** nowa gra używa istniejącego silnika, sektorów, nawigacji i zapisu. Codex przed rozpoczęciem S0 musi sprawdzić ostatni działający kod i PR #15 lub nowszy, ponieważ `main` może zawierać tylko dokumentację. Oddzielna gałąź `feature/p3-stacja-benzynowa`, brak automatycznego scalania i wdrażania. **Nie rozpoczynaj S1 bez akceptacji S0.**
+
+### Wykonane S0 — 14 listopada 2026
+
+Baza `7f678a1` / PR #16, osobna gałąź `feature/p3-stacja-benzynowa`.
+Inwentaryzacja odróżnia istniejącą dynamiczną nawigację od projektowanych
+pasów ruchu, zajętości i FIFO. Plan definiuje świat 4096², limit 32 jednostek,
+stany auta/dostawy/pracownika, podgląd i zatwierdzenie budowy, koszt zapasów,
+finanse, osobny zapis `gas-station`, budżety grafiki/audio oraz macierz testów.
+
+S1: sześciominutowy wycinek z dwiema pompami, własnym sklepem, dwoma ludźmi,
+cysterną i jedną rozbudową; cel 12 obsłużonych oraz dodatni wynik operacyjny.
+S2: dobrowolny najem z oddzielnym obrotem Skoczki, kasą paliwową ORLAR,
+przejęciem lokalu i idempotentnym czynszem. S0 proponuje do balansu 120
+czynszu lub 50 + 8% obrotu zamiast przykładowych 450 / 200 + 8% ze specyfikacji.
+S3: zmiany 8/12/10 minut, finał ≥60 aut, satysfakcja ≥70%, wartość netto >0.
+
+Wykonane kontrole i ograniczenia zapisano w [raporcie S0](S0-REPORT.md).
+Testy bazy nie potwierdzają jeszcze grywalności Stacji. Runtime, zależności,
+instalator i paczki 0.11.0 pozostają bez zmian; brak nowego wpisu w katalogu.
+Następny zakres po odbiorze: S1a–S1d, bez samoczynnego przejścia do S2.
 
 ## 5. Dalsza infrastruktura
 

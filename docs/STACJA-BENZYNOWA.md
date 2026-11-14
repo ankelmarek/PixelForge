@@ -1,10 +1,15 @@
 # STACJA NA TRASIE — strategia ekonomiczna RTS (PixelForge)
 
-**Status: szczegółowa koncepcja do realizacji, bez rozpoczęcia programowania.**  
+**Status: S0 zaprojektowane i do odbioru; S1–S4 bez rozpoczęcia programowania.**
+
 **Data:** 14 listopada 2026.  
 **Tytuł roboczy:** „Stacja na Trasie: Wielki Weekend”.  
 **Repozytorium:** `ankelmarek/PixelForge`.  
 **Architektura:** nowa gra na wspólnym silniku PixelForge, bez osobnego renderera ani instalatora.
+
+Wynik S0: [projekt wdrożenia i kontrakty](STACJA-BENZYNOWA-IMPLEMENTATION.md),
+[raport weryfikacji](S0-REPORT.md). Plan konkretyzuje przykładowe liczby tej
+specyfikacji, w tym zapasy startowe i wysokość czynszu; balans wymaga S1–S3.
 
 ## 1. Wizja i unikalna tożsamość
 
@@ -353,11 +358,15 @@ Stan: `schemaVersion`, `gameId`, `gameVersion`, seed, zmiana i zegar, status kam
 
 ### S0. Projekt techniczny i gameplay design
 
-- [ ] Przejrzyj najnowszą działającą gałąź silnika, PR #15 lub późniejszy, nie bazuj ślepo na dokumentacyjnym `main`.
-- [ ] Utwórz `docs/STACJA-BENZYNOWA-IMPLEMENTATION.md`: dokładny model stanów, kontrakty, zakres systemów generycznych, schematy, budżet assetów, plan E2E i ryzyka.
-- [ ] Opracuj jednoznaczną tabelę pętli 3 zmian, koszty, marże, wagi satysfakcji i ograniczenia liczby jednostek.
-- [ ] Zaprojektuj dwa modele lokalu: własny ORLAR i wynajęty Skoczce; umowy, rozliczenie czynszu i udziału, dane klienta oraz brak podwójnego księgowania.
-- [ ] Załóż nową gałąź `feature/p3-stacja-benzynowa` od sprawdzonej bazy. Nie scalaj ani nie publikuj automatycznie.
+- [x] Przejrzyj najnowszą działającą gałąź silnika, PR #15 lub późniejszy, nie bazuj ślepo na dokumentacyjnym `main`.
+- [x] Utwórz `docs/STACJA-BENZYNOWA-IMPLEMENTATION.md`: dokładny model stanów, kontrakty, zakres systemów generycznych, schematy, budżet assetów, plan E2E i ryzyka.
+- [x] Opracuj jednoznaczną tabelę pętli 3 zmian, koszty, marże, wagi satysfakcji i ograniczenia liczby jednostek.
+- [x] Zaprojektuj dwa modele lokalu: własny ORLAR i wynajęty Skoczce; umowy, rozliczenie czynszu i udziału, dane klienta oraz brak podwójnego księgowania.
+- [x] Załóż nową gałąź `feature/p3-stacja-benzynowa` od sprawdzonej bazy. Nie scalaj ani nie publikuj automatycznie.
+
+Wykonanie: `7f678a1` / PR #16 → `feature/p3-stacja-benzynowa`;
+[plan S0](STACJA-BENZYNOWA-IMPLEMENTATION.md), [raport](S0-REPORT.md).
+Odhaczenie projektu nie oznacza zaimplementowania poniższych funkcji S1–S4.
 
 ### S1. Vertical slice 5–8 minut
 

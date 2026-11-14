@@ -28,6 +28,8 @@ Gra ma korzystać z PixelForge, obsługi dużych map, dynamicznych dróg i nawig
 
 Przy poleceniu rozpoczęcia tego tytułu wykonaj **wyłącznie S0**, po sprawdzeniu aktualnej działającej bazy i PR #15 lub nowszych. Nie przerywaj, nie przepisuj i nie scalaj automatycznie bieżących prac nad Winobraniem RTS. Nie wdrażaj gry na hosting bez osobnego polecenia.
 
+**Stan S0:** po poleceniu „możesz budowac stację benzunową, zerknij w roadmapę” przygotowano [projekt wdrożenia](docs/STACJA-BENZYNOWA-IMPLEMENTATION.md) i [raport S0](docs/S0-REPORT.md) na `feature/p3-stacja-benzynowa`, z bazy `7f678a1` / PR #16. S0 jest do odbioru; Stacja nie ma jeszcze runtime ani ZIP-a. Przy następnym zleceniu sprawdź te dokumenty i aktualny PR. S1 wymaga akceptacji S0; najem Skoczki pozostaje S2, pełna kampania S3. Nie rozpoczynaj ich automatycznie.
+
 **Uzupełnienie dla Stacji na Trasie (14.11.2026):** robocze marki to **ORLAR** (stacja z orłem) oraz **Skoczka** (fikcyjna sieć niewielkich sklepów z motywem żabki). Gracz ma móc **prowadzić sklep sam lub oddać lokal w najem Skoczce**. W najmie przychód stacji to czynsz oraz umówiony udział, a nie pełny obrót sklepu; najemca zapewnia swoich pracowników i towary. Zadbaj o parking, oddzielne kolejki, realną animację dostaw i wpływ sklepu na ruch. Mechanikę implementować w S2 po S0 i S1, zgodnie z sekcją 8.1 `docs/STACJA-BENZYNOWA.md`. Nazwy i znaki są robocze, nie kopiuj oznaczeń ORLEN ani Żabka, sprawdź odróżnialność przed publikacją.
 
 ## Gałęzie i pull requesty
