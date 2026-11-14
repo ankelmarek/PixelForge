@@ -1,6 +1,6 @@
 # PixelForge — aktualna roadmapa 0.3
 
-**Decyzja:** 14 listopada 2026. **Stan:** W0 nowej gry **Winobranie RTS: Trzy sezony** wykonane — inwentaryzacja, kontrakty i plan; W1 jest zaimplementowane i ma komplet zielonych kontroli lokalnych, W2–W4 nie rozpoczęto. **Główny dokument produkcyjny:** [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md).
+**Decyzja:** 14 listopada 2026. **Stan:** W0 nowej gry **Winobranie RTS: Trzy sezony** wykonane — inwentaryzacja, kontrakty i plan; W1 jest zaimplementowane; użytkownik zlecił dalszą rozbudowę W2. W2 ma zaimplementowany żywy sezon i zielone kontrole lokalne; jest do przeglądu. W3–W4 nie rozpoczęto. **Główny dokument produkcyjny:** [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md).
 
 Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md) oraz [archiwum historycznym](./ROADMAP-ARCHIVE-2026-11.md). Oba mają status historyczny. Jeżeli ich zapis przeczy temu dokumentowi lub `docs/WINOBRANIE-RTS.md`, obowiązuje aktualna decyzja z 14 listopada.
 
@@ -30,13 +30,13 @@ Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md
 
 ## 3. Nowy główny cykl: Winobranie RTS
 
-| Etap   | Zakres                                                                                                           | Status                                  |
-| ------ | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| **W0** | Inwentaryzacja kodu, projekt architektury, modele danych i balans wstępny                                        | DONE — dokumentacja i weryfikacja bazy  |
-| **W1** | Pierwszy grywalny vertical slice: duża mapa, własne rzędy, dwa domki, pracownicy, traktor, zbiór i sprzedaż      | REVIEW — testy PASS, odbiór użytkownika |
-| **W2** | 6 szczepów, wzrost roślin, pogoda, prognoza, przymrozki i zraszacze z nieprzerwaną pracą                         | TODO                                    |
-| **W3** | 3 lata, zakup nowych domków, pracowników i traktorów, ekonomia, produkcja wina, warunki wygranej/przegranej      | TODO                                    |
-| **W4** | 3 warianty kampanii, grafika pixel art, audio, balans, wydajność, testy E2E, pełny ZIP przez dotychczasowy panel | TODO                                    |
+| Etap   | Zakres                                                                                                           | Status                                 |
+| ------ | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| **W0** | Inwentaryzacja kodu, projekt architektury, modele danych i balans wstępny                                        | DONE — dokumentacja i weryfikacja bazy |
+| **W1** | Pierwszy grywalny vertical slice: duża mapa, własne rzędy, dwa domki, pracownicy, traktor, zbiór i sprzedaż      | DONE — baza dalszego zlecenia W2       |
+| **W2** | 6 szczepów, wzrost roślin, pogoda, prognoza, przymrozki i zraszacze z nieprzerwaną pracą                         | REVIEW — testy lokalne PASS            |
+| **W3** | 3 lata, zakup nowych domków, pracowników i traktorów, ekonomia, produkcja wina, warunki wygranej/przegranej      | TODO                                   |
+| **W4** | 3 warianty kampanii, grafika pixel art, audio, balans, wydajność, testy E2E, pełny ZIP przez dotychczasowy panel | TODO                                   |
 
 **Szczegółowe mechaniki, etapy i checklisty znajdują się w [specyfikacji Winobrania RTS](./WINOBRANIE-RTS.md).** Każdy etap powinien być ukończony, przetestowany i zrecenzowany przed kolejnym. Nie deklarować ukończenia całej gry po zbudowaniu pierwszego prototypu.
 
@@ -111,7 +111,7 @@ transport, tłoczenie, sprzedaż moszczu i finał po 360 s. W1 ma własny zapis 
 zawiera także dotychczasową Dżdżownicę i Atlas; instalator pozostaje 1.2.0.
 Archiwa 0.8.0 nie są zmieniane. Pełny sezon sprawdzono automatycznie przez UI
 przy ×4, bez ustawiania środków/zasobów poza rozgrywką. Odbiór przez użytkownika
-i badanie z osobami nieznającymi gry pozostają osobne. W2 nie jest rozpoczęte.
+i badanie z osobami nieznającymi gry pozostają osobne. Dalsze zlecenie W2 opisano w sekcji 10.
 
 W1: 85 Vitest, 15 testów paczek, 36 PHP/Python, 12 Apache/PHP,
 45 Playwright PASS (5 uzasadnionych pominięć), build, lint, typecheck oraz
@@ -124,3 +124,25 @@ blokady. Potrafi wskazać kamerą domek z gotowym moszczem albo jednostkę
 wymagającą uwagi. Działa także po wznowieniu i nie zmienia formatu zapisu.
 Ta decyzja zastępuje wcześniejszy zakaz podpowiedzi tekstowych dla Winobrania;
 nie zmienia zakresu W2. [Raport poprawki](W1-GUIDANCE.md), bieżący ZIP 0.9.3.
+
+## 10. W2 — żywy sezon (2026-11-14)
+
+Użytkownik po W1 polecił: „ok, teraz rozwiń grę, zróżnicuj, losuj, zrób ciekawszą”.
+Zakres przełożono na W2 z istniejącej roadmapy. Gałąź
+`feature/w2-winobranie-seasons`, baza `b5c80d1` / PR #14; wydanie 0.10.0,
+klient Winobrania 0.2.0. [Raport W2](W2-REPORT.md).
+
+Sześć odmian, fazy wzrostu, wiek/gleba/słońce, losowany seed nowej gry,
+pogoda i prognoza 1–3 dni, przymrozek i odmarzanie, susza oraz pielęgnacja.
+Instalacja wody: zbiorniki, pompy, rury, zraszacze, Auto/Ciągle/Wyłączony,
+płatna dostawa i energia. Ochrona wymaga ciągłego strumienia i zachowuje
+bilans zasobów. Nowy sezon trwa 600 s, stary zapis W1 kończy swoje 360 s.
+Zapis v2 migruje v1 bez jego nadpisania. Nowe efekty oraz komunikaty są
+ograniczone do klienta gry. Instalator pozostaje 1.2.0.
+
+Lokalnie: 100 Vitest, 15 testów paczek, 36 PHP/Python, 12 Apache/PHP oraz
+46 Playwright PASS (6 pominięć zgodnych z platformą); TypeScript, build
+i walidacja pełnego ZIP PASS. Kontrole produkcyjnego archiwum, instalacji,
+rollbacku i public_html są także objęte CI; szczegóły podaje raport W2.
+Następny możliwy zakres to W3,
+po odbiorze i osobnym poleceniu; bez automatycznego merge ani instalacji.

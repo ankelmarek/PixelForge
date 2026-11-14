@@ -187,7 +187,7 @@ Model: deterministyczny seeded RNG, krok stały (np. istniejące 50 ms), praca p
 - [x] Nie przepisywać Dżdżownicy, Atlasu ani aktualizatora.
 
 Wykonano 2026-11-14: [kontrakty i plan](WINOBRANIE-RTS-IMPLEMENTATION.md),
-[raport weryfikacji bazy](W0-REPORT.md). W1 zrealizowano na kolejnej gałęzi; [raport W1](W1-REPORT.md). W2–W4 pozostają do realizacji.
+[raport weryfikacji bazy](W0-REPORT.md). W1 zrealizowano na kolejnej gałęzi; [raport W1](W1-REPORT.md). W2 zostało zlecone po W1 i jest w weryfikacji — [raport W2](W2-REPORT.md). W3–W4 pozostają do realizacji.
 
 ### W1. Grywalny rdzeń na dużej mapie
 
@@ -204,10 +204,13 @@ Pełny przebieg automatyczny przez mysz przy ×4; nie jest to jeszcze
 
 ### W2. Pełna agronomia i przymrozek
 
-- [ ] 6 odmian, fazy rozwoju i wiek nasadzeń, różne gleby/nasłonecznienie.
-- [ ] Pogoda, prognoza, temperatura i przymrozek z ochroną przez nieprzerwane zraszanie.
-- [ ] Dynamiczna sieć wody/pompy/zraszacze oraz symulacja stresu i utraty części plonu.
-- [ ] Testy porównawcze strat z/bez ochrony i test przerwanej pompy, bez wymuszonej porażki.
+- [x] 6 odmian, fazy rozwoju i wiek nasadzeń, różne gleby/nasłonecznienie.
+- [x] Pogoda, prognoza, temperatura i przymrozek z ochroną przez nieprzerwane zraszanie.
+- [x] Dynamiczna sieć wody/pompy/zraszacze oraz symulacja stresu i utraty części plonu.
+- [x] Testy porównawcze strat z/bez ochrony i test przerwanej pompy, bez wymuszonej porażki.
+
+Implementacja W2: losowany sezon 600 s, zapis v2 z kontynuacją dawnych zapisów W1,
+wydanie 0.10.0. Szczegóły, testy i ograniczenia: [raport W2](W2-REPORT.md).
 
 ### W3. Strategia ekonomiczna i trzy lata
 

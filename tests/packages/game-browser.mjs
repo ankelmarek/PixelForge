@@ -6,7 +6,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import process from 'node:process';
 
 const archive =
-  process.env.PIXELFORGE_TEST_RELEASE ?? 'downloads/pixelforge-0.9.3-full.zip';
+  process.env.PIXELFORGE_TEST_RELEASE ?? 'downloads/pixelforge-0.10.0-full.zip';
 const server = spawn(
   'python3',
   ['-u', 'tests/packages/serve_game.py', archive],
@@ -160,11 +160,12 @@ try {
         await expect.poll(async () => (await state()).stats.buildings).toBe(1);
         await page.locator('[data-cancel]').click();
         await page.locator('[data-speed="4"]').click();
+        await expect(page.locator('.vineyard-weather')).toBeVisible();
         await expect
-          .poll(async () => Number((await state()).stats.processed), {
-            timeout: 40000,
-          })
-          .toBeGreaterThan(0);
+          .poll(async () => Number((await state()).stats.tick))
+          .toBeGreaterThan(200);
+        const crops = JSON.parse((await state()).stats.crops);
+        expect(crops['row-0'].plots[0].heat).toBeGreaterThan(0);
         await page.locator('#pause').click();
         const winery = await state();
         await page.reload();
@@ -172,7 +173,10 @@ try {
         await page.locator('#resume').click();
         await expect.poll(async () => (await state()).stats.ready).toBe(true);
         expect((await state()).stats.buildings).toBe(1);
-        expect((await state()).stats.processed).toBe(winery.stats.processed);
+        expect((await state()).stats.seed).toBe(winery.stats.seed);
+        expect(Number((await state()).stats.tick)).toBeGreaterThanOrEqual(
+          Number(winery.stats.tick),
+        );
         await expect.poll(async () => (await state()).stats.missing).toBe(0);
         expect(errors).toEqual([]);
         results.push({
@@ -181,7 +185,7 @@ try {
           base,
           installedFromArchive: true,
           constructed: true,
-          physicalProcessing: true,
+          growthAndWeather: true,
           resumed: true,
           errors,
         });

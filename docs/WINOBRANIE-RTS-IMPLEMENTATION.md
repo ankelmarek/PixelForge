@@ -649,3 +649,18 @@ przejścia (średnia i rozrzut). Bez takiego pomiaru 30–35 minut pozostaje cel
 Kolejny zakres to **W1a–W1d i odbiór wycinka**, po osobnym poleceniu zgodnym
 z roadmapą. W0 kończy się tym dokumentem, raportem, zaktualizowanymi checklistami
 i PR. W2–W4, U3, Studio oraz stare produkty nie są rozpoczęte.
+
+## 15. Realizacja W2 — 2026-11-14
+
+Po poleceniu rozbudowy po W1 wdrożono sześć odmian, agregowane fragmenty rzędów,
+wzrost od ciepła/słońca/wilgoci, seed pogody, prognozę, mróz i odmarzanie,
+suszę, mączniaka/pielęgnację oraz graf zbiorników/pomp/rur/zraszaczy.
+Nowe sezony trwają 600 s. Model jednego sezonu zachowuje wiek nasadzeń;
+przechodzenie między trzema latami należy do W3. Sampler i oś zdarzeń są
+publicznymi usługami silnika; klient definiuje agronomię, wodę i prezentację.
+
+Konkretny, uproszczony model i parametry, macierz prób awarii, testy oraz
+ograniczenia opisuje [raport W2](W2-REPORT.md). Aktualny klucz to
+`pixelforge:client:v2:winobranie-rts`; migracja v1 zachowuje stary sezon jako
+tryb zgodności i nie nadpisuje v1. Nowa wersja danych gry pozostaje zgodna
+z manifestem full v1 i istniejącym instalatorem 1.2.0.
