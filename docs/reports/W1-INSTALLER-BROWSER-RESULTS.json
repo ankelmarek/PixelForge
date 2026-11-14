@@ -1,14 +1,14 @@
 {
   "chromium": "158.0.8127.18",
-  "release": "0.9.1",
+  "release": "0.9.2",
   "javascriptDisabledUploadAndDiscard": true,
   "results": [
     {
       "device": "desktop",
       "httpsVerified": true,
       "uploadOnlyPrepares": true,
-      "install": "0.6.1 -> 0.9.1",
-      "rollback": "0.9.1 -> 0.6.1",
+      "install": "0.6.1 -> 0.9.2",
+      "rollback": "0.9.2 -> 0.6.1",
       "gameReinstalledAndResumed": true,
       "wineryReinstalledAndResumed": true,
       "savedCameraRestored": true,
@@ -19,8 +19,8 @@
       "device": "mobile",
       "httpsVerified": true,
       "uploadOnlyPrepares": true,
-      "install": "0.6.1 -> 0.9.1",
-      "rollback": "0.9.1 -> 0.6.1",
+      "install": "0.6.1 -> 0.9.2",
+      "rollback": "0.9.2 -> 0.6.1",
       "gameReinstalledAndResumed": true,
       "wineryReinstalledAndResumed": false,
       "savedCameraRestored": true,

@@ -12,7 +12,7 @@ const root = resolve(import.meta.dirname, '../..');
 if (process.argv.includes('--release'))
   process.env.PIXELFORGE_TEST_RELEASE = resolve(
     root,
-    'downloads/pixelforge-0.9.1-full.zip',
+    'downloads/pixelforge-0.9.2-full.zip',
   );
 const server = spawn(
   'python3',

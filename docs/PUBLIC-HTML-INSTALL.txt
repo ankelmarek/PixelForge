@@ -1,5 +1,5 @@
 PIXELFORGE — WSZYSTKO W PUBLIC_HTML
-Gra 0.9.1 (Winobranie RTS W1 + Życie Dżdżownicy + Atlas), instalator i aktualizator 1.2.0.
+Gra 0.9.2 (Winobranie RTS W1 + Życie Dżdżownicy + Atlas), instalator i aktualizator 1.2.0.
 
 WYMAGANIA
 Apache 2.4 lub zgodny LiteSpeed z aktywnymi regułami .htaccess, HTTPS,

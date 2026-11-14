@@ -9,7 +9,7 @@ rozpoczęto. Nie wykonano merge ani instalacji na hostingu użytkownika.
 
 ## Co działa
 
-- Nowy, osobny klient `winobranie-rts` 0.1.1 w katalogu PixelForge 0.9.1.
+- Nowy, osobny klient `winobranie-rts` 0.1.2 w katalogu PixelForge 0.9.2.
   Stare `winobranie` z PR #4 pozostaje nieaktywne.
 - 8192 × 8192 px, 256 sektorów po 512 px; streaming RLE, culling sprite'ów,
   minimapa, przeciąganie kamery, zoom 0.5–2 z wyrównaniem do pikseli.
@@ -64,7 +64,7 @@ Winobrania został zawężony do dokładnego ID, bez zakazu nowego produktu.
 | ----------------------------------------------- | ------------------------------------------------------- |
 | TypeScript strict                               | PASS                                                    |
 | ESLint + Prettier                               | PASS                                                    |
-| Vitest                                          | 84 PASS                                                 |
+| Vitest                                          | 85 PASS                                                 |
 | Paczki U0 (Python)                              | 15 PASS                                                 |
 | Aktualizator/panel (PHP/Python)                 | 36 PASS                                                 |
 | Hosting Apache/PHP                              | 12 PASS                                                 |
@@ -116,10 +116,10 @@ w środowisku testowym; nie wykonano testu na prawdziwym telefonie/LiteSpeed.
 
 ## Paczki i GitHub
 
-`pixelforge-0.9.1-full.zip` zawiera cały frontend (W1 + Dżdżownica + Atlas)
+`pixelforge-0.9.2-full.zip` zawiera cały frontend (W1 + Dżdżownica + Atlas)
 i manifest full v1 / engineSchemaVersion 2. Do skonfigurowanego panelu
 przesyła się ten ZIP bez rozpakowywania. Zestaw
-`pixelforge-public-html-0.9.1-installer-1.2.0.zip` służy pierwszej instalacji
+`pixelforge-public-html-0.9.2-installer-1.2.0.zip` służy pierwszej instalacji
 w `public_html`. Aktualizator 1.2.0 oraz poprzednie ZIP-y pozostają niezmienione.
 Sumy SHA-256 są obok archiwów w `downloads/`.
 
@@ -128,24 +128,26 @@ Oba ZIP-y są w repozytorium wraz z plikami sum SHA-256.
 
 | Paczka                    |      Bajty | SHA-256                                                            |
 | ------------------------- | ---------: | ------------------------------------------------------------------ |
-| Full 0.9.1                | 13 125 961 | `40959c8092cd0672c7e30f9fb7447d2cc864355a059b7a9f2d0245a9d026aa37` |
-| Public_html 0.9.1 + 1.2.0 | 13 216 245 | `ddb289acde6b6a7278a7d43f958c6753f25048dd61b396377b3c21fc3dbd0e61` |
+| Full 0.9.2                | 13 126 023 | `a69a7e21010960bf725ad8cef2a5c24c55c7e3a2822b62ea23beeffa6d30920f` |
+| Public_html 0.9.2 + 1.2.0 | 13 216 311 | `17410c6663e8e085a97c2ee16933b4fdc46f4e6448e6a32a47090409083bf95e` |
 
-Walidator potwierdził 551 plików full ZIP, 16 571 209 bajty po rozpakowaniu.
+Walidator potwierdził 551 plików full ZIP, 16 571 313 bajtów po rozpakowaniu.
 Archiwa full/startowe 0.8.0 mają identyczne SHA-256 jak w W0.
 Wszystkie testy dystrybucji przeszły. [Statyczny ZIP](reports/W1-GAME-BROWSER-RESULTS.json):
 Dżdżownica na desktopie/emulacji telefonu pod `/` i `/PixelForge/`;
 Winobranie na desktopie w obu ścieżkach, budowa, fizyczna produkcja i resume.
 [Panel HTTPS](reports/W1-INSTALLER-BROWSER-RESULTS.json): instalacja
-0.6.1 → 0.9.1, rollback → 0.6.1, ponowna instalacja → 0.9.1, wznowienie
+0.6.1 → 0.9.2, rollback → 0.6.1, ponowna instalacja → 0.9.2, wznowienie
 Dżdżownicy i Winobrania, izolacja save i brak błędów JS/HTTP.
 [Public_html](reports/W1-HOSTING-BROWSER-RESULTS.json): konfiguracja,
 403 prywatnego katalogu, instalacja/rollback, desktop, emulacja telefonu i no-JS.
-Przyszły numer 0.9.2 w tym teście jest wyłącznie tymczasowym fixture
+Przyszły numer 0.9.3 w tym teście jest wyłącznie tymczasowym fixture
 z niezmienioną zawartością gry, nie opublikowanym wydaniem.
 
 Kontrole GitHub Actions są dostępne w [zakładce Checks PR](https://github.com/ankelmarek/PixelForge/pull/14/checks).
-Powyższe liczby opisują ukończone kontrole lokalne, niezależnie od czasu kolejki CI.
+Powyższe liczby opisują ukończone kontrole lokalne. Pełną regresję wykonano
+na 0.9.0; 0.9.1 przeszła także cały workflow GitHub Actions. Zakres lokalnego
+ponowienia po poprawce 0.9.2 opisano poniżej, a CI ponawia cały zestaw.
 
 ## Główne pliki
 
@@ -166,14 +168,14 @@ Nie zmieniono źródeł Dżdżownicy, Atlasu ani aktualizatora. Drobne zmiany
 w istniejących testach ograniczają zakaz do dokładnego starego ID oraz
 wybierają nowe archiwum, zachowując poprzednie kryteria regresji.
 
-### Poprawka końcowa 0.9.1
+### Poprawka 0.9.1
 
 Test regresji wykazał, że punkt pracy pionowego rzędu wyznaczanego z góry
 w dół wypadał na krzewie. Wybór osiągalnego sąsiedniego punktu usuwa
 zależność od kierunku gestu; unit obejmuje oba kierunki, E2E sadzi również
 pionowy rząd. Finał jest zapisywany natychmiast i zatrzymuje akumulator zegara.
-Opublikowane wcześniej archiwa 0.9.0 zachowano bez zmiany bajtów; aktualne
-linki prowadzą do 0.9.1. Pomiar renderera wykonano na 0.9.0 przed tą poprawką;
+Archiwa 0.9.0 zachowano bez zmiany bajtów, a opisany przyrost opublikowano
+jako osobne wydanie 0.9.1. Pomiar renderera wykonano na 0.9.0 przed tą poprawką;
 renderer i grafika nie zmieniły się w 0.9.1.
 
 Po poprawce ponownie przeszły wszystkie 84 testy Vitest, trzy scenariusze
@@ -181,3 +183,20 @@ Playwright Winobrania (2.0 min), build, lint/typecheck, walidacja nowych ZIP-ów
 12 testów hostingu i pełne przeglądarkowe scenariusze paczek/install/rollback
 na 0.9.1. Pełna regresja 45 + 5 została wykonana przed poprawką klienta;
 workflow PR ponawia cały zestaw na końcowym commicie.
+
+### Poprawka 0.9.2 — prześwit ukośnej drogi
+
+Ukośny odcinek rysowany pędzlem 3×3 wymaga także obu ortogonalnych
+komórek w narożniku. Bez nich widoczne kafle łączyły się po przekątnej,
+ale pojazd 3×3 nie miał ciągłej trasy w grafie czterech sąsiadów. Pędzel
+uzupełnia teraz narożniki przed obliczeniem powierzchni, własności i ceny.
+Nowy test sprawdza cztery kierunki, przeciąganie w obie strony oraz porty
+obróconych domków; E2E maluje także odcinek ukośny. Nie zmieniono renderera,
+panelu PHP ani formatu zapisu. Poprzednie archiwa 0.9.0/0.9.1 pozostają
+niezmienione, bieżące wydanie to 0.9.2.
+
+Na 0.9.2 ponownie przeszły lint/typecheck, build, 85 testów Vitest,
+trzy scenariusze Playwright Winobrania (2.0 min), walidacja obu nowych ZIP-ów
+i 12 testów hostingu. Przeglądarkowe testy produkcyjnych paczek, panelu
+instalacji/rollbacku oraz zestawu public_html zakończyły się bez błędów.
+Dołączone raporty JSON dystrybucji dotyczą właśnie 0.9.2.

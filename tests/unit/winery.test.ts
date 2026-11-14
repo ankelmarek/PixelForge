@@ -179,3 +179,35 @@ it('pionowy rząd ma osiągalne stanowisko niezależnie od kierunku przeciągani
     expect(m.human.findPath({ x: 248, y: 258 }, row.access)).not.toBeNull();
   }
 });
+
+it('ukośna droga zachowuje prześwit traktora w czterech kierunkach i dojazd do obróconego domku', () => {
+  for (const end of [
+    { x: 294, y: 270 },
+    { x: 270, y: 270 },
+    { x: 294, y: 246 },
+    { x: 270, y: 246 },
+  ])
+    for (const reverse of [false, true]) {
+      const m = create(),
+        start = { x: 282, y: 258 };
+      const road = m.preview(
+        'road',
+        reverse ? end : start,
+        reverse ? start : end,
+      );
+      expect(road.valid, road.reason).toBe(true);
+      expect(m.commit(road)).toBe(true);
+      const path = m.vehicle.findPath({ x: 248, y: 258 }, end);
+      expect(path).not.toBeNull();
+      expect(path!.every((p) => m.walkable(p, true))).toBe(true);
+      if (end.y > 258) {
+        const house = m.preview(
+          'house',
+          { x: end.x + (end.x > 282 ? 6 : -5), y: end.y },
+          undefined,
+          end.x > 282 ? 1 : 3,
+        );
+        expect(house.valid, house.reason).toBe(true);
+      }
+    }
+});

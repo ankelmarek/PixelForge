@@ -318,7 +318,19 @@ export class VineyardModel {
       if (tool === 'row') cost = Math.ceil(cells.length / 2) * 3000;
       else {
         const expanded = new Map<string, Cell>();
-        for (const p of cells)
+        // Fill both orthogonal steps at diagonal corners before applying the
+        // 3×3 brush. A visual diagonal must also be traversable by a wide actor.
+        const centers = cells.flatMap((point, index) => {
+          const previous = cells[index - 1];
+          return previous && previous.x !== point.x && previous.y !== point.y
+            ? [
+                point,
+                { x: previous.x, y: point.y },
+                { x: point.x, y: previous.y },
+              ]
+            : [point];
+        });
+        for (const p of centers)
           for (let dy = -1; dy <= 1; dy++)
             for (let dx = -1; dx <= 1; dx++) {
               const q = { x: p.x + dx, y: p.y + dy };

@@ -81,6 +81,11 @@ test('W1: pełny sezon samą myszą, budowa, rzędy, transport, sprzedaż i wzno
   await expect
     .poll(async () => Number((await state(page)).stats?.roadCells))
     .toBeGreaterThan(0);
+  const roadCells = Number((await state(page)).stats?.roadCells);
+  await paint(page, { x: 258, y: 261 }, { x: 264, y: 267 });
+  await expect
+    .poll(async () => Number((await state(page)).stats?.roadCells))
+    .toBeGreaterThan(roadCells);
   await page.locator('[data-tool="row"]').click();
   await page.locator('[data-variety="regent"]').click();
   await paint(page, { x: 234, y: 268 }, { x: 244, y: 268 });

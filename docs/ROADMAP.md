@@ -107,12 +107,12 @@ panelami, 256 sektorów mapy 8192², parcelę startową i zakup sąsiednich, trz
 odmiany, własne rzędy/drogi, dwa domki, 2 ludzi i traktor, rzeczywiste zbiory,
 transport, tłoczenie, sprzedaż moszczu i finał po 360 s. W1 ma własny zapis v1.
 
-[Raport W1](W1-REPORT.md) podaje testy, pomiar i ograniczenia. Wydanie 0.9.1
+[Raport W1](W1-REPORT.md) podaje testy, pomiar i ograniczenia. Wydanie 0.9.2
 zawiera także dotychczasową Dżdżownicę i Atlas; instalator pozostaje 1.2.0.
 Archiwa 0.8.0 nie są zmieniane. Pełny sezon sprawdzono automatycznie przez UI
 przy ×4, bez ustawiania środków/zasobów poza rozgrywką. Odbiór przez użytkownika
 i badanie z osobami nieznającymi gry pozostają osobne. W2 nie jest rozpoczęte.
 
-W1: 84 Vitest, 15 testów paczek, 36 PHP/Python, 12 Apache/PHP,
+W1: 85 Vitest, 15 testów paczek, 36 PHP/Python, 12 Apache/PHP,
 45 Playwright PASS (5 uzasadnionych pominięć), build, lint, typecheck oraz
 komplet przeglądarkowych install/rollback/reinstall PASS. [PR #14](https://github.com/ankelmarek/PixelForge/pull/14).

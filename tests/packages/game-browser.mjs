@@ -6,7 +6,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import process from 'node:process';
 
 const archive =
-  process.env.PIXELFORGE_TEST_RELEASE ?? 'downloads/pixelforge-0.9.1-full.zip';
+  process.env.PIXELFORGE_TEST_RELEASE ?? 'downloads/pixelforge-0.9.2-full.zip';
 const server = spawn(
   'python3',
   ['-u', 'tests/packages/serve_game.py', archive],
