@@ -55,13 +55,13 @@ Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md
 
 ### Plan rozwoju Stacji na Trasie (oddzielny cykl)
 
-Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: koncepcja dopracowana, nie wdrażana.
+Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: koncepcja dopracowana, nie wdrażana. **Nowy wariant ekonomiczny:** fikcyjna polska stacja **ORLAR** ma możliwość prowadzenia własnego sklepu lub wynajęcia go sieci **Skoczka**, z czynszem, kontraktem, odmiennymi obowiązkami i ruchem klientów. Funkcja zaplanowana do S2; branding autorski, bez kopiowania realnych znaków ORLEN i Żabka.
 
 | Etap | Cel | Status |
 |---|---|---|
 | S0 | Inwentaryzacja aktualnego PixelForge, architektura symulacji ruchu i kolejek, projekt ekonomii | TODO |
 | S1 | Grywalna stacja, dwa dystrybutory, sklep, pracownicy, cysterna, pierwsza sprzedaż i podstawowy dźwięk | TODO |
-| S2 | Swobodna rozbudowa, ruch samochodów osobowych i ciężarówek, nowe stanowiska, pracownicy i ceny | TODO |
+| S2 | Swobodna rozbudowa, ruch samochodów, pracownicy, ceny oraz **najem sklepu fikcyjnej sieci Skoczka** | TODO |
 | S3 | Myjnia, ekonomia, zdarzenia i 3 zmiany kończące się wynikiem | TODO |
 | S4 | Warianty, pixel art, dźwięki, balans, testy, pełny ZIP dla istniejącego panelu | TODO |
 
