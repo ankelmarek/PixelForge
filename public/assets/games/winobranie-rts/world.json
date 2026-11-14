@@ -1,0 +1,1569 @@
+{
+  "schemaVersion": 2,
+  "id": "vineyard-w1",
+  "width": 512,
+  "height": 512,
+  "tileSize": 16,
+  "camera": {
+    "zoom": 0.5,
+    "minZoom": 0.5,
+    "maxZoom": 2,
+    "center": {
+      "x": 253,
+      "y": 250
+    }
+  },
+  "terrain": {
+    "revision": "vineyard-w1",
+    "sectorSize": 32,
+    "texture": "vineyard-ground",
+    "frames": 7,
+    "fallbackColor": 7046725,
+    "cacheSectors": 48,
+    "sectors": [
+      {
+        "id": "s0-0",
+        "x": 0,
+        "y": 0,
+        "url": "sectors/s0-0.json"
+      },
+      {
+        "id": "s1-0",
+        "x": 1,
+        "y": 0,
+        "url": "sectors/s1-0.json"
+      },
+      {
+        "id": "s2-0",
+        "x": 2,
+        "y": 0,
+        "url": "sectors/s2-0.json"
+      },
+      {
+        "id": "s3-0",
+        "x": 3,
+        "y": 0,
+        "url": "sectors/s3-0.json"
+      },
+      {
+        "id": "s4-0",
+        "x": 4,
+        "y": 0,
+        "url": "sectors/s4-0.json"
+      },
+      {
+        "id": "s5-0",
+        "x": 5,
+        "y": 0,
+        "url": "sectors/s5-0.json"
+      },
+      {
+        "id": "s6-0",
+        "x": 6,
+        "y": 0,
+        "url": "sectors/s6-0.json"
+      },
+      {
+        "id": "s7-0",
+        "x": 7,
+        "y": 0,
+        "url": "sectors/s7-0.json"
+      },
+      {
+        "id": "s8-0",
+        "x": 8,
+        "y": 0,
+        "url": "sectors/s8-0.json"
+      },
+      {
+        "id": "s9-0",
+        "x": 9,
+        "y": 0,
+        "url": "sectors/s9-0.json"
+      },
+      {
+        "id": "s10-0",
+        "x": 10,
+        "y": 0,
+        "url": "sectors/s10-0.json"
+      },
+      {
+        "id": "s11-0",
+        "x": 11,
+        "y": 0,
+        "url": "sectors/s11-0.json"
+      },
+      {
+        "id": "s12-0",
+        "x": 12,
+        "y": 0,
+        "url": "sectors/s12-0.json"
+      },
+      {
+        "id": "s13-0",
+        "x": 13,
+        "y": 0,
+        "url": "sectors/s13-0.json"
+      },
+      {
+        "id": "s14-0",
+        "x": 14,
+        "y": 0,
+        "url": "sectors/s14-0.json"
+      },
+      {
+        "id": "s15-0",
+        "x": 15,
+        "y": 0,
+        "url": "sectors/s15-0.json"
+      },
+      {
+        "id": "s0-1",
+        "x": 0,
+        "y": 1,
+        "url": "sectors/s0-1.json"
+      },
+      {
+        "id": "s1-1",
+        "x": 1,
+        "y": 1,
+        "url": "sectors/s1-1.json"
+      },
+      {
+        "id": "s2-1",
+        "x": 2,
+        "y": 1,
+        "url": "sectors/s2-1.json"
+      },
+      {
+        "id": "s3-1",
+        "x": 3,
+        "y": 1,
+        "url": "sectors/s3-1.json"
+      },
+      {
+        "id": "s4-1",
+        "x": 4,
+        "y": 1,
+        "url": "sectors/s4-1.json"
+      },
+      {
+        "id": "s5-1",
+        "x": 5,
+        "y": 1,
+        "url": "sectors/s5-1.json"
+      },
+      {
+        "id": "s6-1",
+        "x": 6,
+        "y": 1,
+        "url": "sectors/s6-1.json"
+      },
+      {
+        "id": "s7-1",
+        "x": 7,
+        "y": 1,
+        "url": "sectors/s7-1.json"
+      },
+      {
+        "id": "s8-1",
+        "x": 8,
+        "y": 1,
+        "url": "sectors/s8-1.json"
+      },
+      {
+        "id": "s9-1",
+        "x": 9,
+        "y": 1,
+        "url": "sectors/s9-1.json"
+      },
+      {
+        "id": "s10-1",
+        "x": 10,
+        "y": 1,
+        "url": "sectors/s10-1.json"
+      },
+      {
+        "id": "s11-1",
+        "x": 11,
+        "y": 1,
+        "url": "sectors/s11-1.json"
+      },
+      {
+        "id": "s12-1",
+        "x": 12,
+        "y": 1,
+        "url": "sectors/s12-1.json"
+      },
+      {
+        "id": "s13-1",
+        "x": 13,
+        "y": 1,
+        "url": "sectors/s13-1.json"
+      },
+      {
+        "id": "s14-1",
+        "x": 14,
+        "y": 1,
+        "url": "sectors/s14-1.json"
+      },
+      {
+        "id": "s15-1",
+        "x": 15,
+        "y": 1,
+        "url": "sectors/s15-1.json"
+      },
+      {
+        "id": "s0-2",
+        "x": 0,
+        "y": 2,
+        "url": "sectors/s0-2.json"
+      },
+      {
+        "id": "s1-2",
+        "x": 1,
+        "y": 2,
+        "url": "sectors/s1-2.json"
+      },
+      {
+        "id": "s2-2",
+        "x": 2,
+        "y": 2,
+        "url": "sectors/s2-2.json"
+      },
+      {
+        "id": "s3-2",
+        "x": 3,
+        "y": 2,
+        "url": "sectors/s3-2.json"
+      },
+      {
+        "id": "s4-2",
+        "x": 4,
+        "y": 2,
+        "url": "sectors/s4-2.json"
+      },
+      {
+        "id": "s5-2",
+        "x": 5,
+        "y": 2,
+        "url": "sectors/s5-2.json"
+      },
+      {
+        "id": "s6-2",
+        "x": 6,
+        "y": 2,
+        "url": "sectors/s6-2.json"
+      },
+      {
+        "id": "s7-2",
+        "x": 7,
+        "y": 2,
+        "url": "sectors/s7-2.json"
+      },
+      {
+        "id": "s8-2",
+        "x": 8,
+        "y": 2,
+        "url": "sectors/s8-2.json"
+      },
+      {
+        "id": "s9-2",
+        "x": 9,
+        "y": 2,
+        "url": "sectors/s9-2.json"
+      },
+      {
+        "id": "s10-2",
+        "x": 10,
+        "y": 2,
+        "url": "sectors/s10-2.json"
+      },
+      {
+        "id": "s11-2",
+        "x": 11,
+        "y": 2,
+        "url": "sectors/s11-2.json"
+      },
+      {
+        "id": "s12-2",
+        "x": 12,
+        "y": 2,
+        "url": "sectors/s12-2.json"
+      },
+      {
+        "id": "s13-2",
+        "x": 13,
+        "y": 2,
+        "url": "sectors/s13-2.json"
+      },
+      {
+        "id": "s14-2",
+        "x": 14,
+        "y": 2,
+        "url": "sectors/s14-2.json"
+      },
+      {
+        "id": "s15-2",
+        "x": 15,
+        "y": 2,
+        "url": "sectors/s15-2.json"
+      },
+      {
+        "id": "s0-3",
+        "x": 0,
+        "y": 3,
+        "url": "sectors/s0-3.json"
+      },
+      {
+        "id": "s1-3",
+        "x": 1,
+        "y": 3,
+        "url": "sectors/s1-3.json"
+      },
+      {
+        "id": "s2-3",
+        "x": 2,
+        "y": 3,
+        "url": "sectors/s2-3.json"
+      },
+      {
+        "id": "s3-3",
+        "x": 3,
+        "y": 3,
+        "url": "sectors/s3-3.json"
+      },
+      {
+        "id": "s4-3",
+        "x": 4,
+        "y": 3,
+        "url": "sectors/s4-3.json"
+      },
+      {
+        "id": "s5-3",
+        "x": 5,
+        "y": 3,
+        "url": "sectors/s5-3.json"
+      },
+      {
+        "id": "s6-3",
+        "x": 6,
+        "y": 3,
+        "url": "sectors/s6-3.json"
+      },
+      {
+        "id": "s7-3",
+        "x": 7,
+        "y": 3,
+        "url": "sectors/s7-3.json"
+      },
+      {
+        "id": "s8-3",
+        "x": 8,
+        "y": 3,
+        "url": "sectors/s8-3.json"
+      },
+      {
+        "id": "s9-3",
+        "x": 9,
+        "y": 3,
+        "url": "sectors/s9-3.json"
+      },
+      {
+        "id": "s10-3",
+        "x": 10,
+        "y": 3,
+        "url": "sectors/s10-3.json"
+      },
+      {
+        "id": "s11-3",
+        "x": 11,
+        "y": 3,
+        "url": "sectors/s11-3.json"
+      },
+      {
+        "id": "s12-3",
+        "x": 12,
+        "y": 3,
+        "url": "sectors/s12-3.json"
+      },
+      {
+        "id": "s13-3",
+        "x": 13,
+        "y": 3,
+        "url": "sectors/s13-3.json"
+      },
+      {
+        "id": "s14-3",
+        "x": 14,
+        "y": 3,
+        "url": "sectors/s14-3.json"
+      },
+      {
+        "id": "s15-3",
+        "x": 15,
+        "y": 3,
+        "url": "sectors/s15-3.json"
+      },
+      {
+        "id": "s0-4",
+        "x": 0,
+        "y": 4,
+        "url": "sectors/s0-4.json"
+      },
+      {
+        "id": "s1-4",
+        "x": 1,
+        "y": 4,
+        "url": "sectors/s1-4.json"
+      },
+      {
+        "id": "s2-4",
+        "x": 2,
+        "y": 4,
+        "url": "sectors/s2-4.json"
+      },
+      {
+        "id": "s3-4",
+        "x": 3,
+        "y": 4,
+        "url": "sectors/s3-4.json"
+      },
+      {
+        "id": "s4-4",
+        "x": 4,
+        "y": 4,
+        "url": "sectors/s4-4.json"
+      },
+      {
+        "id": "s5-4",
+        "x": 5,
+        "y": 4,
+        "url": "sectors/s5-4.json"
+      },
+      {
+        "id": "s6-4",
+        "x": 6,
+        "y": 4,
+        "url": "sectors/s6-4.json"
+      },
+      {
+        "id": "s7-4",
+        "x": 7,
+        "y": 4,
+        "url": "sectors/s7-4.json"
+      },
+      {
+        "id": "s8-4",
+        "x": 8,
+        "y": 4,
+        "url": "sectors/s8-4.json"
+      },
+      {
+        "id": "s9-4",
+        "x": 9,
+        "y": 4,
+        "url": "sectors/s9-4.json"
+      },
+      {
+        "id": "s10-4",
+        "x": 10,
+        "y": 4,
+        "url": "sectors/s10-4.json"
+      },
+      {
+        "id": "s11-4",
+        "x": 11,
+        "y": 4,
+        "url": "sectors/s11-4.json"
+      },
+      {
+        "id": "s12-4",
+        "x": 12,
+        "y": 4,
+        "url": "sectors/s12-4.json"
+      },
+      {
+        "id": "s13-4",
+        "x": 13,
+        "y": 4,
+        "url": "sectors/s13-4.json"
+      },
+      {
+        "id": "s14-4",
+        "x": 14,
+        "y": 4,
+        "url": "sectors/s14-4.json"
+      },
+      {
+        "id": "s15-4",
+        "x": 15,
+        "y": 4,
+        "url": "sectors/s15-4.json"
+      },
+      {
+        "id": "s0-5",
+        "x": 0,
+        "y": 5,
+        "url": "sectors/s0-5.json"
+      },
+      {
+        "id": "s1-5",
+        "x": 1,
+        "y": 5,
+        "url": "sectors/s1-5.json"
+      },
+      {
+        "id": "s2-5",
+        "x": 2,
+        "y": 5,
+        "url": "sectors/s2-5.json"
+      },
+      {
+        "id": "s3-5",
+        "x": 3,
+        "y": 5,
+        "url": "sectors/s3-5.json"
+      },
+      {
+        "id": "s4-5",
+        "x": 4,
+        "y": 5,
+        "url": "sectors/s4-5.json"
+      },
+      {
+        "id": "s5-5",
+        "x": 5,
+        "y": 5,
+        "url": "sectors/s5-5.json"
+      },
+      {
+        "id": "s6-5",
+        "x": 6,
+        "y": 5,
+        "url": "sectors/s6-5.json"
+      },
+      {
+        "id": "s7-5",
+        "x": 7,
+        "y": 5,
+        "url": "sectors/s7-5.json"
+      },
+      {
+        "id": "s8-5",
+        "x": 8,
+        "y": 5,
+        "url": "sectors/s8-5.json"
+      },
+      {
+        "id": "s9-5",
+        "x": 9,
+        "y": 5,
+        "url": "sectors/s9-5.json"
+      },
+      {
+        "id": "s10-5",
+        "x": 10,
+        "y": 5,
+        "url": "sectors/s10-5.json"
+      },
+      {
+        "id": "s11-5",
+        "x": 11,
+        "y": 5,
+        "url": "sectors/s11-5.json"
+      },
+      {
+        "id": "s12-5",
+        "x": 12,
+        "y": 5,
+        "url": "sectors/s12-5.json"
+      },
+      {
+        "id": "s13-5",
+        "x": 13,
+        "y": 5,
+        "url": "sectors/s13-5.json"
+      },
+      {
+        "id": "s14-5",
+        "x": 14,
+        "y": 5,
+        "url": "sectors/s14-5.json"
+      },
+      {
+        "id": "s15-5",
+        "x": 15,
+        "y": 5,
+        "url": "sectors/s15-5.json"
+      },
+      {
+        "id": "s0-6",
+        "x": 0,
+        "y": 6,
+        "url": "sectors/s0-6.json"
+      },
+      {
+        "id": "s1-6",
+        "x": 1,
+        "y": 6,
+        "url": "sectors/s1-6.json"
+      },
+      {
+        "id": "s2-6",
+        "x": 2,
+        "y": 6,
+        "url": "sectors/s2-6.json"
+      },
+      {
+        "id": "s3-6",
+        "x": 3,
+        "y": 6,
+        "url": "sectors/s3-6.json"
+      },
+      {
+        "id": "s4-6",
+        "x": 4,
+        "y": 6,
+        "url": "sectors/s4-6.json"
+      },
+      {
+        "id": "s5-6",
+        "x": 5,
+        "y": 6,
+        "url": "sectors/s5-6.json"
+      },
+      {
+        "id": "s6-6",
+        "x": 6,
+        "y": 6,
+        "url": "sectors/s6-6.json"
+      },
+      {
+        "id": "s7-6",
+        "x": 7,
+        "y": 6,
+        "url": "sectors/s7-6.json"
+      },
+      {
+        "id": "s8-6",
+        "x": 8,
+        "y": 6,
+        "url": "sectors/s8-6.json"
+      },
+      {
+        "id": "s9-6",
+        "x": 9,
+        "y": 6,
+        "url": "sectors/s9-6.json"
+      },
+      {
+        "id": "s10-6",
+        "x": 10,
+        "y": 6,
+        "url": "sectors/s10-6.json"
+      },
+      {
+        "id": "s11-6",
+        "x": 11,
+        "y": 6,
+        "url": "sectors/s11-6.json"
+      },
+      {
+        "id": "s12-6",
+        "x": 12,
+        "y": 6,
+        "url": "sectors/s12-6.json"
+      },
+      {
+        "id": "s13-6",
+        "x": 13,
+        "y": 6,
+        "url": "sectors/s13-6.json"
+      },
+      {
+        "id": "s14-6",
+        "x": 14,
+        "y": 6,
+        "url": "sectors/s14-6.json"
+      },
+      {
+        "id": "s15-6",
+        "x": 15,
+        "y": 6,
+        "url": "sectors/s15-6.json"
+      },
+      {
+        "id": "s0-7",
+        "x": 0,
+        "y": 7,
+        "url": "sectors/s0-7.json"
+      },
+      {
+        "id": "s1-7",
+        "x": 1,
+        "y": 7,
+        "url": "sectors/s1-7.json"
+      },
+      {
+        "id": "s2-7",
+        "x": 2,
+        "y": 7,
+        "url": "sectors/s2-7.json"
+      },
+      {
+        "id": "s3-7",
+        "x": 3,
+        "y": 7,
+        "url": "sectors/s3-7.json"
+      },
+      {
+        "id": "s4-7",
+        "x": 4,
+        "y": 7,
+        "url": "sectors/s4-7.json"
+      },
+      {
+        "id": "s5-7",
+        "x": 5,
+        "y": 7,
+        "url": "sectors/s5-7.json"
+      },
+      {
+        "id": "s6-7",
+        "x": 6,
+        "y": 7,
+        "url": "sectors/s6-7.json"
+      },
+      {
+        "id": "s7-7",
+        "x": 7,
+        "y": 7,
+        "url": "sectors/s7-7.json"
+      },
+      {
+        "id": "s8-7",
+        "x": 8,
+        "y": 7,
+        "url": "sectors/s8-7.json"
+      },
+      {
+        "id": "s9-7",
+        "x": 9,
+        "y": 7,
+        "url": "sectors/s9-7.json"
+      },
+      {
+        "id": "s10-7",
+        "x": 10,
+        "y": 7,
+        "url": "sectors/s10-7.json"
+      },
+      {
+        "id": "s11-7",
+        "x": 11,
+        "y": 7,
+        "url": "sectors/s11-7.json"
+      },
+      {
+        "id": "s12-7",
+        "x": 12,
+        "y": 7,
+        "url": "sectors/s12-7.json"
+      },
+      {
+        "id": "s13-7",
+        "x": 13,
+        "y": 7,
+        "url": "sectors/s13-7.json"
+      },
+      {
+        "id": "s14-7",
+        "x": 14,
+        "y": 7,
+        "url": "sectors/s14-7.json"
+      },
+      {
+        "id": "s15-7",
+        "x": 15,
+        "y": 7,
+        "url": "sectors/s15-7.json"
+      },
+      {
+        "id": "s0-8",
+        "x": 0,
+        "y": 8,
+        "url": "sectors/s0-8.json"
+      },
+      {
+        "id": "s1-8",
+        "x": 1,
+        "y": 8,
+        "url": "sectors/s1-8.json"
+      },
+      {
+        "id": "s2-8",
+        "x": 2,
+        "y": 8,
+        "url": "sectors/s2-8.json"
+      },
+      {
+        "id": "s3-8",
+        "x": 3,
+        "y": 8,
+        "url": "sectors/s3-8.json"
+      },
+      {
+        "id": "s4-8",
+        "x": 4,
+        "y": 8,
+        "url": "sectors/s4-8.json"
+      },
+      {
+        "id": "s5-8",
+        "x": 5,
+        "y": 8,
+        "url": "sectors/s5-8.json"
+      },
+      {
+        "id": "s6-8",
+        "x": 6,
+        "y": 8,
+        "url": "sectors/s6-8.json"
+      },
+      {
+        "id": "s7-8",
+        "x": 7,
+        "y": 8,
+        "url": "sectors/s7-8.json"
+      },
+      {
+        "id": "s8-8",
+        "x": 8,
+        "y": 8,
+        "url": "sectors/s8-8.json"
+      },
+      {
+        "id": "s9-8",
+        "x": 9,
+        "y": 8,
+        "url": "sectors/s9-8.json"
+      },
+      {
+        "id": "s10-8",
+        "x": 10,
+        "y": 8,
+        "url": "sectors/s10-8.json"
+      },
+      {
+        "id": "s11-8",
+        "x": 11,
+        "y": 8,
+        "url": "sectors/s11-8.json"
+      },
+      {
+        "id": "s12-8",
+        "x": 12,
+        "y": 8,
+        "url": "sectors/s12-8.json"
+      },
+      {
+        "id": "s13-8",
+        "x": 13,
+        "y": 8,
+        "url": "sectors/s13-8.json"
+      },
+      {
+        "id": "s14-8",
+        "x": 14,
+        "y": 8,
+        "url": "sectors/s14-8.json"
+      },
+      {
+        "id": "s15-8",
+        "x": 15,
+        "y": 8,
+        "url": "sectors/s15-8.json"
+      },
+      {
+        "id": "s0-9",
+        "x": 0,
+        "y": 9,
+        "url": "sectors/s0-9.json"
+      },
+      {
+        "id": "s1-9",
+        "x": 1,
+        "y": 9,
+        "url": "sectors/s1-9.json"
+      },
+      {
+        "id": "s2-9",
+        "x": 2,
+        "y": 9,
+        "url": "sectors/s2-9.json"
+      },
+      {
+        "id": "s3-9",
+        "x": 3,
+        "y": 9,
+        "url": "sectors/s3-9.json"
+      },
+      {
+        "id": "s4-9",
+        "x": 4,
+        "y": 9,
+        "url": "sectors/s4-9.json"
+      },
+      {
+        "id": "s5-9",
+        "x": 5,
+        "y": 9,
+        "url": "sectors/s5-9.json"
+      },
+      {
+        "id": "s6-9",
+        "x": 6,
+        "y": 9,
+        "url": "sectors/s6-9.json"
+      },
+      {
+        "id": "s7-9",
+        "x": 7,
+        "y": 9,
+        "url": "sectors/s7-9.json"
+      },
+      {
+        "id": "s8-9",
+        "x": 8,
+        "y": 9,
+        "url": "sectors/s8-9.json"
+      },
+      {
+        "id": "s9-9",
+        "x": 9,
+        "y": 9,
+        "url": "sectors/s9-9.json"
+      },
+      {
+        "id": "s10-9",
+        "x": 10,
+        "y": 9,
+        "url": "sectors/s10-9.json"
+      },
+      {
+        "id": "s11-9",
+        "x": 11,
+        "y": 9,
+        "url": "sectors/s11-9.json"
+      },
+      {
+        "id": "s12-9",
+        "x": 12,
+        "y": 9,
+        "url": "sectors/s12-9.json"
+      },
+      {
+        "id": "s13-9",
+        "x": 13,
+        "y": 9,
+        "url": "sectors/s13-9.json"
+      },
+      {
+        "id": "s14-9",
+        "x": 14,
+        "y": 9,
+        "url": "sectors/s14-9.json"
+      },
+      {
+        "id": "s15-9",
+        "x": 15,
+        "y": 9,
+        "url": "sectors/s15-9.json"
+      },
+      {
+        "id": "s0-10",
+        "x": 0,
+        "y": 10,
+        "url": "sectors/s0-10.json"
+      },
+      {
+        "id": "s1-10",
+        "x": 1,
+        "y": 10,
+        "url": "sectors/s1-10.json"
+      },
+      {
+        "id": "s2-10",
+        "x": 2,
+        "y": 10,
+        "url": "sectors/s2-10.json"
+      },
+      {
+        "id": "s3-10",
+        "x": 3,
+        "y": 10,
+        "url": "sectors/s3-10.json"
+      },
+      {
+        "id": "s4-10",
+        "x": 4,
+        "y": 10,
+        "url": "sectors/s4-10.json"
+      },
+      {
+        "id": "s5-10",
+        "x": 5,
+        "y": 10,
+        "url": "sectors/s5-10.json"
+      },
+      {
+        "id": "s6-10",
+        "x": 6,
+        "y": 10,
+        "url": "sectors/s6-10.json"
+      },
+      {
+        "id": "s7-10",
+        "x": 7,
+        "y": 10,
+        "url": "sectors/s7-10.json"
+      },
+      {
+        "id": "s8-10",
+        "x": 8,
+        "y": 10,
+        "url": "sectors/s8-10.json"
+      },
+      {
+        "id": "s9-10",
+        "x": 9,
+        "y": 10,
+        "url": "sectors/s9-10.json"
+      },
+      {
+        "id": "s10-10",
+        "x": 10,
+        "y": 10,
+        "url": "sectors/s10-10.json"
+      },
+      {
+        "id": "s11-10",
+        "x": 11,
+        "y": 10,
+        "url": "sectors/s11-10.json"
+      },
+      {
+        "id": "s12-10",
+        "x": 12,
+        "y": 10,
+        "url": "sectors/s12-10.json"
+      },
+      {
+        "id": "s13-10",
+        "x": 13,
+        "y": 10,
+        "url": "sectors/s13-10.json"
+      },
+      {
+        "id": "s14-10",
+        "x": 14,
+        "y": 10,
+        "url": "sectors/s14-10.json"
+      },
+      {
+        "id": "s15-10",
+        "x": 15,
+        "y": 10,
+        "url": "sectors/s15-10.json"
+      },
+      {
+        "id": "s0-11",
+        "x": 0,
+        "y": 11,
+        "url": "sectors/s0-11.json"
+      },
+      {
+        "id": "s1-11",
+        "x": 1,
+        "y": 11,
+        "url": "sectors/s1-11.json"
+      },
+      {
+        "id": "s2-11",
+        "x": 2,
+        "y": 11,
+        "url": "sectors/s2-11.json"
+      },
+      {
+        "id": "s3-11",
+        "x": 3,
+        "y": 11,
+        "url": "sectors/s3-11.json"
+      },
+      {
+        "id": "s4-11",
+        "x": 4,
+        "y": 11,
+        "url": "sectors/s4-11.json"
+      },
+      {
+        "id": "s5-11",
+        "x": 5,
+        "y": 11,
+        "url": "sectors/s5-11.json"
+      },
+      {
+        "id": "s6-11",
+        "x": 6,
+        "y": 11,
+        "url": "sectors/s6-11.json"
+      },
+      {
+        "id": "s7-11",
+        "x": 7,
+        "y": 11,
+        "url": "sectors/s7-11.json"
+      },
+      {
+        "id": "s8-11",
+        "x": 8,
+        "y": 11,
+        "url": "sectors/s8-11.json"
+      },
+      {
+        "id": "s9-11",
+        "x": 9,
+        "y": 11,
+        "url": "sectors/s9-11.json"
+      },
+      {
+        "id": "s10-11",
+        "x": 10,
+        "y": 11,
+        "url": "sectors/s10-11.json"
+      },
+      {
+        "id": "s11-11",
+        "x": 11,
+        "y": 11,
+        "url": "sectors/s11-11.json"
+      },
+      {
+        "id": "s12-11",
+        "x": 12,
+        "y": 11,
+        "url": "sectors/s12-11.json"
+      },
+      {
+        "id": "s13-11",
+        "x": 13,
+        "y": 11,
+        "url": "sectors/s13-11.json"
+      },
+      {
+        "id": "s14-11",
+        "x": 14,
+        "y": 11,
+        "url": "sectors/s14-11.json"
+      },
+      {
+        "id": "s15-11",
+        "x": 15,
+        "y": 11,
+        "url": "sectors/s15-11.json"
+      },
+      {
+        "id": "s0-12",
+        "x": 0,
+        "y": 12,
+        "url": "sectors/s0-12.json"
+      },
+      {
+        "id": "s1-12",
+        "x": 1,
+        "y": 12,
+        "url": "sectors/s1-12.json"
+      },
+      {
+        "id": "s2-12",
+        "x": 2,
+        "y": 12,
+        "url": "sectors/s2-12.json"
+      },
+      {
+        "id": "s3-12",
+        "x": 3,
+        "y": 12,
+        "url": "sectors/s3-12.json"
+      },
+      {
+        "id": "s4-12",
+        "x": 4,
+        "y": 12,
+        "url": "sectors/s4-12.json"
+      },
+      {
+        "id": "s5-12",
+        "x": 5,
+        "y": 12,
+        "url": "sectors/s5-12.json"
+      },
+      {
+        "id": "s6-12",
+        "x": 6,
+        "y": 12,
+        "url": "sectors/s6-12.json"
+      },
+      {
+        "id": "s7-12",
+        "x": 7,
+        "y": 12,
+        "url": "sectors/s7-12.json"
+      },
+      {
+        "id": "s8-12",
+        "x": 8,
+        "y": 12,
+        "url": "sectors/s8-12.json"
+      },
+      {
+        "id": "s9-12",
+        "x": 9,
+        "y": 12,
+        "url": "sectors/s9-12.json"
+      },
+      {
+        "id": "s10-12",
+        "x": 10,
+        "y": 12,
+        "url": "sectors/s10-12.json"
+      },
+      {
+        "id": "s11-12",
+        "x": 11,
+        "y": 12,
+        "url": "sectors/s11-12.json"
+      },
+      {
+        "id": "s12-12",
+        "x": 12,
+        "y": 12,
+        "url": "sectors/s12-12.json"
+      },
+      {
+        "id": "s13-12",
+        "x": 13,
+        "y": 12,
+        "url": "sectors/s13-12.json"
+      },
+      {
+        "id": "s14-12",
+        "x": 14,
+        "y": 12,
+        "url": "sectors/s14-12.json"
+      },
+      {
+        "id": "s15-12",
+        "x": 15,
+        "y": 12,
+        "url": "sectors/s15-12.json"
+      },
+      {
+        "id": "s0-13",
+        "x": 0,
+        "y": 13,
+        "url": "sectors/s0-13.json"
+      },
+      {
+        "id": "s1-13",
+        "x": 1,
+        "y": 13,
+        "url": "sectors/s1-13.json"
+      },
+      {
+        "id": "s2-13",
+        "x": 2,
+        "y": 13,
+        "url": "sectors/s2-13.json"
+      },
+      {
+        "id": "s3-13",
+        "x": 3,
+        "y": 13,
+        "url": "sectors/s3-13.json"
+      },
+      {
+        "id": "s4-13",
+        "x": 4,
+        "y": 13,
+        "url": "sectors/s4-13.json"
+      },
+      {
+        "id": "s5-13",
+        "x": 5,
+        "y": 13,
+        "url": "sectors/s5-13.json"
+      },
+      {
+        "id": "s6-13",
+        "x": 6,
+        "y": 13,
+        "url": "sectors/s6-13.json"
+      },
+      {
+        "id": "s7-13",
+        "x": 7,
+        "y": 13,
+        "url": "sectors/s7-13.json"
+      },
+      {
+        "id": "s8-13",
+        "x": 8,
+        "y": 13,
+        "url": "sectors/s8-13.json"
+      },
+      {
+        "id": "s9-13",
+        "x": 9,
+        "y": 13,
+        "url": "sectors/s9-13.json"
+      },
+      {
+        "id": "s10-13",
+        "x": 10,
+        "y": 13,
+        "url": "sectors/s10-13.json"
+      },
+      {
+        "id": "s11-13",
+        "x": 11,
+        "y": 13,
+        "url": "sectors/s11-13.json"
+      },
+      {
+        "id": "s12-13",
+        "x": 12,
+        "y": 13,
+        "url": "sectors/s12-13.json"
+      },
+      {
+        "id": "s13-13",
+        "x": 13,
+        "y": 13,
+        "url": "sectors/s13-13.json"
+      },
+      {
+        "id": "s14-13",
+        "x": 14,
+        "y": 13,
+        "url": "sectors/s14-13.json"
+      },
+      {
+        "id": "s15-13",
+        "x": 15,
+        "y": 13,
+        "url": "sectors/s15-13.json"
+      },
+      {
+        "id": "s0-14",
+        "x": 0,
+        "y": 14,
+        "url": "sectors/s0-14.json"
+      },
+      {
+        "id": "s1-14",
+        "x": 1,
+        "y": 14,
+        "url": "sectors/s1-14.json"
+      },
+      {
+        "id": "s2-14",
+        "x": 2,
+        "y": 14,
+        "url": "sectors/s2-14.json"
+      },
+      {
+        "id": "s3-14",
+        "x": 3,
+        "y": 14,
+        "url": "sectors/s3-14.json"
+      },
+      {
+        "id": "s4-14",
+        "x": 4,
+        "y": 14,
+        "url": "sectors/s4-14.json"
+      },
+      {
+        "id": "s5-14",
+        "x": 5,
+        "y": 14,
+        "url": "sectors/s5-14.json"
+      },
+      {
+        "id": "s6-14",
+        "x": 6,
+        "y": 14,
+        "url": "sectors/s6-14.json"
+      },
+      {
+        "id": "s7-14",
+        "x": 7,
+        "y": 14,
+        "url": "sectors/s7-14.json"
+      },
+      {
+        "id": "s8-14",
+        "x": 8,
+        "y": 14,
+        "url": "sectors/s8-14.json"
+      },
+      {
+        "id": "s9-14",
+        "x": 9,
+        "y": 14,
+        "url": "sectors/s9-14.json"
+      },
+      {
+        "id": "s10-14",
+        "x": 10,
+        "y": 14,
+        "url": "sectors/s10-14.json"
+      },
+      {
+        "id": "s11-14",
+        "x": 11,
+        "y": 14,
+        "url": "sectors/s11-14.json"
+      },
+      {
+        "id": "s12-14",
+        "x": 12,
+        "y": 14,
+        "url": "sectors/s12-14.json"
+      },
+      {
+        "id": "s13-14",
+        "x": 13,
+        "y": 14,
+        "url": "sectors/s13-14.json"
+      },
+      {
+        "id": "s14-14",
+        "x": 14,
+        "y": 14,
+        "url": "sectors/s14-14.json"
+      },
+      {
+        "id": "s15-14",
+        "x": 15,
+        "y": 14,
+        "url": "sectors/s15-14.json"
+      },
+      {
+        "id": "s0-15",
+        "x": 0,
+        "y": 15,
+        "url": "sectors/s0-15.json"
+      },
+      {
+        "id": "s1-15",
+        "x": 1,
+        "y": 15,
+        "url": "sectors/s1-15.json"
+      },
+      {
+        "id": "s2-15",
+        "x": 2,
+        "y": 15,
+        "url": "sectors/s2-15.json"
+      },
+      {
+        "id": "s3-15",
+        "x": 3,
+        "y": 15,
+        "url": "sectors/s3-15.json"
+      },
+      {
+        "id": "s4-15",
+        "x": 4,
+        "y": 15,
+        "url": "sectors/s4-15.json"
+      },
+      {
+        "id": "s5-15",
+        "x": 5,
+        "y": 15,
+        "url": "sectors/s5-15.json"
+      },
+      {
+        "id": "s6-15",
+        "x": 6,
+        "y": 15,
+        "url": "sectors/s6-15.json"
+      },
+      {
+        "id": "s7-15",
+        "x": 7,
+        "y": 15,
+        "url": "sectors/s7-15.json"
+      },
+      {
+        "id": "s8-15",
+        "x": 8,
+        "y": 15,
+        "url": "sectors/s8-15.json"
+      },
+      {
+        "id": "s9-15",
+        "x": 9,
+        "y": 15,
+        "url": "sectors/s9-15.json"
+      },
+      {
+        "id": "s10-15",
+        "x": 10,
+        "y": 15,
+        "url": "sectors/s10-15.json"
+      },
+      {
+        "id": "s11-15",
+        "x": 11,
+        "y": 15,
+        "url": "sectors/s11-15.json"
+      },
+      {
+        "id": "s12-15",
+        "x": 12,
+        "y": 15,
+        "url": "sectors/s12-15.json"
+      },
+      {
+        "id": "s13-15",
+        "x": 13,
+        "y": 15,
+        "url": "sectors/s13-15.json"
+      },
+      {
+        "id": "s14-15",
+        "x": 14,
+        "y": 15,
+        "url": "sectors/s14-15.json"
+      },
+      {
+        "id": "s15-15",
+        "x": 15,
+        "y": 15,
+        "url": "sectors/s15-15.json"
+      }
+    ]
+  },
+  "scenario": {
+    "id": "first-harvest",
+    "seconds": 360,
+    "seed": 731,
+    "initialCash": 30000,
+    "goal": 40000
+  }
+}

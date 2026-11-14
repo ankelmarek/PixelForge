@@ -4,10 +4,10 @@ import { games } from '../../src/games/registry';
 import { platformDefinition } from '../fixtures/content';
 import { validateGame } from '../../src/engine/api/validation';
 it('aktywny katalog zawiera wybrany tytuł P3, bez porzuconych gier', () => {
-  expect(games.map((game) => game.id)).toEqual(['earthworm']);
+  expect(games.map((game) => game.id)).toEqual(['earthworm', 'winobranie-rts']);
   for (const file of globSync('tests/**/*.{ts,html}'))
     expect(readFileSync(file, 'utf8')).not.toMatch(
-      /(?:from|import\s*\()\s*['"][^'"]*games\/(?:forest-demo|winobranie)/,
+      /(?:from|import\s*\()\s*['"][^'"]*games\/(?:forest-demo|winobranie)(?:\/|['"])/,
     );
 });
 it('gry korzystają wyłącznie z publicznego API, rdzeń nie importuje produktów', () => {

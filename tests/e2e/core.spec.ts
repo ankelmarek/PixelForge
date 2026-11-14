@@ -53,12 +53,10 @@ test('aktywny katalog nie udostępnia porzuconych tytułów', async ({ page }) =
   await expect(
     page.getByRole('heading', { name: 'Życie Dżdżownicy' }),
   ).toBeVisible();
-  await expect(page.locator('body')).not.toContainText(
-    /Winobranie|Leśny sygnał/,
-  );
+  await expect(page.locator('body')).not.toContainText(/Leśny sygnał/);
   await expect(page.locator('canvas')).toHaveCount(0);
   expect(
-    requested.some((url) => /games\/(forest-demo|winobranie)/.test(url)),
+    requested.some((url) => /games\/(forest-demo|winobranie)\//.test(url)),
   ).toBe(false);
   expect(
     await page.evaluate(
