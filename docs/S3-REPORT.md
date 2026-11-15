@@ -4,7 +4,7 @@
 [PR #19](https://github.com/ankelmarek/PixelForge/pull/19), pełne CI #28 PASS.
 Zlecenie „ok, realizujj kolejne etapy” obejmuje kolejno S2, S3 i S4.
 Klient `gas-station` 0.3.0, wydanie PixelForge 0.14.1,
-instalator pozostaje 1.2.0. **REVIEW — implementacja i testy lokalne; poprawka CI #29, pełna regresja ponowiona.**
+instalator pozostaje 1.2.0. **REVIEW — pełne CI #30 PASS na `39f9a08`.**
 
 ## Kampania
 
@@ -89,8 +89,7 @@ Każda z dziewięciu strategii osiąga sukces, z dodatnim zyskiem i majątkiem.
 Panel weekendu przeszedł Playwright na desktopie i emulowanym telefonie.
 Pełny weekend przeszedł także przez UI: trzy zmiany, naprawa, zapowiedzi
 i sukces, bez ustawiania zasobów poza grą. Osobny E2E przeszedł od zakupu
-myjni do zapłaty, z odświeżeniem strony w połowie mycia. Typecheck i lint
-przeszły; końcowa regresja i kontrole nowego archiwum są jeszcze w toku.
+myjni do zapłaty, z odświeżeniem strony w połowie mycia. Typecheck, lint i pełna regresja nowego archiwum przeszły w CI #30.
 
 S4 pozostaje zlecone. Trzy osoby nieznające projektu, pomiar czasu przy ×1,
 odsłuch oraz fizyczny telefon są osobnym odbiorem; automatyczne przejścia
@@ -133,3 +132,17 @@ przeglądarkowych PASS (8 aktualizatora, 2 panelu, 10 statycznej paczki,
 oraz produkcyjny build PASS. Manifesty obu nowych ZIP-ów poprawne;
 31 wcześniejszych archiwów zachowuje bajty. Pełna macierz CI zostaje
 uruchomiona na poprawionym wydaniu. Aktualne sumy w S3-release.json.
+
+## Odbiór techniczny S3 — CI #30 PASS
+
+[CI #30](https://github.com/ankelmarek/PixelForge/actions/runs/43712354210)
+na `39f9a08a0d8497a0d3678c2af27dfa5e99a676e8` zakończyło wszystkie trzy
+zadania sukcesem: `verify`, `e2e (station)` i `e2e (core)`.
+Stacja: 10 scenariuszy PASS, 4 jawnie pominięte długie przebiegi mobilne,
+14.8 min łącznie; pełny weekend po poprawce wyjazdu osiąga wymagany sukces.
+Pakiety 0.14.1 zostały odtworzone identycznie w CI, z rzeczywistą instalacją,
+rollbackiem, ponowną instalacją i zachowaniem zapisów. Wcześniejsze akapity
+o trwającej weryfikacji opisują historię przed tym wynikiem.
+
+PR #20 jest gotowy do przeglądu. Implementacja S3 i dystrybucja są sprawdzone;
+odrębny odbiór całej gry przez trzech nowych graczy należy do S4/Q1.
