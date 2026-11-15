@@ -19,6 +19,7 @@ import {
   parkingReady,
 } from './development';
 import { validateDevelopment } from './development-save';
+import { validateCampaign } from './campaign-save';
 import { StationTopology } from './placement';
 
 export const initialQuantities = {
@@ -33,14 +34,19 @@ export const emptyGoods = (): Record<Product, CostStock> => ({
   snack: { quantity: 0, cost: 0 },
   coffee: { quantity: 0, cost: 0 },
 });
-export function openingStock(k: Fuel | Product): CostStock {
-  const quantity = initialQuantities[k];
+export function openingStock(k: Fuel | Product, campaign = false): CostStock {
+  const quantity =
+    campaign && (k === 'e95' || k === 'on') ? 6000 : initialQuantities[k];
   return {
     quantity,
     cost: (quantity * prices[k].buy) / (k === 'e95' || k === 'on' ? 10 : 1),
   };
 }
-export function createState(world: StationWorld, seed: number): StationState {
+export function createState(
+  world: StationWorld,
+  seed: number,
+  campaign = false,
+): StationState {
   return {
     gameVersion: '0.1.0',
     rulesRevision: world.rulesRevision,
@@ -53,7 +59,10 @@ export function createState(world: StationWorld, seed: number): StationState {
     clock: { speed: 1, remainder: 0 },
     result: null,
     journal: new TransactionJournal(1500000).state,
-    tanks: { e95: openingStock('e95'), on: openingStock('on') },
+    tanks: {
+      e95: openingStock('e95', campaign),
+      on: openingStock('on', campaign),
+    },
     goods: {
       drink: openingStock('drink'),
       snack: openingStock('snack'),
@@ -148,7 +157,7 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
   const end = duration(s),
     dev = !!s.development;
   if (
-    s.gameVersion !== (dev ? '0.2.0' : '0.1.0') ||
+    s.gameVersion !== (s.campaign ? '0.3.0' : dev ? '0.2.0' : '0.1.0') ||
     s.rulesRevision !== world.rulesRevision ||
     s.worldRevision !== world.terrain.revision ||
     !integer(s.seed, 0, 0xffffffff) ||
@@ -161,8 +170,10 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
     !Number.isFinite(s.clock.remainder) ||
     s.clock.remainder < 0 ||
     s.clock.remainder >= 50 ||
-    ![null, 'success', 'partial'].includes(s.result) ||
-    (s.result !== null) !== (s.tick === end) ||
+    ![null, 'success', 'partial', ...(s.campaign ? ['bankrupt'] : [])].includes(
+      s.result,
+    ) ||
+    (s.result !== 'bankrupt' && (s.result !== null) !== (s.tick === end)) ||
     !s.camera ||
     ![s.camera.x, s.camera.y, s.camera.zoom].every(Number.isFinite) ||
     s.camera.zoom < 0.5 ||
@@ -271,6 +282,7 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
         'fueling',
         'checkout',
         'to-shop',
+        ...(s.campaign ? ['wash-wait', 'to-wash', 'washing'] : []),
         'leaving',
       ].includes(c.phase) ||
       !['car', 'walking', 'queued', 'paying', 'returning'].includes(
@@ -400,7 +412,13 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
       w.motion.kind !== 'person' ||
       !['forecourt', 'checkout'].includes(w.role) ||
       (w.job &&
-        (!['prepare', 'unload', 'restock', 'build'].includes(w.job.kind) ||
+        (![
+          'prepare',
+          'unload',
+          'restock',
+          'build',
+          ...(s.campaign ? ['repair'] : []),
+        ].includes(w.job.kind) ||
           typeof w.job.id !== 'string' ||
           !integer(w.job.progress, 0, end)))
     )
@@ -457,7 +475,7 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
     )
       return fail();
     const t = s.totals?.[k],
-      initial = openingStock(k);
+      initial = openingStock(k, !!s.campaign);
     if (
       !t ||
       [
@@ -521,6 +539,11 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
       (n, e) => n + e.rent + e.share,
       0,
     ) ?? 0;
+  const washRevenue = s.campaign
+    ? s.journal.entries
+        .filter((e) => e.category === 'wash-sale')
+        .reduce((n, e) => n + e.revenue, 0)
+    : 0;
   const revenue =
     fuelRevenue + goodsRevenue - inProgress.reduce((n, c) => n + c.fuelBill, 0);
   const cost =
@@ -535,6 +558,7 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
         'transport-refund',
         'recruitment',
         'lease-penalty',
+        ...(s.campaign ? ['wash-cost', 'repair', 'loan-fee'] : []),
       ].includes(e.category),
     )
     .reduce((n, e) => n + e.cash, 0);
@@ -545,8 +569,9 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
     .filter((c) => !c.paid)
     .reduce((n, c) => n + c.fuelBill, 0);
   if (
-    s.journal.revenue !== revenue + leaseRevenue ||
-    s.journal.profit !== revenue + leaseRevenue - cost + expense ||
+    s.journal.revenue !== revenue + leaseRevenue + washRevenue ||
+    s.journal.profit !==
+      revenue + leaseRevenue + washRevenue - cost + expense ||
     receipts !== fuelRevenue + goodsRevenue - receivables ||
     s.journal.entries
       .filter((e) => e.category === 'staff' || e.category === 'maintenance')
@@ -558,7 +583,14 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
       s.topology !== Number(!!s.pumps[2].construction || s.pumps[2].built))
   )
     return fail();
-  if (s.result === 'success' && (s.served < goal(s) || s.journal.profit <= 0))
+  if (
+    s.result === 'success' &&
+    (s.served < goal(s) ||
+      (s.campaign
+        ? !s.visits || s.satisfaction / s.visits < 7000
+        : s.journal.profit <= 0))
+  )
     return fail();
+  if (s.campaign) validateCampaign(s);
   return s;
 }

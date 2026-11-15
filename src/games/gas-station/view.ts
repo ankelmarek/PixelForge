@@ -5,6 +5,7 @@ import type { StationModel } from './model';
 import type { Motion } from './types';
 import { extraPump, PARCELS, ENTRY, EXIT } from './development';
 import { roadBounds, siteBounds, island, type BuildRequest } from './placement';
+import { activeEvent, pumpWorking } from './campaign-data';
 import { inside } from '../../engine/api/strategy';
 
 /** Presentation only: hiding a sprite never stops its simulation. */
@@ -16,6 +17,7 @@ export class StationView {
     { x: number; y: number; previousX: number; previousY: number }
   >();
   private lastTick = -1;
+  private siteImages = new Map<string, Phaser.GameObjects.Image>();
   private pumps: Phaser.GameObjects.Image[] = [];
   private objects: Phaser.GameObjects.GameObject[] = [];
   private effects: Phaser.GameObjects.Graphics;
@@ -224,7 +226,9 @@ export class StationView {
             ? 'van'
             : m.kind === 'truck'
               ? customer
-                ? 'freight'
+                ? customer.journey?.bus
+                  ? 'bus'
+                  : 'freight'
                 : 'truck'
               : 'people';
       const turning = m.turn ? this.turnFrame(m) : m.heading * 2;
@@ -354,6 +358,8 @@ export class StationView {
     this.doors.forEach((d, i) =>
       d.setX((121.5 + i * 3.8 + (i ? 2.7 : -1.5) * door) * TILE),
     );
+    for (let i = s.pumps.length; i < this.pumps.length; i++)
+      this.pumps[i].setVisible(false);
     s.pumps.forEach((p, i) => {
       const site = model.pumps[i],
         extension = extraPump(s, i);
@@ -366,16 +372,36 @@ export class StationView {
           .setAngle(extension!.rotation * 90);
         this.objects.push(this.pumps[i]);
       }
+      if (extension) {
+        const a = island(extension)!;
+        this.pumps[i]
+          .setPosition(a.x * TILE, (a.y + 1) * TILE)
+          .setAngle(extension.rotation * 90);
+      }
       this.pumps[i]
         .setVisible(p.built)
         .setFrame(
-          p.open
+          p.open && pumpWorking(s, i)
             ? s.customers.some((c) => c.pump === i && c.phase === 'fueling')
               ? Math.floor(s.tick / 5) % 4
               : 1
             : 0,
         )
         .setAlpha(p.open ? 1 : 0.55);
+      if (!pumpWorking(s, i)) {
+        g.fillStyle(s.tick % 20 < 10 ? 0xe88a59 : 0x6b4945).fillRect(
+          (site.x - 4) * TILE,
+          (site.y - 3) * TILE,
+          18,
+          18,
+        );
+        g.lineStyle(3, 0xffe6a0).lineBetween(
+          (site.x - 4) * TILE + 5,
+          (site.y - 3) * TILE + 4,
+          (site.x - 4) * TILE + 13,
+          (site.y - 3) * TILE + 14,
+        );
+      }
       if (p.construction || (i === 2 && build)) {
         const valid = model.previewPump().valid;
         g.fillStyle(
@@ -408,6 +434,23 @@ export class StationView {
           33,
         );
     });
+    if (activeEvent(s, 'rain')) {
+      const camera = scene.cameras.main,
+        origin = camera.getWorldPoint(0, 0),
+        width = camera.width / camera.zoom,
+        height = camera.height / camera.zoom;
+      g.lineStyle(1 / camera.zoom, 0xaacac8, 0.65);
+      for (let i = 0; i < 80; i++) {
+        const x = origin.x + ((i * 157 + s.tick * 2) % width),
+          y = origin.y + ((i * 83 + s.tick * 5) % height);
+        g.lineBetween(
+          Math.round(x),
+          Math.round(y),
+          Math.round(x - 3),
+          Math.round(y + 9),
+        );
+      }
+    }
     if (s.delivery?.phase === 'unloading')
       g.lineStyle(4, 0x30494a).lineBetween(
         139 * TILE,
@@ -476,9 +519,53 @@ export class StationView {
           ),
         );
     }
+    const activeSites = new Set(d.sites.map((p) => p.id));
+    for (const [id, img] of this.siteImages)
+      if (!activeSites.has(id)) {
+        img.destroy();
+        this.siteImages.delete(id);
+      }
     for (const p of d.sites) {
       const r = siteBounds(p);
-      if (p.kind === 'parking') {
+      if (p.kind === 'wash' && !p.progress) {
+        let image = this.siteImages.get(p.id);
+        if (!image) {
+          image = this.scene.add
+            .image(p.point.x * TILE, p.point.y * TILE, 'wash')
+            .setAngle(p.rotation * 90)
+            .setDepth(17);
+          this.siteImages.set(p.id, image);
+        }
+        const w = s.campaign?.wash;
+        const car = s.customers.find((c) => c.id === w?.customer);
+        if (car?.phase === 'washing') {
+          const f = this.effects,
+            x = p.point.x * TILE,
+            y = p.point.y * TILE;
+          const t = w!.progress / 500;
+          f.fillStyle(0xc8f0de, 0.75);
+          for (let i = 0; i < 24; i++) {
+            const a = ((i * 17 + Math.floor(s.tick / 3) * 7) % 49) - 24;
+            const b = ((i * 29 + Math.floor(s.tick / 4) * 5) % 57) - 28;
+            f.fillRect(x + a, y + b, 5 + (i % 3), 4);
+          }
+          f.fillStyle(0x243c42)
+            .fillRect(x - 34, y + 46, 68, 5)
+            .fillStyle(0x6bd2a9)
+            .fillRect(x - 34, y + 46, 68 * t, 5);
+          for (const side of [-1, 1]) {
+            const bx = x + side * (25 + 4 * Math.sin(s.tick / 6));
+            f.fillStyle(0x447c94).fillRect(Math.round(bx), y - 23, 12, 48);
+            for (let n = 0; n < 10; n++)
+              f.fillStyle(n % 2 ? 0x7cc6bf : 0xabcfc2).fillRect(
+                Math.round(bx) - 3,
+                y - 21 + n * 5,
+                17,
+                2,
+              );
+          }
+        }
+      } else if (p.kind === 'parking') {
         g.lineStyle(2, 0xf0e2b9).strokeRect(
           (p.point.x - 3) * TILE,
           (p.point.y - 4) * TILE,
@@ -587,6 +674,7 @@ export class StationView {
   }
   destroy() {
     this.objects.forEach((o) => o.destroy());
+    this.siteImages.forEach((o) => o.destroy());
     this.sprites.forEach((o) => o.destroy());
     this.labels.forEach((o) => o.destroy());
   }

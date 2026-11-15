@@ -57,6 +57,18 @@ import {
   type BuildRequest,
 } from './placement';
 import { TenantLease } from './tenant-lease';
+import { Weekend } from './campaign';
+import {
+  createCampaign,
+  WEEKEND_BOUNDARIES,
+  LAST_ADMISSION,
+  pumpWorking,
+  rating,
+  washSite,
+  activeEvent,
+} from './campaign-data';
+import { CarWash } from './car-wash';
+import { netWorthOf } from './accounting';
 
 export class StationModel {
   state: StationState;
@@ -64,17 +76,26 @@ export class StationModel {
   readonly navigator: RegionalNavigator;
   topology: StationTopology;
   readonly lease = new TenantLease(this);
+  readonly weekend = new Weekend(this);
+  readonly wash = new CarWash(this);
   occupancy: ReturnType<typeof occupancyOf>;
   private routeBudget = 2;
   constructor(
     readonly world: StationWorld,
     seed = world.scenario.seed,
     development = false,
+    campaign = false,
   ) {
-    this.state = createState(world, seed);
-    if (development) {
+    this.state = createState(world, seed, campaign);
+    if (development || campaign) {
       this.state.gameVersion = '0.2.0';
       this.state.development = createDevelopment();
+      if (campaign) {
+        this.state.gameVersion = '0.3.0';
+        this.state.campaign = createCampaign();
+        this.state.development.duration = 36000;
+        this.state.development.boundaries = [...WEEKEND_BOUNDARIES];
+      }
     }
     this.topology = new StationTopology(this.state);
     this.navigator = new RegionalNavigator(world, (p) =>
@@ -117,35 +138,7 @@ export class StationModel {
     );
   }
   get netWorth() {
-    const s = this.state;
-    return (
-      this.cash -
-      s.journal.cash.arrears +
-      FUELS.reduce((n, k) => n + s.tanks[k].cost, 0) +
-      GOODS.reduce(
-        (n, k) =>
-          n +
-          s.goods[k].cost +
-          s.workers.reduce((v, w) => v + w.cargo[k].cost, 0) +
-          (s.delivery?.goods[k].cost ?? 0),
-        0,
-      ) +
-      (s.delivery?.cargo.cost ?? 0) +
-      s.customers.filter((c) => !c.paid).reduce((n, c) => n + c.fuelBill, 0) +
-      600000 +
-      (s.pumps[2].built ? 108000 : 0) +
-      (s.development
-        ? Math.floor(
-            (s.development.sites.reduce((n, p) => n + p.cost, 0) +
-              s.development.roads.reduce((n, p) => n + p.cost, 0) +
-              PARCELS.filter((p) =>
-                s.development!.parcels.includes(p.id),
-              ).reduce((n, p) => n + p.price, 0) +
-              (s.development.secondCheckout ? 90000 : 0)) *
-              0.6,
-          )
-        : 0)
-    );
+    return netWorthOf(this.state);
   }
   post(
     id: string,
@@ -203,16 +196,19 @@ export class StationModel {
       s.passed++;
       return;
     }
+    const special = s.campaign ? this.weekend.vehicle() : null;
     const id = `c-${s.serial++}`,
       vehicle = motion(
         id,
-        s.development && candidate > 2
-          ? randomSample(s.seed, 9, candidate) < 0.18
-            ? 'truck'
-            : randomSample(s.seed, 9, candidate) < 0.48
-              ? 'van'
-              : 'car'
-          : 'car',
+        special
+          ? 'truck'
+          : s.development && candidate > 2
+            ? randomSample(s.seed, 9, candidate) < 0.18
+              ? 'truck'
+              : randomSample(s.seed, 9, candidate) < 0.48
+                ? 'van'
+                : 'car'
+            : 'car',
         { x, y: 158 },
       );
     if (!this.occupancy.tryClaim(id, footprint(vehicle))) {
@@ -220,21 +216,24 @@ export class StationModel {
       return;
     }
     const fuel =
-      vehicle.kind === 'truck' || vehicle.kind === 'van'
-        ? 'on'
-        : candidate === 0
-          ? 'e95'
-          : randomSample(s.seed, 0, candidate) < 0.2
-            ? null
-            : randomSample(s.seed, 1, candidate) < 0.6
-              ? 'e95'
-              : 'on';
+      special === 'bus'
+        ? null
+        : vehicle.kind === 'truck' || vehicle.kind === 'van'
+          ? 'on'
+          : candidate === 0
+            ? 'e95'
+            : randomSample(s.seed, 0, candidate) < 0.2
+              ? null
+              : randomSample(s.seed, 1, candidate) < 0.6
+                ? 'e95'
+                : 'on';
     const basket = {
       drink: randomSample(s.seed, 2, candidate) < 0.6 ? 1 : 0,
       snack: randomSample(s.seed, 3, candidate) < 0.45 ? 1 : 0,
       coffee: randomSample(s.seed, 4, candidate) < 0.5 ? 1 : 0,
     };
     if (!fuel && !Object.values(basket).some(Boolean)) basket.coffee = 1;
+    if (special === 'bus') for (const k of GOODS) basket[k] = 3;
     s.customers.push({
       id,
       serial: s.serial,
@@ -265,6 +264,19 @@ export class StationModel {
       bought: 0,
       abandoned: false,
       color: Math.floor(randomSample(s.seed, 8, candidate) * 4),
+      ...(s.campaign
+        ? {
+            journey: {
+              fuel: false,
+              goods: 0,
+              wash: 'none' as const,
+              price: 10000,
+              interruptions: 0,
+              comfort: 10000,
+              bus: special === 'bus',
+            },
+          }
+        : {}),
       ...(s.development
         ? {
             shopping: 'none' as const,
@@ -289,30 +301,56 @@ export class StationModel {
     if (s.development) {
       s.development.wages += s.workers.length * 1000 + 400;
       this.lease.tick();
+      if (s.campaign) this.weekend.tick();
+      if (s.result) return;
     }
     if (s.tick >= this.duration) {
       this.finish();
       return;
     }
-    if (s.tick >= s.nextArrival && s.tick < this.duration - 600) {
+    if (s.tick >= s.nextArrival && s.tick < this.admissionEnd) {
       this.spawn();
-      s.nextArrival += 200;
+      s.nextArrival = s.campaign
+        ? this.weekend.nextArrival()
+        : s.nextArrival + 200;
     }
     this.arriveDelivery();
     for (const m of bodies(s))
-      move(m, this.occupancy, this.topology.legal, !!s.development);
+      move(
+        m,
+        this.occupancy,
+        this.topology.legal,
+        !!s.development,
+        !!s.campaign &&
+          m.y === 158 * UNIT &&
+          (m.x < 92 * UNIT || m.x > 164 * UNIT),
+      );
     for (const c of [...s.customers]) this.customer(c);
     for (const w of s.workers) this.worker(w);
+    if (s.campaign) this.wash.tick();
     this.checkout();
     if (s.development?.secondCheckout) this.checkout(1);
     if (s.tick % 600 === 0) this.costs();
+  }
+  get admissionEnd() {
+    return this.state.campaign ? LAST_ADMISSION : this.duration - 600;
   }
   private customer(c: Customer) {
     const s = this.state,
       v = c.vehicle;
     if (c.extension && at(v, EXIT) && c.phase === 'leaving')
       c.extension = false;
-    if (c.admitted >= 0 && !c.paid) c.wait++;
+    if (
+      c.admitted >= 0 &&
+      (s.campaign
+        ? c.phase === 'queue' ||
+          c.phase === 'preparing' ||
+          (c.phase === 'checkout' && c.pedestrian === 'queued') ||
+          c.phase === 'wash-wait'
+        : !c.paid)
+    )
+      c.wait++;
+    if (s.campaign && this.wash.customer(c)) return;
     if (
       c.phase === 'leaving' &&
       c.admitted >= 0 &&
@@ -320,17 +358,22 @@ export class StationModel {
       v.x >= 148 * UNIT &&
       v.y === 158 * UNIT
     ) {
-      this.recordVisit(c, c.paidTotal + (c.tenantBill ?? 0) > 0);
+      this.recordVisit(
+        c,
+        c.paidTotal + (c.tenantBill ?? 0) > 0 &&
+          !c.abandoned &&
+          c.journey?.wash !== 'missed',
+      );
       c.admitted = -1;
     }
     if (v.route.length || v.turn) return;
     if (c.phase === 'approaching') {
       if (
-        s.tick >= this.duration - 600 ||
+        s.tick >= this.admissionEnd ||
         s.customers.filter((a) => a.admitted >= 0 && a.phase !== 'leaving')
           .length >= 10 ||
         (c.fuel &&
-          (!s.pumps.some((p) => p.open) ||
+          (!s.pumps.some((p, i) => p.open && pumpWorking(s, i)) ||
             this.available(c.fuel) < 100 ||
             s.fuelQueue.length >= 3))
       ) {
@@ -352,12 +395,14 @@ export class StationModel {
           0.1,
           Math.min(
             0.85,
-            0.72 - premium * 0.3 + (d.tenant.phase === 'leased' ? 0.1 : 0),
+            (s.campaign ? 0.6 : 0.72) -
+              premium * 0.3 +
+              (d.tenant.phase === 'leased' ? 0.1 : 0),
           ),
         );
         if (
           randomSample(s.seed, 10, c.serial) > chance ||
-          (c.vehicle.kind === 'truck' && !this.admitHeavy(c))
+          (c.vehicle.kind === 'truck' && !c.journey?.bus && !this.admitHeavy(c))
         ) {
           c.phase = 'bypass';
           s.passed++;
@@ -373,7 +418,78 @@ export class StationModel {
         c.goodsPrices = Object.fromEntries(
           GOODS.map((k) => [k, retail(s, k)]),
         ) as Customer['goodsPrices'];
-        if (c.vehicle.kind === 'truck') return;
+        if (c.journey) {
+          const j = c.journey;
+          j.fuel = !!c.fuel;
+          const hasParking = this.parking.some(
+            (_, i) =>
+              parkingReady(s, i) && !s.customers.some((a) => a.parking === i),
+          );
+          const hasWalkway =
+            this.topology.pedestrian({ x: 124, y: 114 }) &&
+            this.topology.pedestrian({ x: 124, y: 112 });
+          // Daytime lighting; the night scenario supplies its own light coverage.
+          j.comfort = Math.round(
+            (10000 * (Number(hasParking) + Number(hasWalkway) + 1)) / 3,
+          );
+          j.goods =
+            c.shopping === 'none'
+              ? 0
+              : GOODS.reduce(
+                  (n, k) =>
+                    n +
+                    ((c.shopping === 'tenant'
+                      ? d.tenant.stock[k]
+                      : s.goods[k].quantity) > 0
+                      ? c.basket[k]
+                      : 0),
+                  0,
+                );
+          const scores = [
+            ...(c.fuel
+              ? [
+                  Math.max(
+                    0,
+                    Math.min(1, 1 - (c.price - prices[c.fuel].sell) / 300),
+                  ),
+                ]
+              : []),
+            ...GOODS.filter((k) => c.basket[k] && c.shopping !== 'none').map(
+              (k) =>
+                c.shopping === 'tenant'
+                  ? 1
+                  : Math.max(
+                      0,
+                      Math.min(
+                        1,
+                        1 - (c.goodsPrices![k] - prices[k].sell) / 300,
+                      ),
+                    ),
+            ),
+          ];
+          j.price = Math.round(
+            (10000 * scores.reduce((n, v) => n + v, 0)) /
+              Math.max(1, scores.length),
+          );
+          if (
+            v.kind !== 'truck' &&
+            washSite(s) &&
+            s.tick < this.duration - 4200 &&
+            s.customers.filter(
+              (a) => a.journey && ['wanted', 'queued'].includes(a.journey.wash),
+            ).length < 2 &&
+            randomSample(s.seed, 24, c.serial) <
+              (activeEvent(s, 'rain') ? 0.05 : 0.25)
+          ) {
+            j.wash = 'wanted';
+            if (c.fuel)
+              c.requested = Math.min(
+                c.requested,
+                Math.floor(((c.budget - 5500) * 10) / c.price),
+              );
+          }
+        }
+        if (c.vehicle.kind === 'truck' && !c.journey?.bus) return;
       }
       if (!c.fuel) {
         const slot = this.parking.findIndex(
@@ -383,6 +499,7 @@ export class StationModel {
             (i < 4 || !this.extensionBusy()),
         );
         if (
+          (c.journey?.bus && this.extensionBusy()) ||
           slot < 0 ||
           this.tickets() >= 5 ||
           (s.development && c.shopping === 'none') ||
@@ -402,6 +519,7 @@ export class StationModel {
         c.admitted = s.tick;
         if (s.development) c.tenantVisit = c.shopping === 'tenant';
         c.parking = slot;
+        if (c.journey?.bus) c.extension = true;
         c.phase = 'to-pump';
         if (slot >= 4) this.driveExtension(c, this.parking[slot]);
         else
@@ -423,7 +541,9 @@ export class StationModel {
       if (c.admitted >= 0)
         this.recordVisit(
           c,
-          c.paidTotal + (c.tenantBill ?? 0) > 0 && !c.abandoned,
+          c.paidTotal + (c.tenantBill ?? 0) > 0 &&
+            !c.abandoned &&
+            c.journey?.wash !== 'missed',
         );
       this.occupancy.release(v.id);
       s.customers.splice(s.customers.indexOf(c), 1);
@@ -454,6 +574,7 @@ export class StationModel {
         (p, i) =>
           p.built &&
           p.open &&
+          pumpWorking(s, i) &&
           p.customer === null &&
           (i < 3 ||
             (!this.extensionBusy(c.id) &&
@@ -474,6 +595,10 @@ export class StationModel {
       return;
     }
     if (c.phase === 'fueling' && c.fuel) {
+      if (!pumpWorking(s, c.pump!)) {
+        this.weekend.interrupt(c);
+        return;
+      }
       const amount = Math.min(1, c.reserved);
       if (amount) {
         const load = takeStock(s.tanks[c.fuel], amount);
@@ -559,6 +684,7 @@ export class StationModel {
             return;
           }
         }
+        if (s.campaign && this.wash.join(c, site)) return;
         c.phase = 'leaving';
         if ((c.pump ?? -1) >= 3 || (c.parking ?? -1) >= 4) {
           const route = this.topology.route(site, EXIT, v.kind);
@@ -612,6 +738,16 @@ export class StationModel {
       if (!at(m, target)) this.walk(m, target);
       return;
     }
+    if (
+      !w.job &&
+      s.campaign?.fault?.repair &&
+      !s.workers.some((a) => a.job?.kind === 'repair')
+    )
+      w.job = {
+        kind: 'repair',
+        id: `repair-${s.campaign.fault.since}`,
+        progress: 0,
+      };
     if (!w.job) {
       const delivery = s.delivery;
       if (
@@ -626,6 +762,7 @@ export class StationModel {
         const c = s.customers.find(
           (c) =>
             c.phase === 'preparing' &&
+            pumpWorking(s, c.pump!) &&
             !s.workers.some((a) => a.job?.id === c.id),
         );
         if (c) w.job = { kind: 'prepare', id: c.id, progress: 0 };
@@ -659,23 +796,41 @@ export class StationModel {
         customer?.pump !== null && customer?.pump !== undefined
           ? extraPump(s, customer.pump)
           : undefined;
-    const target = extension
-      ? servicePort(extension)
-      : job.kind === 'prepare'
-        ? pump
-          ? servicePort(pump)
-          : { x: this.pumps[customer!.pump!].x - 3, y: 122 }
-        : job.kind === 'build'
-          ? { x: 137, y: 122 }
-          : job.kind === 'restock'
-            ? { x: 131, y: 110 }
-            : { x: 139, y: 110 };
+    const fault = s.campaign?.fault;
+    const repairSite = fault ? extraPump(s, fault.pump) : undefined;
+    const target =
+      job.kind === 'repair' && fault
+        ? repairSite
+          ? servicePort(repairSite)
+          : { x: this.pumps[fault.pump].x - 3, y: 122 }
+        : extension
+          ? servicePort(extension)
+          : job.kind === 'prepare'
+            ? pump
+              ? servicePort(pump)
+              : { x: this.pumps[customer!.pump!].x - 3, y: 122 }
+            : job.kind === 'build'
+              ? { x: 137, y: 122 }
+              : job.kind === 'restock'
+                ? { x: 131, y: 110 }
+                : { x: 139, y: 110 };
     if (!at(m, target)) {
       this.walk(m, target);
       return;
     }
+    if (job.kind === 'prepare' && !pumpWorking(s, customer!.pump!)) {
+      this.weekend.interrupt(customer!);
+      return;
+    }
     job.progress++;
-    if (job.kind === 'prepare') {
+    if (job.kind === 'repair') {
+      if (!fault) {
+        w.job = null;
+        return;
+      }
+      fault.progress++;
+      if (fault.progress >= 300) this.weekend.repaired();
+    } else if (job.kind === 'prepare') {
       if (job.progress >= 80) {
         customer!.phase = 'fueling';
         w.job = null;
@@ -790,7 +945,13 @@ export class StationModel {
       const count = Math.min(
         c.basket[k],
         s.goods[k].quantity,
-        Math.max(0, Math.floor((c.budget - total) / price)),
+        Math.max(
+          0,
+          Math.floor(
+            (c.budget - total - (c.journey?.wash === 'wanted' ? 2500 : 0)) /
+              price,
+          ),
+        ),
       );
       if (!count) continue;
       const goods = takeStock(s.goods[k], count);
@@ -823,10 +984,16 @@ export class StationModel {
   }
   private recordVisit(c: Customer, served: boolean) {
     const s = this.state;
+    if (s.campaign) {
+      if (s.campaign.ratings.some((r) => r.id === c.id)) return;
+      const entry = rating(s, c, served);
+      s.campaign.ratings.push(entry);
+      s.satisfaction += entry.score;
+    }
     s.visits++;
     if (served) s.served++;
     else s.lost++;
-    if (!served) return;
+    if (!served || s.campaign) return;
     const wants = Object.values(c.basket).reduce((n, a) => n + a, 0);
     const needs =
       ((c.fuel ? c.issued / Math.max(1, c.requested) : 1) +
@@ -857,14 +1024,31 @@ export class StationModel {
     this.post(`upkeep-${s.tick}`, 'maintenance', -upkeep, -upkeep, 0, true);
     s.wagesUntil = s.tick;
   }
-  private finish() {
+  finish(outcome?: 'bankrupt') {
     const s = this.state;
     for (const c of s.customers) {
       if (c.phase === 'fueling') this.closeFuel(c);
       if (c.admitted >= 0) this.recordVisit(c, false);
     }
     this.costs();
-    s.result = s.served >= this.goal && this.profit > 0 ? 'success' : 'partial';
+    if (s.campaign) this.weekend.repay();
+    s.result =
+      outcome ??
+      (s.served >= this.goal &&
+      (s.campaign
+        ? s.visits > 0 && s.satisfaction / s.visits >= 7000 && this.netWorth > 0
+        : this.profit > 0)
+        ? 'success'
+        : 'partial');
+  }
+  fuelQuote(fuel: Fuel, litres: number) {
+    return (
+      litres *
+        (this.state.campaign
+          ? this.weekend.wholesale(fuel, litres)
+          : prices[fuel].buy) +
+      8000
+    );
   }
   orderFuel(fuel: Fuel, litres: number) {
     const s = this.state;
@@ -876,7 +1060,7 @@ export class StationModel {
       s.tanks[fuel].quantity + litres * 10 > tankCapacity(s, fuel)
     )
       return false;
-    const cost = litres * prices[fuel].buy;
+    const cost = this.fuelQuote(fuel, litres) - 8000;
     if (this.cash < cost + 8000) return false;
     const id = `delivery-${s.serial++}`;
     if (!this.post(`order-${id}`, 'fuel-purchase', -cost)) return false;
@@ -897,6 +1081,8 @@ export class StationModel {
       receiptCost: 0,
       cancelled: false,
     };
+    if (s.campaign && litres >= 400 && activeEvent(s, 'discount'))
+      s.campaign.event!.end = s.tick;
     return true;
   }
   orderGoods() {
@@ -1108,6 +1294,7 @@ export class StationModel {
       (p, i) =>
         p.built &&
         p.open &&
+        pumpWorking(s, i) &&
         !p.customer &&
         extraPump(s, i)?.kind === 'heavy-pump',
     );
@@ -1129,8 +1316,8 @@ export class StationModel {
     return this.state.customers.some(
       (c) =>
         c.extension &&
-        c.vehicle.kind === 'truck' &&
-        c.phase === 'to-pump' &&
+        ((c.vehicle.kind === 'truck' && c.phase === 'to-pump') ||
+          c.phase === 'to-wash') &&
         c.vehicle.x >= 96 * UNIT,
     );
   }

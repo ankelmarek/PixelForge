@@ -69,6 +69,7 @@ export function move(
   occupancy: OccupancyReservations,
   allowed = legal,
   coordinated = false,
+  highway = false,
 ) {
   if (m.turn) {
     m.turn--;
@@ -101,11 +102,13 @@ export function move(
   }
   m.heading = heading;
   const unitsPerSecond =
-    m.kind === 'car' || m.kind === 'van'
-      ? 1024
-      : m.kind === 'truck'
-        ? 896
-        : 768;
+    highway && m.kind !== 'person'
+      ? 2048
+      : m.kind === 'car' || m.kind === 'van'
+        ? 1024
+        : m.kind === 'truck'
+          ? 896
+          : 768;
   const numerator = unitsPerSecond + m.remainder,
     step = Math.min(Math.floor(numerator / 20), Math.abs(dx || dy));
   const x = m.x + Math.sign(dx) * step,

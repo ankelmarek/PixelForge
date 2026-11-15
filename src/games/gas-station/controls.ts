@@ -1,4 +1,5 @@
 import type { ClientDefinition, Snapshot } from '../../engine/api';
+import { campaignControls, type CampaignUI } from './campaign-controls';
 import { FUELS, GOODS, prices } from './world';
 import {
   developmentControls,
@@ -22,6 +23,8 @@ export interface StationUI {
     can200: boolean;
     can400: boolean;
     capacity: number;
+    quote200: number;
+    quote400: number;
   }[];
   goods: { product: string; quantity: number }[];
   canGoods: boolean;
@@ -45,6 +48,7 @@ export interface StationUI {
   ready: boolean;
   duration: number;
   development?: DevelopmentUI;
+  campaign?: CampaignUI;
 }
 export const money = (n: number) =>
   new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 0 }).format(n / 100);
@@ -106,12 +110,14 @@ export const createControls: NonNullable<
           crew: 'ZAŁOGA',
           build: 'ROZBUDOWA',
           selection: 'NA STACJI',
+          weekend: 'WIELKI WEEKEND',
         } as Record<string, string>
       )[tab] ?? '';
   };
   const action = (action: string, payload?: string | number | boolean) =>
     send({ type: 'client-action', action, payload });
   const development = developmentControls(root, action);
+  const campaign = campaignControls(root, action);
   const click = (e: Event) => {
     const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button');
     if (!b || b.disabled) return;
@@ -163,9 +169,12 @@ export const createControls: NonNullable<
       if (v.selection && v.selection !== current?.selection) show('selection');
       current = v;
       development.update(v.development, v.cash);
-      get('.station-brand small').textContent = v.development
-        ? 'ROZBUDOWA'
-        : 'PIERWSZA ZMIANA';
+      campaign.update(v.campaign);
+      get('.station-brand small').textContent = v.campaign
+        ? v.campaign.shift
+        : v.development
+          ? 'ROZBUDOWA'
+          : 'PIERWSZA ZMIANA';
       text('cash', money(v.cash));
       text('profit', `${v.profit >= 0 ? '+' : ''}${money(v.profit)}`);
       get('[data-sv="profit"]').classList.toggle('negative', v.profit < 0);
@@ -191,6 +200,12 @@ export const createControls: NonNullable<
           `${Math.floor(t.quantity / 10)} L`;
         b.querySelector('meter')!.value = t.quantity / 10;
         b.querySelector('meter')!.max = t.capacity / 10;
+        get(
+          `[data-st-order="${t.fuel}"][data-litres="200"] small`,
+        ).textContent = `${money(t.quote200)} ◈`;
+        get(
+          `[data-st-order="${t.fuel}"][data-litres="400"] small`,
+        ).textContent = `${money(t.quote400)} ◈`;
         b.classList.toggle('low', t.quantity < 800);
         get(`[data-st-stock="${t.fuel}"]`).textContent =
           `${(t.quantity / 10).toFixed(1)} / ${t.capacity / 10} L`;
@@ -245,6 +260,7 @@ export const createControls: NonNullable<
     },
     destroy() {
       development.destroy();
+      campaign.destroy();
       root.removeEventListener('click', click);
       root.removeEventListener('input', input);
       root.removeEventListener('pointerdown', prevent);

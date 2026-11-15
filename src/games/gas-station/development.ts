@@ -11,7 +11,7 @@ import {
   type Product,
 } from './world';
 
-export type SiteKind = 'pump' | 'heavy-pump' | 'parking' | 'tank';
+export type SiteKind = 'pump' | 'heavy-pump' | 'parking' | 'tank' | 'wash';
 export interface Site {
   id: string;
   kind: SiteKind;
@@ -162,7 +162,8 @@ export const extraPump = (s: StationState, i: number) =>
         (p) => p.kind === 'pump' || p.kind === 'heavy-pump',
       )[i - 3];
 export const duration = (s: StationState) => s.development?.duration ?? 7200;
-export const goal = (s: StationState) => (s.development ? 20 : 12);
+export const goal = (s: StationState) =>
+  s.campaign ? 60 : s.development ? 20 : 12;
 export const tankCapacity = (s: StationState, f: Fuel) =>
   10000 +
   (s.development?.sites.filter(

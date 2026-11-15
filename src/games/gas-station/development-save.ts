@@ -15,8 +15,9 @@ export function validateDevelopment(s: StationState) {
     typeof v === 'number' && Number.isSafeInteger(v) && v >= min && v <= max;
   if (
     d.revision !== 'development-1' ||
-    d.duration !== 14400 ||
-    JSON.stringify(d.boundaries) !== '[7200,10800,14400]' ||
+    d.duration !== (s.campaign ? 36000 : 14400) ||
+    JSON.stringify(d.boundaries) !==
+      (s.campaign ? '[9600,24000,36000]' : '[7200,10800,14400]') ||
     !Array.isArray(d.parcels) ||
     !d.parcels.includes('start') ||
     new Set(d.parcels).size !== d.parcels.length ||
@@ -68,7 +69,13 @@ export function validateDevelopment(s: StationState) {
       !p ||
       !/^site-\d+$/.test(p.id) ||
       id.has(p.id) ||
-      !['pump', 'heavy-pump', 'parking', 'tank'].includes(p.kind) ||
+      ![
+        'pump',
+        'heavy-pump',
+        'parking',
+        'tank',
+        ...(s.campaign ? ['wash'] : []),
+      ].includes(p.kind) ||
       !point(p.point) ||
       !int(p.rotation, 0, 3) ||
       !int(p.progress, 0, 300) ||

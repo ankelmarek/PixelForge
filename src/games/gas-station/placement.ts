@@ -16,6 +16,7 @@ import {
 } from './development';
 import { footprint, motion, point } from './traffic';
 import type { StationState, Motion } from './types';
+import { WASH_COST, WASH_UNLOCK } from './campaign-data';
 
 const key = (p: Cell) => p.y * 256 + p.x;
 export const same = (a: Cell, b: Cell) => a.x === b.x && a.y === b.y;
@@ -29,7 +30,12 @@ export const offset = (
   return { x: p.x + x, y: p.y + y };
 };
 export function siteBounds(site: Site): GridRect {
-  const size = site.kind === 'heavy-pump' ? 16 : site.kind === 'tank' ? 6 : 10;
+  const size =
+    site.kind === 'heavy-pump' || site.kind === 'wash'
+      ? 16
+      : site.kind === 'tank'
+        ? 6
+        : 10;
   return {
     x: site.point.x - size / 2,
     y: site.point.y - size / 2,
@@ -46,7 +52,7 @@ export function island(site: Site) {
   );
   return site.kind === 'tank'
     ? siteBounds(site)
-    : site.kind === 'parking'
+    : site.kind === 'parking' || site.kind === 'wash'
       ? null
       : {
           x: center.x - (site.rotation % 2 ? 1 : 0),
@@ -58,14 +64,16 @@ export function island(site: Site) {
 export const port = (p: Cell, kind: Motion['kind'], site?: Site) =>
   offset(p, site?.rotation ?? 0, kind === 'truck' ? 5 : 3, 0);
 export const servicePort = (site: Site) =>
-  site.kind === 'tank'
-    ? offset(site.point, site.rotation, 4, 0)
-    : offset(
-        site.point,
-        site.rotation,
-        site.kind === 'heavy-pump' ? -6 : -3,
-        -3,
-      );
+  site.kind === 'wash'
+    ? offset(site.point, site.rotation, 0, -8)
+    : site.kind === 'tank'
+      ? offset(site.point, site.rotation, 4, 0)
+      : offset(
+          site.point,
+          site.rotation,
+          site.kind === 'heavy-pump' ? -6 : -3,
+          -3,
+        );
 export interface BuildRequest {
   kind: SiteKind | 'road' | 'remove-road';
   point: Cell;
@@ -112,6 +120,14 @@ export class StationTopology {
       }
     }
     for (const site of state.development?.sites ?? []) {
+      if (site.kind === 'wash') {
+        for (const side of [-1, 1])
+          for (let a = -6; a < 6; a++)
+            for (let b = 0; b < 2; b++)
+              this.obstacles.add(
+                key(offset(site.point, site.rotation, side * 5 + b, a)),
+              );
+      }
       const obstacle = island(site);
       if (obstacle)
         for (const p of rectCells(obstacle)) this.obstacles.add(key(p));
@@ -247,9 +263,15 @@ export function preview(
   });
   if (!d || s.result) return reject('Niedostępne w tej zmianie');
   if (
-    !['pump', 'heavy-pump', 'parking', 'tank', 'road', 'remove-road'].includes(
-      request.kind,
-    ) ||
+    ![
+      'pump',
+      'heavy-pump',
+      'parking',
+      'tank',
+      'wash',
+      'road',
+      'remove-road',
+    ].includes(request.kind) ||
     ![p.x, p.y].every((v) => Number.isSafeInteger(v) && v >= 8 && v < 248) ||
     ![0, 1, 2, 3].includes(request.rotation) ||
     !['e95', 'on'].includes(request.fuel)
@@ -294,12 +316,20 @@ export function preview(
     base.bounds = roadBounds(road);
     nd.roads = nd.roads.filter((r) => r.id !== road.id);
   } else {
+    if (
+      request.kind === 'wash' &&
+      (!s.campaign || s.journal.revenue < WASH_UNLOCK)
+    )
+      return reject('Myjnia · przychód 1 500 ◈');
+    if (request.kind === 'wash' && d.sites.some((p) => p.kind === 'wash'))
+      return reject('Myjnia istnieje');
     if (d.sites.length >= 24) return reject('Limit obiektów');
     const cost = {
       pump: 180000,
       'heavy-pump': 240000,
       parking: 20000,
       tank: 120000,
+      wash: WASH_COST,
     }[request.kind];
     const site: Site = {
       id: `site-${s.serial}`,

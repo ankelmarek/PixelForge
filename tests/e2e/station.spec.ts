@@ -3,7 +3,7 @@ import type { Snapshot } from '../../src/engine/api/types';
 import type { StationUI } from '../../src/games/gas-station/controls';
 import { StationModel } from '../../src/games/gas-station/model';
 import { stationWorld } from '../fixtures/station';
-const key = 'pixelforge:client:v2:gas-station';
+const key = 'pixelforge:client:v3:gas-station';
 test.afterEach(async ({ page }, info) => {
   if (info.status !== info.expectedStatus && !page.isClosed())
     await info.attach('station-save', {

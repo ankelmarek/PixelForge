@@ -5,10 +5,10 @@ export const station: ClientDefinition = {
   kind: 'client',
   schemaVersion: 1,
   id: 'gas-station',
-  version: '0.2.0',
+  version: '0.3.0',
   title: 'Stacja na Trasie',
   description:
-    'ORLAR i Skoczka. Własne drogi, nowe stanowiska i wybór gospodarza sklepu.',
+    'Wielki Weekend. Trzy zmiany, myjnia, żywy ruch i własny sklep albo Skoczka.',
   viewport: { width: 320, height: 180 },
   preferredViewport: { width: 640, height: 360 },
   levelUrl: 'assets/games/gas-station/world.json',
@@ -19,6 +19,8 @@ export const station: ClientDefinition = {
       'cars',
       'van',
       'freight',
+      'bus',
+      'wash',
       'truck',
       'people',
       'shop',
@@ -39,6 +41,7 @@ export const station: ClientDefinition = {
     cars: { frameWidth: 64, frameHeight: 64 },
     van: { frameWidth: 64, frameHeight: 64 },
     freight: { frameWidth: 128, frameHeight: 128 },
+    bus: { frameWidth: 128, frameHeight: 128 },
     truck: { frameWidth: 128, frameHeight: 128 },
     people: { frameWidth: 32, frameHeight: 32 },
     pump: { frameWidth: 64, frameHeight: 64 },
@@ -51,7 +54,7 @@ export const station: ClientDefinition = {
   catalog: {
     cover: 'assets/games/gas-station/cover.png',
     launchLabel: 'Otwórz stację',
-    badge: 'ROZBUDOWA I SKOCZKA · S2',
+    badge: 'WIELKI WEEKEND · S3',
     detail: 'Stacja na Trasie',
   },
   presentation: {

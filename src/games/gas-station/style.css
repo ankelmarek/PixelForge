@@ -442,3 +442,54 @@
     bottom: 12px;
   }
 }
+
+.station-event {
+  position: absolute;
+  top: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  min-height: 44px;
+  max-width: min(420px, 60vw);
+  padding: 8px 16px;
+  border: 1px solid #80b6a6;
+  color: #f0e6be;
+  background: #243c42ed;
+  pointer-events: auto;
+  font-size: 12px;
+}
+.station-event.critical {
+  border-color: #e9ab6b;
+  background: #593e38f2;
+}
+.station-ui [data-st-panel='weekend'] p {
+  font-size: 12px;
+  line-height: 1.5;
+}
+.station-ui [data-weekend-sites] {
+  display: grid;
+  gap: 5px;
+}
+@media (max-width: 760px) {
+  .station-event {
+    top: 151px;
+    left: auto;
+    right: 10px;
+    transform: none;
+    max-width: calc(100vw - 112px);
+    gap: 8px;
+    font-size: 11px;
+  }
+  .station-ui:has([data-weekend]:not([hidden])) .station-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 53px);
+    gap: 4px;
+  }
+}
+@media (max-width: 380px) {
+  .station-ui:has([data-weekend]:not([hidden])) .station-tabs {
+    grid-template-columns: repeat(2, 62px);
+  }
+}

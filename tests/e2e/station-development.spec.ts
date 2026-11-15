@@ -1,4 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
+import { StationModel } from '../../src/games/gas-station/model';
+import { stationWorld } from '../fixtures/station';
 import type { Snapshot } from '../../src/engine/api';
 import type { StationUI } from '../../src/games/gas-station/controls';
 // Preserve DOM/events and saves without recording every rendered campaign frame.
@@ -18,10 +20,10 @@ const ui = async (page: Page) =>
   (await state(page)).client as unknown as StationUI;
 test.afterEach(async ({ page }, info) => {
   if (info.status !== info.expectedStatus && !page.isClosed())
-    await info.attach('station-v2', {
+    await info.attach('station-v3', {
       body: await page.evaluate(
         () =>
-          localStorage.getItem('pixelforge:client:v2:gas-station') ?? 'null',
+          localStorage.getItem('pixelforge:client:v3:gas-station') ?? 'null',
       ),
       contentType: 'application/json',
     });
@@ -45,7 +47,7 @@ async function screen(page: Page, x: number, y: number) {
         r.height,
   };
 }
-test('S2: własna droga i stanowisko, cennik, personel, zapis v2 oraz obie kolejki Skoczki', async ({
+test('S2: własna droga i stanowisko, cennik, personel, migracja v2 do v3 oraz obie kolejki Skoczki', async ({
   page,
   isMobile,
 }) => {
@@ -57,9 +59,23 @@ test('S2: własna droga i stanowisko, cennik, personel, zapis v2 oraz obie kolej
   await page.setViewportSize({ width: 1280, height: 900 });
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('/');
+  const legacy = JSON.stringify({
+    gameId: 'gas-station',
+    schemaVersion: 2,
+    state: new StationModel(
+      stationWorld,
+      stationWorld.scenario.seed,
+      true,
+    ).snapshot(),
+  });
+  await page.evaluate(
+    (value) => localStorage.setItem('pixelforge:client:v2:gas-station', value),
+    legacy,
+  );
   await page.goto('/?diagnostics=1');
   await page.locator('[data-game="gas-station"]').click();
-  await page.locator('#start').click();
+  await page.locator('#resume').click();
   await expect.poll(async () => (await state(page)).stats?.ready).toBe(true);
   await tab(page, 'build');
   await page.locator('[data-parcel="west"]').click();
@@ -108,7 +124,7 @@ test('S2: własna droga i stanowisko, cennik, personel, zapis v2 oraz obie kolej
   });
   await page.locator('#pause').click();
   const saved = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem('pixelforge:client:v2:gas-station')!),
+    JSON.parse(localStorage.getItem('pixelforge:client:v3:gas-station')!),
   );
   expect(saved.state.development.roads).toHaveLength(4);
   expect(saved.state.development.sites).toHaveLength(1);
@@ -148,5 +164,11 @@ test('S2: własna droga i stanowisko, cennik, personel, zapis v2 oraz obie kolej
   expect(final.development!.turnover).toBeGreaterThan(0);
   expect(final.development!.leaseIncome).toBeGreaterThan(0);
   expect(Number((await state(page)).stats?.sites)).toBe(1);
+  expect(
+    await page.evaluate(() =>
+      localStorage.getItem('pixelforge:client:v2:gas-station'),
+    ),
+  ).toBe(legacy);
+  expect(final.duration).toBe(14400);
   expect(errors).toEqual([]);
 });

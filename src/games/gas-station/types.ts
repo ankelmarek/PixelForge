@@ -2,6 +2,7 @@ import type { Cell } from '../../engine/api/strategy';
 import type { QueueEntry } from '../../engine/api/mobility';
 import type { JournalState, CostStock } from '../../engine/api/economy';
 import type { Fuel, Product } from './world';
+import type { Campaign, Journey } from './campaign-data';
 import type { Development } from './development';
 
 export interface Motion {
@@ -30,6 +31,9 @@ export interface Customer {
     | 'fueling'
     | 'checkout'
     | 'to-shop'
+    | 'wash-wait'
+    | 'to-wash'
+    | 'washing'
     | 'leaving';
   pedestrian: 'car' | 'walking' | 'queued' | 'paying' | 'returning';
   fuel: Fuel | null;
@@ -58,12 +62,13 @@ export interface Customer {
   goodsPrices?: Record<Product, number>;
   checkoutLane?: number;
   extension?: boolean;
+  journey?: Journey;
 }
 export interface Worker {
   motion: Motion;
   role: 'forecourt' | 'checkout';
   job: {
-    kind: 'prepare' | 'unload' | 'restock' | 'build';
+    kind: 'prepare' | 'unload' | 'restock' | 'build' | 'repair';
     id: string;
     progress: number;
   } | null;
@@ -98,7 +103,7 @@ export interface ResourceTotals {
   usedCost: number;
 }
 export interface StationState {
-  gameVersion: '0.1.0' | '0.2.0';
+  gameVersion: '0.1.0' | '0.2.0' | '0.3.0';
   rulesRevision: 'opening-1';
   worldRevision: string;
   seed: number;
@@ -107,7 +112,7 @@ export interface StationState {
   candidate: number;
   nextArrival: number;
   clock: { speed: 1 | 2 | 4; remainder: number };
-  result: 'success' | 'partial' | null;
+  result: 'success' | 'partial' | 'bankrupt' | null;
   journal: JournalState;
   tanks: Record<Fuel, CostStock>;
   goods: Record<Product, CostStock>;
@@ -131,4 +136,5 @@ export interface StationState {
   topology: number;
   camera: { x: number; y: number; zoom: number };
   development?: Development;
+  campaign?: Campaign;
 }

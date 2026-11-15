@@ -17,6 +17,7 @@ import { validateWorld, FUELS, GOODS, SHOP, UNIT, prices } from './world';
 import { bodies } from './state';
 import { money, type StationUI } from './controls';
 import { tankCapacity, PARCELS } from './development';
+import { campaignUI } from './campaign-controls';
 import { roadLine, type BuildRequest } from './placement';
 
 export function createStationRuntime(
@@ -27,11 +28,14 @@ export function createStationRuntime(
   const world = validateWorld(data);
   context.audio.setMix('music', 0.7);
   context.audio.setMix('effects', 0.8);
-  let model = new StationModel(world, world.scenario.seed, true),
+  let model = new StationModel(world, world.scenario.seed, true, true),
     active: Gameplay | undefined,
     started = false,
     lastSave = 0;
-  const save = new VersionedSave(definition.id, 2, (raw) =>
+  const save = new VersionedSave(definition.id, 3, (raw) =>
+    model.validateSave(raw),
+  );
+  const developmentSave = new VersionedSave(definition.id, 2, (raw) =>
     model.validateSave(raw),
   );
   const legacySave = new VersionedSave(definition.id, 1, (raw) =>
@@ -340,6 +344,7 @@ export function createStationRuntime(
           'heavy-pump',
           'parking',
           'tank',
+          'wash',
         ].includes(payload) &&
         s.development
       ) {
@@ -403,6 +408,22 @@ export function createStationRuntime(
         mutation = true;
       } else if (action === 'lease-end' && s.development) {
         ok = model.lease.termination();
+        mutation = true;
+      } else if (action === 'repair' && s.campaign) {
+        ok = model.weekend.repair();
+        mutation = true;
+      } else if (action === 'discount' && s.campaign) {
+        ok = model.weekend.acceptDiscount();
+        mutation = true;
+      } else if (action === 'rescue' && s.campaign) {
+        ok = model.weekend.rescue();
+        mutation = true;
+      } else if (
+        action === 'sell' &&
+        s.campaign &&
+        typeof payload === 'string'
+      ) {
+        ok = model.weekend.sell(payload);
         mutation = true;
       } else if (action === 'select' && typeof payload === 'string') {
         this.selection = payload;
@@ -575,8 +596,10 @@ export function createStationRuntime(
         unload: 'Rozładunek',
         restock: 'Towar do sklepu',
         build: 'Rozbudowa',
+        repair: 'Naprawa pompy',
       };
       const client: StationUI = {
+        campaign: campaignUI(model),
         cash: model.cash,
         profit: model.profit,
         netWorth: model.netWorth,
@@ -592,15 +615,17 @@ export function createStationRuntime(
           fuel: f,
           capacity: tankCapacity(s, f),
           quantity: s.tanks[f].quantity,
+          quote200: model.fuelQuote(f, 200),
+          quote400: model.fuelQuote(f, 400),
           reserved: s.tanks[f].quantity - model.available(f),
           can200:
             !d &&
             s.tanks[f].quantity + 2000 <= tankCapacity(s, f) &&
-            model.cash >= prices[f].buy * 200 + 8000,
+            model.cash >= model.fuelQuote(f, 200),
           can400:
             !d &&
             s.tanks[f].quantity + 4000 <= tankCapacity(s, f) &&
-            model.cash >= prices[f].buy * 400 + 8000,
+            model.cash >= model.fuelQuote(f, 400),
         })),
         goods: GOODS.map((k) => ({
           product: k,
@@ -733,7 +758,7 @@ export function createStationRuntime(
       context.state({
         mode: 'client',
         completed: s.result === 'success',
-        failed: s.result === 'partial',
+        failed: s.result === 'partial' || s.result === 'bankrupt',
         paused: false,
         elapsed: s.tick / 20,
         collected: s.served,
@@ -743,11 +768,38 @@ export function createStationRuntime(
         y: center.y,
         resultTitle:
           s.result === 'success'
-            ? s.development
-              ? 'Stacja rośnie!'
-              : 'Dobry początek!'
-            : 'Zmiana zamknięta',
+            ? s.campaign
+              ? 'Wielki Weekend!'
+              : s.development
+                ? 'Stacja rośnie!'
+                : 'Dobry początek!'
+            : s.result === 'bankrupt'
+              ? 'Stacja niewypłacalna'
+              : 'Zmiana zamknięta',
         results: [
+          ...(s.campaign
+            ? [
+                {
+                  label: 'Ocena weekendu',
+                  value:
+                    s.result === 'success'
+                      ? s.served >= 80 && client.satisfaction >= 85
+                        ? '★★★'
+                        : '★★☆'
+                      : s.result === 'bankrupt'
+                        ? '☆☆☆'
+                        : '★☆☆',
+                },
+                {
+                  label: 'Mycia / średnie oczekiwanie',
+                  value: `${s.campaign.wash.completed} / ${Math.round(s.campaign.ratings.reduce((n, r) => n + r.wait, 0) / Math.max(1, s.visits) / 20)} s`,
+                },
+                {
+                  label: 'Inwestycje',
+                  value: `${money(s.development!.constructionSpent + (s.pumps[2].built || s.pumps[2].construction ? 180000 : 0))} ◈`,
+                },
+              ]
+            : []),
           { label: 'Obsłużeni klienci', value: `${s.served} / ${model.goal}` },
           { label: 'Zysk operacyjny', value: `${money(model.profit)} ◈` },
           { label: 'Przychód', value: `${money(s.journal.revenue)} ◈` },
@@ -827,7 +879,9 @@ export function createStationRuntime(
           deliveries: s.deliveries,
           thirdPump: s.pumps[2].built,
           cash: model.cash,
-          saveVersion: 2,
+          saveVersion: 3,
+          shift: s.campaign ? campaignUI(model)!.shift : '',
+          washes: s.campaign?.wash.completed ?? 0,
           maxAdvanceMs: this.maxAdvanceMs,
           navRegions: model.navigator.stats.regions,
           navLocal: model.navigator.stats.maxLocalExpanded,
@@ -855,9 +909,10 @@ export function createStationRuntime(
       Gameplay,
     ],
     start(resume) {
-      model = new StationModel(world, world.scenario.seed, true);
+      model = new StationModel(world, world.scenario.seed, true, true);
       if (resume) {
         let result = save.inspect();
+        if (result.status === 'absent') result = developmentSave.inspect();
         if (result.status === 'absent') result = legacySave.inspect();
         if (result.status === 'ready') model.restore(result.value);
         else if (result.status === 'invalid')

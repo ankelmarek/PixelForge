@@ -212,3 +212,48 @@ line(skoczka,27,23,18,29,'#b2cc8c',3);skoczka.rect(29,18,6,2,'#59435e')
 skoczka.rect(260,39,8,30,'#a3bd80');skoczka.rect(4,110,136,3,'#b2cc8c');skoczka.rect(276,110,72,3,'#b2cc8c')
 save('skoczka',skoczka)
 print('Generated original ORLAR art, 64 sectors and world manifest.')
+
+# S3: compact touring coach, one visible group representative in the simulation.
+buses=Image(1024,128)
+bus=Image(128,128)
+bus.rect(43,17,48,96,'#3d574f')
+for yy in [28,85]:
+    bus.rect(40,yy,8,12,INK);bus.rect(80,yy,8,12,INK)
+bus.rect(44,12,40,100,INK);bus.rect(46,14,36,96,'#e9d7ad')
+bus.rect(48,14,32,5,WHITE);bus.rect(46,22,36,15,INK);bus.rect(49,24,30,10,'#8db6b1')
+bus.rect(52,25,7,8,'#c2d7c4');bus.rect(46,37,36,4,AMBER)
+for yy in range(42,96,10):
+    bus.rect(46,yy,5,7,'#41676e');bus.rect(77,yy,5,7,'#41676e')
+    bus.rect(47,yy,2,5,'#81aaa6');bus.rect(79,yy,2,5,'#b4ccbb')
+bus.rect(53,42,22,55,'#f4e9c8');bus.rect(57,48,14,12,'#94aaa0');bus.rect(59,50,10,8,'#c2cdb8')
+bus.rect(57,75,14,12,'#94aaa0');bus.rect(59,77,10,8,'#c2cdb8')
+bus.rect(46,98,36,6,TEAL);bus.rect(48,105,7,4,'#d57259');bus.rect(75,105,7,4,'#d57259')
+for direction in range(8):buses.blit(rotate(bus,math.pi/2+direction*math.pi/4),direction*128,0)
+save('bus',buses)
+
+# Open-sided wash bay: a visible car between guide rails, glass plant room,
+# drain grates, hoses and a turquoise arch. Animation is a separate effect layer.
+wash=Image(256,256)
+wash.rect(16,12,232,232,'#344d50');wash.rect(12,8,232,232,'#789a94')
+wash.rect(18,14,220,220,'#abc4b6');wash.rect(82,14,92,220,'#628e8e')
+for yy in range(20,234,16):
+    wash.rect(84,yy,88,2,'#71a09a');wash.rect(20,yy,58,1,'#c0cec0');wash.rect(178,yy,58,1,'#c0cec0')
+for xx in [85,167]:
+    wash.rect(xx,22,4,206,INK);wash.rect(xx+1,22,2,206,'#d9d7b5')
+for yy in [20,218]:
+    wash.rect(88,yy,78,6,INK)
+    for xx in range(91,166,5):wash.rect(xx,yy+1,2,4,'#8baea2')
+wash.rect(24,22,36,194,INK);wash.rect(27,24,30,188,'#d3d9bf')
+wash.rect(28,25,28,40,TEAL);wash.rect(32,30,20,24,'#21464c');wash.rect(35,34,14,4,'#9ee8bd')
+for yy in [78,122,165]:
+    wash.rect(28,yy,27,33,'#638d8e');wash.rect(31,yy+3,20,26,'#b0d0c0');wash.rect(35,yy+3,4,26,'#dce4c9')
+wash.rect(195,28,30,182,INK);wash.rect(198,30,24,177,TEAL)
+for yy in range(36,202,16):wash.rect(202,yy,16,4,'#7fc6af')
+wash.rect(58,34,140,15,INK);wash.rect(61,32,134,12,TEAL);wash.rect(64,33,128,3,'#a1dac3')
+wash.rect(76,31,104,7,AMBER);wash.rect(84,33,18,2,WHITE);wash.rect(108,33,18,2,WHITE);wash.rect(132,33,18,2,WHITE)
+for xx in [69,181]:
+    wash.rect(xx,48,7,155,INK);wash.rect(xx+1,49,4,151,'#80b8a9')
+    for yy in range(52,198,18):wash.rect(xx-3,yy,12,2,'#d1d7b8')
+for xx,yy in [(99,197),(148,181),(117,66)]:
+    wash.rect(xx,yy,15,3,'#97c5b5');wash.rect(xx+3,yy-2,9,2,'#c1dfc5')
+save('wash',wash)

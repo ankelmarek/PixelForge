@@ -183,7 +183,13 @@ export class TenantLease {
         t.stock[k],
         Math.max(
           0,
-          Math.floor((c.budget - c.paidTotal - total) / prices[k].sell),
+          Math.floor(
+            (c.budget -
+              c.paidTotal -
+              total -
+              (c.journey?.wash === 'wanted' ? 2500 : 0)) /
+              prices[k].sell,
+          ),
         ),
       );
       items[k] = count;
