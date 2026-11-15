@@ -288,3 +288,23 @@ lamp.rect(18,20,15,4,AMBER)
 lamp.rect(21,21,10,2,WHITE)
 lamp.rect(27,83,13,5,'#bac8ae')
 save('lamp',lamp)
+
+# Bounded reusable light masks: one quad per lamp/headlight instead of layered
+# translucent polygons each frame. Nearest-neighbour keeps stepped pixel edges.
+pool=Image(128,96)
+beam=Image(128,96)
+for y in range(96):
+    for x in range(128):
+        px=(x//2)*2-64;py=(y//2)*2-48
+        layers=0
+        for i in range(1,6):
+            r=round(64*i/5/2)*2
+            layers+=int(abs(px)<r and abs(py)<r/2)
+            layers+=int(abs(px)<r/2 and abs(py)<r*.75)
+        alpha=round(layers*255*.025)
+        if abs(px)<2 and abs(py)<2:alpha=175
+        pool.rect(x,y,1,1,(255,255,255,alpha))
+        layers=sum(1 for i in range(1,4) if 0<=x<i*32 and abs(y-48)<x*13/32)
+        beam.rect(x,y,1,1,(255,255,255,round(layers*255*.035)))
+save('light-pool',pool)
+save('headlight',beam)

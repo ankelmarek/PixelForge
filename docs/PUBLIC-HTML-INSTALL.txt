@@ -1,5 +1,5 @@
 PIXELFORGE — WSZYSTKO W PUBLIC_HTML
-Gry 0.14.1 (Stacja na Trasie S3 + Winobranie RTS W3 + Życie Dżdżownicy + Atlas), instalator i aktualizator 1.2.0.
+Gry 0.15.0 (Stacja na Trasie S4 + Winobranie RTS W3 + Życie Dżdżownicy + Atlas), instalator i aktualizator 1.2.0.
 
 WYMAGANIA
 Apache 2.4 lub zgodny LiteSpeed z aktywnymi regułami .htaccess, HTTPS,

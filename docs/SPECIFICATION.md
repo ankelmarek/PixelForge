@@ -1,5 +1,11 @@
 # PixelForge — specyfikacja techniczna i funkcjonalna
 
+> **Stacja na Trasie — S4 (15.11.2026):** klient 0.4.0, trzy warianty weekendu,
+> zapis v4 z zachowaniem v1/v2/v3, dynamiczne światło i proceduralne audio.
+> PixelForge 0.15.0. Rdzeń otrzymuje generyczny formularz nowej sesji oraz
+> ograniczony syntezator szumu; reguły gry pozostają w kliencie.
+> [Raport S4](S4-REPORT.md), [otwarty odbiór Q1](S4-PLAYTEST.md).
+
 > **Stacja na Trasie — S3 (15.11.2026):** pełna kampania 30 minut, myjnia,
 > zdarzenia i ekonomia pozostają w niezależnym kliencie. PixelForge 0.14.1
 > używa zapisu Stacji v3, zachowując klucze i zasady S1/S2. [Raport S3](S3-REPORT.md).

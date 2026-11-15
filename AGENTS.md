@@ -65,6 +65,13 @@ Zapis v3 zachowuje klucze i scenariusze v1/v2. [Raport S3](docs/S3-REPORT.md)
 podaje aktualne wyniki kontroli. Następny zlecony etap to S4; pełne ukończenie
 gry wymaga nadal badania z trzema nowymi graczami. Bez W4, merge i hostingu.
 
+**Stan S4 (15.11.2026):** `feature/s4-stacja-warianty`, klient 0.4.0,
+PixelForge 0.15.0. Trzy warianty, seed, nocna ekonomia, światło i audio,
+zapis v4 z zachowaniem v1/v2/v3. [Raport S4](docs/S4-REPORT.md) podaje
+wyniki techniczne; [odbiór Q1](docs/S4-PLAYTEST.md) nadal wymaga trzech
+nowych graczy. Poprawki pozostają na tej gałęzi. Nie oznaczać gry DONE
+bez Q1 ani nie rozpoczynać nowego etapu, W4, merge lub hostingu.
+
 **Uzupełnienie dla Stacji na Trasie (14.11.2026):** robocze marki to **ORLAR** (stacja z orłem) oraz **Skoczka** (fikcyjna sieć niewielkich sklepów z motywem żabki). Gracz ma móc **prowadzić sklep sam lub oddać lokal w najem Skoczce**. W najmie przychód stacji to czynsz oraz umówiony udział, a nie pełny obrót sklepu; najemca zapewnia swoich pracowników i towary. Zadbaj o parking, oddzielne kolejki, realną animację dostaw i wpływ sklepu na ruch. Mechanikę implementować w S2 po S0 i S1, zgodnie z sekcją 8.1 `docs/STACJA-BENZYNOWA.md`. Nazwy i znaki są robocze, nie kopiuj oznaczeń ORLEN ani Żabka, sprawdź odróżnialność przed publikacją.
 
 ## Gałęzie i pull requesty

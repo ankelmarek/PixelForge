@@ -1,0 +1,24 @@
+{
+  "measuredAt": "2026-11-15T12:16:14.681Z",
+  "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+  "cpus": 5,
+  "chromium": "158.0.8127.18",
+  "viewport": {
+    "width": 1280,
+    "height": 900
+  },
+  "durationMs": 60004.499999997766,
+  "fps": 56.45321198447703,
+  "p95FrameMs": 33.200000000004366,
+  "medianFrameMs": 16.69999999999709,
+  "minUnits": 32,
+  "maxUnits": 32,
+  "maxMoving": 30,
+  "maxStepMs": 9.300000000745058,
+  "maxResident": 48,
+  "maxTextureBytes": 25165824,
+  "maxLocal": 189,
+  "errors": [],
+  "cameraPositions": 5,
+  "notes": "Synthetic S4 32-unit workload with night lighting and rain at ×4, zoom 0.5, compiled Vite build, real station motion/navigation/renderer/assets and camera jumps. 14 vehicles, 10 drivers, 6 staff, 2 deliveries. Synthetic state is never written to production localStorage. This measures component capacity; full game economy and traffic are tested separately. Headless Chromium software rendering; no physical-phone claim."
+}

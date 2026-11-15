@@ -2,7 +2,7 @@
 
 **Decyzja:** 14 listopada 2026. **Stan:** W0 nowej gry **Winobranie RTS: Trzy sezony** wykonane — inwentaryzacja, kontrakty i plan. W1 i W2 są bazą kolejnych zleceń. Po poleceniu „Rób nowy zakres” zaimplementowano W3: trzyletnią kampanię, rozbudowę, ekonomię i produkcję wina. W3 jest do odbioru; W4 nie rozpoczęto. **Główny dokument produkcyjny:** [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md).
 
-**Stacja na Trasie:** S0 zaakceptowane kolejnym poleceniem. **S2 do odbioru** — rozbudowa i najem Skoczki; [raport S2](S2-REPORT.md), [projekt wdrożenia](STACJA-BENZYNOWA-IMPLEMENTATION.md). S2 zaimplementowane; S3–S4 zlecone do kolejnej realizacji.
+**Stacja na Trasie:** S2–S4 zaimplementowane na osobnych gałęziach. S2 i S3 przeszły pełne CI; S4 ma testy lokalne i paczki, z końcową regresją w PR. [Raport S4](S4-REPORT.md). Odbiór Q1 z trzema nowymi osobami pozostaje otwarty.
 
 Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md) oraz [archiwum historycznym](./ROADMAP-ARCHIVE-2026-11.md). Oba mają status historyczny. Jeżeli ich zapis przeczy temu dokumentowi lub `docs/WINOBRANIE-RTS.md`, obowiązuje aktualna decyzja z 14 listopada.
 
@@ -59,13 +59,13 @@ nowy tytuł nie jest jeszcze dostępny w launcherze ani ZIP-ie.
 ## 4. Kolejka pozostałych gier
 
 - **Miodobranie:** zaakceptowana koncepcja, osobny etap w przyszłości.
-- **Stacja na Trasie: Wielki Weekend:** [pełna specyfikacja RTS](./STACJA-BENZYNOWA.md), osobna gra ekonomiczna z ruchem pojazdów, usługami, 3 zmianami i końcem po około 30 minutach. **S2 do odbioru**: rozbudowa na 12 minut; S3–S4 zlecone do kolejnej realizacji. Nie wstrzymuje prac nad Winobraniem RTS.
+- **Stacja na Trasie: Wielki Weekend:** [pełna specyfikacja RTS](./STACJA-BENZYNOWA.md), osobna gra ekonomiczna z ruchem pojazdów, usługami, 3 zmianami i końcem po około 30 minutach. **S4 w weryfikacji**: pełny weekend i trzy warianty; Q1 pozostaje otwarty. Nie wstrzymuje prac nad Winobraniem RTS.
 - **Życie Dżdżownicy:** istniejąca produkcja; zachować kompatybilność.
 - Pozostałe koncepcje pozostają propozycjami, nie aktywnymi zadaniami.
 
 ### Plan rozwoju Stacji na Trasie (oddzielny cykl)
 
-Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: S0 zaprojektowane na bazie PR #16; [kontrakty i plan S1](STACJA-BENZYNOWA-IMPLEMENTATION.md). **Nowy wariant ekonomiczny:** fikcyjna polska stacja **ORLAR** ma możliwość prowadzenia własnego sklepu lub wynajęcia go sieci **Skoczka**, z czynszem, kontraktem, odmiennymi obowiązkami i ruchem klientów. Implementacja S2 w weryfikacji; branding autorski, bez kopiowania realnych znaków ORLEN i Żabka.
+Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: S0 zaprojektowane na bazie PR #16; [kontrakty i plan S1](STACJA-BENZYNOWA-IMPLEMENTATION.md). **Nowy wariant ekonomiczny:** fikcyjna polska stacja **ORLAR** ma możliwość prowadzenia własnego sklepu lub wynajęcia go sieci **Skoczka**, z czynszem, kontraktem, odmiennymi obowiązkami i ruchem klientów. Implementacja S2–S4 gotowa do kontroli; branding autorski, bez kopiowania realnych znaków ORLEN i Żabka.
 
 | Etap | Cel                                                                                                   | Status                         |
 | ---- | ----------------------------------------------------------------------------------------------------- | ------------------------------ |
@@ -73,7 +73,7 @@ Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: S0 zaprojekt
 | S1   | Grywalna stacja, dwa dystrybutory, sklep, pracownicy, cysterna, pierwsza sprzedaż i podstawowy dźwięk | REVIEW — implementacja i testy |
 | S2   | Swobodna rozbudowa, ruch samochodów, pracownicy, ceny oraz **najem sklepu fikcyjnej sieci Skoczka**   | REVIEW                         |
 | S3   | Myjnia, ekonomia, zdarzenia i 3 zmiany kończące się wynikiem                                          | REVIEW                         |
-| S4   | Warianty, pixel art, dźwięki, balans, testy, pełny ZIP dla istniejącego panelu                        | TODO                           |
+| S4   | Warianty, pixel art, dźwięki, balans, testy, pełny ZIP dla istniejącego panelu                        | REVIEW — Q1 otwarte            |
 
 **Zależność:** nowa gra używa istniejącego silnika, sektorów, nawigacji i zapisu. Codex przed rozpoczęciem S0 musi sprawdzić ostatni działający kod i PR #15 lub nowszy, ponieważ `main` może zawierać tylko dokumentację. Oddzielna gałąź `feature/p3-stacja-benzynowa`, brak automatycznego scalania i wdrażania. **Nie rozpoczynaj S1 bez akceptacji S0.**
 
@@ -299,3 +299,21 @@ CI #29: kod, paczki, instalator i pozostałe gry PASS. Weekend wykrył zator
 cysterny przy trzeciej pompie. Poprawka 0.14.1 zmienia wyjazd zapleczem i
 naprawia trasę przy wznowieniu; rzeczywisty zapis z CI ma test regresyjny.
 18 testów kampanii, transakcji i tej regresji PASS. Pełne CI ponowione.
+
+## 15. S4 — warianty, oprawa i wydanie (2026-11-15)
+
+`feature/s4-stacja-warianty` obejmuje S3 z poprawką 0.14.1. Klient 0.4.0,
+PixelForge 0.15.0: Krajówka, Autostradowy weekend i Nocna zmiana, wybór seeda,
+nocne płace i energia, dynamiczne światło, reflektory, wiata, latarnie,
+mokra nawierzchnia i proceduralne audio. Zapis v4 zachowuje starsze klucze
+oraz scenariusze S1/S2/S3. Aktualizator pozostaje 1.2.0.
+
+[Raport S4](S4-REPORT.md) odróżnia testy techniczne od [odbioru Q1](S4-PLAYTEST.md).
+20 pełnych symulacji wariantów/strategii PASS; wybór nocy, oświetlenie,
+audio, migracja v3 i wznowienie przeszły na desktopie i emulowanym Pixel 7.
+187 Vitest, 15 testów pakietów, 36 PHP/Python, lint/typecheck/build PASS.
+Paczki 0.15.0 zbudowane, 33 wcześniejsze ZIP-y niezmienione. Pomiar 32
+jednostek: p95 16.8 ms; zwykła sesja nocna: 33.3 ms, powyżej celu 33 ms.
+Pełna regresja CI i dystrybucji jest raportowana w powiązanym PR. Gra pozostaje REVIEW, dopóki
+trzy nowe osoby nie potwierdzą przystępności i czasu zabawy. Nie rozpoczęto
+W4 Winobrania; bez automatycznego merge i wdrożenia na hosting.

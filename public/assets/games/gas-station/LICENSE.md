@@ -24,3 +24,7 @@ skryptu. Klient rysuje światło dnia, zmierzchu i nocy, reflektory, drzwi aut
 i mokry asfalt. Nocna aranżacja, deszcz, wiatr oraz efekty stacji są autorską
 syntezą proceduralną. Silnik udostępnia ograniczone, współdzielone bufory
 białego i brązowego szumu, bez zewnętrznych nagrań lub grafik.
+
+Maski światła `light-pool.png` i `headlight.png` (po 128×96) pochodzą
+z tego samego generatora i ograniczają koszt wielokrotnych przezroczystych
+wielokątów. Są współdzielone przez lampy i pojazdy, bez tekstury świata.

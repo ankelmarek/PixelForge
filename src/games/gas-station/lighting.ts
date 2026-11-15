@@ -17,6 +17,8 @@ export class StationLighting {
   private shade: Phaser.GameObjects.Graphics;
   private glow: Phaser.GameObjects.Graphics;
   private wet: Phaser.GameObjects.Graphics;
+  private pools: Phaser.GameObjects.Image[] = [];
+  private beams: Phaser.GameObjects.Image[] = [];
   constructor(
     private scene: Phaser.Scene,
     private model: StationModel,
@@ -55,7 +57,24 @@ export class StationLighting {
         this.wet.fillStyle(0xc4ded3, 0.3).fillRect(x + 8, y + 2, 20, 2);
       }
     }
-    if (!dark) return;
+    let pools = 0,
+      beams = 0;
+    const mask = (
+      images: Phaser.GameObjects.Image[],
+      index: number,
+      texture: string,
+    ) => {
+      if (!images[index])
+        images[index] = this.scene.add
+          .image(0, 0, texture)
+          .setDepth(41)
+          .setBlendMode(Phaser.BlendModes.ADD);
+      return images[index].setVisible(true).setAlpha(dark);
+    };
+    if (!dark) {
+      for (const img of [...this.pools, ...this.beams]) img.setVisible(false);
+      return;
+    }
     this.shade
       .fillStyle(0x121f39, dark * 0.65)
       .fillRect(
@@ -72,21 +91,17 @@ export class StationLighting {
         y - radius > origin.y + height
       )
         return;
-      for (let i = 5; i > 0; i--) {
-        const r = Math.round((radius * i) / 5 / 4) * 4;
-        glow
-          .fillStyle(color, dark * 0.025)
-          .fillRect(x - r, y - r / 2, r * 2, r)
-          .fillRect(x - r / 2, y - r * 0.75, r, r * 1.5);
-      }
-      glow.fillStyle(0xffe9a9, dark * 0.55).fillRect(x - 5, y - 5, 10, 6);
+      mask(this.pools, pools++, 'light-pool')
+        .setPosition(x, y)
+        .setTint(color)
+        .setDisplaySize(radius * 2, radius * 1.5);
     };
     // The shop keeps a low safety glow even when paid forecourt lights are off.
     pool(124 * TILE, 112 * TILE, 90, 0x80c6b5);
     if (s.campaign?.scenario?.lights) {
       for (const p of LAMPS) pool(p.x * TILE, p.y * TILE, 150);
-      for (const p of this.model.pumps)
-        pool((p.x - 3) * TILE, p.y * TILE - 18, 100);
+      for (const [i, p] of this.model.pumps.entries())
+        if (s.pumps[i].built) pool((p.x - 3) * TILE, p.y * TILE - 18, 100);
       for (const p of s.development?.sites ?? [])
         if (p.kind === 'wash' && !p.progress)
           pool(p.point.x * TILE, p.point.y * TILE, 140, 0x81d6c2);
@@ -113,20 +128,11 @@ export class StationLighting {
         nose = m.kind === 'truck' ? 43 : 23;
       const sx = x + dx * nose,
         sy = y + dy * nose;
-      for (let i = 3; i > 0; i--) {
-        const length = i * 32,
-          spread = i * 13;
-        glow
-          .fillStyle(0xf7e4a3, dark * 0.035)
-          .fillTriangle(
-            sx,
-            sy,
-            sx + dx * length - dy * spread,
-            sy + dy * length + dx * spread,
-            sx + dx * length + dy * spread,
-            sy + dy * length - dx * spread,
-          );
-      }
+      mask(this.beams, beams++, 'headlight')
+        .setOrigin(0, 0.5)
+        .setPosition(sx, sy)
+        .setRotation(angle)
+        .setTint(0xf7e4a3);
       glow.fillStyle(0xfbeec7, dark * 0.7);
       for (const side of [-1, 1])
         glow.fillRect(
@@ -136,10 +142,15 @@ export class StationLighting {
           4,
         );
     }
+    for (let i = pools; i < this.pools.length; i++)
+      this.pools[i].setVisible(false);
+    for (let i = beams; i < this.beams.length; i++)
+      this.beams[i].setVisible(false);
   }
   destroy() {
     this.shade.destroy();
     this.glow.destroy();
     this.wet.destroy();
+    for (const img of [...this.pools, ...this.beams]) img.destroy();
   }
 }

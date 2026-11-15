@@ -1,8 +1,8 @@
-# PixelForge 0.14.1 — Stacja S3 + Winobranie RTS W3 + Życie Dżdżownicy + Atlas
+# PixelForge 0.15.0 — Stacja S4 + Winobranie RTS W3 + Życie Dżdżownicy + Atlas
 
 ## Pierwsza instalacja wszystkiego w public_html
 
-[Pobierz jeden ZIP: PixelForge + instalator + aktualizator](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s3-stacja-weekend/downloads/pixelforge-public-html-0.14.1-installer-1.2.0.zip).
+[Pobierz jeden ZIP: PixelForge + instalator + aktualizator](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s4-stacja-warianty/downloads/pixelforge-public-html-0.15.0-installer-1.2.0.zip).
 
 1. Rozpakuj zawartość w `public_html`, także ukryte pliki `.htaccess`.
 2. Otwórz `https://twoja-domena.pl/setup.php`.
@@ -23,10 +23,10 @@ Nie rozpakowuj paczki startowej ponownie na skonfigurowany panel.
 
 ## Paczka samej gry do aktualizatora
 
-[Pobierz gotowy ZIP gry](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s3-stacja-weekend/downloads/pixelforge-0.14.1-full.zip).
+[Pobierz gotowy ZIP gry](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s4-stacja-warianty/downloads/pixelforge-0.15.0-full.zip).
 
-**Do instalatora wgrywasz `pixelforge-0.14.1-full.zip` w całości, bez rozpakowywania.**
-Zawiera silnik, Stację na Trasie S3, Winobranie RTS W3, Dżdżownicę,
+**Do instalatora wgrywasz `pixelforge-0.15.0-full.zip` w całości, bez rozpakowywania.**
+Zawiera silnik, Stację na Trasie S4, Winobranie RTS W3, Dżdżownicę,
 dotychczasowy Atlas, zasoby i manifest z SHA-256.
 Nie jest to ZIP źródeł z przycisku „Code → Download ZIP”.
 
@@ -37,10 +37,10 @@ ustawiony na hostingu; jego zmiana należy do ustawień PHP w panelu hostingowym
 ## Instalacja przez panel U2
 
 1. Otwórz skonfigurowany panel administratora i zaloguj się.
-2. Wybierz `pixelforge-0.14.1-full.zip` i kliknij **Sprawdź pakiet**.
-3. Sprawdź wersję i listę zmian, następnie **Zainstaluj wydanie 0.14.1**.
+2. Wybierz `pixelforge-0.15.0-full.zip` i kliknij **Sprawdź pakiet**.
+3. Sprawdź wersję i listę zmian, następnie **Zainstaluj wydanie 0.15.0**.
 4. Otwórz stronę gry pod dotychczasowym adresem, np.
-   `https://twoja-domena.pl/PixelForge/index.html?v=0.14.1`.
+   `https://twoja-domena.pl/PixelForge/index.html?v=0.15.0`.
 5. Przy Stacji na Trasie wybierz **Otwórz stację** i **Nowa gra**.
    **Wznów** kontynuuje rozpoczętą zmianę. Pozostałe gry i ich zapisy pozostają dostępne.
 
@@ -51,7 +51,7 @@ następnie `apply` z identyfikatorem planu i sumą pokazaną przez `prepare`).
 U3 i paczki delta nie są do tego potrzebne.
 
 Rollback w panelu przywraca poprzednią wersję aplikacji. Zapis Dżdżownicy
-pozostaje w przeglądarce i wraca po ponownej instalacji 0.14.1. Pionowa przygoda
+pozostaje w przeglądarce i wraca po ponownej instalacji 0.15.0. Pionowa przygoda
 korzysta z osobnego zapisu v3; zapis starego ogrodu v1 nie jest kasowany ani
 przenoszony do odmiennej mapy. Zachowaj ten sam
 adres i przeglądarkę, żeby odczytać dotychczasowe zapisy.
@@ -63,7 +63,7 @@ Rozpakuj ZIP i wgraj **całą zawartość** do katalogu strony: `index.html`,
 Jeśli adres kończący się `/` nie otwiera strony, dopisz `index.html`.
 W tej paczce nie ma dodatkowego katalogu nadrzędnego.
 
-Kontrola lokalna: `npm run package:validate -- downloads/pixelforge-0.14.1-full.zip`.
+Kontrola lokalna: `npm run package:validate -- downloads/pixelforge-0.15.0-full.zip`.
 Odtworzenie z kodu: `npm ci`, następnie `npm run package:release`.
 [Specyfikacja gry](../docs/EARTHWORM.md), [raport nowej gry](../docs/P3-SOIL-REPORT.md).
 
@@ -71,12 +71,13 @@ W3: trzy roczniki, rozbudowa, zatrudnienie, flota, fermentacja, butelki, jakoś�
 i kontrakty. [Raport i testy](../docs/W3-REPORT.md).
 Zapis Winobrania v3 zachowuje v1/v2 do rollbacku, a zapisy innych gier nie są migrowane.
 
-S3: pełny weekend 8/12/10 minut, myjnia, zdarzenia, pożyczka, odsprzedaż
-rozszerzeń i finał. Cel: ≥60 opłaconych wizyt, ≥70% oceny i dodatni majątek.
-[Raport i testy](../docs/S3-REPORT.md). Nowa gra używa zapisu Stacji v3.
-**Wznów** kontynuuje również starsze S1/S2, gdy bieżący klucz nie istnieje;
-oryginalne klucze pozostają do rollbacku. Aby zagrać w pełny weekend,
-wybierz **Nowa gra**. Inne gry i ich klucze pozostają niezależne.
+S4: trzy warianty — Krajówka, Autostradowy weekend i Nocna zmiana — oraz
+wybór numeru weekendu. Pełne 30 minut, myjnia, zdarzenia, rozbudowa i najem,
+światła, reflektory, nocna ekonomia i dźwięki. [Raport](../docs/S4-REPORT.md).
+Nowa gra używa zapisu v4. **Wznów** zachowuje scenariusze S1/S2/S3 i ich
+oryginalne klucze do rollbacku. Wybór w menu nie zmienia wznawianej gry.
+Pozostałe gry i ich zapisy pozostają niezależne. Odbiór z trzema nowymi
+osobami, fizycznym telefonem i odsłuchem pozostaje otwarty.
 
 ## Archiwum: PixelForge 0.7.0
 
@@ -134,7 +135,7 @@ npm run package:validate -- downloads/pixelforge-0.6.1-full.zip
 
 Wynik poprawnej kontroli ma `valid: true`. Szczegóły i limity:
 [RELEASE-PACKAGES.md](../docs/RELEASE-PACKAGES.md).
-Paczki P1 0.5.0/0.5.1 i U0 0.6.0/0.6.1 zachowano jako archiwum; bieżąca to **0.14.1-full**.
+Paczki P1 0.5.0/0.5.1 i U0 0.6.0/0.6.1 zachowano jako archiwum; bieżąca to **0.15.0-full**.
 
 ## Osobny panel aktualizacji U2 — wariant prywatny poza public_html
 
@@ -144,7 +145,7 @@ ustawia własne hasło i tworzy publiczny plik panelu. Kolejne pełne ZIP-y gry
 wgrywa się już przez przeglądarkę: logowanie, podgląd, osobne zatwierdzenie.
 
 Nie wgrywaj ZIP-a panelu do katalogu gry ani do formularza paczek full.
-Wymagane PHP 8.2+, ZipArchive i HTTPS. Gra pozostaje statyczna; bieżące wydanie to 0.14.1.
+Wymagane PHP 8.2+, ZipArchive i HTTPS. Gra pozostaje statyczna; bieżące wydanie to 0.15.0.
 [Instrukcja konfiguracji i obsługi](../admin-updater/README.md),
 [raport U2](../docs/U2-REPORT.md).
 Poprzednie ZIP-y U1 1.0.0 i U2 1.1.0 zachowano bez zmiany bajtów.

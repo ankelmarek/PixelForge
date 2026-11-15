@@ -171,6 +171,9 @@ export class EngineHost {
       width: 320,
       height: 180,
       pixelArt: true,
+      // Bound the sampler shader on software renderers and older mobile GPUs.
+      // More textures remain resident; batches flush at eight texture units.
+      render: { maxTextures: 8 },
       roundPixels: true,
       backgroundColor: '#112b32',
       audio: { noAudio: true },

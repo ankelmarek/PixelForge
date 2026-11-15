@@ -47,7 +47,7 @@ async function screen(page: Page, x: number, y: number) {
         r.height,
   };
 }
-test('S2: własna droga i stanowisko, cennik, personel, migracja v2 do v3 oraz obie kolejki Skoczki', async ({
+test('S2: własna droga i stanowisko, cennik, personel, migracja v2 do v4 oraz obie kolejki Skoczki', async ({
   page,
   isMobile,
 }) => {

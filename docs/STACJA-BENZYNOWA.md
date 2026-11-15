@@ -1,6 +1,6 @@
 # STACJA NA TRASIE — strategia ekonomiczna RTS (PixelForge)
 
-**Status: S1/S2 zaimplementowane i przetestowane; S3 w końcowej weryfikacji; S4 zlecone.**
+**Status: S1–S4 zaimplementowane; S3 przeszło CI #30, S4 ma paczki i testy lokalne, z pełną regresją w PR. Odbiór Q1 z trzema nowymi graczami pozostaje otwarty.**
 
 **Data:** 14 listopada 2026.  
 **Tytuł roboczy:** „Stacja na Trasie: Wielki Weekend”.  
@@ -397,11 +397,11 @@ Odhaczenie projektu nie oznacza zaimplementowania poniższych funkcji S1–S4.
 
 ### S4. Dopracowanie i wydanie
 
-- [ ] Trzy scenariusze, pełna grafika, animacje, audio i dynamiczne światło.
-- [ ] Oryginalny branding ORLAR (orzeł) i Skoczka (żabka): odrębny od realnych marek, także w uproszczonych sprite'ach i dźwiękach.
+- [x] Trzy scenariusze, grafika, animacje, audio i dynamiczne światło — odbiór percepcji przez graczy w Q1.
+- [x] Oryginalny branding ORLAR (orzeł) i Skoczka (żabka), własne generatory i audio; przegląd źródeł i sprite'ów w raporcie S4.
 - [ ] Playtesty z co najmniej 3 osobami, pomiar czasu i problemów z odkrywalnością.
 - [ ] Regresja wcześniejszych gier, pełna kampania na kilku seedach, testy wydajności i rozmiaru builda.
-- [ ] Wydanie `full ZIP` zgodne z istniejącym aktualizatorem U2, bez aktualizacji jego kodu.
+- [x] Wydanie `full ZIP` 0.15.0 dla istniejącego aktualizatora U2, bez aktualizacji jego kodu.
 - [ ] PR i raport; nie scalać ani nie wdrażać bez zgody użytkownika.
 
 ## 17. Testy i definicja ukończenia

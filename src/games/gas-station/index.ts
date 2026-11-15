@@ -24,6 +24,8 @@ export const station: ClientDefinition = {
       'wash',
       'canopy',
       'lamp',
+      'light-pool',
+      'headlight',
       'truck',
       'people',
       'shop',

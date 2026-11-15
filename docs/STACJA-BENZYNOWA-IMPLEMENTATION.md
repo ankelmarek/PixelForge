@@ -719,3 +719,18 @@ ratunku. Szczegóły bilansu i dowody: [raport S3](S3-REPORT.md).
 Starsze v1/v2 zachowują czas, cele, ruch i własne klucze. Wznowienie wybiera
 najnowszy istniejący klucz; nie maskuje uszkodzenia v3 kopią starszego postępu.
 Rollback aplikacji nie cofa localStorage. Instalator pozostaje 1.2.0.
+
+## S4 — wdrożenie 15.11.2026
+
+Klient 0.4.0 dodaje warianty i wybór seeda przez opcjonalne `createSetup`
+publicznego API klienta. `start(resume, options)` przekazuje ustawienia
+nowej sesji; wznowienie ich nie stosuje. Gra zarządza trzema wariantami,
+światłem, kosztami energii, stawkami nocnymi i dźwiękami. Rdzeń dostarcza
+również ograniczony `Audio.noise`, zgodny z miksowaniem i cyklem życia.
+
+Zapis v4 czyta starszy klucz tylko przy braku bieżącego; zachowuje stare
+reguły 0.1/0.2/0.3 i oryginalne klucze. Model 0.4 zapisuje wybrany wariant,
+światła oraz rachunek energii. Cele 60/55/50 wizyt zostały zróżnicowane
+według ruchu, przy wspólnych ≥70% satysfakcji i dodatnim majątku netto.
+[Raport S4](S4-REPORT.md) dokumentuje balans, zasoby i końcowe kontrole.
+Q1 pozostaje osobnym, niewykonanym odbiorem: [protokół](S4-PLAYTEST.md).
