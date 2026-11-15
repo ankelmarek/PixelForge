@@ -9,6 +9,9 @@ import { UNIT, TILE } from './world';
 export class StationSounds {
   private elapsed = 0;
   private entries: number;
+  private tenantSales: number;
+  private delivery = false;
+  private event = -1;
   private door = false;
   private theme = '';
   private fault = false;
@@ -20,6 +23,9 @@ export class StationSounds {
     private music: ClientDefinition['music'],
   ) {
     this.entries = model.state.journal.entries.length;
+    this.tenantSales = model.state.development?.tenant.sales.length ?? 0;
+    this.delivery = !!model.state.delivery;
+    this.event = model.state.campaign?.event?.id ?? -1;
     this.fault = !!model.state.campaign?.fault;
     this.construction = this.built();
   }
@@ -68,12 +74,11 @@ export class StationSounds {
     };
     const entries = s.journal.entries.slice(this.entries);
     this.entries = s.journal.entries.length;
+    const tenantSales = s.development?.tenant.sales.length ?? 0;
+    const tenantReceipt = tenantSales > this.tenantSales;
+    this.tenantSales = tenantSales;
     // A frame may complete multiple visits at ×4; one receipt cue suffices.
-    if (
-      entries.some(
-        (e) => e.category === 'checkout' || e.category === 'tenant-sale',
-      )
-    ) {
+    if (tenantReceipt || entries.some((e) => e.category === 'checkout')) {
       tone(1320, 1760, 0.022 * shop, 0.12);
       if (s.customers.some((c) => c.bought && c.basket.coffee))
         this.audio.noise(
@@ -83,6 +88,18 @@ export class StationSounds {
     }
     if (entries.some((e) => e.category === 'wash-sale'))
       tone(660, 990, 0.018 * gain(84 * TILE, 118 * TILE));
+    const event = s.campaign?.event?.id ?? -1;
+    if (event >= 0 && event !== this.event) tone(440, 660, 0.018, 0.24);
+    this.event = event;
+    const delivery = !!s.delivery;
+    if (delivery !== this.delivery)
+      tone(
+        delivery ? 76 : 60,
+        delivery ? 60 : 110,
+        0.012 * gain(144 * TILE, 110 * TILE),
+        0.4,
+      );
+    this.delivery = delivery;
     const fault = !!s.campaign?.fault;
     if (fault !== this.fault) {
       tone(fault ? 240 : 660, fault ? 140 : 880, 0.025 * shop);

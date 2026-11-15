@@ -77,7 +77,7 @@ export function campaignControls(
     <div data-weekend-lighting hidden><button data-lights class="station-wide">☼ Oświetlenie</button><small>20 ◈ / min po zmroku · obsada nocnej zmiany +25%</small><p data-weekend-energy></p></div>
     <h3 data-weekend-event></h3><div class="station-actions"><button data-repair hidden>⚒ Naprawa <small>120 ◈ · 15 s</small></button><button data-discount hidden>Oferta −15% <small>Jedna cysterna 400 L</small></button></div>
     <p data-weekend-repair></p><h3>Rezerwa finansowa</h3><button data-rescue class="station-wide">＋ 1 500 ◈<small>Jednorazowo · spłata 1 650 ◈ w finale</small></button><p data-weekend-debt></p>
-    <h3>Myjnia</h3><p data-weekend-wash></p><h3>Odsprzedaż rozszerzeń</h3><div data-weekend-sites></div>
+    <h3>Myjnia</h3><p data-weekend-wash></p><button data-wash-focus class="station-wide" hidden>◎ Myjnia</button><h3>Odsprzedaż rozszerzeń</h3><div data-weekend-sites></div>
   </section>`,
   );
   get('.station-inventory').insertAdjacentHTML(
@@ -97,6 +97,7 @@ export function campaignControls(
     if ('discount' in d) action('discount');
     if ('rescue' in d) action('rescue');
     if ('lights' in d) action('lights');
+    if ('washFocus' in d) action('wash-focus');
     if (d.sell) action('sell', d.sell);
   }
   root.addEventListener('click', click);
@@ -146,6 +147,7 @@ export function campaignControls(
         : 'Przychód wymagany do inwestycji: 1 500 ◈';
       get<HTMLButtonElement>('[data-project="wash"]').disabled =
         !v.washUnlocked;
+      get('[data-wash-focus]').hidden = !v.sites.some((p) => p.kind === 'wash');
       const rows = JSON.stringify(v.sites);
       if (rows !== sites) {
         sites = rows;

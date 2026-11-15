@@ -353,7 +353,10 @@ export function createStationRuntime(
           fuel: 'e95',
         };
         if (payload === 'heavy-pump') this.project.fuel = 'on';
-        this.focus(116 * 16, 115 * 16);
+        this.focus(
+          (payload === 'wash' ? 84 : 116) * 16,
+          (payload === 'wash' ? 118 : 115) * 16,
+        );
       } else if (action === 'project-rotate' && this.project)
         this.project.rotation = (this.project.rotation + 1) % 4;
       else if (
@@ -425,6 +428,9 @@ export function createStationRuntime(
         this.selection = payload;
         const body = bodies(s).find((m) => m.id === payload);
         if (body) this.focus((body.x / UNIT) * 16, (body.y / UNIT) * 16);
+      } else if (action === 'wash-focus') {
+        const p = s.development?.sites.find((p) => p.kind === 'wash');
+        if (p) this.focus(p.point.x * 16, p.point.y * 16);
       } else if (action === 'delivery-focus') {
         const m = s.delivery?.motion;
         this.focus(
