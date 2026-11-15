@@ -1,0 +1,17 @@
+{
+  "version": "0.15.0",
+  "run": 32,
+  "url": "https://github.com/ankelmarek/PixelForge/actions/runs/43714179789",
+  "commit": "08780f07615f82adb64aa26425af0590ad9a222c",
+  "conclusion": "success",
+  "jobs": ["verify", "e2e (station)", "e2e (core)"],
+  "station": {
+    "passed": 14,
+    "skipped": 4
+  },
+  "core": {
+    "passed": 47,
+    "skipped": 7
+  },
+  "nextRelease": "0.15.1: isolated setup validation fix, six focused E2E and 15 ZIP scenarios passed locally; complete CI linked in PR #21."
+}

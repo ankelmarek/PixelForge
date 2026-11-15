@@ -1,0 +1,33 @@
+{
+  "chromium": "158.0.8127.18",
+  "release": "0.7.1 is a temporary fixture with unchanged 0.7.0 payload, not a game release",
+  "results": [
+    {
+      "device": "desktop",
+      "tlsVerified": true,
+      "setup": true,
+      "installAndRollback": true,
+      "privateHttp403": true,
+      "wormSaveResumed": true,
+      "errors": []
+    },
+    {
+      "device": "mobile",
+      "tlsVerified": true,
+      "setup": true,
+      "installAndRollback": true,
+      "privateHttp403": true,
+      "wormSaveResumed": true,
+      "errors": []
+    },
+    {
+      "device": "no-js",
+      "tlsVerified": true,
+      "setup": true,
+      "installAndRollback": true,
+      "privateHttp403": true,
+      "wormSaveResumed": false,
+      "errors": []
+    }
+  ]
+}
