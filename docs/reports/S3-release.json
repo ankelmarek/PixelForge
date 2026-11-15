@@ -1,0 +1,55 @@
+{
+  "version": "0.14.1",
+  "clientVersion": "0.3.0",
+  "updaterVersion": "1.2.0",
+  "unchangedArchives": {
+    "pixelforge-0.10.0-full.zip": "e0a88b378c708b4784c8781fd08bb9ba8b0db7cb79ebed851991313b2098ec3c",
+    "pixelforge-0.11.0-full.zip": "96068bfad85b48e7c0f6b16495e5aa01e3ea1ea4e344257125c6c0ffe44c3ad6",
+    "pixelforge-0.12.0-full.zip": "838e1f9dad346ea20ca256de055f05457ddd507845599affc664ac083ab8ce69",
+    "pixelforge-0.13.0-full.zip": "c73ca8fe817436b4520fe8a49f4dc103fc440916fe4c83994fdbfc71853eeecd",
+    "pixelforge-0.13.1-full.zip": "3ced3ab8052c8acb9ffd4a115b1f1762b2543ba586fde2c038b38d4ead76ffd9",
+    "pixelforge-0.6.0-full.zip": "ff6acbe185b06fe57d4d7cd322ca27cc534b451f87b6d6295906039813c093d4",
+    "pixelforge-0.6.1-full.zip": "e9b06ca8950de804d56056ea28a10d6dafd2eaf2e5f185430490d8f8f3554797",
+    "pixelforge-0.7.0-full.zip": "0d5a302ae4cf7bd11c0529c655a876825b76bf2f02dcedda6a7c97e1d392f492",
+    "pixelforge-0.8.0-full.zip": "066d23235ea5f2fd0cc53d919479917752c8419f396ac04885d8a3491413a6e4",
+    "pixelforge-0.9.0-full.zip": "f801a9c81d9ee4e1abee4619805a81632bdd7506b02b8c8fc9c7de629170c3a2",
+    "pixelforge-0.9.1-full.zip": "40959c8092cd0672c7e30f9fb7447d2cc864355a059b7a9f2d0245a9d026aa37",
+    "pixelforge-0.9.2-full.zip": "a69a7e21010960bf725ad8cef2a5c24c55c7e3a2822b62ea23beeffa6d30920f",
+    "pixelforge-0.9.3-full.zip": "4ea558a566556e6dee83546ed63ceda8d32676e8daf9119882bfc3247a41349d",
+    "pixelforge-p1-0.5.0-static.zip": "5a7b16601c80643427f2db0ee476a557525f1b0ae6b1a4eef76268dc75c76696",
+    "pixelforge-p1-0.5.1-static.zip": "7a4408cc38fa1b90f778eef82484a770c8085a07e620c194614cb70523feb1e3",
+    "pixelforge-public-html-0.10.0-installer-1.2.0.zip": "4adcd52a2ab0a9ceb29875d9b9486209e207d6ee9c8ad4db2124fe98c69404ad",
+    "pixelforge-public-html-0.11.0-installer-1.2.0.zip": "9212054414ce8dd762a138764c34441407b0ec42823fefeb024a06e19354fc10",
+    "pixelforge-public-html-0.12.0-installer-1.2.0.zip": "e61487a3222ca2fd01dcb23fef529b0f7b448972c222dc21677b3b44bb158b68",
+    "pixelforge-public-html-0.13.0-installer-1.2.0.zip": "e8bbbca6c40b50d3e6b22cbba79a2706b75bb7ab088b8de0cc5af7f89b01deaa",
+    "pixelforge-public-html-0.13.1-installer-1.2.0.zip": "3111c962f6312497767376182acb574a5ba231a3c466d081047bb4cb133fea9b",
+    "pixelforge-public-html-0.7.0-installer-1.2.0.zip": "02873c61424dbb57054dd52737b37b46953c857ecf2bf4448fa3d5a9e2a3e152",
+    "pixelforge-public-html-0.8.0-installer-1.2.0.zip": "388a2272cc9dbacbdfe78d2dd8cf2b38f11cde80c63d858e99f8d0b88445a0de",
+    "pixelforge-public-html-0.9.0-installer-1.2.0.zip": "e449bec2439705dd7c31ca8c42de2cd4a2fe9fb5794e52c1bcc7c15f01a77b0b",
+    "pixelforge-public-html-0.9.1-installer-1.2.0.zip": "ddb289acde6b6a7278a7d43f958c6753f25048dd61b396377b3c21fc3dbd0e61",
+    "pixelforge-public-html-0.9.2-installer-1.2.0.zip": "17410c6663e8e085a97c2ee16933b4fdc46f4e6448e6a32a47090409083bf95e",
+    "pixelforge-public-html-0.9.3-installer-1.2.0.zip": "e614a0001fd1b78d445e07c69506c21a46f0343971c5a35fca394825a3a01be3",
+    "pixelforge-updater-u1-1.0.0.zip": "b2359d83576a1ec5ded63b0300cc4eaaf85f30bb4e5e5bc440cfc07c3040d60d",
+    "pixelforge-updater-u2-1.1.0.zip": "7305e7de90abb02134c652c28e533816a615d60cacc023db3498db126c0d0e3b",
+    "pixelforge-updater-u2-1.2.0.zip": "70cfcd1e44de05c7ebd40da0051e799e2a27bd08b956c446004a2d647a184cb1",
+    "pixelforge-0.14.0-full.zip": "a57e0bfa1346f53f1e3fe7581c5c3a90f7e8d435267d7a140ad7c6e54cf6331a",
+    "pixelforge-public-html-0.14.0-installer-1.2.0.zip": "14b0eedd5ab43a084cde1b91c2b04a4c3d2d008db3266527afe83466a221ea7b"
+  },
+  "archives": [
+    {
+      "name": "pixelforge-0.14.1-full.zip",
+      "bytes": 13281628,
+      "sha256": "5e96abe1c542cc5f737ebab5793ef944a35fd676324094c0e321319ff41e1f12"
+    },
+    {
+      "name": "pixelforge-public-html-0.14.1-installer-1.2.0.zip",
+      "bytes": 13377186,
+      "sha256": "428cd4ce1a05961eaef9f0bb94415bc50b81a307e3c178ef1b8c66f59d45e785"
+    }
+  ],
+  "assets": {
+    "pngBytes": 70248,
+    "decodedRgbaBytes": 5685248
+  },
+  "runtimeChunks": []
+}

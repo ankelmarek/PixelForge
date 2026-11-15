@@ -2,12 +2,20 @@
 
 > **Nowa decyzja, 14.11.2026:** porzucony stary prototyp Winobrania pozostaje historyczny, ale przygotowujemy **[Winobranie RTS: Trzy sezony](docs/WINOBRANIE-RTS.md)** jako nową strategię na dużej mapie. Platformówka **Leśny sygnał** nadal nie jest rozwijana. Aktualne zadania są w [roadmapie 0.3](docs/ROADMAP.md); starszy plan w [archiwum 0.2](docs/ROADMAP-ARCHIVE-0.2.md).
 
-
 **PixelForge** to uniwersalna, przeglądarkowa platforma do tworzenia małych gier 2D w estetyce pixel art. Docelowo każda gra ma oferować około **20–35 minut rozgrywki** i mieć własny początek, rozwinięcie oraz zakończenie.
 
 Projekt powstaje z myślą o wielokrotnym wykorzystaniu gotowego silnika i produkowaniu kolejnych, niezależnych tytułów, zamiast pisania całych gier od zera.
 
-**Kolejna zatwierdzona koncepcja:** [Stacja na Trasie: Wielki Weekend](docs/STACJA-BENZYNOWA.md). Osobna strategia ekonomiczna RTS o prowadzeniu stacji paliw, z ruchem, sklepem, dostawami, myjnią, pracownikami i trzyczęściową kampanią. Etapy S0–S4 opisano w [roadmapie](docs/ROADMAP.md); nie są jeszcze zaimplementowane.
+**Stacja na Trasie — S3:** pełny Wielki Weekend na 30 minut przy ×1.
+Piątek, sobota i niedziela płynnie zmieniają ruch i kończą się wynikiem:
+cel to ≥60 opłaconych wizyt, ≥70% satysfakcji i dodatnia wartość netto.
+Myjnia ma rzeczywisty dojazd, kolejkę, pianę, koszty i płatności. Deszcz,
+autokary, ciężarówki, awarie oraz ceny dostaw zmieniają warunki prowadzenia
+stacji. Można skorzystać z jednorazowej pożyczki i odsprzedać wolne rozszerzenia.
+Pozostają własne drogi, działki, personel, pompy, ceny i dobrowolny najem Skoczki.
+**Wznów** zachowuje zasady wcześniejszych zapisów S1/S2; **Nowa gra** uruchamia
+cały weekend. [Raport S3](docs/S3-REPORT.md), [specyfikacja](docs/STACJA-BENZYNOWA.md)
+i [plan](docs/STACJA-BENZYNOWA-IMPLEMENTATION.md). Warianty i dalsza oprawa to S4.
 
 ## Główna zasada
 
@@ -29,26 +37,181 @@ Projekt powstaje z myślą o wielokrotnym wykorzystaniu gotowego silnika i produ
 3. [Roadmapa](./docs/ROADMAP.md): aktualne etapy, zadania, priorytety i kryteria odbioru.
 4. [Aktualizator ZIP](./docs/UPDATER-SPEC.md): bezpieczne wydania, upload, walidacja i rollback.
 5. [Winobranie RTS](./docs/WINOBRANIE-RTS.md): pełne wymagania i etapy strategii ekonomicznej.
+6. [Plan wdrożenia Winobrania RTS](docs/WINOBRANIE-RTS-IMPLEMENTATION.md): kontrakty W0, brakujące usługi, balans wstępny i macierz testów.
+7. [Plan wdrożenia Stacji na Trasie](docs/STACJA-BENZYNOWA-IMPLEMENTATION.md): inwentaryzacja S0, ruch i kolejki, finanse, najem, zapis, budżety i plan S1.
 
 ## Stan implementacji
 
-Funkcje silnika powstały w historycznych gałęziach M0–M3 i powiązanych PR, które pozostają do przeglądu i integracji. **Gałąź main nie jest jeszcze opublikowaną wersją kodu.** Stare Winobranie i Leśny sygnał zostały porzucone, natomiast nowy projekt **Winobranie RTS** powstanie w osobnym katalogu na współdzielonym silniku; generyczne moduły pozostają do wykorzystania. Nowe mapy muszą być znacznie większe od historycznej próbki 640 × 416 pikseli.
+Funkcje silnika powstały w historycznych gałęziach M0–M3 i powiązanych PR, które pozostają do przeglądu i integracji. **Gałąź main nie jest jeszcze opublikowaną wersją kodu.** Stare Winobranie i Leśny sygnał zostały porzucone, natomiast nowy projekt **Winobranie RTS** działa jako osobny klient w osobnym katalogu na współdzielonym silniku; generyczne moduły pozostają do wykorzystania. Nowe mapy muszą być znacznie większe od historycznej próbki 640 × 416 pikseli.
+
+**Winobranie RTS — W3:** trzyletnia kampania na mapie 8192 × 8192,
+po 10 minut na rocznik przy ×1. Sześć odmian, zmienna pogoda i ochrona upraw
+pozostają częścią rozbudowy. Kupujesz kolejne domki i traktory, zatrudniasz ludzi,
+ulepszasz winiarnie, fermentujesz, butelkujesz i sprzedajesz partie o różnej jakości.
+Kontrakty, koszty utrzymania i ograniczona pożyczka wpływają na decyzje.
+Cel: 300 sprzedanych butelek, średnia jakość ≥65, nieujemna wartość netto
+oraz co najmniej dwa szczepy z plonem w roku trzecim. [Raport W3](docs/W3-REPORT.md).
+
+Panel **„Rozwój i finanse”** zawiera zakupy i kontrakty, a zaznaczony domek —
+produkcję, ulepszenia i sprzedaż. Zwijane **„Co teraz?”** wskazuje bieżące działanie.
+**Nowa gra** rozpoczyna W3; **Wznów** dokańcza zapisy W1/W2 według dawnych reguł.
+Zapis v3 zachowuje starsze klucze na potrzeby rollbacku. Dostępne są ×2/×4 i pauza.
+Odbiór strategii obejmuje komputer; Dżdżownica i Atlas zachowują obsługę telefonu.
+Warianty kampanii, pełny miks audio i badania z nowymi graczami pozostają W4.
+
+## Gotowa paczka na hosting
+
+[Pobierz wszystko do public_html — gry 0.14.1 + instalator i aktualizator 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s3-stacja-weekend/downloads/pixelforge-public-html-0.14.1-installer-1.2.0.zip).
+
+Rozpakuj **zawartość** w `public_html`, razem z ukrytymi `.htaccess`, i otwórz
+`https://twoja-domena.pl/setup.php`. Pobierz z instalatora plik konfiguracji,
+wgraj go do wskazanego podkatalogu i utwórz własne konto. Nie potrzeba SSH,
+Node.js ani bazy danych. Hosting wymaga PHP 8.2+ / ZipArchive, HTTPS oraz
+Apache 2.4 lub zgodnego LiteSpeed z działającą blokadą `.htaccess`.
+Gra działa pod `/PixelForge/`, panel pod `/pixelforge-admin/`, a chroniony
+`_pixelforge/` mieści cały kod narzędzia, konfigurację, staging i kopie.
+[Instrukcja krok po kroku](docs/PUBLIC-HTML-INSTALL.txt), [raport](docs/PUBLIC-HTML-REPORT.md).
+Paczka zachowuje stronę główną domeny i jej `.htaccess`; dodatkowy skrót do gry
+to `/pixelforge.php`. Przy zastępowaniu starej gry wgraj nowy katalog `PixelForge`
+w całości, bez pozostawiania starych assetów. Zachowaj wcześniejszą kopię.
+
+**Do kolejnych aktualizacji gry albo samego hostingu statycznego:**
+[Pobierz PixelForge 0.14.1 — Stacja S3 + Winobranie RTS W3 + Dżdżownica + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s3-stacja-weekend/downloads/pixelforge-0.14.1-full.zip).
+W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.14.1**.
+Po instalacji otwórz stronę gry i wybierz **Otwórz stację**, a następnie **Nowa gra**.
+Panel trzeba wcześniej jednorazowo skonfigurować; jest osobnym narzędziem PHP.
+Możliwe jest również ręczne wgranie na hosting statyczny:
+Rozpakuj i wgraj `index.html`, cały katalog `assets/` oraz `manifest.json` do
+katalogu strony, np. `public_html/pixelforge/`. Otwórz potem
+`https://twoja-domena.pl/pixelforge/`. Na hostingu nie potrzebujesz Node.js,
+Pythona ani PHP. [Pełna instrukcja](downloads/README.md).
+Dżdżownica i Atlas zajmują całe okno przeglądarki, także po obrocie telefonu.
+Wydanie 0.6.1 poprawia migotanie przy maksymalnym oddaleniu i daty plików ZIP
+wpływające na cache przeglądarki. [Raport poprawki](docs/HOTFIX-0.6.1.md).
+
+Generator U0 i instalator U1 są gotowe. Panel WWW **U2** jest gotowy
+na osobnej gałęzi / [PR #9](https://github.com/ankelmarek/PixelForge/pull/9). [Instrukcja](admin-updater/README.md) opisuje
+jednorazową konfigurację oraz upload, podgląd, instalację i rollback w przeglądarce.
+Paczka gry nie wdraża się samodzielnie.
 
 ## Uruchamianie
 
-Po bezpiecznym włączeniu rdzenia Codex musi zachować standardowe polecenia:
+Gałąź `feature/s3-stacja-weekend` zawiera Stację, Winobranie RTS W3,
+Dżdżownicę, Atlas i aktualizator. W katalogu wybierz **Otwórz stację**, następnie
+**Nowa gra** lub **Wznów**. Mapa zajmuje całe okno. Cały silnik i zasoby
+są w jednej paczce, bez dodatkowej instalacji poszczególnych gier.
+PR pozostaje do odbioru i scalenia; `main` może nadal zawierać samą dokumentację.
+
+Wymagane Node.js **24 LTS**, npm 11 oraz Python **3.11+** do testów i paczek U0.
+Pełny zestaw testów obejmuje także PHP **8.2+**, ZipArchive i system Unix/Linux
+(na Windows można użyć WSL). PHP służy aktualizatorowi, nie statycznej grze.
+Po przełączeniu na bieżącą gałąź:
 
 ```bash
-npm install
+git clone --branch feature/s3-stacja-weekend https://github.com/ankelmarek/PixelForge.git
+cd PixelForge
+npm ci
 npm run dev
 npm run build
 npm run lint
+npm run typecheck
 npm run test
 npm run test:e2e
 ```
+
+`npm run dev` podaje lokalny adres Vite. `npm run build` tworzy statyczny `dist/`
+z grą i demonstracją świata, bez testów oraz fixture'ów. Build działa także
+z podkatalogu dzięki `base: './'`. `npm run preview` służy do jego sprawdzenia.
+
+Przed pierwszym E2E: `npx playwright install chromium`, następnie `npm run test:e2e`.
+Playwright uruchamia własny Vite na porcie 4190 i testuje prawdziwy EngineHost
+w laboratorium P1 oraz przez syntetyczny harness rdzenia poza buildem. Testy nie importują
+dawnych gier. PNG testowe odtwarza `python3 tools/generate-test-assets.py`.
+
+[Inwentaryzacja i pochodzenie modułów](docs/CORE-INVENTORY.md),
+[raport P0](docs/P0-REPORT.md), [raport P1](docs/P1-REPORT.md),
+[format dużych światów i pomiary](docs/LARGE-WORLDS.md),
+[plan dużych map i aktualizatora](docs/IMPLEMENTATION-PLAN.md).
+
+Grafikę i sektory Atlasu odtwarza `npm run assets:world` (Python 3 bez bibliotek).
+Pomiary: `npm run preview -- --port 4194`, w drugim terminalu `npm run measure:world`.
+`?diagnostics=1` w adresie włącza lokalne liczniki techniczne. Nie jest to panel
+aktualizatora.
+
+## Paczki wydania U0
+
+```bash
+npm run package:release
+npm run package:validate -- downloads/pixelforge-0.14.1-full.zip
+npm run test:packages
+```
+
+Pierwsze polecenie buduje projekt i dopiero po sukcesie tworzy wersjonowany ZIP,
+manifest oraz plik sumy SHA-256. Drugie sprawdza paczkę bez instalacji i bez
+rozpakowywania. `npm test` obejmuje Vitest oraz testy paczek i aktualizatora
+w Pythonie/PHP (biblioteka standardowa, bez pip). [Format, limity i polecenia](docs/RELEASE-PACKAGES.md),
+[raport U0](docs/U0-REPORT.md).
+
+## Panel U2 i instalator U1
+
+[Osobny ZIP narzędzia PHP 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p3-soil-adventure/downloads/pixelforge-updater-u2-1.2.0.zip)
+rozpakowuje się poza katalogiem publicznym. Nie jest paczką gry do wgrania
+do PixelForge. Aktualizacja gry 0.14.1 zachowuje zapisy Atlasu i starej Dżdżownicy. Nowy pionowy świat ma osobny zapis v3; mapa z widokiem z góry pozostaje dostępna po rollbacku do 0.7.0.
+
+```bash
+npm run test:updater
+npm run test:updater:browser
+npm run test:panel:browser
+npm run test:release:browser
+npm run package:updater
+npm run package:hosting
+npm run test:hosting
+npm run test:hosting:browser
+php admin-updater/cli.php help
+```
+
+Domyślnie testy używają `php` z PATH; `PIXELFORGE_PHP` może wskazać inną
+binarkę/wrapper z PHP 8.2+, ZipArchive i memory_limit co najmniej 256M.
+Test przeglądarkowy używa produkcyjnego ZIP-a i tymczasowej wersji 0.6.2
+wyłącznie jako fixture. Sprawdza instalację, rollback i zachowanie zapisu.
+[Konfiguracja i polecenia](admin-updater/README.md), [raport U1](docs/U1-REPORT.md),
+[raport U2](docs/U2-REPORT.md). Test panelu używa lokalnego HTTPS i własnego
+CA dodawanego na czas testu do NSS; wymaga OpenSSL oraz certutil (libnss3-tools).
+Weryfikacja TLS pozostaje włączona.
+Testy `hosting` wymagają dodatkowo Apache i modułu PHP (`apache2`,
+`libapache2-mod-php` na Debianie/Ubuntu). Sprawdzają prawdziwe `.htaccess`,
+konfigurację przez WWW, odrzucenie braku ochrony/TLS, SIGKILL, instalację
+i rollback. Zmienne dla niestandardowych binarek opisuje [raport](docs/PUBLIC-HTML-REPORT.md).
+`test:release:browser` używa rzeczywistego ZIP-a 0.14.1: instaluje go nad 0.6.1,
+uruchamia Dżdżownicę, Winobranie RTS i Stację, cofa wydanie, instaluje ponownie i wznawia zachowane zapisy.
+`npm run assets:earthworm` odtwarza mapę JSON Dżdżownicy; nie nadpisuje ilustracji.
+U1 używa dwóch rename katalogów z krótkim oknem HTTP 404; po zabiciu procesu
+w tym oknie potrzebne jest `recover`. Nie obiecuje atomowej podmiany.
 
 Aktualizuj ten opis po każdej zmianie publicznego sposobu uruchamiania. Nie oznaczaj projektu jako ukończonego przed przejściem kryteriów odbioru z roadmapy.
 
 ## Zasoby
 
 Grafiki, muzyka i fonty muszą mieć prawa pozwalające na publikację. Domyślnie używaj własnych zasobów lub odpowiednio licencjonowanych materiałów z zapisaną informacją o pochodzeniu.
+
+## Dżdżownica: Pod powierzchnią (0.8.0)
+
+Gra ma teraz pionowy przekrój gleby: rośliny u góry, korzenie i larwy pod ziemią,
+pięć warstw, użyźnianie tuneli oraz deszcz przesiąkający w dół. Cztery przygody
+obejmują gliniany zator, eskortę małej dżdżownicy, zalany skarbiec i głęboką oazę.
+Finał to 300 punktów i dorosłość w gnieździe. [Opis gry](docs/EARTHWORM.md).
+
+Nowa oprawa zawiera większe atlasy: dla aktualizatora zalecane są PHP
+`upload_max_filesize=16M` i `post_max_size=17M` lub większe wartości. Panel pokazuje
+rzeczywisty limit hostingu. Paczka pierwszej instalacji jest rozpakowywana przez
+menedżer plików hostingu, a ZIP `full` wybiera się wewnątrz panelu aktualizacji.
+
+`npm run assets:winery` odtwarza wyłącznie dane mapy Winobrania.
+Pliki ilustracji pozostają niezmienione. W2 dodaje mały atlas urządzeń wodnych
+i efekty generowane z kodu; [pochodzenie zasobów](public/assets/games/winobranie-rts/LICENSE.md).
+
+`npm run assets:station` odtwarza własne atlasy i sektory Stacji (Python 3,
+bez dodatkowych bibliotek). Pochodzenie: [LICENSE.md](public/assets/games/gas-station/LICENSE.md).
+Po `npm run build` i `npm run preview -- --port 4194` pomiar Stacji uruchamia
+`node tools/measure-station.mjs`: 60 s przy ×4 i zoomie 0.5, ruch kamery,
+liczniki sektorów/jednostek/audio, czasy klatek i rozmiar zapisu.

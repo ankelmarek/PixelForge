@@ -1,0 +1,122 @@
+{
+  "singleOffer": [
+    {
+      "seed": 731,
+      "policy": "owned",
+      "result": "success",
+      "served": 28,
+      "lost": 2,
+      "profit": 250.07,
+      "maximumUnits": 20,
+      "maximumBlocked": 57,
+      "tenantTurnover": 0
+    },
+    {
+      "seed": 731,
+      "policy": "fixed",
+      "result": "success",
+      "served": 22,
+      "lost": 4,
+      "profit": 458.45,
+      "maximumUnits": 20,
+      "maximumBlocked": 49,
+      "tenantTurnover": 72
+    },
+    {
+      "seed": 731,
+      "policy": "share",
+      "result": "success",
+      "served": 22,
+      "lost": 4,
+      "profit": 352.07,
+      "maximumUnits": 20,
+      "maximumBlocked": 49,
+      "tenantTurnover": 72
+    },
+    {
+      "seed": 731,
+      "policy": "heavy",
+      "result": "success",
+      "served": 24,
+      "lost": 3,
+      "profit": 477.62,
+      "maximumUnits": 18,
+      "maximumBlocked": 57,
+      "tenantTurnover": 0
+    },
+    {
+      "seed": 9021,
+      "policy": "owned",
+      "result": "success",
+      "served": 33,
+      "lost": 5,
+      "profit": 692.37,
+      "maximumUnits": 21,
+      "maximumBlocked": 59,
+      "tenantTurnover": 0
+    },
+    {
+      "seed": 9021,
+      "policy": "fixed",
+      "result": "success",
+      "served": 27,
+      "lost": 7,
+      "profit": 398.22,
+      "maximumUnits": 19,
+      "maximumBlocked": 66,
+      "tenantTurnover": 0
+    },
+    {
+      "seed": 9021,
+      "policy": "share",
+      "result": "success",
+      "served": 27,
+      "lost": 7,
+      "profit": 398.22,
+      "maximumUnits": 19,
+      "maximumBlocked": 66,
+      "tenantTurnover": 0
+    },
+    {
+      "seed": 9021,
+      "policy": "heavy",
+      "result": "success",
+      "served": 30,
+      "lost": 4,
+      "profit": 658.37,
+      "maximumUnits": 21,
+      "maximumBlocked": 63,
+      "tenantTurnover": 0
+    }
+  ],
+  "retryExpiredOffer": [
+    {
+      "seed": 9021,
+      "policy": "fixed",
+      "result": "success",
+      "served": 29,
+      "lost": 5,
+      "profit": 857.53,
+      "maximumUnits": 23,
+      "maximumBlocked": 79,
+      "tenantTurnover": 50,
+      "tenantPhase": "leased",
+      "activeFrom": 9076,
+      "settlements": 2
+    },
+    {
+      "seed": 9021,
+      "policy": "share",
+      "result": "success",
+      "served": 29,
+      "lost": 5,
+      "profit": 758.01,
+      "maximumUnits": 23,
+      "maximumBlocked": 79,
+      "tenantTurnover": 50,
+      "tenantPhase": "leased",
+      "activeFrom": 9076,
+      "settlements": 2
+    }
+  ]
+}
