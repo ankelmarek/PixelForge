@@ -264,6 +264,8 @@ zakończonych i opłaconych oraz zysk operacyjny >0. Nie zastępuje kampanii S3
 8/12/10 minut ani jej celu ≥60 aut / ≥70% satysfakcji / wartość netto >0.
 Zapis v2 zachowuje v1 i wznawia scenariusz S1 w trybie zgodności.
 Paczki 0.13.0 są zbudowane i sprawdzone w istniejącym aktualizatorze.
+Poprawka 0.13.1 usuwa mijanie się pieszych w pętli wykryte w CI #26;
+regresja tego zapisu oraz scenariusz S2 przeszły lokalnie, pełne CI ponowione.
 [PR #19](https://github.com/ankelmarek/PixelForge/pull/19) pozostaje szkicem
 na czas pełnej regresji CI. Lokalnie lint, typecheck, build, logika, zapis
 S1/S2, desktop i emulacja dotyku, 12 testów hostingu oraz 25 prób dystrybucji

@@ -299,7 +299,8 @@ export class StationModel {
       s.nextArrival += 200;
     }
     this.arriveDelivery();
-    for (const m of bodies(s)) move(m, this.occupancy, this.topology.legal);
+    for (const m of bodies(s))
+      move(m, this.occupancy, this.topology.legal, !!s.development);
     for (const c of [...s.customers]) this.customer(c);
     for (const w of s.workers) this.worker(w);
     this.checkout();

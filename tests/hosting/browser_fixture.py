@@ -21,7 +21,7 @@ with tempfile.TemporaryDirectory(
     if published.exists():
         assert published.read_bytes() == bundle, "Hosting archive differs from source"
         bundle = published.read_bytes()
-    with zipfile.ZipFile(ROOT / "downloads/pixelforge-0.13.0-full.zip") as archive:
+    with zipfile.ZipFile(ROOT / "downloads/pixelforge-0.13.1-full.zip") as archive:
         files = {
             name: archive.read(name)
             for name in archive.namelist()

@@ -190,3 +190,16 @@ na opisanym w JSON procesorze, nie deklaracja wydajności fizycznego telefonu.
 Następny zlecony etap: S3. W4 Winobrania pozostaje poza tym zadaniem.
 S4 wymaga później także trzech nowych graczy; automatyzacja nie zastępuje
 tego badania ani odsłuchu i pomiarów na fizycznym urządzeniu.
+
+## Poprawka 0.13.1 — mijanie się pieszych
+
+CI #26 wykryło zakleszczenie dwóch pracowników: obaj wybierali ten sam
+boczny objazd i wracali naprzeciwko siebie. Zapis z CI jest zachowany jako
+`station-s2-ci-livelock.json`. Piesi S2 mają teraz stałe pierwszeństwo według
+ID oraz wybór dalszego punktu ponownego wejścia na trasę. Budżet poszukiwania
+pozostaje 625 pozycji. Ruch S1 zachowuje poprzednią regułę.
+
+Regresja przypadku, wszystkie 30 testów modelu Stacji oraz pełny scenariusz
+S2 w przeglądarce przeszły lokalnie. Nowy przebieg CI zweryfikuje cały zestaw.
+Paczki 0.13.0 pozostają niezmienione; poprawka otrzymuje osobną wersję 0.13.1.
+Pomiary wydajności powyżej pochodzą z 0.13.0; nie są nowym pomiarem poprawki.

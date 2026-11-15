@@ -1,0 +1,1317 @@
+{
+  "gameVersion": "0.2.0",
+  "rulesRevision": "opening-1",
+  "worldRevision": "orlar-1",
+  "seed": 20261114,
+  "tick": 14400,
+  "serial": 61,
+  "candidate": 71,
+  "nextArrival": 13800,
+  "clock": { "speed": 4, "remainder": 3.846666666675631 },
+  "result": "partial",
+  "journal": {
+    "opening": 1500000,
+    "cash": {
+      "balance": 429208,
+      "income": 316842,
+      "costs": 1387634,
+      "arrears": 0,
+      "ids": [
+        "parcel-west",
+        "parcel-north",
+        "build-site-3",
+        "build-site-4",
+        "build-site-5",
+        "build-site-6",
+        "build-site-7",
+        "wages-199",
+        "hire-worker-3",
+        "order-delivery-9",
+        "transport-delivery-9",
+        "wages-600",
+        "issued-c-1",
+        "wages-1200",
+        "receipt-c-1",
+        "issued-c-8",
+        "wages-1800",
+        "receipt-c-8",
+        "issued-c-10",
+        "wages-2400",
+        "receipt-c-10",
+        "issued-c-11",
+        "wages-3000",
+        "receipt-c-11",
+        "issued-c-12",
+        "receipt-c-12",
+        "wages-3600",
+        "order-delivery-24",
+        "transport-delivery-24",
+        "issued-c-13",
+        "wages-4200",
+        "issued-c-16",
+        "receipt-c-13",
+        "wages-4800",
+        "receipt-c-16",
+        "wages-5400",
+        "issued-c-23",
+        "issued-c-18",
+        "receipt-c-26",
+        "issued-c-20",
+        "receipt-c-23",
+        "wages-6000",
+        "receipt-c-18",
+        "receipt-c-20",
+        "wages-6600",
+        "wages-7200",
+        "issued-c-31",
+        "receipt-c-31",
+        "wages-7800",
+        "issued-c-32",
+        "receipt-c-32",
+        "wages-8400",
+        "issued-c-33",
+        "receipt-c-33",
+        "wages-9000",
+        "issued-c-35",
+        "receipt-c-35",
+        "wages-9600",
+        "issued-c-37",
+        "order-delivery-49",
+        "transport-delivery-49",
+        "receipt-c-37",
+        "wages-10200",
+        "issued-c-39",
+        "lease-lease-36-1-rent",
+        "lease-lease-36-1-share",
+        "wages-10800",
+        "receipt-c-39",
+        "wages-11400",
+        "wages-12000",
+        "wages-12600",
+        "wages-13200",
+        "wages-13800",
+        "lease-lease-36-2-rent",
+        "lease-lease-36-2-share",
+        "wages-14400"
+      ]
+    },
+    "profit": 16521,
+    "revenue": 316842,
+    "entries": [
+      {
+        "id": "parcel-west",
+        "category": "construction",
+        "cash": -220000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 7
+      },
+      {
+        "id": "parcel-north",
+        "category": "construction",
+        "cash": -260000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 12
+      },
+      {
+        "id": "build-site-3",
+        "category": "construction",
+        "cash": -11000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 51
+      },
+      {
+        "id": "build-site-4",
+        "category": "construction",
+        "cash": -17000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 98
+      },
+      {
+        "id": "build-site-5",
+        "category": "construction",
+        "cash": -32000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 142
+      },
+      {
+        "id": "build-site-6",
+        "category": "construction",
+        "cash": -9000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 181
+      },
+      {
+        "id": "build-site-7",
+        "category": "construction",
+        "cash": -240000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 194
+      },
+      {
+        "id": "wages-199",
+        "category": "staff",
+        "cash": -398,
+        "profit": -398,
+        "revenue": 0,
+        "tick": 199
+      },
+      {
+        "id": "hire-worker-3",
+        "category": "recruitment",
+        "cash": -10000,
+        "profit": -10000,
+        "revenue": 0,
+        "tick": 199
+      },
+      {
+        "id": "order-delivery-9",
+        "category": "fuel-purchase",
+        "cash": -172000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 256
+      },
+      {
+        "id": "transport-delivery-9",
+        "category": "transport",
+        "cash": -8000,
+        "profit": -8000,
+        "revenue": 0,
+        "tick": 256
+      },
+      {
+        "id": "wages-600",
+        "category": "staff",
+        "cash": -1136,
+        "profit": -1136,
+        "revenue": 0,
+        "tick": 600
+      },
+      {
+        "id": "issued-c-1",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 3210,
+        "revenue": 12412,
+        "tick": 914
+      },
+      {
+        "id": "wages-1200",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 1200
+      },
+      {
+        "id": "receipt-c-1",
+        "category": "checkout",
+        "cash": 14012,
+        "profit": 700,
+        "revenue": 1600,
+        "tick": 1233
+      },
+      {
+        "id": "issued-c-8",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 3150,
+        "revenue": 12600,
+        "tick": 1473
+      },
+      {
+        "id": "wages-1800",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 1800
+      },
+      {
+        "id": "receipt-c-8",
+        "category": "checkout",
+        "cash": 13300,
+        "profit": 300,
+        "revenue": 700,
+        "tick": 1801
+      },
+      {
+        "id": "issued-c-10",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 5850,
+        "revenue": 22620,
+        "tick": 2163
+      },
+      {
+        "id": "wages-2400",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 2400
+      },
+      {
+        "id": "receipt-c-10",
+        "category": "checkout",
+        "cash": 23420,
+        "profit": 600,
+        "revenue": 800,
+        "tick": 2442
+      },
+      {
+        "id": "issued-c-11",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 4785,
+        "revenue": 19140,
+        "tick": 2812
+      },
+      {
+        "id": "wages-3000",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 3000
+      },
+      {
+        "id": "receipt-c-11",
+        "category": "checkout",
+        "cash": 20740,
+        "profit": 700,
+        "revenue": 1600,
+        "tick": 3173
+      },
+      {
+        "id": "issued-c-12",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 5070,
+        "revenue": 19604,
+        "tick": 3269
+      },
+      {
+        "id": "receipt-c-12",
+        "category": "checkout",
+        "cash": 20304,
+        "profit": 300,
+        "revenue": 700,
+        "tick": 3548
+      },
+      {
+        "id": "wages-3600",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 3600
+      },
+      {
+        "id": "order-delivery-24",
+        "category": "fuel-purchase",
+        "cash": -180000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 4065
+      },
+      {
+        "id": "transport-delivery-24",
+        "category": "transport",
+        "cash": -8000,
+        "profit": -8000,
+        "revenue": 0,
+        "tick": 4065
+      },
+      {
+        "id": "issued-c-13",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 3825,
+        "revenue": 14790,
+        "tick": 4182
+      },
+      {
+        "id": "wages-4200",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 4200
+      },
+      {
+        "id": "issued-c-16",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 5865,
+        "revenue": 22678,
+        "tick": 4417
+      },
+      {
+        "id": "receipt-c-13",
+        "category": "checkout",
+        "cash": 17190,
+        "profit": 1300,
+        "revenue": 2400,
+        "tick": 4583
+      },
+      {
+        "id": "wages-4800",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 4800
+      },
+      {
+        "id": "receipt-c-16",
+        "category": "checkout",
+        "cash": 25078,
+        "profit": 1300,
+        "revenue": 2400,
+        "tick": 4841
+      },
+      {
+        "id": "wages-5400",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 5400
+      },
+      {
+        "id": "issued-c-23",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 8145,
+        "revenue": 31494,
+        "tick": 5446
+      },
+      {
+        "id": "issued-c-18",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 4230,
+        "revenue": 16920,
+        "tick": 5557
+      },
+      {
+        "id": "receipt-c-26",
+        "category": "checkout",
+        "cash": 800,
+        "profit": 600,
+        "revenue": 800,
+        "tick": 5573
+      },
+      {
+        "id": "issued-c-20",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 5880,
+        "revenue": 22736,
+        "tick": 5795
+      },
+      {
+        "id": "receipt-c-23",
+        "category": "checkout",
+        "cash": 32294,
+        "profit": 600,
+        "revenue": 800,
+        "tick": 5950
+      },
+      {
+        "id": "wages-6000",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 6000
+      },
+      {
+        "id": "receipt-c-18",
+        "category": "checkout",
+        "cash": 17620,
+        "profit": 300,
+        "revenue": 700,
+        "tick": 6129
+      },
+      {
+        "id": "receipt-c-20",
+        "category": "checkout",
+        "cash": 22736,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 6267
+      },
+      {
+        "id": "wages-6600",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 6600
+      },
+      {
+        "id": "wages-7200",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 7200
+      },
+      {
+        "id": "issued-c-31",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 5040,
+        "revenue": 19488,
+        "tick": 7517
+      },
+      {
+        "id": "receipt-c-31",
+        "category": "checkout",
+        "cash": 19488,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 7756
+      },
+      {
+        "id": "wages-7800",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 7800
+      },
+      {
+        "id": "issued-c-32",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 3045,
+        "revenue": 11774,
+        "tick": 7928
+      },
+      {
+        "id": "receipt-c-32",
+        "category": "checkout",
+        "cash": 13374,
+        "profit": 700,
+        "revenue": 1600,
+        "tick": 8289
+      },
+      {
+        "id": "wages-8400",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 8400
+      },
+      {
+        "id": "issued-c-33",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 4740,
+        "revenue": 18328,
+        "tick": 8612
+      },
+      {
+        "id": "receipt-c-33",
+        "category": "checkout",
+        "cash": 18328,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 8931
+      },
+      {
+        "id": "wages-9000",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 9000
+      },
+      {
+        "id": "issued-c-35",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 3645,
+        "revenue": 14094,
+        "tick": 9266
+      },
+      {
+        "id": "receipt-c-35",
+        "category": "checkout",
+        "cash": 14094,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 9587
+      },
+      {
+        "id": "wages-9600",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 9600
+      },
+      {
+        "id": "issued-c-37",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 5445,
+        "revenue": 21054,
+        "tick": 9822
+      },
+      {
+        "id": "order-delivery-49",
+        "category": "fuel-purchase",
+        "cash": -172000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 10137
+      },
+      {
+        "id": "transport-delivery-49",
+        "category": "transport",
+        "cash": -8000,
+        "profit": -8000,
+        "revenue": 0,
+        "tick": 10137
+      },
+      {
+        "id": "receipt-c-37",
+        "category": "checkout",
+        "cash": 21054,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 10181
+      },
+      {
+        "id": "wages-10200",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 10200
+      },
+      {
+        "id": "issued-c-39",
+        "category": "fuel-sale",
+        "cash": 0,
+        "profit": 3900,
+        "revenue": 15080,
+        "tick": 10601
+      },
+      {
+        "id": "lease-lease-36-1-rent",
+        "category": "tenant-rent",
+        "cash": 2930,
+        "profit": 2930,
+        "revenue": 2930,
+        "tick": 10800
+      },
+      {
+        "id": "lease-lease-36-1-share",
+        "category": "tenant-share",
+        "cash": 0,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 10800
+      },
+      {
+        "id": "wages-10800",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 10800
+      },
+      {
+        "id": "receipt-c-39",
+        "category": "checkout",
+        "cash": 15080,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 11002
+      },
+      {
+        "id": "wages-11400",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 11400
+      },
+      {
+        "id": "wages-12000",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 12000
+      },
+      {
+        "id": "wages-12600",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 12600
+      },
+      {
+        "id": "wages-13200",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 13200
+      },
+      {
+        "id": "wages-13800",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 13800
+      },
+      {
+        "id": "lease-lease-36-2-rent",
+        "category": "tenant-rent",
+        "cash": 5000,
+        "profit": 5000,
+        "revenue": 5000,
+        "tick": 14400
+      },
+      {
+        "id": "lease-lease-36-2-share",
+        "category": "tenant-share",
+        "cash": 0,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 14400
+      },
+      {
+        "id": "wages-14400",
+        "category": "staff",
+        "cash": -1700,
+        "profit": -1700,
+        "revenue": 0,
+        "tick": 14400
+      }
+    ]
+  },
+  "tanks": {
+    "e95": { "quantity": 4989, "cost": 224505 },
+    "on": { "quantity": 756, "cost": 32508 }
+  },
+  "goods": {
+    "drink": { "quantity": 8, "cost": 3200 },
+    "snack": { "quantity": 9, "cost": 4500 },
+    "coffee": { "quantity": 5, "cost": 1000 }
+  },
+  "totals": {
+    "e95": {
+      "ordered": 4000,
+      "orderedCost": 180000,
+      "refunded": 0,
+      "refundCost": 0,
+      "used": 811,
+      "usedCost": 36495
+    },
+    "on": {
+      "ordered": 8000,
+      "orderedCost": 344000,
+      "refunded": 0,
+      "refundCost": 0,
+      "used": 4244,
+      "usedCost": 182492
+    },
+    "drink": {
+      "ordered": 0,
+      "orderedCost": 0,
+      "refunded": 0,
+      "refundCost": 0,
+      "used": 8,
+      "usedCost": 3200
+    },
+    "snack": {
+      "ordered": 0,
+      "orderedCost": 0,
+      "refunded": 0,
+      "refundCost": 0,
+      "used": 5,
+      "usedCost": 2500
+    },
+    "coffee": {
+      "ordered": 0,
+      "orderedCost": 0,
+      "refunded": 0,
+      "refundCost": 0,
+      "used": 5,
+      "usedCost": 1000
+    }
+  },
+  "pumps": [
+    {
+      "id": "pump-0",
+      "built": true,
+      "open": true,
+      "construction": 0,
+      "customer": "c-42"
+    },
+    {
+      "id": "pump-1",
+      "built": true,
+      "open": true,
+      "construction": 0,
+      "customer": "c-45"
+    },
+    {
+      "id": "pump-2",
+      "built": false,
+      "open": false,
+      "construction": 0,
+      "customer": null
+    },
+    {
+      "id": "pump-3",
+      "built": true,
+      "open": true,
+      "construction": 0,
+      "customer": null
+    }
+  ],
+  "customers": [
+    {
+      "id": "c-42",
+      "serial": 43,
+      "vehicle": {
+        "id": "c-42",
+        "kind": "van",
+        "x": 29696,
+        "y": 31744,
+        "heading": 3,
+        "nextHeading": 3,
+        "turn": 0,
+        "route": [],
+        "remainder": 0,
+        "blocked": 0
+      },
+      "driver": null,
+      "phase": "preparing",
+      "pedestrian": "car",
+      "fuel": "on",
+      "requested": 207,
+      "reserved": 207,
+      "issued": 0,
+      "fuelCost": 0,
+      "fuelBill": 0,
+      "price": 580,
+      "basket": { "drink": 1, "snack": 0, "coffee": 1 },
+      "budget": 42167,
+      "pump": 0,
+      "parking": null,
+      "patience": 1661,
+      "admitted": 9059,
+      "wait": 5340,
+      "paid": false,
+      "checked": false,
+      "paidTotal": 0,
+      "bought": 0,
+      "abandoned": false,
+      "color": 0,
+      "shopping": "tenant",
+      "tenantVisit": false,
+      "tenantBill": 0,
+      "goodsPrices": { "drink": 700, "snack": 900, "coffee": 800 }
+    },
+    {
+      "id": "c-45",
+      "serial": 46,
+      "vehicle": {
+        "id": "c-45",
+        "kind": "car",
+        "x": 32768,
+        "y": 31744,
+        "heading": 3,
+        "nextHeading": 3,
+        "turn": 0,
+        "route": [],
+        "remainder": 0,
+        "blocked": 0
+      },
+      "driver": null,
+      "phase": "preparing",
+      "pedestrian": "car",
+      "fuel": "e95",
+      "requested": 265,
+      "reserved": 265,
+      "issued": 0,
+      "fuelCost": 0,
+      "fuelBill": 0,
+      "price": 600,
+      "basket": { "drink": 1, "snack": 0, "coffee": 1 },
+      "budget": 42502,
+      "pump": 1,
+      "parking": null,
+      "patience": 2212,
+      "admitted": 9659,
+      "wait": 4740,
+      "paid": false,
+      "checked": false,
+      "paidTotal": 0,
+      "bought": 0,
+      "abandoned": false,
+      "color": 1,
+      "shopping": "tenant",
+      "tenantVisit": false,
+      "tenantBill": 0,
+      "goodsPrices": { "drink": 700, "snack": 900, "coffee": 800 }
+    },
+    {
+      "id": "c-52",
+      "serial": 53,
+      "vehicle": {
+        "id": "c-52",
+        "kind": "van",
+        "x": 49561,
+        "y": 40448,
+        "heading": 0,
+        "nextHeading": 0,
+        "turn": 0,
+        "route": [{ "x": 252, "y": 158 }],
+        "remainder": 12,
+        "blocked": 0
+      },
+      "driver": null,
+      "phase": "leaving",
+      "pedestrian": "car",
+      "fuel": "on",
+      "requested": 386,
+      "reserved": 0,
+      "issued": 0,
+      "fuelCost": 0,
+      "fuelBill": 0,
+      "price": 580,
+      "basket": { "drink": 0, "snack": 0, "coffee": 0 },
+      "budget": 36368,
+      "pump": null,
+      "parking": null,
+      "patience": 2314,
+      "admitted": -1,
+      "wait": 2315,
+      "paid": false,
+      "checked": false,
+      "paidTotal": 0,
+      "bought": 0,
+      "abandoned": true,
+      "color": 3,
+      "shopping": "tenant",
+      "tenantVisit": false,
+      "tenantBill": 0,
+      "goodsPrices": { "drink": 700, "snack": 900, "coffee": 800 }
+    },
+    {
+      "id": "c-58",
+      "serial": 59,
+      "vehicle": {
+        "id": "c-58",
+        "kind": "car",
+        "x": 27136,
+        "y": 34304,
+        "heading": 3,
+        "nextHeading": 3,
+        "turn": 0,
+        "route": [],
+        "remainder": 0,
+        "blocked": 0
+      },
+      "driver": null,
+      "phase": "queue",
+      "pedestrian": "car",
+      "fuel": "e95",
+      "requested": 214,
+      "reserved": 0,
+      "issued": 0,
+      "fuelCost": 0,
+      "fuelBill": 0,
+      "price": 600,
+      "basket": { "drink": 1, "snack": 1, "coffee": 1 },
+      "budget": 42514,
+      "pump": null,
+      "parking": null,
+      "patience": 1768,
+      "admitted": 13459,
+      "wait": 940,
+      "paid": false,
+      "checked": false,
+      "paidTotal": 0,
+      "bought": 0,
+      "abandoned": false,
+      "color": 2,
+      "shopping": "tenant",
+      "tenantVisit": false,
+      "tenantBill": 0,
+      "goodsPrices": { "drink": 700, "snack": 900, "coffee": 800 }
+    },
+    {
+      "id": "c-59",
+      "serial": 60,
+      "vehicle": {
+        "id": "c-59",
+        "kind": "van",
+        "x": 27136,
+        "y": 35840,
+        "heading": 3,
+        "nextHeading": 3,
+        "turn": 0,
+        "route": [],
+        "remainder": 0,
+        "blocked": 0
+      },
+      "driver": null,
+      "phase": "queue",
+      "pedestrian": "car",
+      "fuel": "on",
+      "requested": 228,
+      "reserved": 0,
+      "issued": 0,
+      "fuelCost": 0,
+      "fuelBill": 0,
+      "price": 580,
+      "basket": { "drink": 0, "snack": 1, "coffee": 0 },
+      "budget": 42765,
+      "pump": null,
+      "parking": null,
+      "patience": 2349,
+      "admitted": 13659,
+      "wait": 740,
+      "paid": false,
+      "checked": false,
+      "paidTotal": 0,
+      "bought": 0,
+      "abandoned": false,
+      "color": 2,
+      "shopping": "tenant",
+      "tenantVisit": false,
+      "tenantBill": 0,
+      "goodsPrices": { "drink": 700, "snack": 900, "coffee": 800 }
+    },
+    {
+      "id": "c-60",
+      "serial": 61,
+      "vehicle": {
+        "id": "c-60",
+        "kind": "car",
+        "x": 41984,
+        "y": 40448,
+        "heading": 0,
+        "nextHeading": 0,
+        "turn": 0,
+        "route": [{ "x": 252, "y": 158 }],
+        "remainder": 0,
+        "blocked": 0
+      },
+      "driver": null,
+      "phase": "bypass",
+      "pedestrian": "car",
+      "fuel": "on",
+      "requested": 323,
+      "reserved": 0,
+      "issued": 0,
+      "fuelCost": 0,
+      "fuelBill": 0,
+      "price": 580,
+      "basket": { "drink": 1, "snack": 1, "coffee": 1 },
+      "budget": 56603,
+      "pump": null,
+      "parking": null,
+      "patience": 1760,
+      "admitted": -1,
+      "wait": 0,
+      "paid": false,
+      "checked": false,
+      "paidTotal": 0,
+      "bought": 0,
+      "abandoned": false,
+      "color": 1,
+      "shopping": "none",
+      "tenantVisit": false,
+      "tenantBill": 0,
+      "goodsPrices": { "drink": 700, "snack": 900, "coffee": 800 }
+    }
+  ],
+  "workers": [
+    {
+      "motion": {
+        "id": "worker-1",
+        "kind": "person",
+        "x": 27802,
+        "y": 29542,
+        "heading": 0,
+        "nextHeading": 0,
+        "turn": 0,
+        "route": [
+          { "x": 109, "y": 115.3984375 },
+          { "x": 109, "y": 116 },
+          { "x": 110, "y": 116 },
+          { "x": 110, "y": 115 },
+          { "x": 110, "y": 114 },
+          { "x": 110, "y": 113 },
+          { "x": 111, "y": 113 },
+          { "x": 111, "y": 112 },
+          { "x": 111, "y": 111 },
+          { "x": 111, "y": 110 },
+          { "x": 111, "y": 109 },
+          { "x": 110, "y": 109 },
+          { "x": 110, "y": 108 },
+          { "x": 109, "y": 108 }
+        ],
+        "remainder": 0,
+        "blocked": 0
+      },
+      "role": "forecourt",
+      "job": null,
+      "cargo": {
+        "drink": { "quantity": 0, "cost": 0 },
+        "snack": { "quantity": 0, "cost": 0 },
+        "coffee": { "quantity": 0, "cost": 0 }
+      }
+    },
+    {
+      "motion": {
+        "id": "worker-2",
+        "kind": "person",
+        "x": 32256,
+        "y": 28672,
+        "heading": 0,
+        "nextHeading": 0,
+        "turn": 0,
+        "route": [],
+        "remainder": 0,
+        "blocked": 0
+      },
+      "role": "checkout",
+      "job": null,
+      "cargo": {
+        "drink": { "quantity": 0, "cost": 0 },
+        "snack": { "quantity": 0, "cost": 0 },
+        "coffee": { "quantity": 0, "cost": 0 }
+      }
+    },
+    {
+      "motion": {
+        "id": "worker-3",
+        "kind": "person",
+        "x": 27802,
+        "y": 29338,
+        "heading": 0,
+        "nextHeading": 0,
+        "turn": 0,
+        "route": [
+          { "x": 109, "y": 114.6015625 },
+          { "x": 109, "y": 114 },
+          { "x": 110, "y": 114 },
+          { "x": 110, "y": 115 },
+          { "x": 110, "y": 116 },
+          { "x": 110, "y": 117 },
+          { "x": 111, "y": 117 },
+          { "x": 112, "y": 117 },
+          { "x": 112, "y": 118 },
+          { "x": 112, "y": 119 },
+          { "x": 112, "y": 120 },
+          { "x": 112, "y": 121 },
+          { "x": 112, "y": 122 },
+          { "x": 113, "y": 122 }
+        ],
+        "remainder": 0,
+        "blocked": 0
+      },
+      "role": "forecourt",
+      "job": { "kind": "prepare", "id": "c-42", "progress": 0 },
+      "cargo": {
+        "drink": { "quantity": 0, "cost": 0 },
+        "snack": { "quantity": 0, "cost": 0 },
+        "coffee": { "quantity": 0, "cost": 0 }
+      }
+    }
+  ],
+  "delivery": {
+    "id": "delivery-49",
+    "phase": "unloading",
+    "due": 10737,
+    "motion": {
+      "id": "delivery-49",
+      "kind": "truck",
+      "x": 36864,
+      "y": 28160,
+      "heading": 1,
+      "nextHeading": 1,
+      "turn": 0,
+      "route": [],
+      "remainder": 8,
+      "blocked": 0
+    },
+    "fuel": "on",
+    "cargo": { "quantity": 4000, "cost": 172000 },
+    "goods": {
+      "drink": { "quantity": 0, "cost": 0 },
+      "snack": { "quantity": 0, "cost": 0 },
+      "coffee": { "quantity": 0, "cost": 0 }
+    },
+    "total": 4000,
+    "received": 0,
+    "receiptCost": 0,
+    "cancelled": false
+  },
+  "fuelQueue": [
+    { "id": "c-58", "tick": 13459, "serial": 59 },
+    { "id": "c-59", "tick": 13659, "serial": 60 }
+  ],
+  "checkoutQueue": [],
+  "checkout": null,
+  "served": 17,
+  "lost": 7,
+  "passed": 47,
+  "satisfaction": 126417,
+  "visits": 24,
+  "fuelSold": 5055,
+  "articles": 18,
+  "deliveries": 2,
+  "wagesUntil": 14400,
+  "topology": 7,
+  "camera": { "x": 1856, "y": 1840, "zoom": 0.5 },
+  "development": {
+    "revision": "development-1",
+    "duration": 14400,
+    "boundaries": [7200, 10800, 14400],
+    "parcels": ["start", "west", "north"],
+    "sites": [
+      {
+        "id": "site-7",
+        "kind": "heavy-pump",
+        "point": { "x": 84, "y": 118 },
+        "rotation": 0,
+        "fuel": "on",
+        "cost": 240000,
+        "progress": 0
+      }
+    ],
+    "roads": [
+      {
+        "id": "road-3",
+        "from": { "x": 106, "y": 134 },
+        "to": { "x": 84, "y": 134 },
+        "cost": 11000
+      },
+      {
+        "id": "road-4",
+        "from": { "x": 84, "y": 134 },
+        "to": { "x": 84, "y": 100 },
+        "cost": 17000
+      },
+      {
+        "id": "road-5",
+        "from": { "x": 84, "y": 100 },
+        "to": { "x": 148, "y": 100 },
+        "cost": 32000
+      },
+      {
+        "id": "road-6",
+        "from": { "x": 148, "y": 100 },
+        "to": { "x": 148, "y": 118 },
+        "cost": 9000
+      }
+    ],
+    "prices": {
+      "e95": 600,
+      "on": 580,
+      "drink": 700,
+      "snack": 900,
+      "coffee": 800
+    },
+    "priority": "deliveries",
+    "secondCheckout": false,
+    "checkout": null,
+    "wages": 0,
+    "wageRemainder": 200,
+    "wageTotal": 40634,
+    "goodsRevenue": 14100,
+    "fuelRevenue": 294812,
+    "constructionSpent": 789000,
+    "tenant": {
+      "phase": "leased",
+      "since": 8690,
+      "contract": {
+        "id": "lease-36",
+        "type": "share",
+        "signed": 7220,
+        "active": 8690,
+        "end": -1,
+        "terminate": false,
+        "rent": 5000,
+        "share": 800
+      },
+      "everSigned": true,
+      "queue": [],
+      "checkout": null,
+      "staff": [
+        {
+          "id": "tenant-cashier",
+          "kind": "person",
+          "x": 29440,
+          "y": 28160,
+          "heading": 0,
+          "nextHeading": 0,
+          "turn": 0,
+          "route": [],
+          "remainder": 0,
+          "blocked": 0
+        },
+        {
+          "id": "tenant-stocker",
+          "kind": "person",
+          "x": 33536,
+          "y": 28160,
+          "heading": 3,
+          "nextHeading": 0,
+          "turn": 0,
+          "route": [],
+          "remainder": 0,
+          "blocked": 0
+        }
+      ],
+      "stock": { "drink": 20, "snack": 20, "coffee": 20 },
+      "supplied": { "drink": 20, "snack": 20, "coffee": 20 },
+      "sales": [],
+      "settlements": [
+        {
+          "id": "lease-lease-36-1",
+          "shift": 1,
+          "ticks": 2110,
+          "turnover": 0,
+          "rent": 2930,
+          "share": 0
+        },
+        {
+          "id": "lease-lease-36-2",
+          "shift": 2,
+          "ticks": 3600,
+          "turnover": 0,
+          "rent": 5000,
+          "share": 0
+        }
+      ],
+      "delivery": null,
+      "deliveries": 1
+    }
+  }
+}

@@ -68,6 +68,7 @@ export function move(
   m: Motion,
   occupancy: OccupancyReservations,
   allowed = legal,
+  coordinated = false,
 ) {
   if (m.turn) {
     m.turn--;
@@ -116,8 +117,16 @@ export function move(
     !occupancy.tryMove(m.id, swept, destination)
   ) {
     m.blocked++;
-    if (m.kind === 'person' && m.blocked % 20 === 0)
-      detour(m, occupancy, allowed);
+    if (m.kind === 'person') {
+      const blocker = destination
+        .map((p) => occupancy.ownerAt(p))
+        .filter((id): id is string => !!id && id !== m.id)
+        .sort()[0];
+      // Stable right of way breaks the symmetric 'both step aside' livelock.
+      // The priority walker still detours after 3 s around a stationary actor.
+      const delay = coordinated && blocker && m.id < blocker ? 60 : 20;
+      if (m.blocked % delay === 0) detour(m, occupancy, allowed, coordinated);
+    }
     return;
   }
   m.x = x;
@@ -132,6 +141,7 @@ function detour(
   m: Motion,
   occupancy: OccupancyReservations,
   allowed: typeof legal,
+  coordinated: boolean,
 ) {
   const current = point(m),
     origin = { x: Math.round(current.x), y: Math.round(current.y) };
@@ -192,12 +202,13 @@ function detour(
   const targets = expanded.slice(0, 20);
   const queue = starts;
   const visited = new Set<string>(starts.map((s) => `${s.p.x},${s.p.y}`));
+  let best: { route: Cell[]; index: number } | null = null;
   for (let i = 0; i < queue.length && i < 625; i++) {
     const { p, route } = queue[i];
     const index = targets.findIndex((t) => t.x === p.x && t.y === p.y);
-    if (index >= 0 && route.length > 1) {
-      m.route = [...route, ...expanded.slice(index + 1)];
-      return;
+    if (index >= 0 && route.length > 1 && (!best || index > best.index)) {
+      best = { route, index };
+      if (!coordinated || index === targets.length - 1) break;
     }
     for (const [dx, dy] of [
       [0, -1],
@@ -219,4 +230,7 @@ function detour(
         queue.push({ p: next, route: [...route, next] });
     }
   }
+  // Rejoin beyond the obstruction. The nearest waypoint can send two people
+  // around the same corner forever, resetting their blocked counters each lap.
+  if (best) m.route = [...best.route, ...expanded.slice(best.index + 1)];
 }
