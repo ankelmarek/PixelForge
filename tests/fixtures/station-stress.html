@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <base href="/" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PixelForge · próba 32 jednostek</title>
+    <style>
+      body {
+        margin: 0;
+        background: #203b40;
+        color: white;
+        font: 14px system-ui;
+      }
+      #stage {
+        width: 100vw;
+        height: 100vh;
+      }
+      canvas {
+        image-rendering: pixelated;
+      }
+      nav {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        z-index: 10;
+      }
+      button {
+        min-width: 44px;
+        min-height: 44px;
+      }
+      #error {
+        position: absolute;
+        top: 4px;
+        left: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage"></div>
+    <nav>
+      <button id="start" disabled>Start</button><button id="jump">⌖</button>
+    </nav>
+    <p id="error"></p>
+    <output id="telemetry" hidden></output>
+    <script type="module" src="/tests/fixtures/station-stress.ts"></script>
+  </body>
+</html>

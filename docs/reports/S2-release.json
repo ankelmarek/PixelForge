@@ -1,0 +1,36 @@
+{
+  "archives": [
+    {
+      "file": "pixelforge-0.13.0-full.zip",
+      "bytes": 13266008,
+      "sha256": "c73ca8fe817436b4520fe8a49f4dc103fc440916fe4c83994fdbfc71853eeecd"
+    },
+    {
+      "file": "pixelforge-public-html-0.13.0-installer-1.2.0.zip",
+      "bytes": 13361439,
+      "sha256": "e8bbbca6c40b50d3e6b22cbba79a2706b75bb7ab088b8de0cc5af7f89b01deaa"
+    },
+    {
+      "file": "pixelforge-0.12.0-full.zip",
+      "bytes": 13235274,
+      "sha256": "838e1f9dad346ea20ca256de055f05457ddd507845599affc664ac083ab8ce69"
+    },
+    {
+      "file": "pixelforge-public-html-0.12.0-installer-1.2.0.zip",
+      "bytes": 13330491,
+      "sha256": "e61487a3222ca2fd01dcb23fef529b0f7b448972c222dc21677b3b44bb158b68"
+    },
+    {
+      "file": "pixelforge-updater-u2-1.2.0.zip",
+      "bytes": 51183,
+      "sha256": "70cfcd1e44de05c7ebd40da0051e799e2a27bd08b956c446004a2d647a184cb1"
+    }
+  ],
+  "stationClientChunks": [
+    {
+      "file": "runtime-CDLxU06i.js",
+      "bytes": 76069,
+      "gzipBytes": 25945
+    }
+  ]
+}
