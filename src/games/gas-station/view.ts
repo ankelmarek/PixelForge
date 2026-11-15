@@ -7,6 +7,7 @@ import { extraPump, PARCELS, ENTRY, EXIT } from './development';
 import { roadBounds, siteBounds, island, type BuildRequest } from './placement';
 import { activeEvent, pumpWorking } from './campaign-data';
 import { inside } from '../../engine/api/strategy';
+import { StationLighting, LAMPS } from './lighting';
 
 /** Presentation only: hiding a sprite never stops its simulation. */
 export class StationView {
@@ -19,6 +20,8 @@ export class StationView {
   private lastTick = -1;
   private siteImages = new Map<string, Phaser.GameObjects.Image>();
   private pumps: Phaser.GameObjects.Image[] = [];
+  private canopies: Phaser.GameObjects.Image[] = [];
+  private lighting: StationLighting;
   private objects: Phaser.GameObjects.GameObject[] = [];
   private effects: Phaser.GameObjects.Graphics;
   private doors: Phaser.GameObjects.Rectangle[] = [];
@@ -34,6 +37,7 @@ export class StationView {
     private scene: Phaser.Scene,
     private model: StationModel,
   ) {
+    this.lighting = new StationLighting(scene, model);
     const g = scene.add.graphics().setDepth(2);
     this.grounds = scene.add.graphics().setDepth(3);
     this.developments = scene.add.graphics().setDepth(16);
@@ -141,6 +145,12 @@ export class StationView {
     );
     this.objects.push(...this.doors);
     for (const [i, p] of PUMPS.entries()) {
+      const canopy = scene.add
+        .image((p.x - 2) * TILE, (p.y - 1) * TILE, 'canopy')
+        .setOrigin(0.5, 1)
+        .setDepth(15);
+      this.canopies.push(canopy);
+      this.objects.push(canopy);
       const img = scene.add
         .image((p.x - 3) * TILE, p.y * TILE, 'pump', 0)
         .setOrigin(0.45, 0.8)
@@ -207,6 +217,13 @@ export class StationView {
       }
     this.effects = scene.add.graphics().setDepth(80);
     this.objects.push(this.effects);
+    for (const p of LAMPS)
+      this.objects.push(
+        scene.add
+          .image(p.x * TILE, p.y * TILE, 'lamp')
+          .setOrigin(0.5, 0.9)
+          .setDepth(32),
+      );
   }
   draw(selection: string, build: boolean, project: BuildRequest | null = null) {
     const { scene, model } = this,
@@ -252,6 +269,21 @@ export class StationView {
       }
       const x = (m.x / UNIT) * TILE,
         y = (m.y / UNIT) * TILE;
+      if (customer?.driver) {
+        const side = m.kind === 'truck' ? 29 : 12;
+        g.lineStyle(3, 0x3b676b).lineBetween(
+          x + side,
+          y - 5,
+          x + side + 10,
+          y + 2,
+        );
+        g.lineStyle(2, 0xc2d5bd).lineBetween(
+          x + side,
+          y - 5,
+          x + side + 7,
+          y - 1,
+        );
+      }
       let pos = this.positions.get(m.id);
       if (!pos) {
         pos = { x, y, previousX: x, previousY: y };
@@ -361,6 +393,7 @@ export class StationView {
     for (let i = s.pumps.length; i < this.pumps.length; i++)
       this.pumps[i].setVisible(false);
     s.pumps.forEach((p, i) => {
+      if (i < 3) this.canopies[i].setVisible(p.built);
       const site = model.pumps[i],
         extension = extraPump(s, i);
       if (!this.pumps[i]) {
@@ -458,6 +491,7 @@ export class StationView {
         144 * TILE,
         110 * TILE,
       );
+    this.lighting.draw();
   }
   private drawDevelopment(project: BuildRequest | null) {
     const s = this.model.state,
@@ -673,6 +707,7 @@ export class StationView {
     return m.turn > (m.kind === 'truck' ? 8 : 4) ? m.heading * 2 : mid;
   }
   destroy() {
+    this.lighting.destroy();
     this.objects.forEach((o) => o.destroy());
     this.siteImages.forEach((o) => o.destroy());
     this.sprites.forEach((o) => o.destroy());

@@ -13,7 +13,7 @@ import {
   type SimulationRuntime,
 } from '../simulation/runtime';
 import type { SimulationCommand } from '../simulation/types';
-import type { ClientCommand, ClientRuntime } from '../api/client';
+import type { ClientCommand, ClientRuntime, JsonValue } from '../api/client';
 export class EngineHost {
   private game?: Phaser.Game;
   private abort = new AbortController();
@@ -297,7 +297,7 @@ export class EngineHost {
     });
     this.resize.observe(this.options.parent);
   }
-  start(resume = false) {
+  start(resume = false, options?: JsonValue) {
     if (!this.game || (!this.session && !this.simulation && !this.client))
       return;
     this.audio.unlock();
@@ -305,7 +305,7 @@ export class EngineHost {
     this.audio.music(this.options.definition.music);
     this.input.clear();
     this.paused = false;
-    if (this.client) this.client.start(resume);
+    if (this.client) this.client.start(resume, options);
     else if (this.simulation) this.simulation.start(resume);
     else if (!resume) this.session!.progress.reset();
     else this.session!.progress.state = this.session!.progress.save.read();

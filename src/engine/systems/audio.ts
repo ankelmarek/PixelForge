@@ -11,18 +11,96 @@ export interface ToneCue {
   end?: number;
   type?: OscillatorType;
 }
+export interface NoiseCue {
+  color: 'white' | 'brown';
+  duration: number;
+  volume: number;
+}
 // Own synthesized tones. Music notes and tempo belong to each game definition.
 export class Audio {
   private context?: AudioContext;
   private master?: GainNode;
   private silent = false;
   private timer?: ReturnType<typeof setInterval>;
-  private voices = new Set<OscillatorNode>();
-  private voiceBuses = new Map<OscillatorNode, AudioBus>();
+  private voices = new Set<AudioScheduledSourceNode>();
+  private voiceBuses = new Map<AudioScheduledSourceNode, AudioBus>();
+  private noiseBuffers = new Map<NoiseCue['color'], AudioBuffer>();
   private buses?: Record<AudioBus, GainNode>;
   private mix = { music: 1, ambience: 0.35, effects: 1 };
   get activeVoices() {
     return this.voices.size;
+  }
+  get decodedBytes() {
+    return [...this.noiseBuffers.values()].reduce(
+      (n, b) => n + b.length * 4,
+      0,
+    );
+  }
+  /** Two reusable mono buffers; noise shares every voice/mix/lifecycle limit. */
+  noise(cue: NoiseCue, bus: AudioBus = 'ambience') {
+    if (
+      !(bus in this.mix) ||
+      !['white', 'brown'].includes(cue.color) ||
+      !Number.isFinite(cue.duration) ||
+      cue.duration < 0.03 ||
+      cue.duration > 2 ||
+      !Number.isFinite(cue.volume) ||
+      cue.volume < 0 ||
+      cue.volume > 0.1
+    )
+      return false;
+    const context = this.context;
+    if (
+      !context ||
+      context.state !== 'running' ||
+      this.silent ||
+      this.mix[bus] === 0 ||
+      cue.volume === 0 ||
+      this.voices.size >= 12 ||
+      [...this.voiceBuses.values()].filter((b) => b === bus).length >=
+        (bus === 'effects' ? 8 : 2)
+    )
+      return true;
+    let buffer = this.noiseBuffers.get(cue.color);
+    if (!buffer) {
+      buffer = context.createBuffer(
+        1,
+        Math.ceil(context.sampleRate * 2),
+        context.sampleRate,
+      );
+      const data = buffer.getChannelData(0);
+      let seed = 0x71a9b3,
+        previous = 0;
+      for (let i = 0; i < data.length; i++) {
+        seed ^= seed << 13;
+        seed ^= seed >>> 17;
+        seed ^= seed << 5;
+        const white = ((seed >>> 0) / 0xffffffff) * 2 - 1;
+        previous = (previous + 0.02 * white) / 1.02;
+        data[i] = cue.color === 'white' ? white : previous * 3.5;
+      }
+      this.noiseBuffers.set(cue.color, buffer);
+    }
+    const voice = context.createBufferSource(),
+      gain = context.createGain(),
+      time = context.currentTime;
+    voice.buffer = buffer;
+    gain.gain.setValueAtTime(0.001, time);
+    gain.gain.linearRampToValueAtTime(cue.volume, time + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + cue.duration);
+    voice.connect(gain);
+    gain.connect(this.buses![bus]);
+    this.voices.add(voice);
+    this.voiceBuses.set(voice, bus);
+    voice.onended = () => {
+      this.voices.delete(voice);
+      this.voiceBuses.delete(voice);
+      voice.disconnect();
+      gain.disconnect();
+    };
+    voice.start();
+    voice.stop(time + cue.duration);
+    return true;
   }
   setMix(bus: AudioBus, volume: number) {
     if (!(bus in this.mix) || !Number.isFinite(volume)) return false;
@@ -195,6 +273,7 @@ export class Audio {
     });
     this.voices.clear();
     this.voiceBuses.clear();
+    this.noiseBuffers.clear();
     void this.context?.close();
   }
 }

@@ -171,7 +171,7 @@ try {
       await game.locator('[data-st-order="on"][data-litres="200"]').click();
       await game.locator('#pause').click();
       stationSave = await game.evaluate(() =>
-        globalThis.localStorage.getItem('pixelforge:client:v3:gas-station'),
+        globalThis.localStorage.getItem('pixelforge:client:v4:gas-station'),
       );
       expect(stationSave).toBeTruthy();
     }
@@ -219,7 +219,7 @@ try {
       await game.locator('#pause').click();
       expect(
         await game.evaluate(() =>
-          globalThis.localStorage.getItem('pixelforge:client:v3:gas-station'),
+          globalThis.localStorage.getItem('pixelforge:client:v4:gas-station'),
         ),
       ).toBe(stationSave);
       await game.locator('#back').click();

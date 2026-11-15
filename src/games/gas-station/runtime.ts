@@ -13,11 +13,13 @@ import {
 } from '../../engine/api';
 import { StationModel } from './model';
 import { StationView } from './view';
+import { StationSounds } from './sounds';
 import { validateWorld, FUELS, GOODS, SHOP, UNIT, prices } from './world';
 import { bodies } from './state';
 import { money, type StationUI } from './controls';
 import { tankCapacity, PARCELS } from './development';
 import { campaignUI } from './campaign-controls';
+import { VARIANTS, type Variant } from './scenarios';
 import { roadLine, type BuildRequest } from './placement';
 
 export function createStationRuntime(
@@ -32,7 +34,10 @@ export function createStationRuntime(
     active: Gameplay | undefined,
     started = false,
     lastSave = 0;
-  const save = new VersionedSave(definition.id, 3, (raw) =>
+  const save = new VersionedSave(definition.id, 4, (raw) =>
+    model.validateSave(raw),
+  );
+  const weekendSave = new VersionedSave(definition.id, 3, (raw) =>
     model.validateSave(raw),
   );
   const developmentSave = new VersionedSave(definition.id, 2, (raw) =>
@@ -55,10 +60,7 @@ export function createStationRuntime(
     private prepared = false;
     private ended = false;
     private elapsed = 0;
-    private soundElapsed = 0;
-    private previousReceipts = 0;
-    private previousDelivery = '';
-    private previousDoorOpen = false;
+    private sounds!: StationSounds;
     private drag?: {
       x: number;
       y: number;
@@ -85,16 +87,7 @@ export function createStationRuntime(
       this.drag = undefined;
       this.hint = '';
       this.elapsed = 0;
-      this.soundElapsed = 0;
-      this.previousReceipts = model.state.journal.entries.filter(
-        (e) => e.category === 'checkout',
-      ).length;
-      this.previousDelivery = model.state.delivery?.phase ?? '';
-      this.previousDoorOpen = model.state.customers.some(
-        (c) =>
-          c.driver &&
-          Math.hypot(c.driver.x / UNIT - 124, c.driver.y / UNIT - 113) < 5,
-      );
+      this.sounds = new StationSounds(model, context.audio, definition.music);
       this.terrain = new SectorRenderer(
         this,
         world,
@@ -301,7 +294,10 @@ export function createStationRuntime(
       this.hint = '';
       if (action === 'speed' && [1, 2, 4].includes(Number(payload)))
         model.clock.speed = Number(payload) as 1 | 2 | 4;
-      else if (action === 'order-e95' || action === 'order-on') {
+      else if (action === 'lights' && s.campaign?.scenario) {
+        s.campaign.scenario.lights = !s.campaign.scenario.lights;
+        mutation = true;
+      } else if (action === 'order-e95' || action === 'order-on') {
         ok = model.orderFuel(
           action === 'order-on' ? 'on' : 'e95',
           Number(payload),
@@ -481,86 +477,7 @@ export function createStationRuntime(
       this.clamp();
       this.terrain.update(cameraView(c));
       this.art.draw(this.selection, this.buildMode, this.project);
-      this.soundElapsed += delta;
-      if (this.soundElapsed > 400 && !model.state.result) {
-        this.soundElapsed = 0;
-        const v = c.getWorldPoint(0, 0);
-        const audible = (x: number, y: number) =>
-          x >= v.x &&
-          y >= v.y &&
-          x <= v.x + c.width / c.zoom &&
-          y <= v.y + c.height / c.zoom;
-        if (
-          model.state.customers.some(
-            (a) =>
-              a.vehicle.route.length &&
-              audible(a.vehicle.x / 16, a.vehicle.y / 16),
-          )
-        )
-          context.audio.cue(
-            {
-              frequency: 78,
-              end: 62,
-              duration: 0.35,
-              volume: 0.009,
-              type: 'triangle',
-            },
-            'ambience',
-          );
-        if (
-          model.state.customers.some(
-            (a) =>
-              a.phase === 'fueling' &&
-              audible(a.vehicle.x / 16, a.vehicle.y / 16),
-          )
-        )
-          context.audio.cue(
-            {
-              frequency: 115,
-              end: 110,
-              duration: 0.28,
-              volume: 0.008,
-              type: 'sawtooth',
-            },
-            'ambience',
-          );
-      }
-      const receipts = model.state.journal.entries.filter(
-        (e) => e.category === 'checkout',
-      ).length;
-      if (receipts > this.previousReceipts) {
-        this.previousReceipts = receipts;
-        context.audio.cue({
-          frequency: 1400,
-          end: 1900,
-          duration: 0.13,
-          volume: 0.025,
-          type: 'sine',
-        });
-      }
-      const doorOpen = model.state.customers.some(
-        (c) =>
-          c.driver &&
-          Math.hypot(c.driver.x / UNIT - 124, c.driver.y / UNIT - 113) < 5,
-      );
-      if (doorOpen && !this.previousDoorOpen)
-        context.audio.cue({
-          frequency: 880,
-          end: 1040,
-          duration: 0.09,
-          volume: 0.015,
-          type: 'sine',
-        });
-      this.previousDoorOpen = doorOpen;
-      const phase = model.state.delivery?.phase ?? '';
-      if (phase !== this.previousDelivery) {
-        if (phase === 'unloading')
-          context.audio.cue(
-            { frequency: 92, end: 66, duration: 0.7, volume: 0.018 },
-            'ambience',
-          );
-        this.previousDelivery = phase;
-      }
+      this.sounds.update(delta, c);
       if (model.state.result && !this.ended) {
         this.ended = true;
         context.audio.music();
@@ -879,7 +796,7 @@ export function createStationRuntime(
           deliveries: s.deliveries,
           thirdPump: s.pumps[2].built,
           cash: model.cash,
-          saveVersion: 3,
+          saveVersion: 4,
           shift: s.campaign ? campaignUI(model)!.shift : '',
           washes: s.campaign?.wash.completed ?? 0,
           maxAdvanceMs: this.maxAdvanceMs,
@@ -887,6 +804,7 @@ export function createStationRuntime(
           navLocal: model.navigator.stats.maxLocalExpanded,
           terrain: JSON.stringify(this.terrain?.stats ?? {}),
           audioVoices: context.audio.activeVoices,
+          audioBytes: context.audio.decodedBytes,
           duration: model.duration,
           laneExpanded: model.topology.expanded,
           shopMode: s.development?.tenant.phase ?? 'owned',
@@ -908,10 +826,29 @@ export function createStationRuntime(
       ...createFlowScenes(definition, context.ready, context.error),
       Gameplay,
     ],
-    start(resume) {
-      model = new StationModel(world, world.scenario.seed, true, true);
+    start(resume, options) {
+      let seed = world.scenario.seed;
+      let variant: Variant = 'country';
+      if (
+        !resume &&
+        options &&
+        typeof options === 'object' &&
+        !Array.isArray(options)
+      ) {
+        if (
+          !Number.isSafeInteger(options.seed) ||
+          Number(options.seed) < 0 ||
+          Number(options.seed) > 0xffffffff ||
+          !VARIANTS.includes(options.variant as Variant)
+        )
+          throw Error('Stacja: nieprawidłowe ustawienia weekendu');
+        seed = Number(options.seed);
+        variant = options.variant as Variant;
+      }
+      model = new StationModel(world, seed, true, true, variant);
       if (resume) {
         let result = save.inspect();
+        if (result.status === 'absent') result = weekendSave.inspect();
         if (result.status === 'absent') result = developmentSave.inspect();
         if (result.status === 'absent') result = legacySave.inspect();
         if (result.status === 'ready') model.restore(result.value);

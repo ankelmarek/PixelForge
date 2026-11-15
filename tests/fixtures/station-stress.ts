@@ -31,9 +31,18 @@ const definition: ClientDefinition = {
   ...station,
   createRuntime(context, data) {
     const world = validateWorld(data),
-      model = new StationModel(world, 731, true),
+      model = new StationModel(world, 731, true, true, 'night'),
       s = model.state;
     const template = structuredClone(s.customers[0]);
+    s.campaign!.event = {
+      id: 0,
+      kind: 'rain',
+      announced: 0,
+      start: 0,
+      end: 120000,
+      remaining: 0,
+      accepted: false,
+    };
     s.customers = Array.from({ length: 14 }, (_, i): Customer => ({
       ...structuredClone(template),
       id: `stress-${i}`,
@@ -148,7 +157,13 @@ const definition: ClientDefinition = {
             while (budget-- > 0)
               model.navigator.findPath({ x: 100, y: 150 }, { x: 132, y: 108 });
             for (const m of bodies(s))
-              move(m, model.occupancy, model.topology.legal);
+              move(
+                m,
+                model.occupancy,
+                model.topology.legal,
+                true,
+                m.y === 158 * UNIT && (m.x < 92 * UNIT || m.x > 164 * UNIT),
+              );
           });
         this.maxStepMs = Math.max(this.maxStepMs, performance.now() - before);
         const c = this.cameras.main;

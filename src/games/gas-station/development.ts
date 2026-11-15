@@ -163,7 +163,15 @@ export const extraPump = (s: StationState, i: number) =>
       )[i - 3];
 export const duration = (s: StationState) => s.development?.duration ?? 7200;
 export const goal = (s: StationState) =>
-  s.campaign ? 60 : s.development ? 20 : 12;
+  s.campaign?.scenario?.variant === 'night'
+    ? 50
+    : s.campaign?.scenario?.variant === 'highway'
+      ? 55
+      : s.campaign
+        ? 60
+        : s.development
+          ? 20
+          : 12;
 export const tankCapacity = (s: StationState, f: Fuel) =>
   10000 +
   (s.development?.sites.filter(

@@ -265,8 +265,12 @@ export class TenantLease {
         t.deliveries++;
         d.progress = 1;
         path(d.motion, [
-          { x: 144, y: 116 },
-          { x: 156, y: 116 },
+          ...(s.campaign?.scenario
+            ? [{ x: 156, y: 110 }]
+            : [
+                { x: 144, y: 116 },
+                { x: 156, y: 116 },
+              ]),
           { x: 156, y: 158 },
           { x: 252, y: 158 },
         ]);

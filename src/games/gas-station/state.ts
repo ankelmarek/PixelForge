@@ -157,7 +157,14 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
   const end = duration(s),
     dev = !!s.development;
   if (
-    s.gameVersion !== (s.campaign ? '0.3.0' : dev ? '0.2.0' : '0.1.0') ||
+    s.gameVersion !==
+      (s.campaign?.scenario
+        ? '0.4.0'
+        : s.campaign
+          ? '0.3.0'
+          : dev
+            ? '0.2.0'
+            : '0.1.0') ||
     s.rulesRevision !== world.rulesRevision ||
     s.worldRevision !== world.terrain.revision ||
     !integer(s.seed, 0, 0xffffffff) ||
@@ -559,6 +566,7 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
         'recruitment',
         'lease-penalty',
         ...(s.campaign ? ['wash-cost', 'repair', 'loan-fee'] : []),
+        ...(s.campaign?.scenario ? ['lighting'] : []),
       ].includes(e.category),
     )
     .reduce((n, e) => n + e.cash, 0);

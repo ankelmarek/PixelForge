@@ -1,14 +1,15 @@
 import type { ClientDefinition } from '../../engine/api/client';
 import { createControls } from './controls';
+import { createSetup } from './setup';
 import './style.css';
 export const station: ClientDefinition = {
   kind: 'client',
   schemaVersion: 1,
   id: 'gas-station',
-  version: '0.3.0',
+  version: '0.4.0',
   title: 'Stacja na Trasie',
   description:
-    'Wielki Weekend. Trzy zmiany, myjnia, żywy ruch i własny sklep albo Skoczka.',
+    'Krajówka, autostrada i nocna zmiana. Własna stacja, myjnia i żywy ruch.',
   viewport: { width: 320, height: 180 },
   preferredViewport: { width: 640, height: 360 },
   levelUrl: 'assets/games/gas-station/world.json',
@@ -21,6 +22,8 @@ export const station: ClientDefinition = {
       'freight',
       'bus',
       'wash',
+      'canopy',
+      'lamp',
       'truck',
       'people',
       'shop',
@@ -54,7 +57,7 @@ export const station: ClientDefinition = {
   catalog: {
     cover: 'assets/games/gas-station/cover.png',
     launchLabel: 'Otwórz stację',
-    badge: 'WIELKI WEEKEND · S3',
+    badge: 'WIELKI WEEKEND · 3 WARIANTY',
     detail: 'Stacja na Trasie',
   },
   presentation: {
@@ -64,6 +67,7 @@ export const station: ClientDefinition = {
     actionLabel: 'Stacja',
   },
   createControls,
+  createSetup,
   async createRuntime(context, data) {
     const { createStationRuntime } = await import('./runtime');
     return createStationRuntime(station, context, data);

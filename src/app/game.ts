@@ -46,6 +46,8 @@ export function mountGame(
     running = false;
   const diagnostic = new URLSearchParams(location.search).has('diagnostics');
   let controls: ClientControls | undefined;
+  let setup:
+    ReturnType<NonNullable<ClientDefinition['createSetup']>> | undefined;
   const drawMap = (s: Snapshot) => {
     if (!s.map) return;
     ctx.fillStyle = '#352e37';
@@ -212,15 +214,30 @@ export function mountGame(
     get(id).addEventListener('pointerdown', (e) => e.preventDefault());
     get(id).addEventListener('click', fn);
   };
+  if (definition.createSetup) {
+    const options = document.createElement('div');
+    get('start').before(options);
+    setup = definition.createSetup({ root: options });
+  }
   const start = (resume: boolean) => {
     if (!ready) return;
+    let options;
+    try {
+      options = resume ? undefined : setup?.value();
+    } catch (error) {
+      get('error').textContent =
+        error instanceof Error
+          ? error.message
+          : 'Nieprawidłowe ustawienia gry.';
+      return;
+    }
     get('menu').hidden = true;
     get('session-menu').hidden = true;
     get('error').textContent = '';
     running = true;
     const panel = root.querySelector<HTMLElement>('.client-controls');
     if (panel) panel.hidden = false;
-    host.start(resume);
+    host.start(resume, options);
   };
   bind('start', () => start(false));
   bind('resume', () => start(true));
@@ -266,6 +283,7 @@ export function mountGame(
     if (dead) return;
     dead = true;
     controls?.destroy();
+    setup?.destroy();
     host.destroy();
     window.removeEventListener('pagehide', destroy);
     root.removeEventListener('keydown', keys);

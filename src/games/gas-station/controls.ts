@@ -50,8 +50,11 @@ export interface StationUI {
   development?: DevelopmentUI;
   campaign?: CampaignUI;
 }
+const moneyFormat = new Intl.NumberFormat('pl-PL', {
+  maximumFractionDigits: 0,
+});
 export const money = (n: number) =>
-  new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 0 }).format(n / 100);
+  moneyFormat.format(Math.round(n / 100) || 0);
 export const createControls: NonNullable<
   ClientDefinition['createControls']
 > = ({ root, send }) => {
@@ -72,7 +75,7 @@ export const createControls: NonNullable<
   <aside class="station-panel" hidden><div class="station-panel-head"><strong data-sv="panel-title"></strong><button data-st-close aria-label="Zamknij panel">×</button></div>
   <section data-st-panel="fuel">${FUELS.map((f) => `<div class="station-stock"><h3>${prices[f].label} <span data-st-stock="${f}"></span></h3><small data-st-reserved="${f}"></small><div class="station-actions">${[200, 400].map((n) => `<button data-st-order="${f}" data-litres="${n}">${n} L <small>${money(n * prices[f].buy + 8000)} ◈</small></button>`).join('')}</div></div>`).join('')}<small>Transport 80 ◈</small></section>
   <section data-st-panel="shop" hidden><h3>Magazyn ORLAR</h3><div class="station-products">${GOODS.map((k) => `<div><span>${prices[k].label}</span><b data-st-good="${k}"></b><small data-own-price="${k}">${prices[k].sell / 100} ◈</small></div>`).join('')}</div><button class="station-wide" data-st-goods>▣ 30 szt. <span>130 ◈</span></button><small>10 × napój / przekąska / kawa · magazyn 80 szt.</small></section>
-  <section data-st-panel="crew" hidden>${[0, 1, 2, 3].map((i) => `<div class="station-worker"><div><button data-st-worker="${i}" aria-label="Pracownik ${i + 1}">♟ ${i + 1}</button><span data-st-job="${i}"></span></div><div class="station-actions"><button data-st-role="forecourt" data-worker="${i}">Podjazd</button><button data-st-role="checkout" data-worker="${i}">Kasa</button></div></div>`).join('')}<small>Wynagrodzenie 10 ◈ / osoba / min</small></section>
+  <section data-st-panel="crew" hidden>${[0, 1, 2, 3].map((i) => `<div class="station-worker"><div><button data-st-worker="${i}" aria-label="Pracownik ${i + 1}">♟ ${i + 1}</button><span data-st-job="${i}"></span></div><div class="station-actions"><button data-st-role="forecourt" data-worker="${i}">Podjazd</button><button data-st-role="checkout" data-worker="${i}">Kasa</button></div></div>`).join('')}<small data-st-wages>Wynagrodzenie 10 ◈ / osoba / min</small></section>
   <section data-st-panel="build" hidden><div class="station-build-art">⛽ <b>03</b></div><h3>Trzeci dystrybutor</h3><button class="station-wide" data-st-preview>＋ <span>1 800 ◈</span></button><div class="station-actions" data-st-confirm-area hidden><button data-st-commit>✓ 1 800 ◈</button><button data-st-cancel aria-label="Anuluj rozbudowę">×</button></div><output data-sv="plan"></output></section>
   <section data-st-panel="selection" hidden><h3 data-sv="label"></h3><p data-sv="detail"></p><button data-st-toggle-pump hidden></button></section>
   <div class="station-delivery" hidden><div><b data-sv="delivery"></b><button data-st-delivery-focus aria-label="Dostawa na mapie">⌖</button><button data-st-cancel-delivery aria-label="Anuluj dostawę">×</button></div><span data-sv="delivery-phase"></span><progress max="1" value="0"></progress></div>
@@ -168,8 +171,11 @@ export const createControls: NonNullable<
       if (!v) return;
       if (v.selection && v.selection !== current?.selection) show('selection');
       current = v;
+      if (snapshot.completed || snapshot.failed) show('');
       development.update(v.development, v.cash);
       campaign.update(v.campaign);
+      get('[data-st-wages]').textContent =
+        `Wynagrodzenie ${((v.campaign?.staffRate ?? 1000) / 100).toLocaleString('pl-PL')} ◈ / osoba / min`;
       get('.station-brand small').textContent = v.campaign
         ? v.campaign.shift
         : v.development

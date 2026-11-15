@@ -1,9 +1,11 @@
 import { netWorthOf } from './accounting';
+import { validateScenario } from './scenarios';
 import type { StationState } from './types';
 import { EVENT_KINDS, WEEKEND_END, type WeekendEvent } from './campaign-data';
 
 /** Reject inconsistent v3 snapshots rather than replaying payments or healing lost services. */
 export function validateCampaign(s: StationState) {
+  validateScenario(s);
   const c = s.campaign!;
   const fail = (): never => {
     throw Error('Stacja: niespójny zapis weekendu');

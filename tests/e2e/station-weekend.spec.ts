@@ -15,7 +15,7 @@ test.use({
     sources: true,
   },
 });
-const key = 'pixelforge:client:v3:gas-station';
+const key = 'pixelforge:client:v4:gas-station';
 const state = (page: Page): Promise<Snapshot> =>
   page
     .locator('#diagnostics')
@@ -34,7 +34,7 @@ test.afterEach(async ({ page }, info) => {
     });
 });
 
-test('S3: myjnia z budowy do opłaconej usługi oraz wznowienie v3', async ({
+test('S3: myjnia z budowy do opłaconej usługi oraz wznowienie weekendu', async ({
   page,
   isMobile,
 }) => {
@@ -58,7 +58,7 @@ test('S3: myjnia z budowy do opłaconej usługi oraz wznowienie v3', async ({
     key,
     value: JSON.stringify({
       gameId: 'gas-station',
-      schemaVersion: 3,
+      schemaVersion: 4,
       state: m.snapshot(),
     }),
   });
@@ -136,6 +136,7 @@ test('S3: cały weekend myszą, trzy zmiany, zapowiedzi, naprawa i wynik', async
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto('/?diagnostics=1');
   await page.locator('[data-game="gas-station"]').click();
+  await page.locator('[data-st-seed]').fill('20261114');
   await page.locator('#start').click();
   await expect.poll(async () => (await state(page)).stats?.ready).toBe(true);
   await tab(page, 'build');

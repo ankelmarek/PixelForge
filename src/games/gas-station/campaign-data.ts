@@ -1,4 +1,5 @@
 import type { Customer, StationState } from './types';
+import type { Scenario } from './scenarios';
 
 export const WEEKEND_END = 36000;
 export const LAST_ADMISSION = 34200;
@@ -42,6 +43,7 @@ export interface VisitRating {
 }
 export interface Campaign {
   revision: 'weekend-1';
+  scenario?: Scenario;
   arrivalWindow: number;
   nextEvent: number;
   eventIndex: number;

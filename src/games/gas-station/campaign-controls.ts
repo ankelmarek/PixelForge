@@ -1,6 +1,7 @@
 import type { StationModel } from './model';
 import { WASH_UNLOCK, activeEvent, debt, shiftIndex } from './campaign-data';
 import { money } from './controls';
+import { scenarios, darkness } from './scenarios';
 
 const labels = {
   rain: 'Deszcz',
@@ -16,6 +17,14 @@ export function campaignUI(m: StationModel) {
   if (!c) return undefined;
   const e = c.event;
   return {
+    variant: c.scenario ? scenarios[c.scenario.variant].name : 'Wielki Weekend',
+    seed: s.seed,
+    goal: m.goal,
+    staffRate: c.scenario?.variant === 'night' ? 1250 : 1000,
+    scenario: !!c.scenario,
+    lights: c.scenario?.lights ?? false,
+    energy: c.scenario?.energyCharged ?? 0,
+    darkness: darkness(s),
     shift: ['PIĄTEK', 'SOBOTA', 'NIEDZIELA'][shiftIndex(s)],
     event: e ? labels[e.kind] : '',
     upcoming: !!e && s.tick < e.start,
@@ -64,7 +73,8 @@ export function campaignControls(
   get('.station-panel').insertAdjacentHTML(
     'beforeend',
     `<section data-st-panel="weekend" hidden>
-    <h3>Wielki Weekend</h3><p>60 klientów · 70% zadowolenia · majątek &gt; 0</p>
+    <h3 data-weekend-variant>Wielki Weekend</h3><small data-weekend-seed></small><p data-weekend-goal></p>
+    <div data-weekend-lighting hidden><button data-lights class="station-wide">☼ Oświetlenie</button><small>20 ◈ / min po zmroku · obsada nocnej zmiany +25%</small><p data-weekend-energy></p></div>
     <h3 data-weekend-event></h3><div class="station-actions"><button data-repair hidden>⚒ Naprawa <small>120 ◈ · 15 s</small></button><button data-discount hidden>Oferta −15% <small>Jedna cysterna 400 L</small></button></div>
     <p data-weekend-repair></p><h3>Rezerwa finansowa</h3><button data-rescue class="station-wide">＋ 1 500 ◈<small>Jednorazowo · spłata 1 650 ◈ w finale</small></button><p data-weekend-debt></p>
     <h3>Myjnia</h3><p data-weekend-wash></p><h3>Odsprzedaż rozszerzeń</h3><div data-weekend-sites></div>
@@ -86,6 +96,7 @@ export function campaignControls(
     if ('repair' in d) action('repair');
     if ('discount' in d) action('discount');
     if ('rescue' in d) action('rescue');
+    if ('lights' in d) action('lights');
     if (d.sell) action('sell', d.sell);
   }
   root.addEventListener('click', click);
@@ -99,6 +110,15 @@ export function campaignControls(
         return;
       }
       const event = v.warning ? 'Brak płynności' : v.event;
+      get('[data-weekend-variant]').textContent = v.variant;
+      get('[data-weekend-seed]').textContent = `Weekend ${v.seed}`;
+      get('[data-weekend-goal]').textContent =
+        `${v.goal} klientów · 70% zadowolenia · majątek > 0`;
+      get('[data-weekend-lighting]').hidden = !v.scenario;
+      get('[data-lights]').setAttribute('aria-pressed', String(v.lights));
+      get('[data-lights]').textContent =
+        `☼ Oświetlenie · ${v.lights ? 'włączone' : 'wyłączone'}`;
+      get('[data-weekend-energy]').textContent = `Energia ${money(v.energy)} ◈`;
       get('.station-event').hidden = !event;
       get('.station-event').classList.toggle(
         'critical',

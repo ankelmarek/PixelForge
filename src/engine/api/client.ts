@@ -43,6 +43,11 @@ export interface ClientDefinition {
     root: HTMLElement;
     send: (command: ClientCommand) => void;
   }) => ClientControls;
+  /** Optional client-owned new-session options; resuming ignores these values. */
+  createSetup?: (context: { root: HTMLElement }) => {
+    value: () => JsonValue;
+    destroy: () => void;
+  };
 }
 export interface ClientContext {
   input: Input;
@@ -59,7 +64,7 @@ export type ClientCommand =
   | { type: 'client-action'; action: string; payload?: JsonValue };
 export interface ClientRuntime {
   scenes: (typeof Phaser.Scene)[];
-  start: (resume: boolean) => void;
+  start: (resume: boolean, options?: JsonValue) => void;
   persist: () => boolean;
   command: (command: ClientCommand) => void;
 }

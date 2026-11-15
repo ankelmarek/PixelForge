@@ -23,7 +23,7 @@ test.afterEach(async ({ page }, info) => {
     await info.attach('station-v3', {
       body: await page.evaluate(
         () =>
-          localStorage.getItem('pixelforge:client:v3:gas-station') ?? 'null',
+          localStorage.getItem('pixelforge:client:v4:gas-station') ?? 'null',
       ),
       contentType: 'application/json',
     });
@@ -124,7 +124,7 @@ test('S2: własna droga i stanowisko, cennik, personel, migracja v2 do v3 oraz o
   });
   await page.locator('#pause').click();
   const saved = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem('pixelforge:client:v3:gas-station')!),
+    JSON.parse(localStorage.getItem('pixelforge:client:v4:gas-station')!),
   );
   expect(saved.state.development.roads).toHaveLength(4);
   expect(saved.state.development.sites).toHaveLength(1);

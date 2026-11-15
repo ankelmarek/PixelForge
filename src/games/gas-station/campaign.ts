@@ -6,6 +6,7 @@ import { extraPump, tankCapacity, parkingPoints } from './development';
 import { siteBounds, StationTopology } from './placement';
 import { bodies } from './state';
 import { footprint } from './traffic';
+import { isNight } from './scenarios';
 import {
   EVENT_KINDS,
   LAST_ADMISSION,
@@ -24,6 +25,13 @@ export class Weekend {
   }
   nextArrival() {
     const n = ++this.c.arrivalWindow;
+    if (this.c.scenario?.variant === 'night')
+      return (
+        this.s.tick +
+        (this.s.tick < 9600 ? 240 : this.s.tick < 24000 ? 192 : 180) +
+        Math.floor(randomSample(this.s.seed, 20, n) * 41) -
+        20
+      );
     const base =
       n < 48
         ? n * 200
@@ -62,6 +70,7 @@ export class Weekend {
   tick() {
     const s = this.s,
       c = this.c;
+    if (c.scenario?.lights && isNight(s)) c.scenario.energyTicks++;
     const event = c.event;
     if (event && s.tick === event.start && event.kind === 'fault') {
       const eligible = s.pumps

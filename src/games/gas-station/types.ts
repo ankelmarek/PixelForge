@@ -103,7 +103,7 @@ export interface ResourceTotals {
   usedCost: number;
 }
 export interface StationState {
-  gameVersion: '0.1.0' | '0.2.0' | '0.3.0';
+  gameVersion: '0.1.0' | '0.2.0' | '0.3.0' | '0.4.0';
   rulesRevision: 'opening-1';
   worldRevision: string;
   seed: number;

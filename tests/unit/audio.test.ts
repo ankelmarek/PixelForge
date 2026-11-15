@@ -28,6 +28,8 @@ class Context {
   static current: Context;
   state = 'running';
   currentTime = 0;
+  sampleRate = 48000;
+  buffers = 0;
   destination = {};
   gains: Gain[] = [];
   constructor() {
@@ -39,6 +41,14 @@ class Context {
     return gain;
   }
   createOscillator() {
+    return new Voice();
+  }
+  createBuffer(_channels: number, length: number) {
+    this.buffers++;
+    const data = new Float32Array(length);
+    return { length, getChannelData: () => data };
+  }
+  createBufferSource() {
     return new Voice();
   }
   async resume() {
@@ -56,6 +66,36 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 describe('audio — limity i cykl życia', () => {
+  it('szum ma wspólny limit głosów, najwyżej dwa bufory i respektuje mute/pauzę', () => {
+    vi.stubGlobal('AudioContext', Context);
+    const audio = new Audio();
+    const cue = { color: 'brown' as const, duration: 0.5, volume: 0.01 };
+    audio.noise(cue);
+    expect(audio.activeVoices).toBe(0);
+    audio.unlock();
+    audio.noise(cue);
+    audio.noise({ ...cue, color: 'white' });
+    for (let i = 0; i < 20; i++) audio.noise(cue);
+    expect(audio.activeVoices).toBe(2);
+    expect(Context.current.buffers).toBe(2);
+    expect(audio.decodedBytes).toBe(768000);
+    audio.music();
+    audio.muted = true;
+    audio.noise(cue);
+    expect(audio.activeVoices).toBe(0);
+    audio.muted = false;
+    audio.pause(true);
+    audio.noise(cue);
+    expect(audio.activeVoices).toBe(0);
+    audio.pause(false);
+    audio.noise(cue);
+    expect(audio.activeVoices).toBe(1);
+    expect(Context.current.buffers).toBe(2);
+    expect(audio.noise({ ...cue, duration: Infinity })).toBe(false);
+    audio.destroy();
+    expect(audio.decodedBytes).toBe(0);
+    expect(audio.activeVoices).toBe(0);
+  });
   it('ogranicza głosy do 8 efektów + 2 otoczenia + 2 muzyki, wycisza i usuwa timer', () => {
     vi.useFakeTimers();
     vi.stubGlobal('AudioContext', Context);

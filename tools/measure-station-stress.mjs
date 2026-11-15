@@ -70,11 +70,11 @@ try {
     errors,
     cameraPositions: new Set(measurement.samples.map((s) => s.camera)).size,
     notes:
-      'Synthetic 32-unit workload at ×4, zoom 0.5, compiled Vite build, real station motion/navigation/renderer/assets and camera jumps. 14 vehicles, 10 drivers, 6 staff, 2 deliveries. Synthetic state is never written to production localStorage. This measures component capacity; full game economy and traffic are tested separately. Headless Chromium software rendering; no physical-phone claim.',
+      'Synthetic S4 32-unit workload with night lighting and rain at ×4, zoom 0.5, compiled Vite build, real station motion/navigation/renderer/assets and camera jumps. 14 vehicles, 10 drivers, 6 staff, 2 deliveries. Synthetic state is never written to production localStorage. This measures component capacity; full game economy and traffic are tested separately. Headless Chromium software rendering; no physical-phone claim.',
   };
-  await mkdir('work/s2', { recursive: true });
+  await mkdir('work/s4', { recursive: true });
   await writeFile(
-    'work/s2/stress-performance.json',
+    'work/s4/stress-performance.json',
     JSON.stringify(report, null, 2) + '\n',
   );
   console.log(JSON.stringify(report, null, 2));

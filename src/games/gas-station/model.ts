@@ -69,6 +69,7 @@ import {
 } from './campaign-data';
 import { CarWash } from './car-wash';
 import { netWorthOf } from './accounting';
+import { createScenario, lit, type Variant } from './scenarios';
 
 export class StationModel {
   state: StationState;
@@ -85,6 +86,7 @@ export class StationModel {
     seed = world.scenario.seed,
     development = false,
     campaign = false,
+    variant?: Variant,
   ) {
     this.state = createState(world, seed, campaign);
     if (development || campaign) {
@@ -93,6 +95,10 @@ export class StationModel {
       if (campaign) {
         this.state.gameVersion = '0.3.0';
         this.state.campaign = createCampaign();
+        if (variant) {
+          this.state.campaign.scenario = createScenario(variant);
+          this.state.gameVersion = '0.4.0';
+        }
         this.state.development.duration = 36000;
         this.state.development.boundaries = [...WEEKEND_BOUNDARIES];
       }
@@ -196,14 +202,23 @@ export class StationModel {
       s.passed++;
       return;
     }
-    const special = s.campaign ? this.weekend.vehicle() : null;
+    const variant = s.campaign?.scenario?.variant;
+    const special = s.campaign
+      ? (this.weekend.vehicle() ??
+        (variant === 'highway' &&
+        candidate > 2 &&
+        randomSample(s.seed, 25, candidate) < 0.035
+          ? 'bus'
+          : null))
+      : null;
     const id = `c-${s.serial++}`,
       vehicle = motion(
         id,
         special
           ? 'truck'
           : s.development && candidate > 2
-            ? randomSample(s.seed, 9, candidate) < 0.18
+            ? randomSample(s.seed, 9, candidate) <
+              (variant === 'highway' ? 0.28 : 0.18)
               ? 'truck'
               : randomSample(s.seed, 9, candidate) < 0.48
                 ? 'van'
@@ -230,7 +245,10 @@ export class StationModel {
     const basket = {
       drink: randomSample(s.seed, 2, candidate) < 0.6 ? 1 : 0,
       snack: randomSample(s.seed, 3, candidate) < 0.45 ? 1 : 0,
-      coffee: randomSample(s.seed, 4, candidate) < 0.5 ? 1 : 0,
+      coffee:
+        randomSample(s.seed, 4, candidate) < (variant === 'night' ? 0.85 : 0.5)
+          ? 1
+          : 0,
     };
     if (!fuel && !Object.values(basket).some(Boolean)) basket.coffee = 1;
     if (special === 'bus') for (const k of GOODS) basket[k] = 3;
@@ -299,7 +317,10 @@ export class StationModel {
     s.tick++;
     this.routeBudget = 2;
     if (s.development) {
-      s.development.wages += s.workers.length * 1000 + 400;
+      s.development.wages +=
+        s.workers.length *
+          (s.campaign?.scenario?.variant === 'night' ? 1250 : 1000) +
+        400;
       this.lease.tick();
       if (s.campaign) this.weekend.tick();
       if (s.result) return;
@@ -396,6 +417,7 @@ export class StationModel {
           Math.min(
             0.85,
             (s.campaign ? 0.6 : 0.72) -
+              (lit(s) ? 0 : 0.1) -
               premium * 0.3 +
               (d.tenant.phase === 'leased' ? 0.1 : 0),
           ),
@@ -430,7 +452,9 @@ export class StationModel {
             this.topology.pedestrian({ x: 124, y: 112 });
           // Daytime lighting; the night scenario supplies its own light coverage.
           j.comfort = Math.round(
-            (10000 * (Number(hasParking) + Number(hasWalkway) + 1)) / 3,
+            (10000 *
+              (Number(hasParking) + Number(hasWalkway) + Number(lit(s)))) /
+              3,
           );
           j.goods =
             c.shopping === 'none'
@@ -1006,6 +1030,14 @@ export class StationModel {
   private costs() {
     const s = this.state;
     if (s.tick === s.wagesUntil) return;
+    const scenario = s.campaign?.scenario;
+    if (scenario) {
+      const total = Math.floor((scenario.energyTicks * 2000) / 1200);
+      const cost = total - scenario.energyCharged;
+      if (cost)
+        this.post(`lighting-${s.tick}`, 'lighting', -cost, -cost, 0, true);
+      scenario.energyCharged = total;
+    }
     if (s.development) {
       const d = s.development;
       const cost = Math.floor((d.wages + d.wageRemainder) / 1200);
@@ -1190,8 +1222,12 @@ export class StationModel {
     const d = this.state.delivery!;
     d.phase = 'departing';
     path(d.motion!, [
-      { x: 144, y: 116 },
-      { x: 156, y: 116 },
+      ...(this.state.campaign?.scenario
+        ? [{ x: 156, y: 110 }]
+        : [
+            { x: 144, y: 116 },
+            { x: 156, y: 116 },
+          ]),
       { x: 156, y: 158 },
       { x: 252, y: 158 },
     ]);
