@@ -1,6 +1,6 @@
 # STACJA NA TRASIE — strategia ekonomiczna RTS (PixelForge)
 
-**Status: S0 zaprojektowane i do odbioru; S1–S4 bez rozpoczęcia programowania.**
+**Status: S1/S2 zaimplementowane i przetestowane; S3 w końcowej weryfikacji; S4 zlecone.**
 
 **Data:** 14 listopada 2026.  
 **Tytuł roboczy:** „Stacja na Trasie: Wielki Weekend”.  

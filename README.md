@@ -6,15 +6,16 @@
 
 Projekt powstaje z myślą o wielokrotnym wykorzystaniu gotowego silnika i produkowaniu kolejnych, niezależnych tytułów, zamiast pisania całych gier od zera.
 
-**Stacja na Trasie — S2:** rozbudowa ORLAR i dobrowolny najem Skoczki.
-Wycinek na 12 minut obejmuje zakup działek, skierowane drogi, własne pompy,
-stanowisko ciężarowe ON, parkingi i zbiorniki, do czterech pracowników,
-drugą kasę i ceny detaliczne. Sklep można prowadzić samemu albo wynająć:
-stacja otrzymuje czynsz i umówiony udział, a Skoczka ma własny towar,
-personel oraz dostawy. Cel wycinka: ≥20 obsłużonych i dodatni zysk.
-[Raport S2](docs/S2-REPORT.md), [specyfikacja](docs/STACJA-BENZYNOWA.md)
-i [plan](docs/STACJA-BENZYNOWA-IMPLEMENTATION.md). Pełna kampania 30 minut
-z myjnią i zdarzeniami pozostaje S3; oprawa i warianty — S4.
+**Stacja na Trasie — S3:** pełny Wielki Weekend na 30 minut przy ×1.
+Piątek, sobota i niedziela płynnie zmieniają ruch i kończą się wynikiem:
+cel to ≥60 opłaconych wizyt, ≥70% satysfakcji i dodatnia wartość netto.
+Myjnia ma rzeczywisty dojazd, kolejkę, pianę, koszty i płatności. Deszcz,
+autokary, ciężarówki, awarie oraz ceny dostaw zmieniają warunki prowadzenia
+stacji. Można skorzystać z jednorazowej pożyczki i odsprzedać wolne rozszerzenia.
+Pozostają własne drogi, działki, personel, pompy, ceny i dobrowolny najem Skoczki.
+**Wznów** zachowuje zasady wcześniejszych zapisów S1/S2; **Nowa gra** uruchamia
+cały weekend. [Raport S3](docs/S3-REPORT.md), [specyfikacja](docs/STACJA-BENZYNOWA.md)
+i [plan](docs/STACJA-BENZYNOWA-IMPLEMENTATION.md). Warianty i dalsza oprawa to S4.
 
 ## Główna zasada
 
@@ -60,7 +61,7 @@ Warianty kampanii, pełny miks audio i badania z nowymi graczami pozostają W4.
 
 ## Gotowa paczka na hosting
 
-[Pobierz wszystko do public_html — gry 0.13.1 + instalator i aktualizator 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s2-stacja-rozbudowa/downloads/pixelforge-public-html-0.13.1-installer-1.2.0.zip).
+[Pobierz wszystko do public_html — gry 0.14.0 + instalator i aktualizator 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s3-stacja-weekend/downloads/pixelforge-public-html-0.14.0-installer-1.2.0.zip).
 
 Rozpakuj **zawartość** w `public_html`, razem z ukrytymi `.htaccess`, i otwórz
 `https://twoja-domena.pl/setup.php`. Pobierz z instalatora plik konfiguracji,
@@ -75,8 +76,8 @@ to `/pixelforge.php`. Przy zastępowaniu starej gry wgraj nowy katalog `PixelFor
 w całości, bez pozostawiania starych assetów. Zachowaj wcześniejszą kopię.
 
 **Do kolejnych aktualizacji gry albo samego hostingu statycznego:**
-[Pobierz PixelForge 0.13.1 — Stacja S2 + Winobranie RTS W3 + Dżdżownica + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s2-stacja-rozbudowa/downloads/pixelforge-0.13.1-full.zip).
-W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.13.1**.
+[Pobierz PixelForge 0.14.0 — Stacja S3 + Winobranie RTS W3 + Dżdżownica + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s3-stacja-weekend/downloads/pixelforge-0.14.0-full.zip).
+W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.14.0**.
 Po instalacji otwórz stronę gry i wybierz **Otwórz stację**, a następnie **Nowa gra**.
 Panel trzeba wcześniej jednorazowo skonfigurować; jest osobnym narzędziem PHP.
 Możliwe jest również ręczne wgranie na hosting statyczny:
@@ -95,7 +96,7 @@ Paczka gry nie wdraża się samodzielnie.
 
 ## Uruchamianie
 
-Gałąź `feature/s1-stacja-benzynowa` zawiera Stację, Winobranie RTS W3,
+Gałąź `feature/s3-stacja-weekend` zawiera Stację, Winobranie RTS W3,
 Dżdżownicę, Atlas i aktualizator. W katalogu wybierz **Otwórz stację**, następnie
 **Nowa gra** lub **Wznów**. Mapa zajmuje całe okno. Cały silnik i zasoby
 są w jednej paczce, bez dodatkowej instalacji poszczególnych gier.
@@ -107,7 +108,7 @@ Pełny zestaw testów obejmuje także PHP **8.2+**, ZipArchive i system Unix/Lin
 Po przełączeniu na bieżącą gałąź:
 
 ```bash
-git clone --branch feature/s1-stacja-benzynowa https://github.com/ankelmarek/PixelForge.git
+git clone --branch feature/s3-stacja-weekend https://github.com/ankelmarek/PixelForge.git
 cd PixelForge
 npm ci
 npm run dev
@@ -141,7 +142,7 @@ aktualizatora.
 
 ```bash
 npm run package:release
-npm run package:validate -- downloads/pixelforge-0.13.1-full.zip
+npm run package:validate -- downloads/pixelforge-0.14.0-full.zip
 npm run test:packages
 ```
 
@@ -155,7 +156,7 @@ w Pythonie/PHP (biblioteka standardowa, bez pip). [Format, limity i polecenia](d
 
 [Osobny ZIP narzędzia PHP 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p3-soil-adventure/downloads/pixelforge-updater-u2-1.2.0.zip)
 rozpakowuje się poza katalogiem publicznym. Nie jest paczką gry do wgrania
-do PixelForge. Aktualizacja gry 0.13.1 zachowuje zapisy Atlasu i starej Dżdżownicy. Nowy pionowy świat ma osobny zapis v3; mapa z widokiem z góry pozostaje dostępna po rollbacku do 0.7.0.
+do PixelForge. Aktualizacja gry 0.14.0 zachowuje zapisy Atlasu i starej Dżdżownicy. Nowy pionowy świat ma osobny zapis v3; mapa z widokiem z góry pozostaje dostępna po rollbacku do 0.7.0.
 
 ```bash
 npm run test:updater
@@ -181,7 +182,7 @@ Testy `hosting` wymagają dodatkowo Apache i modułu PHP (`apache2`,
 `libapache2-mod-php` na Debianie/Ubuntu). Sprawdzają prawdziwe `.htaccess`,
 konfigurację przez WWW, odrzucenie braku ochrony/TLS, SIGKILL, instalację
 i rollback. Zmienne dla niestandardowych binarek opisuje [raport](docs/PUBLIC-HTML-REPORT.md).
-`test:release:browser` używa rzeczywistego ZIP-a 0.13.1: instaluje go nad 0.6.1,
+`test:release:browser` używa rzeczywistego ZIP-a 0.14.0: instaluje go nad 0.6.1,
 uruchamia Dżdżownicę, Winobranie RTS i Stację, cofa wydanie, instaluje ponownie i wznawia zachowane zapisy.
 `npm run assets:earthworm` odtwarza mapę JSON Dżdżownicy; nie nadpisuje ilustracji.
 U1 używa dwóch rename katalogów z krótkim oknem HTTP 404; po zabiciu procesu

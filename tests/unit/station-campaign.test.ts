@@ -10,7 +10,7 @@ import { debt } from '../../src/games/gas-station/campaign-data';
 
 describe('Stacja S3 — cały weekend', () => {
   it.each(
-    [731, 9021].flatMap((seed) =>
+    [731, 9021, 20261114].flatMap((seed) =>
       (['own', 'retail', 'tenant'] as Strategy[]).map((strategy) => ({
         seed,
         strategy,

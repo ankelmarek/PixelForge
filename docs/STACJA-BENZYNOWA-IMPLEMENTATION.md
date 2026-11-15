@@ -689,3 +689,33 @@ Wspólny budżet jednostek to 14 pojazdów, 10 kierowców, 4 osoby ORLAR,
 na własne rozszerzenia, bez równoczesnej dostawy w tym samym podjeździe.
 Nie obiecuje dowolnej, wielopasmowej sieci miejskiej. Przepustowość i
 przygotowanie kolejnych usług są przedmiotem balansu S3.
+
+## 16. S3 — kampania i myjnia
+
+Zlecone wraz z S2/S4. Baza `767b164` / PR #19, pełne CI #28 PASS.
+Nowy klient 0.3.0, zapis v3, weekend 36000 kroków z granicami 9600/24000/36000.
+Moduły `campaign`, `campaign-data`, `campaign-save`, `car-wash`, `accounting`
+i `campaign-controls` są częścią gry, bez zależności zwrotnej silnika.
+
+Ruch ma okna 10/8/7.5 s z jitterem ±1 s. Poza skrzyżowaniami drogi publicznej
+obowiązuje 8 pól/s; manewry zachowują prędkości S2. Wspólne limity dotyczą
+także autokaru, konwoju i myjni. Zdarzenia mają zapowiedź 20 s, jeden aktywny
+slot i minimum 45 s oddechu po awarii. Naprawa nie resetuje wydanego paliwa.
+Ceny hurtowe zamrażają się w opłaconej dostawie; rabat jest jednokrotny.
+
+Myjnia 16×16 pól kosztuje 2500, wymaga 1500 przychodu, drogi i 300 kroków
+pracy budowlanej. Port pracownika leży przed obwiednią budynku. Koszt 8,
+zapłata 25, czas 25 s. Oczekujące auta zajmują bazowe parkingi; przejazd
+po obsłudze używa osobnego pasa publicznego, a wyjazd z parkingu do myjni
+osobnej alejki. Bramka rozszerzeń obejmuje aktywne mycie i przejazd, nie
+samą kolejkę. Stany `wash-wait`, `to-wash`, `washing` są zapisywane w całości.
+
+Oceny są rejestrem wizyt z pięcioma częściami i wagami 30/25/20/15/10.
+Koniec zamyka niezakończone wizyty jako nieobsłużone i zachowuje należności.
+Pożyczka jest zobowiązaniem; odsprzedaż ma 60% kosztu i kontroluje referencje.
+Bankructwo wymaga 120 sekund ciągłego ostrzeżenia po wyczerpaniu realnego
+ratunku. Szczegóły bilansu i dowody: [raport S3](S3-REPORT.md).
+
+Starsze v1/v2 zachowują czas, cele, ruch i własne klucze. Wznowienie wybiera
+najnowszy istniejący klucz; nie maskuje uszkodzenia v3 kopią starszego postępu.
+Rollback aplikacji nie cofa localStorage. Instalator pozostaje 1.2.0.

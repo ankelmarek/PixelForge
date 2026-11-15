@@ -117,7 +117,7 @@ try {
     await page
       .getByRole('button', { name: 'Zaloguj się', exact: true })
       .click();
-    await expect(page.locator('[data-active]')).toHaveText('0.13.1');
+    await expect(page.locator('[data-active]')).toHaveText(config.version);
     let game, save, stationSave;
     if (site.device !== 'no-js') {
       game = await context.newPage();
@@ -180,20 +180,26 @@ try {
       .getByRole('button', { name: 'Sprawdź pakiet', exact: true })
       .click();
     await expect(
-      page.getByRole('heading', { name: '0.13.1 → 0.13.2', exact: true }),
+      page.getByRole('heading', {
+        name: `${config.version} → ${config.nextVersion}`,
+        exact: true,
+      }),
     ).toBeVisible();
-    await expect(page.locator('[data-active]')).toHaveText('0.13.1');
+    await expect(page.locator('[data-active]')).toHaveText(config.version);
     await page
-      .getByRole('button', { name: 'Zainstaluj wydanie 0.13.2', exact: true })
+      .getByRole('button', {
+        name: `Zainstaluj wydanie ${config.nextVersion}`,
+        exact: true,
+      })
       .click();
-    await expect(page.locator('[data-active]')).toHaveText('0.13.2');
+    await expect(page.locator('[data-active]')).toHaveText(config.nextVersion);
     await page
       .getByRole('link', { name: 'Przywróć poprzednią wersję', exact: true })
       .click();
     await page
       .getByRole('button', { name: 'Potwierdź przywrócenie', exact: true })
       .click();
-    await expect(page.locator('[data-active]')).toHaveText('0.13.1');
+    await expect(page.locator('[data-active]')).toHaveText(config.version);
     if (game) {
       expect(
         await game.evaluate(() =>
@@ -270,8 +276,7 @@ try {
     JSON.stringify(
       {
         chromium: browser.version(),
-        release:
-          '0.13.2 is a temporary fixture with unchanged 0.13.1 payload, not a game release',
+        release: `${config.nextVersion} is a temporary fixture with unchanged ${config.version} payload, not a game release`,
         results,
       },
       null,

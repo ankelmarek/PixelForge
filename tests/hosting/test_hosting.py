@@ -16,6 +16,11 @@ import zipfile
 from fixture import HostingServer, ROOT, PHP, certificate, package
 
 
+VERSION = json.loads((ROOT / "package.json").read_text())["version"]
+_parts = VERSION.split(".")
+NEXT_VERSION = ".".join(_parts[:2] + [str(int(_parts[2]) + 1)])
+
+
 class HostingTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -39,7 +44,7 @@ class HostingTests(unittest.TestCase):
             self.assertIsNone(archive.testzip())
             names = archive.namelist()
             self.assertEqual(len(names), len(set(names)))
-            with zipfile.ZipFile(ROOT / "downloads/pixelforge-0.13.1-full.zip") as game:
+            with zipfile.ZipFile(ROOT / f"downloads/pixelforge-{VERSION}-full.zip") as game:
                 self.assertEqual(
                     {
                         name.removeprefix("PixelForge/"): archive.read(name)
@@ -197,7 +202,7 @@ class HostingTests(unittest.TestCase):
         with self.server() as server:
             self.assertEqual(server.setup()[0], 303)
             server.login()
-            plan = server.plan(package("0.13.2", extra=True))
+            plan = server.plan(package(NEXT_VERSION, extra=True))
             process = subprocess.Popen(
                 [
                     PHP,
@@ -235,7 +240,7 @@ class HostingTests(unittest.TestCase):
                     json.loads((server.site.private / "state.json").read_text())[
                         "active"
                     ]["version"],
-                    "0.13.1",
+                    VERSION,
                 )
             finally:
                 if process.poll() is None:
@@ -269,8 +274,8 @@ class HostingTests(unittest.TestCase):
                     server.request(path="/_pixelforge/" + path)[0], 403, path
                 )
             self.assertEqual(server.upload(self.bundle)[0], 409)
-            plan = server.plan(package("0.13.2", extra=True))
-            self.assertIn("0.13.1", server.request()[2])
+            plan = server.plan(package(NEXT_VERSION, extra=True))
+            self.assertIn(VERSION, server.request()[2])
             staged = f"/_pixelforge/data/staging/{plan['id']}/"
             self.assertEqual(server.request(path=staged + "plan.json")[0], 403)
             self.assertEqual(
@@ -281,7 +286,7 @@ class HostingTests(unittest.TestCase):
             )
             server.request()
             state = json.loads((server.site.private / "state.json").read_text())
-            self.assertEqual(state["active"]["version"], "0.13.2")
+            self.assertEqual(state["active"]["version"], NEXT_VERSION)
             backup = f"/_pixelforge/data/releases/{state['previous']['id']}/index.html"
             self.assertEqual(server.request(path=backup)[0], 403)
             self.assertEqual(
@@ -299,7 +304,7 @@ class HostingTests(unittest.TestCase):
                 json.loads((server.site.private / "state.json").read_text())["active"][
                     "version"
                 ],
-                "0.13.1",
+                VERSION,
             )
             self.assertEqual(server.request(path="/PixelForge/index.html")[0], 200)
             self.assertEqual(server.panel_config.stat().st_mode & 0o777, 0o600)

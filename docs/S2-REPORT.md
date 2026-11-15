@@ -4,7 +4,7 @@ Data: 2026-11-15. Gałąź `feature/s2-stacja-rozbudowa`, baza `6dafa75`
 / [PR #18](https://github.com/ankelmarek/PixelForge/pull/18), którego pełne
 CI #24 przeszło. Zlecenie: „ok, realizujj kolejne etapy”, kolejno S2–S4.
 Klient `gas-station` 0.2.0; przygotowywane wydanie PixelForge 0.13.0,
-instalator bez zmiany: 1.2.0. Status: **implementacja do odbioru; końcowa regresja CI w toku**.
+instalator bez zmiany: 1.2.0. Status: **REVIEW — implementacja i pełne CI #28 PASS, PR gotowy do przeglądu**.
 
 ## Zakres
 
@@ -203,3 +203,13 @@ Regresja przypadku, wszystkie 30 testów modelu Stacji oraz pełny scenariusz
 S2 w przeglądarce przeszły lokalnie. Nowy przebieg CI zweryfikuje cały zestaw.
 Paczki 0.13.0 pozostają niezmienione; poprawka otrzymuje osobną wersję 0.13.1.
 Pomiary wydajności powyżej pochodzą z 0.13.0; nie są nowym pomiarem poprawki.
+
+## Końcowa regresja 0.13.1
+
+[CI #28](https://github.com/ankelmarek/PixelForge/actions/runs/43700846192)
+na `767b164f79d6b82e4e470a4a1110b0e1cd2e599c` zakończyło wszystkie zadania
+(`verify`, `e2e core`, `e2e station`) sukcesem. PR #19 jest gotowy do przeglądu.
+W CI #27 poprawiono wyłącznie numer syntetycznej aktualizacji hostingu,
+która musi być nowsza od testowanego wydania. Nie zmieniono paczek 0.13.1.
+S3 bazuje na tym zweryfikowanym stanie; wcześniejsze wpisy powyżej zachowują
+historię wykrycia i naprawy błędów.

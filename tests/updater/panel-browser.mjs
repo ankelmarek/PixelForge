@@ -1,6 +1,6 @@
 import { chromium, devices, expect } from '@playwright/test';
 import { execFileSync, spawn } from 'node:child_process';
-import { access, mkdir, writeFile } from 'node:fs/promises';
+import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { resolve } from 'node:path';
 import { createInterface } from 'node:readline';
@@ -9,10 +9,13 @@ import { randomUUID } from 'node:crypto';
 import process from 'node:process';
 
 const root = resolve(import.meta.dirname, '../..');
+const version = JSON.parse(
+  await readFile(resolve(root, 'package.json'), 'utf8'),
+).version;
 if (process.argv.includes('--release'))
   process.env.PIXELFORGE_TEST_RELEASE = resolve(
     root,
-    'downloads/pixelforge-0.13.1-full.zip',
+    `downloads/pixelforge-${version}-full.zip`,
   );
 const server = spawn(
   'python3',

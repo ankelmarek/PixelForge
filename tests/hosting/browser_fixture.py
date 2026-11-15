@@ -10,6 +10,10 @@ import zipfile
 from fixture import HostingServer, ROOT, certificate
 from test_release import fixture
 
+version = json.loads((ROOT / "package.json").read_text())["version"]
+parts = version.split(".")
+next_version = ".".join(parts[:2] + [str(int(parts[2]) + 1)])
+
 with tempfile.TemporaryDirectory(
     prefix="pixelforge-hosting-browser-"
 ) as temp, ExitStack() as stack:
@@ -21,17 +25,17 @@ with tempfile.TemporaryDirectory(
     if published.exists():
         assert published.read_bytes() == bundle, "Hosting archive differs from source"
         bundle = published.read_bytes()
-    with zipfile.ZipFile(ROOT / "downloads/pixelforge-0.13.1-full.zip") as archive:
+    with zipfile.ZipFile(ROOT / f"downloads/pixelforge-{version}-full.zip") as archive:
         files = {
             name: archive.read(name)
             for name in archive.namelist()
             if name != "manifest.json"
         }
-    release = root / "fixture-0.13.2-full.zip"
+    release = root / f"fixture-{next_version}-full.zip"
     release.write_bytes(
         fixture(
             files=files,
-            change=lambda value: value.update(releaseVersion="0.13.2"),
+            change=lambda value: value.update(releaseVersion=next_version),
             compression=zipfile.ZIP_DEFLATED,
         )
     )
@@ -53,7 +57,7 @@ with tempfile.TemporaryDirectory(
         )
     print(
         json.dumps(
-            {"ca": str(certs[0]), "package": str(release), "servers": configurations}
+            {"ca": str(certs[0]), "package": str(release), "servers": configurations, "version": version, "nextVersion": next_version}
         ),
         flush=True,
     )

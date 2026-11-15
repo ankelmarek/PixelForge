@@ -72,7 +72,7 @@ Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: S0 zaprojekt
 | S0   | Inwentaryzacja aktualnego PixelForge, architektura symulacji ruchu i kolejek, projekt ekonomii        | DONE — baza zleconego S1       |
 | S1   | Grywalna stacja, dwa dystrybutory, sklep, pracownicy, cysterna, pierwsza sprzedaż i podstawowy dźwięk | REVIEW — implementacja i testy |
 | S2   | Swobodna rozbudowa, ruch samochodów, pracownicy, ceny oraz **najem sklepu fikcyjnej sieci Skoczka**   | REVIEW                         |
-| S3   | Myjnia, ekonomia, zdarzenia i 3 zmiany kończące się wynikiem                                          | TODO                           |
+| S3   | Myjnia, ekonomia, zdarzenia i 3 zmiany kończące się wynikiem                                          | REVIEW                         |
 | S4   | Warianty, pixel art, dźwięki, balans, testy, pełny ZIP dla istniejącego panelu                        | TODO                           |
 
 **Zależność:** nowa gra używa istniejącego silnika, sektorów, nawigacji i zapisu. Codex przed rozpoczęciem S0 musi sprawdzić ostatni działający kod i PR #15 lub nowszy, ponieważ `main` może zawierać tylko dokumentację. Oddzielna gałąź `feature/p3-stacja-benzynowa`, brak automatycznego scalania i wdrażania. **Nie rozpoczynaj S1 bez akceptacji S0.**
@@ -272,3 +272,25 @@ S1/S2, desktop i emulacja dotyku, 12 testów hostingu oraz 25 prób dystrybucji
 przeszły. Raport zachowuje również pomiar p95 33.3 ms powyżej celu.
 Najem ma test wygasłej i ponowionej oferty z checkpointu CI.
 Bez automatycznego merge i wdrożenia; następny zlecony etap to S3.
+
+## 14. S3 — Wielki Weekend (2026-11-15)
+
+S2 przeszło pełne CI #28 na `767b164` i PR #19 jest gotowy do przeglądu.
+S3 powstaje na `feature/s3-stacja-weekend` z tej bazy. Klient 0.3.0:
+trzy zmiany 8/12/10 minut, myjnia z fizycznym dojazdem i kolejką, sześć
+zdarzeń z zapowiedzią, naprawy, rabat dostawcy, jednorazowa pożyczka,
+odsprzedaż wolnych rozszerzeń oraz sukces/częściowy sukces/bankructwo.
+Cel: ≥60 opłaconych i zakończonych wizyt, ocena ≥70%, majątek netto >0.
+Zapis v3 zachowuje wcześniejsze klucze i scenariusze S1/S2.
+
+[Raport S3](S3-REPORT.md) podaje postęp weryfikacji. Dziewięć pełnych kampanii
+(trzy strategie × trzy seedy) i pozostałe testy S3 przeszły. Końcowa regresja
+przeglądarkowa i dystrybucja pozostają w toku. Kolejno zlecone S4 obejmuje
+warianty, oprawę, audio, balans i wydajność. Wymagane badanie z trzema nowymi
+graczami pozostaje osobną bramką: bez niego nie oznaczać całej gry DONE.
+Bez W4 Winobrania, automatycznego merge i instalacji na hostingu.
+
+S3: pełny test UI PASS (78 obsłużonych, 86%, 1380 monet zysku), myjnia
+z zapisem w połowie usługi PASS, 168 Vitest / 15 pakietów / 36 PHP/Python,
+lint, typecheck i build PASS. Paczki 0.14.0 zbudowane; pełna regresja CI
+oraz dystrybucja mają odrębne wyniki w PR i raporcie następnego etapu.

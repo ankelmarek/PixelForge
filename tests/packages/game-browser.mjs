@@ -2,11 +2,13 @@ import { chromium, devices, expect } from '@playwright/test';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { createInterface } from 'node:readline';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import process from 'node:process';
 
+const version = JSON.parse(await readFile('package.json', 'utf8')).version;
 const archive =
-  process.env.PIXELFORGE_TEST_RELEASE ?? 'downloads/pixelforge-0.13.1-full.zip';
+  process.env.PIXELFORGE_TEST_RELEASE ??
+  `downloads/pixelforge-${version}-full.zip`;
 const server = spawn(
   'python3',
   ['-u', 'tests/packages/serve_game.py', archive],
