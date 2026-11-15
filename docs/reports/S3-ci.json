@@ -1,0 +1,11 @@
+{
+  "run": 30,
+  "url": "https://github.com/ankelmarek/PixelForge/actions/runs/43712354210",
+  "commit": "39f9a08a0d8497a0d3678c2af27dfa5e99a676e8",
+  "conclusion": "success",
+  "jobs": ["verify", "e2e (station)", "e2e (core)"],
+  "station": {
+    "passed": 10,
+    "skipped": 4
+  }
+}
