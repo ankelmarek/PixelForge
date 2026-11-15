@@ -12,7 +12,7 @@ const root = resolve(import.meta.dirname, '../..');
 if (process.argv.includes('--release'))
   process.env.PIXELFORGE_TEST_RELEASE = resolve(
     root,
-    'downloads/pixelforge-0.12.0-full.zip',
+    'downloads/pixelforge-0.13.0-full.zip',
   );
 const server = spawn(
   'python3',
@@ -259,7 +259,7 @@ try {
       await game.locator('[data-st-order="on"][data-litres="200"]').click();
       await game.locator('#pause').click();
       stationSave = await game.evaluate(() =>
-        globalThis.localStorage.getItem('pixelforge:client:v1:gas-station'),
+        globalThis.localStorage.getItem('pixelforge:client:v2:gas-station'),
       );
       expect(stationSave).toBeTruthy();
       keys = await game.evaluate(() =>
@@ -283,7 +283,7 @@ try {
     if (newGame) {
       expect(
         await game.evaluate(() =>
-          globalThis.localStorage.getItem('pixelforge:client:v1:gas-station'),
+          globalThis.localStorage.getItem('pixelforge:client:v2:gas-station'),
         ),
       ).toBe(stationSave);
       expect(

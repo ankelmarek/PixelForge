@@ -64,7 +64,11 @@ export function path(m: Motion, stops: Cell[]) {
 }
 
 /** Grid reservations include the complete turning square, never just a vehicle's centre. */
-export function move(m: Motion, occupancy: OccupancyReservations) {
+export function move(
+  m: Motion,
+  occupancy: OccupancyReservations,
+  allowed = legal,
+) {
   if (m.turn) {
     m.turn--;
     if (!m.turn) {
@@ -85,7 +89,7 @@ export function move(m: Motion, occupancy: OccupancyReservations) {
   const heading = dx > 0 ? 0 : dy > 0 ? 1 : dx < 0 ? 2 : 3;
   if (m.heading !== heading && m.kind !== 'person') {
     const turning = footprint(m, m.x, m.y, 1);
-    if (!legal(m, turning) || !occupancy.tryClaim(m.id, turning)) {
+    if (!allowed(m, turning) || !occupancy.tryClaim(m.id, turning)) {
       m.blocked++;
       return;
     }
@@ -96,16 +100,24 @@ export function move(m: Motion, occupancy: OccupancyReservations) {
   }
   m.heading = heading;
   const unitsPerSecond =
-    m.kind === 'car' ? 1024 : m.kind === 'truck' ? 896 : 768;
+    m.kind === 'car' || m.kind === 'van'
+      ? 1024
+      : m.kind === 'truck'
+        ? 896
+        : 768;
   const numerator = unitsPerSecond + m.remainder,
     step = Math.min(Math.floor(numerator / 20), Math.abs(dx || dy));
   const x = m.x + Math.sign(dx) * step,
     y = m.y + Math.sign(dy) * step;
   const destination = footprint(m, x, y),
     swept = [...footprint(m), ...destination];
-  if (!legal(m, destination) || !occupancy.tryMove(m.id, swept, destination)) {
+  if (
+    !allowed(m, destination) ||
+    !occupancy.tryMove(m.id, swept, destination)
+  ) {
     m.blocked++;
-    if (m.kind === 'person' && m.blocked % 20 === 0) detour(m, occupancy);
+    if (m.kind === 'person' && m.blocked % 20 === 0)
+      detour(m, occupancy, allowed);
     return;
   }
   m.x = x;
@@ -116,12 +128,16 @@ export function move(m: Motion, occupancy: OccupancyReservations) {
 }
 
 /** Bounded local avoidance around a person or parked car; no world-sized search. */
-function detour(m: Motion, occupancy: OccupancyReservations) {
+function detour(
+  m: Motion,
+  occupancy: OccupancyReservations,
+  allowed: typeof legal,
+) {
   const current = point(m),
     origin = { x: Math.round(current.x), y: Math.round(current.y) };
   const clear = (p: Cell) => {
     const cells = footprint(m, p.x * UNIT, p.y * UNIT);
-    return legal(m, cells) && occupancy.available(m.id, cells);
+    return allowed(m, cells) && occupancy.available(m.id, cells);
   };
   const starts: { p: Cell; route: Cell[] }[] = [];
   // A person may stand between two occupied grid rows. Permit a perpendicular
@@ -153,14 +169,34 @@ function detour(m: Motion, occupancy: OccupancyReservations) {
       }
   }
   if (!starts.length) return;
-  const targets = m.route.slice(0, 20);
+  // Long waypoints (door -> forecourt) must expose nearby rejoin points too.
+  // Otherwise an obstacle two cells away cannot be avoided with a radius-8
+  // search when the only stored destination is eighteen cells away.
+  const expanded: Cell[] = [];
+  let cursor = current;
+  for (const end of m.route) {
+    while (Math.abs(end.x - cursor.x) + Math.abs(end.y - cursor.y) > 1) {
+      cursor = {
+        x:
+          cursor.x +
+          Math.sign(end.x - cursor.x) * Math.min(1, Math.abs(end.x - cursor.x)),
+        y:
+          cursor.y +
+          Math.sign(end.y - cursor.y) * Math.min(1, Math.abs(end.y - cursor.y)),
+      };
+      expanded.push(cursor);
+    }
+    expanded.push(end);
+    cursor = end;
+  }
+  const targets = expanded.slice(0, 20);
   const queue = starts;
   const visited = new Set<string>(starts.map((s) => `${s.p.x},${s.p.y}`));
-  for (let i = 0; i < queue.length && i < 289; i++) {
+  for (let i = 0; i < queue.length && i < 625; i++) {
     const { p, route } = queue[i];
     const index = targets.findIndex((t) => t.x === p.x && t.y === p.y);
     if (index >= 0 && route.length > 1) {
-      m.route = [...route, ...m.route.slice(index + 1)];
+      m.route = [...route, ...expanded.slice(index + 1)];
       return;
     }
     for (const [dx, dy] of [
@@ -173,13 +209,13 @@ function detour(m: Motion, occupancy: OccupancyReservations) {
         k = `${next.x},${next.y}`;
       if (
         visited.has(k) ||
-        Math.abs(next.x - origin.x) > 8 ||
-        Math.abs(next.y - origin.y) > 8
+        Math.abs(next.x - origin.x) > 12 ||
+        Math.abs(next.y - origin.y) > 12
       )
         continue;
       visited.add(k);
       const cells = footprint(m, next.x * UNIT, next.y * UNIT);
-      if (legal(m, cells) && occupancy.available(m.id, cells))
+      if (allowed(m, cells) && occupancy.available(m.id, cells))
         queue.push({ p: next, route: [...route, next] });
     }
   }

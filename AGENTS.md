@@ -39,6 +39,14 @@ opisuje testy i ograniczenia. S1 jest do odbioru. Poprawki prowadź na tej
 samej gałęzi; S2–S4 oraz W4 wymagają kolejnego polecenia. Najem Skoczki,
 swobodne budowanie i pełna kampania nie są jeszcze zaimplementowane.
 
+**Nowe zlecenie (15.11.2026):** „ok, realizujj kolejne etapy” upoważnia do
+wykonania kolejno **S2, S3 i S4** Stacji. Każdy etap zachowuje oddzielną
+gałąź, weryfikację, raport i PR do `main`. Nie jest to zlecenie W4 Winobrania,
+automatycznego merge ani instalacji na hostingu. S2 powstaje z `6dafa75`
+/ PR #18, którego pełne CI #24 przeszło. Wymagane badanie S4 z trzema nowymi
+graczami należy odróżnić od automatycznych testów; bez takiego badania nie
+oznaczać całej gry jako ukończonej.
+
 **Uzupełnienie dla Stacji na Trasie (14.11.2026):** robocze marki to **ORLAR** (stacja z orłem) oraz **Skoczka** (fikcyjna sieć niewielkich sklepów z motywem żabki). Gracz ma móc **prowadzić sklep sam lub oddać lokal w najem Skoczce**. W najmie przychód stacji to czynsz oraz umówiony udział, a nie pełny obrót sklepu; najemca zapewnia swoich pracowników i towary. Zadbaj o parking, oddzielne kolejki, realną animację dostaw i wpływ sklepu na ruch. Mechanikę implementować w S2 po S0 i S1, zgodnie z sekcją 8.1 `docs/STACJA-BENZYNOWA.md`. Nazwy i znaki są robocze, nie kopiuj oznaczeń ORLEN ani Żabka, sprawdź odróżnialność przed publikacją.
 
 ## Gałęzie i pull requesty

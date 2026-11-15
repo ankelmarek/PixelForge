@@ -1,0 +1,742 @@
+{
+  "gameVersion": "0.2.0",
+  "rulesRevision": "opening-1",
+  "worldRevision": "orlar-1",
+  "seed": 20261114,
+  "tick": 194,
+  "serial": 8,
+  "candidate": 3,
+  "nextArrival": 200,
+  "clock": {
+    "speed": 1,
+    "remainder": 47.85000000000488
+  },
+  "result": null,
+  "journal": {
+    "opening": 1500000,
+    "cash": {
+      "balance": 700656,
+      "income": 0,
+      "costs": 799344,
+      "arrears": 0,
+      "ids": [
+        "parcel-west",
+        "parcel-north",
+        "build-site-3",
+        "build-site-4",
+        "build-site-5",
+        "build-site-6",
+        "build-site-7",
+        "wages-172",
+        "hire-worker-3"
+      ]
+    },
+    "profit": -10344,
+    "revenue": 0,
+    "entries": [
+      {
+        "id": "parcel-west",
+        "category": "construction",
+        "cash": -220000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 9
+      },
+      {
+        "id": "parcel-north",
+        "category": "construction",
+        "cash": -260000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 12
+      },
+      {
+        "id": "build-site-3",
+        "category": "construction",
+        "cash": -11000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 47
+      },
+      {
+        "id": "build-site-4",
+        "category": "construction",
+        "cash": -17000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 82
+      },
+      {
+        "id": "build-site-5",
+        "category": "construction",
+        "cash": -32000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 116
+      },
+      {
+        "id": "build-site-6",
+        "category": "construction",
+        "cash": -9000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 144
+      },
+      {
+        "id": "build-site-7",
+        "category": "construction",
+        "cash": -240000,
+        "profit": 0,
+        "revenue": 0,
+        "tick": 161
+      },
+      {
+        "id": "wages-172",
+        "category": "staff",
+        "cash": -344,
+        "profit": -344,
+        "revenue": 0,
+        "tick": 172
+      },
+      {
+        "id": "hire-worker-3",
+        "category": "recruitment",
+        "cash": -10000,
+        "profit": -10000,
+        "revenue": 0,
+        "tick": 172
+      }
+    ]
+  },
+  "tanks": {
+    "e95": {
+      "quantity": 1800,
+      "cost": 81000
+    },
+    "on": {
+      "quantity": 1000,
+      "cost": 43000
+    }
+  },
+  "goods": {
+    "drink": {
+      "quantity": 16,
+      "cost": 6400
+    },
+    "snack": {
+      "quantity": 14,
+      "cost": 7000
+    },
+    "coffee": {
+      "quantity": 10,
+      "cost": 2000
+    }
+  },
+  "totals": {
+    "e95": {
+      "ordered": 0,
+      "orderedCost": 0,
+      "refunded": 0,
+      "refundCost": 0,
+      "used": 0,
+      "usedCost": 0
+    },
+    "on": {
+      "ordered": 0,
+      "orderedCost": 0,
+      "refunded": 0,
+      "refundCost": 0,
+      "used": 0,
+      "usedCost": 0
+    },
+    "drink": {
+      "ordered": 0,
+      "orderedCost": 0,
+      "refunded": 0,
+      "refundCost": 0,
+      "used": 0,
+      "usedCost": 0
+    },
+    "snack": {
+      "ordered": 0,
+      "orderedCost": 0,
+      "refunded": 0,
+      "refundCost": 0,
+      "used": 0,
+      "usedCost": 0
+    },
+    "coffee": {
+      "ordered": 0,
+      "orderedCost": 0,
+      "refunded": 0,
+      "refundCost": 0,
+      "used": 0,
+      "usedCost": 0
+    }
+  },
+  "pumps": [
+    {
+      "id": "pump-0",
+      "built": true,
+      "open": true,
+      "construction": 0,
+      "customer": null
+    },
+    {
+      "id": "pump-1",
+      "built": true,
+      "open": true,
+      "construction": 0,
+      "customer": null
+    },
+    {
+      "id": "pump-2",
+      "built": false,
+      "open": false,
+      "construction": 0,
+      "customer": null
+    },
+    {
+      "id": "pump-3",
+      "built": false,
+      "open": false,
+      "construction": 0,
+      "customer": null
+    }
+  ],
+  "customers": [
+    {
+      "id": "c-0",
+      "serial": 1,
+      "vehicle": {
+        "id": "c-0",
+        "kind": "car",
+        "x": 32460,
+        "y": 40448,
+        "heading": 0,
+        "nextHeading": 0,
+        "turn": 0,
+        "route": [
+          {
+            "x": 252,
+            "y": 158
+          }
+        ],
+        "remainder": 16,
+        "blocked": 0
+      },
+      "driver": null,
+      "phase": "bypass",
+      "pedestrian": "car",
+      "fuel": "e95",
+      "requested": 265,
+      "reserved": 0,
+      "issued": 0,
+      "fuelCost": 0,
+      "fuelBill": 0,
+      "price": 600,
+      "basket": {
+        "drink": 1,
+        "snack": 1,
+        "coffee": 0
+      },
+      "budget": 54508,
+      "pump": null,
+      "parking": null,
+      "patience": 2782,
+      "admitted": -1,
+      "wait": 0,
+      "paid": false,
+      "checked": false,
+      "paidTotal": 0,
+      "bought": 0,
+      "abandoned": false,
+      "color": 0,
+      "shopping": "none",
+      "tenantVisit": false,
+      "tenantBill": 0,
+      "goodsPrices": {
+        "drink": 700,
+        "snack": 900,
+        "coffee": 800
+      }
+    },
+    {
+      "id": "c-1",
+      "serial": 2,
+      "vehicle": {
+        "id": "c-1",
+        "kind": "car",
+        "x": 22220,
+        "y": 40448,
+        "heading": 0,
+        "nextHeading": 0,
+        "turn": 0,
+        "route": [
+          {
+            "x": 96,
+            "y": 158
+          }
+        ],
+        "remainder": 16,
+        "blocked": 0
+      },
+      "driver": null,
+      "phase": "approaching",
+      "pedestrian": "car",
+      "fuel": "on",
+      "requested": 214,
+      "reserved": 0,
+      "issued": 0,
+      "fuelCost": 0,
+      "fuelBill": 0,
+      "price": 580,
+      "basket": {
+        "drink": 1,
+        "snack": 1,
+        "coffee": 0
+      },
+      "budget": 55538,
+      "pump": null,
+      "parking": null,
+      "patience": 2754,
+      "admitted": -1,
+      "wait": 0,
+      "paid": false,
+      "checked": false,
+      "paidTotal": 0,
+      "bought": 0,
+      "abandoned": false,
+      "color": 0,
+      "shopping": "none",
+      "tenantVisit": false,
+      "tenantBill": 0,
+      "goodsPrices": {
+        "drink": 700,
+        "snack": 900,
+        "coffee": 800
+      }
+    },
+    {
+      "id": "c-2",
+      "serial": 3,
+      "vehicle": {
+        "id": "c-2",
+        "kind": "car",
+        "x": 11980,
+        "y": 40448,
+        "heading": 0,
+        "nextHeading": 0,
+        "turn": 0,
+        "route": [
+          {
+            "x": 96,
+            "y": 158
+          }
+        ],
+        "remainder": 16,
+        "blocked": 0
+      },
+      "driver": null,
+      "phase": "approaching",
+      "pedestrian": "car",
+      "fuel": "e95",
+      "requested": 379,
+      "reserved": 0,
+      "issued": 0,
+      "fuelCost": 0,
+      "fuelBill": 0,
+      "price": 600,
+      "basket": {
+        "drink": 1,
+        "snack": 0,
+        "coffee": 0
+      },
+      "budget": 48170,
+      "pump": null,
+      "parking": null,
+      "patience": 2537,
+      "admitted": -1,
+      "wait": 0,
+      "paid": false,
+      "checked": false,
+      "paidTotal": 0,
+      "bought": 0,
+      "abandoned": false,
+      "color": 1,
+      "shopping": "none",
+      "tenantVisit": false,
+      "tenantBill": 0,
+      "goodsPrices": {
+        "drink": 700,
+        "snack": 900,
+        "coffee": 800
+      }
+    }
+  ],
+  "workers": [
+    {
+      "motion": {
+        "id": "worker-1",
+        "kind": "person",
+        "x": 26726,
+        "y": 27648,
+        "heading": 2,
+        "nextHeading": 0,
+        "turn": 0,
+        "route": [
+          {
+            "x": 104,
+            "y": 108
+          },
+          {
+            "x": 103,
+            "y": 108
+          },
+          {
+            "x": 102,
+            "y": 108
+          },
+          {
+            "x": 101,
+            "y": 108
+          },
+          {
+            "x": 100,
+            "y": 108
+          },
+          {
+            "x": 99,
+            "y": 108
+          },
+          {
+            "x": 98,
+            "y": 108
+          },
+          {
+            "x": 97,
+            "y": 108
+          },
+          {
+            "x": 96,
+            "y": 108
+          },
+          {
+            "x": 95,
+            "y": 108
+          },
+          {
+            "x": 95,
+            "y": 109
+          },
+          {
+            "x": 94,
+            "y": 109
+          },
+          {
+            "x": 94,
+            "y": 110
+          },
+          {
+            "x": 94,
+            "y": 111
+          },
+          {
+            "x": 93,
+            "y": 111
+          },
+          {
+            "x": 93,
+            "y": 112
+          },
+          {
+            "x": 92,
+            "y": 112
+          },
+          {
+            "x": 91,
+            "y": 112
+          },
+          {
+            "x": 90,
+            "y": 112
+          },
+          {
+            "x": 90,
+            "y": 113
+          },
+          {
+            "x": 89,
+            "y": 113
+          },
+          {
+            "x": 88,
+            "y": 113
+          },
+          {
+            "x": 87,
+            "y": 113
+          },
+          {
+            "x": 87,
+            "y": 114
+          },
+          {
+            "x": 86,
+            "y": 114
+          },
+          {
+            "x": 85,
+            "y": 114
+          },
+          {
+            "x": 85,
+            "y": 115
+          },
+          {
+            "x": 84,
+            "y": 115
+          },
+          {
+            "x": 83,
+            "y": 115
+          },
+          {
+            "x": 82,
+            "y": 115
+          },
+          {
+            "x": 81,
+            "y": 115
+          },
+          {
+            "x": 80,
+            "y": 115
+          },
+          {
+            "x": 80,
+            "y": 116
+          },
+          {
+            "x": 79,
+            "y": 116
+          },
+          {
+            "x": 78,
+            "y": 116
+          }
+        ],
+        "remainder": 4,
+        "blocked": 0
+      },
+      "role": "forecourt",
+      "job": {
+        "kind": "build",
+        "id": "site-7",
+        "progress": 0
+      },
+      "cargo": {
+        "drink": {
+          "quantity": 0,
+          "cost": 0
+        },
+        "snack": {
+          "quantity": 0,
+          "cost": 0
+        },
+        "coffee": {
+          "quantity": 0,
+          "cost": 0
+        }
+      }
+    },
+    {
+      "motion": {
+        "id": "worker-2",
+        "kind": "person",
+        "x": 32256,
+        "y": 28672,
+        "heading": 0,
+        "nextHeading": 0,
+        "turn": 0,
+        "route": [],
+        "remainder": 0,
+        "blocked": 0
+      },
+      "role": "checkout",
+      "job": null,
+      "cargo": {
+        "drink": {
+          "quantity": 0,
+          "cost": 0
+        },
+        "snack": {
+          "quantity": 0,
+          "cost": 0
+        },
+        "coffee": {
+          "quantity": 0,
+          "cost": 0
+        }
+      }
+    },
+    {
+      "motion": {
+        "id": "worker-3",
+        "kind": "person",
+        "x": 27904,
+        "y": 29184,
+        "heading": 0,
+        "nextHeading": 0,
+        "turn": 0,
+        "route": [],
+        "remainder": 0,
+        "blocked": 0
+      },
+      "role": "forecourt",
+      "job": null,
+      "cargo": {
+        "drink": {
+          "quantity": 0,
+          "cost": 0
+        },
+        "snack": {
+          "quantity": 0,
+          "cost": 0
+        },
+        "coffee": {
+          "quantity": 0,
+          "cost": 0
+        }
+      }
+    }
+  ],
+  "delivery": null,
+  "fuelQueue": [],
+  "checkoutQueue": [],
+  "checkout": null,
+  "served": 0,
+  "lost": 0,
+  "passed": 1,
+  "satisfaction": 0,
+  "visits": 0,
+  "fuelSold": 0,
+  "articles": 0,
+  "deliveries": 0,
+  "wagesUntil": 172,
+  "topology": 7,
+  "camera": {
+    "x": 1856,
+    "y": 1840,
+    "zoom": 0.5
+  },
+  "development": {
+    "revision": "development-1",
+    "duration": 14400,
+    "boundaries": [7200, 10800, 14400],
+    "parcels": ["start", "west", "north"],
+    "sites": [
+      {
+        "id": "site-7",
+        "kind": "heavy-pump",
+        "point": {
+          "x": 84,
+          "y": 118
+        },
+        "rotation": 0,
+        "fuel": "on",
+        "cost": 240000,
+        "progress": 300
+      }
+    ],
+    "roads": [
+      {
+        "id": "road-3",
+        "from": {
+          "x": 106,
+          "y": 134
+        },
+        "to": {
+          "x": 84,
+          "y": 134
+        },
+        "cost": 11000
+      },
+      {
+        "id": "road-4",
+        "from": {
+          "x": 84,
+          "y": 134
+        },
+        "to": {
+          "x": 84,
+          "y": 100
+        },
+        "cost": 17000
+      },
+      {
+        "id": "road-5",
+        "from": {
+          "x": 84,
+          "y": 100
+        },
+        "to": {
+          "x": 148,
+          "y": 100
+        },
+        "cost": 32000
+      },
+      {
+        "id": "road-6",
+        "from": {
+          "x": 148,
+          "y": 100
+        },
+        "to": {
+          "x": 148,
+          "y": 118
+        },
+        "cost": 9000
+      }
+    ],
+    "prices": {
+      "e95": 600,
+      "on": 580,
+      "drink": 700,
+      "snack": 900,
+      "coffee": 800
+    },
+    "priority": "deliveries",
+    "secondCheckout": false,
+    "checkout": null,
+    "wages": 74800,
+    "wageRemainder": 0,
+    "wageTotal": 344,
+    "goodsRevenue": 0,
+    "fuelRevenue": 0,
+    "constructionSpent": 789000,
+    "tenant": {
+      "phase": "owned",
+      "since": 0,
+      "contract": null,
+      "everSigned": false,
+      "queue": [],
+      "checkout": null,
+      "staff": [],
+      "stock": {
+        "drink": 0,
+        "snack": 0,
+        "coffee": 0
+      },
+      "supplied": {
+        "drink": 0,
+        "snack": 0,
+        "coffee": 0
+      },
+      "sales": [],
+      "settlements": [],
+      "delivery": null,
+      "deliveries": 0
+    }
+  }
+}

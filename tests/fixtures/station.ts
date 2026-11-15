@@ -1,4 +1,4 @@
-import data from '../../public/assets/games/gas-station/world.json';
+import data from '../../public/assets/games/gas-station/world.json' with { type: 'json' };
 import { validateWorld } from '../../src/games/gas-station/world';
 import type { StationModel } from '../../src/games/gas-station/model';
 export const stationWorld = validateWorld(data);

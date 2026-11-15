@@ -117,7 +117,7 @@ try {
     await page
       .getByRole('button', { name: 'Zaloguj się', exact: true })
       .click();
-    await expect(page.locator('[data-active]')).toHaveText('0.12.0');
+    await expect(page.locator('[data-active]')).toHaveText('0.13.0');
     let game, save, stationSave;
     if (site.device !== 'no-js') {
       game = await context.newPage();
@@ -171,7 +171,7 @@ try {
       await game.locator('[data-st-order="on"][data-litres="200"]').click();
       await game.locator('#pause').click();
       stationSave = await game.evaluate(() =>
-        globalThis.localStorage.getItem('pixelforge:client:v1:gas-station'),
+        globalThis.localStorage.getItem('pixelforge:client:v2:gas-station'),
       );
       expect(stationSave).toBeTruthy();
     }
@@ -180,20 +180,20 @@ try {
       .getByRole('button', { name: 'Sprawdź pakiet', exact: true })
       .click();
     await expect(
-      page.getByRole('heading', { name: '0.12.0 → 0.12.1', exact: true }),
+      page.getByRole('heading', { name: '0.13.0 → 0.13.1', exact: true }),
     ).toBeVisible();
-    await expect(page.locator('[data-active]')).toHaveText('0.12.0');
+    await expect(page.locator('[data-active]')).toHaveText('0.13.0');
     await page
-      .getByRole('button', { name: 'Zainstaluj wydanie 0.12.1', exact: true })
+      .getByRole('button', { name: 'Zainstaluj wydanie 0.13.1', exact: true })
       .click();
-    await expect(page.locator('[data-active]')).toHaveText('0.12.1');
+    await expect(page.locator('[data-active]')).toHaveText('0.13.1');
     await page
       .getByRole('link', { name: 'Przywróć poprzednią wersję', exact: true })
       .click();
     await page
       .getByRole('button', { name: 'Potwierdź przywrócenie', exact: true })
       .click();
-    await expect(page.locator('[data-active]')).toHaveText('0.12.0');
+    await expect(page.locator('[data-active]')).toHaveText('0.13.0');
     if (game) {
       expect(
         await game.evaluate(() =>
@@ -213,7 +213,7 @@ try {
       await game.locator('#pause').click();
       expect(
         await game.evaluate(() =>
-          globalThis.localStorage.getItem('pixelforge:client:v1:gas-station'),
+          globalThis.localStorage.getItem('pixelforge:client:v2:gas-station'),
         ),
       ).toBe(stationSave);
       await game.locator('#back').click();
@@ -271,7 +271,7 @@ try {
       {
         chromium: browser.version(),
         release:
-          '0.12.1 is a temporary fixture with unchanged 0.12.0 payload, not a game release',
+          '0.13.1 is a temporary fixture with unchanged 0.13.0 payload, not a game release',
         results,
       },
       null,

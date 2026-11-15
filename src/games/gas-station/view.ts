@@ -3,6 +3,9 @@ import { PUMPS, PARKING, SHOP, TILE, UNIT, paved } from './world';
 import { bodies } from './state';
 import type { StationModel } from './model';
 import type { Motion } from './types';
+import { extraPump, PARCELS, ENTRY, EXIT } from './development';
+import { roadBounds, siteBounds, island, type BuildRequest } from './placement';
+import { inside } from '../../engine/api/strategy';
 
 /** Presentation only: hiding a sprite never stops its simulation. */
 export class StationView {
@@ -17,11 +20,22 @@ export class StationView {
   private objects: Phaser.GameObjects.GameObject[] = [];
   private effects: Phaser.GameObjects.Graphics;
   private doors: Phaser.GameObjects.Rectangle[] = [];
+  private grounds: Phaser.GameObjects.Graphics;
+  private developments: Phaser.GameObjects.Graphics;
+  private tenantSign: Phaser.GameObjects.Image;
+  private shopLabel: Phaser.GameObjects.Text;
+  private priceLabels: Phaser.GameObjects.Text[] = [];
+  private trees: { x: number; y: number; image: Phaser.GameObjects.Image }[] =
+    [];
+  private roadRevision = -1;
   constructor(
     private scene: Phaser.Scene,
     private model: StationModel,
   ) {
     const g = scene.add.graphics().setDepth(2);
+    this.grounds = scene.add.graphics().setDepth(3);
+    this.developments = scene.add.graphics().setDepth(16);
+    this.objects.push(this.grounds, this.developments);
     this.objects.push(g);
     const rect = (x: number, y: number, w: number, h: number, c: number) =>
       g.fillStyle(c).fillRect(x, y, w, h);
@@ -100,7 +114,13 @@ export class StationView {
       this.objects.push(t);
       return t;
     };
-    text(118 * TILE, 106 * TILE + 8, 'O R L A R', 16);
+    this.shopLabel = text(118 * TILE, 106 * TILE + 8, 'O R L A R', 16);
+    this.tenantSign = scene.add
+      .image(SHOP.x * TILE, SHOP.y * TILE, 'skoczka')
+      .setOrigin(0)
+      .setDepth(11)
+      .setVisible(false);
+    this.objects.push(this.tenantSign);
     text(129 * TILE, 106 * TILE + 12, '24h', 10, '#efb851');
     text(112 * TILE + 18, 110 * TILE, 'KAWA', 8, '#304d4b');
     text(128 * TILE + 10, 110 * TILE, 'SKLEP', 8, '#304d4b');
@@ -132,8 +152,8 @@ export class StationView {
     rect(99 * TILE, 139 * TILE, 72, 74, 0x243c42);
     rect(99 * TILE, 139 * TILE, 72, 5, 0xefb851);
     text(99 * TILE + 7, 139 * TILE + 9, 'ORLAR', 11, '#efb851');
-    text(99 * TILE + 7, 139 * TILE + 29, 'E95 6.00', 8);
-    text(99 * TILE + 7, 139 * TILE + 46, 'ON  5.80', 8);
+    this.priceLabels.push(text(99 * TILE + 7, 139 * TILE + 29, 'E95 6.00', 8));
+    this.priceLabels.push(text(99 * TILE + 7, 139 * TILE + 46, 'ON  5.80', 8));
     for (const [i, x] of [137, 140].entries()) {
       g.fillStyle(0x687f78)
         .fillCircle(x * TILE, 102 * TILE, 17)
@@ -175,39 +195,50 @@ export class StationView {
         )
           continue;
         if ((x + y) % 5 === 0) continue;
-        this.objects.push(
-          scene.add
-            .image(q.x * TILE, q.y * TILE, 'tree')
-            .setOrigin(0.5, 0.8)
-            .setDepth(5)
-            .setFlipX(x % 3 === 0),
-        );
+        const tree = scene.add
+          .image(q.x * TILE, q.y * TILE, 'tree')
+          .setOrigin(0.5, 0.8)
+          .setDepth(5)
+          .setFlipX(x % 3 === 0);
+        this.objects.push(tree);
+        this.trees.push({ ...q, image: tree });
       }
     this.effects = scene.add.graphics().setDepth(80);
     this.objects.push(this.effects);
   }
-  draw(selection: string, build: boolean) {
+  draw(selection: string, build: boolean, project: BuildRequest | null = null) {
     const { scene, model } = this,
       s = model.state,
       g = this.effects;
     g.clear();
+    this.drawDevelopment(project);
     const present = new Set<string>();
     for (const m of bodies(s)) {
       present.add(m.id);
       const customer = s.customers.find((c) => c.id === m.id),
         worker = s.workers.find((w) => w.motion.id === m.id);
       const texture =
-        m.kind === 'car' ? 'cars' : m.kind === 'truck' ? 'truck' : 'people';
+        m.kind === 'car'
+          ? 'cars'
+          : m.kind === 'van'
+            ? 'van'
+            : m.kind === 'truck'
+              ? customer
+                ? 'freight'
+                : 'truck'
+              : 'people';
       const turning = m.turn ? this.turnFrame(m) : m.heading * 2;
       const phase = m.route.length ? Math.floor(s.tick / 4) % 4 : 0;
       const frame =
-        m.kind === 'car'
+        m.kind === 'car' || m.kind === 'van'
           ? (customer?.color ?? 0) * 16 +
             turning * 2 +
             Number(!!m.turn || m.blocked > 0)
           : m.kind === 'truck'
             ? turning
-            : (worker ? 0 : 2) * 16 + phase * 4 + m.heading;
+            : (worker ? 0 : m.id.startsWith('tenant-') ? 1 : 2) * 16 +
+              phase * 4 +
+              m.heading;
       let img = this.sprites.get(m.id);
       if (!img) {
         img = scene.add
@@ -281,7 +312,7 @@ export class StationView {
                 : (customer.fuel?.toUpperCase() ?? '☕'),
           );
         if (customer.phase === 'fueling' && customer.pump !== null) {
-          const p = PUMPS[customer.pump];
+          const p = model.pumps[customer.pump];
           g.lineStyle(3, 0x263d40).lineBetween(
             (p.x - 2) * TILE,
             p.y * TILE,
@@ -324,7 +355,17 @@ export class StationView {
       d.setX((121.5 + i * 3.8 + (i ? 2.7 : -1.5) * door) * TILE),
     );
     s.pumps.forEach((p, i) => {
-      const site = PUMPS[i];
+      const site = model.pumps[i],
+        extension = extraPump(s, i);
+      if (!this.pumps[i]) {
+        const p = island(extension!)!;
+        this.pumps[i] = scene.add
+          .image(p.x * TILE, (p.y + 1) * TILE, 'pump', 0)
+          .setOrigin(0.45, 0.8)
+          .setDepth(30)
+          .setAngle(extension!.rotation * 90);
+        this.objects.push(this.pumps[i]);
+      }
       this.pumps[i]
         .setVisible(p.built)
         .setFrame(
@@ -374,6 +415,170 @@ export class StationView {
         144 * TILE,
         110 * TILE,
       );
+  }
+  private drawDevelopment(project: BuildRequest | null) {
+    const s = this.model.state,
+      d = s.development,
+      g = this.developments;
+    g.clear();
+    this.tenantSign.setVisible(
+      d?.tenant.phase === 'leased' || d?.tenant.phase === 'returning',
+    );
+    this.shopLabel
+      .setText(this.tenantSign.visible ? 'SKOCZKA' : 'O R L A R')
+      .setColor(this.tenantSign.visible ? '#e8dca5' : '#f4e6bd');
+    if (!d) return;
+    this.priceLabels.forEach((p, i) =>
+      p.setText(
+        `${i ? 'ON ' : 'E95'} ${(d.prices[i ? 'on' : 'e95'] / 100).toFixed(2)}`,
+      ),
+    );
+    if (this.roadRevision !== s.topology) {
+      const ground = this.grounds;
+      ground.clear();
+      this.roadRevision = s.topology;
+      for (const road of d.roads) {
+        const r = roadBounds(road);
+        ground
+          .fillStyle(0x8e9f98)
+          .fillRect(r.x * TILE, r.y * TILE, r.width * TILE, r.height * TILE);
+        ground
+          .lineStyle(2, 0xd3ccb2)
+          .strokeRect(
+            r.x * TILE + 2,
+            r.y * TILE + 2,
+            r.width * TILE - 4,
+            r.height * TILE - 4,
+          );
+        const dx = Math.sign(road.to.x - road.from.x),
+          dy = Math.sign(road.to.y - road.from.y);
+        for (
+          let n = 4;
+          n <
+          Math.abs(road.to.x - road.from.x) + Math.abs(road.to.y - road.from.y);
+          n += 8
+        ) {
+          const x = (road.from.x + dx * n) * TILE,
+            y = (road.from.y + dy * n) * TILE;
+          ground
+            .lineStyle(3, 0xe7dec1)
+            .lineBetween(x - dx * 12, y - dy * 12, x + dx * 12, y + dy * 12);
+          ground
+            .lineBetween(x + dx * 12, y + dy * 12, x - dy * 7, y + dx * 7)
+            .lineBetween(x + dx * 12, y + dy * 12, x + dy * 7, y - dx * 7);
+        }
+      }
+      for (const tree of this.trees)
+        tree.image.setVisible(
+          !PARCELS.some(
+            (p) =>
+              p.id !== 'start' && d.parcels.includes(p.id) && inside(tree, p),
+          ),
+        );
+    }
+    for (const p of d.sites) {
+      const r = siteBounds(p);
+      if (p.kind === 'parking') {
+        g.lineStyle(2, 0xf0e2b9).strokeRect(
+          (p.point.x - 3) * TILE,
+          (p.point.y - 4) * TILE,
+          6 * TILE,
+          8 * TILE,
+        );
+        g.lineBetween(
+          (p.point.x - 2) * TILE,
+          (p.point.y - 4) * TILE,
+          (p.point.x + 2) * TILE,
+          (p.point.y - 4) * TILE,
+        );
+      } else if (p.kind === 'tank') {
+        g.fillStyle(0x354f51).fillRoundedRect(
+          r.x * TILE,
+          r.y * TILE,
+          r.width * TILE,
+          r.height * TILE,
+          12,
+        );
+        g.fillStyle(0xa8bbb0).fillRoundedRect(
+          r.x * TILE + 5,
+          r.y * TILE + 5,
+          r.width * TILE - 10,
+          r.height * TILE - 16,
+          10,
+        );
+        g.fillStyle(p.fuel === 'e95' ? 0x48aa9a : 0xefb851).fillRect(
+          r.x * TILE + 8,
+          (r.y + 2) * TILE,
+          r.width * TILE - 16,
+          12,
+        );
+        g.fillStyle(0xe7dec1).fillCircle(
+          p.point.x * TILE,
+          (p.point.y - 1) * TILE,
+          10,
+        );
+      }
+      if (p.progress) {
+        g.lineStyle(3, 0xefb851).strokeRect(
+          r.x * TILE,
+          r.y * TILE,
+          r.width * TILE,
+          r.height * TILE,
+        );
+        for (let x = r.x; x < r.x + r.width; x += 2)
+          g.fillStyle(0xefb851).fillTriangle(
+            x * TILE,
+            r.y * TILE,
+            (x + 1) * TILE,
+            r.y * TILE,
+            (x + 0.5) * TILE,
+            (r.y - 1) * TILE,
+          );
+        g.fillStyle(0x48aa9a).fillRect(
+          r.x * TILE,
+          (r.y + r.height) * TILE,
+          r.width * TILE * (1 - p.progress / 300),
+          4,
+        );
+      }
+    }
+    if (d.secondCheckout)
+      g.fillStyle(0xdeb874).fillRect(128 * TILE - 16, 112 * TILE - 12, 32, 12);
+    if (['closing', 'refitting', 'restoring'].includes(d.tenant.phase)) {
+      g.fillStyle(0x755b63, 0.8).fillRect(
+        SHOP.x * TILE,
+        SHOP.y * TILE,
+        SHOP.width * TILE,
+        32,
+      );
+      for (let x = SHOP.x; x < SHOP.x + SHOP.width; x += 2)
+        g.fillStyle(0xefb851).fillRect(x * TILE, SHOP.y * TILE, 16, 6);
+    }
+    if (project) {
+      for (const p of PARCELS)
+        g.lineStyle(
+          2,
+          d.parcels.includes(p.id) ? 0x77cca5 : 0xd4a273,
+          0.8,
+        ).strokeRect(p.x * TILE, p.y * TILE, p.width * TILE, p.height * TILE);
+      for (const [p, color] of [
+        [ENTRY, 0x77cca5],
+        [EXIT, 0xefb851],
+      ] as const)
+        g.lineStyle(4, color).strokeCircle(p.x * TILE, p.y * TILE, 20);
+      const plan = this.model.previewBuild(project),
+        r = plan.bounds,
+        c = plan.valid ? 0x73d5ad : 0xd8766c;
+      g.fillStyle(c, 0.2)
+        .fillRect(r.x * TILE, r.y * TILE, r.width * TILE, r.height * TILE)
+        .lineStyle(3, c)
+        .strokeRect(r.x * TILE, r.y * TILE, r.width * TILE, r.height * TILE);
+      const dx = [0, -1, 0, 1][project.rotation],
+        dy = [-1, 0, 1, 0][project.rotation],
+        x = project.point.x * TILE,
+        y = project.point.y * TILE;
+      g.lineBetween(x, y, x + dx * 26, y + dy * 26);
+    }
   }
   private turnFrame(m: Motion) {
     const delta = (m.nextHeading - m.heading + 4) % 4,

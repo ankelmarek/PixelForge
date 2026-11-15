@@ -6,13 +6,15 @@
 
 Projekt powstaje z myślą o wielokrotnym wykorzystaniu gotowego silnika i produkowaniu kolejnych, niezależnych tytułów, zamiast pisania całych gier od zera.
 
-**Stacja na Trasie — S1 do odbioru:** pierwsza sześciominutowa zmiana ORLAR
-jest dostępna w katalogu i ZIP-ie 0.12.0. Dwie pompy, sklep, dwóch pracowników,
-kolejki, fizyczne dostawy i rozbudowa o trzeci dystrybutor. Cel: co najmniej
-12 obsłużonych klientów i dodatni zysk operacyjny. Gra ma własne grafiki,
-dźwięki, zapis, obsługę myszą i podstawowy dotyk. [Raport S1](docs/S1-REPORT.md),
-[specyfikacja](docs/STACJA-BENZYNOWA.md) i [plan](docs/STACJA-BENZYNOWA-IMPLEMENTATION.md).
-Najem Skoczki i swobodne budowanie to S2; pełny „Wielki Weekend” to S3.
+**Stacja na Trasie — S2:** rozbudowa ORLAR i dobrowolny najem Skoczki.
+Wycinek na 12 minut obejmuje zakup działek, skierowane drogi, własne pompy,
+stanowisko ciężarowe ON, parkingi i zbiorniki, do czterech pracowników,
+drugą kasę i ceny detaliczne. Sklep można prowadzić samemu albo wynająć:
+stacja otrzymuje czynsz i umówiony udział, a Skoczka ma własny towar,
+personel oraz dostawy. Cel wycinka: ≥20 obsłużonych i dodatni zysk.
+[Raport S2](docs/S2-REPORT.md), [specyfikacja](docs/STACJA-BENZYNOWA.md)
+i [plan](docs/STACJA-BENZYNOWA-IMPLEMENTATION.md). Pełna kampania 30 minut
+z myjnią i zdarzeniami pozostaje S3; oprawa i warianty — S4.
 
 ## Główna zasada
 
@@ -58,7 +60,7 @@ Warianty kampanii, pełny miks audio i badania z nowymi graczami pozostają W4.
 
 ## Gotowa paczka na hosting
 
-[Pobierz wszystko do public_html — gry 0.12.0 + instalator i aktualizator 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s1-stacja-benzynowa/downloads/pixelforge-public-html-0.12.0-installer-1.2.0.zip).
+[Pobierz wszystko do public_html — gry 0.13.0 + instalator i aktualizator 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s2-stacja-rozbudowa/downloads/pixelforge-public-html-0.13.0-installer-1.2.0.zip).
 
 Rozpakuj **zawartość** w `public_html`, razem z ukrytymi `.htaccess`, i otwórz
 `https://twoja-domena.pl/setup.php`. Pobierz z instalatora plik konfiguracji,
@@ -73,8 +75,8 @@ to `/pixelforge.php`. Przy zastępowaniu starej gry wgraj nowy katalog `PixelFor
 w całości, bez pozostawiania starych assetów. Zachowaj wcześniejszą kopię.
 
 **Do kolejnych aktualizacji gry albo samego hostingu statycznego:**
-[Pobierz PixelForge 0.12.0 — Stacja S1 + Winobranie RTS W3 + Dżdżownica + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s1-stacja-benzynowa/downloads/pixelforge-0.12.0-full.zip).
-W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.12.0**.
+[Pobierz PixelForge 0.13.0 — Stacja S2 + Winobranie RTS W3 + Dżdżownica + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s2-stacja-rozbudowa/downloads/pixelforge-0.13.0-full.zip).
+W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.13.0**.
 Po instalacji otwórz stronę gry i wybierz **Otwórz stację**, a następnie **Nowa gra**.
 Panel trzeba wcześniej jednorazowo skonfigurować; jest osobnym narzędziem PHP.
 Możliwe jest również ręczne wgranie na hosting statyczny:
@@ -139,7 +141,7 @@ aktualizatora.
 
 ```bash
 npm run package:release
-npm run package:validate -- downloads/pixelforge-0.12.0-full.zip
+npm run package:validate -- downloads/pixelforge-0.13.0-full.zip
 npm run test:packages
 ```
 
@@ -153,7 +155,7 @@ w Pythonie/PHP (biblioteka standardowa, bez pip). [Format, limity i polecenia](d
 
 [Osobny ZIP narzędzia PHP 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p3-soil-adventure/downloads/pixelforge-updater-u2-1.2.0.zip)
 rozpakowuje się poza katalogiem publicznym. Nie jest paczką gry do wgrania
-do PixelForge. Aktualizacja gry 0.12.0 zachowuje zapisy Atlasu i starej Dżdżownicy. Nowy pionowy świat ma osobny zapis v3; mapa z widokiem z góry pozostaje dostępna po rollbacku do 0.7.0.
+do PixelForge. Aktualizacja gry 0.13.0 zachowuje zapisy Atlasu i starej Dżdżownicy. Nowy pionowy świat ma osobny zapis v3; mapa z widokiem z góry pozostaje dostępna po rollbacku do 0.7.0.
 
 ```bash
 npm run test:updater
@@ -179,7 +181,7 @@ Testy `hosting` wymagają dodatkowo Apache i modułu PHP (`apache2`,
 `libapache2-mod-php` na Debianie/Ubuntu). Sprawdzają prawdziwe `.htaccess`,
 konfigurację przez WWW, odrzucenie braku ochrony/TLS, SIGKILL, instalację
 i rollback. Zmienne dla niestandardowych binarek opisuje [raport](docs/PUBLIC-HTML-REPORT.md).
-`test:release:browser` używa rzeczywistego ZIP-a 0.12.0: instaluje go nad 0.6.1,
+`test:release:browser` używa rzeczywistego ZIP-a 0.13.0: instaluje go nad 0.6.1,
 uruchamia Dżdżownicę, Winobranie RTS i Stację, cofa wydanie, instaluje ponownie i wznawia zachowane zapisy.
 `npm run assets:earthworm` odtwarza mapę JSON Dżdżownicy; nie nadpisuje ilustracji.
 U1 używa dwóch rename katalogów z krótkim oknem HTTP 404; po zabiciu procesu

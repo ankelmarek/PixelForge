@@ -665,3 +665,27 @@ aktualnie brzmiące głosy. Nie ma tekstowego samouczka.
 
 Wyniki testów, pomiary, paczki i ograniczenia odbioru są w [raporcie S1](S1-REPORT.md).
 Następny zakres to S2 po odbiorze S1 i kolejnym poleceniu.
+
+## 15. S2 — rzeczywista implementacja rozbudowy
+
+Zlecone 15.11.2026 wraz z dalszym S3/S4; baza `6dafa75` / PR #18.
+[Raport S2](S2-REPORT.md) rozdziela implementację od wyników kontroli.
+Klient 0.2.0, zapis v2 z zachowaniem v1, osobny scenariusz na 12 minut:
+6 minut otwarcia oraz dwa okresy po 3 minuty, oferta w drugim okresie,
+finał ≥20 obsłużonych i zysk operacyjny >0. To wycinek do sprawdzenia
+rozbudowy i umów, nie zmiana reguł pełnej kampanii S3.
+
+`placement.ts` sprawdza własność, aktualne trasy i pełne obwiednie,
+podgląd oraz commit. Drogę 2–64 pola przeciąga się w osi; sieć jest
+skierowana, szerokość 10 pól umożliwia skręt obwiedni ciężarówki 8×8.
+Do 24 obiektów i 64 odcinków. Pompa/parking muszą mieć wejście i wyjście
+w grafie, zbiornik dojście pracownika. Koszt nalicza się atomowo,
+budowa trwa 300 ticków pracy po dojściu, nie po samym kliknięciu.
+
+`tenant-lease.ts` oddziela zamknięcie koszyków, przebudowę, najem,
+zamykanie operatora i powrót po przebudowie. Kasa ORLAR pozostaje czynna.
+Wspólny budżet jednostek to 14 pojazdów, 10 kierowców, 4 osoby ORLAR,
+2 Skoczki i 2 dostawy. Konserwatywna bramka wpuszcza jeden pojazd klienta
+na własne rozszerzenia, bez równoczesnej dostawy w tym samym podjeździe.
+Nie obiecuje dowolnej, wielopasmowej sieci miejskiej. Przepustowość i
+przygotowanie kolejnych usług są przedmiotem balansu S3.

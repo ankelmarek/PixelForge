@@ -2,7 +2,7 @@
 
 **Decyzja:** 14 listopada 2026. **Stan:** W0 nowej gry **Winobranie RTS: Trzy sezony** wykonane — inwentaryzacja, kontrakty i plan. W1 i W2 są bazą kolejnych zleceń. Po poleceniu „Rób nowy zakres” zaimplementowano W3: trzyletnią kampanię, rozbudowę, ekonomię i produkcję wina. W3 jest do odbioru; W4 nie rozpoczęto. **Główny dokument produkcyjny:** [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md).
 
-**Stacja na Trasie:** S0 zaakceptowane kolejnym poleceniem. **S1 do odbioru** — pierwszy grywalny klient i ZIP 0.12.0; [raport S1](S1-REPORT.md), [projekt wdrożenia](STACJA-BENZYNOWA-IMPLEMENTATION.md). S2–S4 nie rozpoczęto.
+**Stacja na Trasie:** S0 zaakceptowane kolejnym poleceniem. **S2 w weryfikacji** — rozbudowa i najem Skoczki; [raport S2](S2-REPORT.md), [projekt wdrożenia](STACJA-BENZYNOWA-IMPLEMENTATION.md). S2 trwa; S3–S4 zlecone do kolejnej realizacji.
 
 Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md) oraz [archiwum historycznym](./ROADMAP-ARCHIVE-2026-11.md). Oba mają status historyczny. Jeżeli ich zapis przeczy temu dokumentowi lub `docs/WINOBRANIE-RTS.md`, obowiązuje aktualna decyzja z 14 listopada.
 
@@ -59,19 +59,19 @@ nowy tytuł nie jest jeszcze dostępny w launcherze ani ZIP-ie.
 ## 4. Kolejka pozostałych gier
 
 - **Miodobranie:** zaakceptowana koncepcja, osobny etap w przyszłości.
-- **Stacja na Trasie: Wielki Weekend:** [pełna specyfikacja RTS](./STACJA-BENZYNOWA.md), osobna gra ekonomiczna z ruchem pojazdów, usługami, 3 zmianami i końcem po około 30 minutach. **S1 do odbioru**: pierwsza zmiana na 6 minut; S2–S4 nie rozpoczęto. Nie wstrzymuje prac nad Winobraniem RTS.
+- **Stacja na Trasie: Wielki Weekend:** [pełna specyfikacja RTS](./STACJA-BENZYNOWA.md), osobna gra ekonomiczna z ruchem pojazdów, usługami, 3 zmianami i końcem po około 30 minutach. **S2 w weryfikacji**: rozbudowa na 12 minut; S3–S4 zlecone do kolejnej realizacji. Nie wstrzymuje prac nad Winobraniem RTS.
 - **Życie Dżdżownicy:** istniejąca produkcja; zachować kompatybilność.
 - Pozostałe koncepcje pozostają propozycjami, nie aktywnymi zadaniami.
 
 ### Plan rozwoju Stacji na Trasie (oddzielny cykl)
 
-Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: S0 zaprojektowane na bazie PR #16; [kontrakty i plan S1](STACJA-BENZYNOWA-IMPLEMENTATION.md). **Nowy wariant ekonomiczny:** fikcyjna polska stacja **ORLAR** ma możliwość prowadzenia własnego sklepu lub wynajęcia go sieci **Skoczka**, z czynszem, kontraktem, odmiennymi obowiązkami i ruchem klientów. Funkcja zaplanowana do S2; branding autorski, bez kopiowania realnych znaków ORLEN i Żabka.
+Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: S0 zaprojektowane na bazie PR #16; [kontrakty i plan S1](STACJA-BENZYNOWA-IMPLEMENTATION.md). **Nowy wariant ekonomiczny:** fikcyjna polska stacja **ORLAR** ma możliwość prowadzenia własnego sklepu lub wynajęcia go sieci **Skoczka**, z czynszem, kontraktem, odmiennymi obowiązkami i ruchem klientów. Implementacja S2 w weryfikacji; branding autorski, bez kopiowania realnych znaków ORLEN i Żabka.
 
 | Etap | Cel                                                                                                   | Status                         |
 | ---- | ----------------------------------------------------------------------------------------------------- | ------------------------------ |
 | S0   | Inwentaryzacja aktualnego PixelForge, architektura symulacji ruchu i kolejek, projekt ekonomii        | DONE — baza zleconego S1       |
 | S1   | Grywalna stacja, dwa dystrybutory, sklep, pracownicy, cysterna, pierwsza sprzedaż i podstawowy dźwięk | REVIEW — implementacja i testy |
-| S2   | Swobodna rozbudowa, ruch samochodów, pracownicy, ceny oraz **najem sklepu fikcyjnej sieci Skoczka**   | TODO                           |
+| S2   | Swobodna rozbudowa, ruch samochodów, pracownicy, ceny oraz **najem sklepu fikcyjnej sieci Skoczka**   | IN PROGRESS                    |
 | S3   | Myjnia, ekonomia, zdarzenia i 3 zmiany kończące się wynikiem                                          | TODO                           |
 | S4   | Warianty, pixel art, dźwięki, balans, testy, pełny ZIP dla istniejącego panelu                        | TODO                           |
 
@@ -240,6 +240,27 @@ Raport podaje metody i ograniczenia. ZIP `full` służy istniejącemu panelowi,
 [pełne CI #23 — PASS](https://github.com/ankelmarek/PixelForge/actions/runs/43649290650)
 dla kodu i paczek `f861147`; końcowe uzupełnienie dotyczy wyłącznie dokumentacji.
 
-**S1: REVIEW. S2–S4: TODO.** Następny etap wymaga odbioru i osobnego zlecenia.
+**Historyczny stan po S1:** S1 REVIEW, S2–S4 TODO. Następne polecenie opisano w sekcji 13.
 Najem Skoczki, swobodne budowanie, myjnia i trzy zmiany nie są jeszcze
 dostępne. Nie wdrożono gry na hosting i nie scalono PR do `main`.
+
+## 13. S2 — rozbudowa i Skoczka (2026-11-15)
+
+Polecenie „ok, realizujj kolejne etapy” upoważnia do S2 → S3 → S4,
+każdego na osobnej gałęzi i w PR, bez automatycznego merge i hostingu.
+Baza S2: `6dafa75` / PR #18, pełne CI #24 PASS.
+`feature/s2-stacja-rozbudowa`: klient 0.2.0, przygotowywane wydanie 0.13.0,
+instalator pozostaje 1.2.0. [Raport S2](S2-REPORT.md).
+
+Swobodna rozbudowa na zakupionych działkach, skierowane drogi z kontrolą
+wjazdu/wyjazdu, zwykłe i ciężarowe pompy, parkingi i dodatkowe zbiorniki.
+Ceny nowych ofert, czterech pracowników, priorytety i druga kasa.
+Własny sklep lub dwa kontrakty Skoczki, rzeczywiste dostawy, personel,
+odrębna kolejka i obrót; proporcjonalne, jednokrotne rozliczenie najmu.
+Wcześniejsze rozwiązanie na granicy okresu z karą i zachowaniem zapasów.
+
+S2 pozostaje osobnym wycinkiem 12 minut (6 + 3 + 3), cel ≥20 wizyt
+zakończonych i opłaconych oraz zysk operacyjny >0. Nie zastępuje kampanii S3
+8/12/10 minut ani jej celu ≥60 aut / ≥70% satysfakcji / wartość netto >0.
+Zapis v2 zachowuje v1 i wznawia scenariusz S1 w trybie zgodności.
+Weryfikacja i paczki w toku; wyniki zostaną uzupełnione po sprawdzeniu.

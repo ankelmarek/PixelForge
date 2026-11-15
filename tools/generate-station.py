@@ -174,4 +174,41 @@ for x,y,n in [(294,196,0),(415,213,1),(85,297,2)]:
 for x,y in [(10,14),(525,23),(18,174),(535,177)]:cover.blit(tree,x,y)
 cover.rect(83,84,8,117,INK);cover.rect(65,60,52,63,INK);eagle(cover,70,69,2);cover.rect(72,98,37,3,AMBER);cover.rect(72,110,28,3,TEAL)
 save('cover',cover)
+
+# S2: distinct silhouettes for vans/freight and an original sage/plum tenant.
+vans=Image(1024,256)
+for n,paint in enumerate(['#d8c38b','#74a9a1','#cbbca3','#9e96ab']):
+    van=Image(64,64)
+    van.rect(16,12,34,46,'#3d574f')
+    for yy in [16,43]:
+        van.rect(15,yy,5,9,INK);van.rect(43,yy,5,9,INK)
+    van.rect(18,8,28,47,INK);van.rect(19,10,26,43,paint)
+    van.rect(21,11,22,4,WHITE);van.rect(20,19,24,9,INK);van.rect(22,20,20,6,'#9ebfb4')
+    van.rect(22,30,20,20,'#e0ddc7');van.rect(24,31,16,2,WHITE);van.rect(20,50,5,3,'#d96954');van.rect(39,50,5,3,'#d96954')
+    van.rect(22,37,20,6,'#77988a');van.rect(27,38,10,4,'#e2ce87')
+    for d in range(8):
+        for light in range(2):
+            van.rect(20,50,5,3,'#f0b35d' if light else '#d96954')
+            vans.blit(rotate(van,math.pi/2+d*math.pi/4),(d*2+light)*64,n*64)
+save('van',vans)
+freight=Image(1024,128)
+lorry=Image(128,128)
+lorry.rect(43,18,46,94,'#3d574f')
+for yy in [27,81,98]:lorry.rect(41,yy,7,10,INK);lorry.rect(80,yy,7,10,INK)
+lorry.rect(46,16,36,90,INK);lorry.rect(46,18,36,30,'#a46961');lorry.rect(48,18,32,4,'#e5b18c')
+lorry.rect(48,27,32,10,INK);lorry.rect(50,28,28,6,'#a6c6bb');lorry.rect(48,20,6,3,WHITE);lorry.rect(74,20,6,3,WHITE)
+lorry.rect(46,49,36,58,'#bdb49c');lorry.rect(48,49,32,56,'#dad4ba');lorry.rect(50,51,28,3,WHITE)
+for xx in range(51,78,5):lorry.rect(xx,57,1,43,'#b1ab97')
+lorry.rect(49,101,30,3,'#837f70');lorry.rect(48,106,6,3,'#d2694d');lorry.rect(74,106,6,3,'#d2694d')
+for d in range(8):freight.blit(rotate(lorry,math.pi/2+d*math.pi/4),d*128,0)
+save('freight',freight)
+skoczka=Image(352,160);skoczka.pixels=shop.pixels.copy()
+skoczka.rect(0,0,352,40,'#59435e');skoczka.rect(0,30,352,8,'#a3bd80');skoczka.rect(8,8,336,2,'#94758d')
+# Asymmetric leaping frog: long back leg, round amber cheeks, never a traced logo.
+skoczka.circle(32,18,10,'#b2cc8c');skoczka.circle(25,10,5,'#e9dca8');skoczka.circle(39,8,5,'#e9dca8')
+skoczka.rect(24,8,2,3,INK);skoczka.rect(39,6,2,3,INK)
+line(skoczka,33,23,49,26,'#b2cc8c',4);line(skoczka,49,26,57,17,'#b2cc8c',3)
+line(skoczka,27,23,18,29,'#b2cc8c',3);skoczka.rect(29,18,6,2,'#59435e')
+skoczka.rect(260,39,8,30,'#a3bd80');skoczka.rect(4,110,136,3,'#b2cc8c');skoczka.rect(276,110,72,3,'#b2cc8c')
+save('skoczka',skoczka)
 print('Generated original ORLAR art, 64 sectors and world manifest.')

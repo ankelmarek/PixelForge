@@ -258,6 +258,63 @@
   width: 65%;
   accent-color: #efb851;
 }
+.station-tools,
+.station-parcels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+.station-tools button {
+  display: grid;
+  gap: 3px;
+  font-size: 11px;
+}
+.station-tools b {
+  font-size: 22px;
+}
+.station-price {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0;
+}
+.station-price span {
+  flex: 1;
+}
+.station-price b {
+  min-width: 38px;
+  text-align: center;
+}
+.station-price button {
+  min-width: 44px;
+  padding: 5px;
+}
+.station-lease {
+  padding: 10px;
+  background: #354b45;
+  border-left: 3px solid #adbf85;
+}
+.station-lease p {
+  margin: 3px 0 10px;
+}
+.station-ui > [data-project-controls] {
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(290px, calc(100vw - 24px));
+  pointer-events: auto;
+  background: #203b40f5;
+  border: 1px solid #91b69e;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.station-ui > [data-project-controls] .station-actions {
+  margin: 0;
+}
+.station-ui > [data-project-controls] output {
+  font-size: 11px;
+}
 .game-shell:has(.station-ui) .game-map {
   top: auto;
   width: 112px;

@@ -2,10 +2,11 @@ import type { Cell } from '../../engine/api/strategy';
 import type { QueueEntry } from '../../engine/api/mobility';
 import type { JournalState, CostStock } from '../../engine/api/economy';
 import type { Fuel, Product } from './world';
+import type { Development } from './development';
 
 export interface Motion {
   id: string;
-  kind: 'car' | 'truck' | 'person';
+  kind: 'car' | 'van' | 'truck' | 'person';
   x: number;
   y: number;
   heading: number;
@@ -28,6 +29,7 @@ export interface Customer {
     | 'preparing'
     | 'fueling'
     | 'checkout'
+    | 'to-shop'
     | 'leaving';
   pedestrian: 'car' | 'walking' | 'queued' | 'paying' | 'returning';
   fuel: Fuel | null;
@@ -50,6 +52,12 @@ export interface Customer {
   checked: boolean;
   abandoned: boolean;
   color: number;
+  shopping?: 'owned' | 'tenant' | 'none';
+  tenantVisit?: boolean;
+  tenantBill?: number;
+  goodsPrices?: Record<Product, number>;
+  checkoutLane?: number;
+  extension?: boolean;
 }
 export interface Worker {
   motion: Motion;
@@ -90,7 +98,7 @@ export interface ResourceTotals {
   usedCost: number;
 }
 export interface StationState {
-  gameVersion: '0.1.0';
+  gameVersion: '0.1.0' | '0.2.0';
   rulesRevision: 'opening-1';
   worldRevision: string;
   seed: number;
@@ -122,4 +130,5 @@ export interface StationState {
   wagesUntil: number;
   topology: number;
   camera: { x: number; y: number; zoom: number };
+  development?: Development;
 }

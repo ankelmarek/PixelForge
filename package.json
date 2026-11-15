@@ -1,6 +1,6 @@
 {
   "name": "pixelforge",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -47,5 +47,5 @@
     "@playwright/test": "^1.56.1",
     "@types/node": "^24.10.0"
   },
-  "releaseEpoch": 1794694990
+  "releaseEpoch": 1794732345
 }

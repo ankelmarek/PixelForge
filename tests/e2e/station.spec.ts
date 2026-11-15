@@ -1,7 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
 import type { Snapshot } from '../../src/engine/api/types';
 import type { StationUI } from '../../src/games/gas-station/controls';
-const key = 'pixelforge:client:v1:gas-station';
+import { StationModel } from '../../src/games/gas-station/model';
+import { stationWorld } from '../fixtures/station';
+const key = 'pixelforge:client:v2:gas-station';
 test.afterEach(async ({ page }, info) => {
   if (info.status !== info.expectedStatus && !page.isClosed())
     await info.attach('station-save', {
@@ -20,7 +22,20 @@ async function state(page: Page): Promise<Snapshot> {
 async function ui(page: Page) {
   return (await state(page)).client as unknown as StationUI;
 }
-async function open(page: Page, resume = false) {
+async function open(page: Page, resume = false, legacy = false) {
+  if (legacy) {
+    await page.goto('/');
+    const old = new StationModel(stationWorld).snapshot();
+    await page.evaluate(
+      (state) =>
+        localStorage.setItem(
+          'pixelforge:client:v1:gas-station',
+          JSON.stringify({ gameId: 'gas-station', schemaVersion: 1, state }),
+        ),
+      old,
+    );
+    resume = true;
+  }
   await page.goto('/?diagnostics=1');
   await page.locator('[data-game="gas-station"]').click();
   await expect(page.locator(resume ? '#resume' : '#start')).toBeEnabled({
@@ -44,7 +59,10 @@ test('S1: pełna zmiana myszą, rozbudowa, cysterna, zapis podczas rozładunku i
   await page.setViewportSize({ width: 1280, height: 900 });
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  await open(page);
+  await open(page, false, true);
+  const legacySave = await page.evaluate(() =>
+    localStorage.getItem('pixelforge:client:v1:gas-station'),
+  );
   await tab(page, 'fuel');
   await page.locator('[data-st-order="on"][data-litres="200"]').click();
   await tab(page, 'build');
@@ -117,6 +135,11 @@ test('S1: pełna zmiana myszą, rozbudowa, cysterna, zapis podczas rozładunku i
   await page.locator('[data-game="gas-station"]').click();
   await page.locator('#resume').click();
   await expect(page.locator('#result-title')).toHaveText('Dobry początek!');
+  expect(
+    await page.evaluate(() =>
+      localStorage.getItem('pixelforge:client:v1:gas-station'),
+    ),
+  ).toBe(legacySave);
 });
 
 test('S1: dotyk/mysz, zoom 0.5, panorama, zamówienie, anulowanie, pauza i odświeżenie', async ({

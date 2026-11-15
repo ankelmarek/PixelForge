@@ -7,7 +7,7 @@ import { cpus, totalmem } from 'node:os';
 
 const base = process.env.PIXELFORGE_BENCH_URL ?? 'http://127.0.0.1:4194/';
 const output =
-  process.env.PIXELFORGE_BENCH_OUTPUT ?? 'work/s1/performance.json';
+  process.env.PIXELFORGE_BENCH_OUTPUT ?? 'work/s2/performance.json';
 const browser = await chromium.launch({ headless: true });
 try {
   const context = await browser.newContext({
@@ -89,7 +89,7 @@ try {
   const saveBytes = await page.evaluate(
     () =>
       new TextEncoder().encode(
-        localStorage.getItem('pixelforge:client:v1:gas-station'),
+        localStorage.getItem('pixelforge:client:v2:gas-station'),
       ).byteLength,
   );
   const afterHeap = await cdp.send('Runtime.getHeapUsage');
@@ -127,7 +127,7 @@ try {
     final: (await read()).stats,
     errors,
     notes:
-      'Headless Chromium with software rendering, no CPU/network throttling. 60 seconds at speed x4 and zoom 0.5 with camera moves; ordinary S1 population, not a synthetic 32-unit stress test. Heap excludes GPU; textureBytes estimates sector RGBA surfaces.',
+      'Headless Chromium with software rendering, no CPU/network throttling. 60 seconds at speed x4 and zoom 0.5 with camera moves; ordinary S2 population, not a synthetic 32-unit stress test. Heap excludes GPU; textureBytes estimates sector RGBA surfaces.',
   };
   await mkdir(dirname(output), { recursive: true });
   await writeFile(output, JSON.stringify(result, null, 2) + '\n');

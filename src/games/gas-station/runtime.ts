@@ -13,18 +13,11 @@ import {
 } from '../../engine/api';
 import { StationModel } from './model';
 import { StationView } from './view';
-import {
-  validateWorld,
-  FUELS,
-  GOODS,
-  PUMPS,
-  SHOP,
-  UNIT,
-  prices,
-  DURATION,
-} from './world';
+import { validateWorld, FUELS, GOODS, SHOP, UNIT, prices } from './world';
 import { bodies } from './state';
 import { money, type StationUI } from './controls';
+import { tankCapacity, PARCELS } from './development';
+import { roadLine, type BuildRequest } from './placement';
 
 export function createStationRuntime(
   definition: ClientDefinition,
@@ -34,11 +27,14 @@ export function createStationRuntime(
   const world = validateWorld(data);
   context.audio.setMix('music', 0.7);
   context.audio.setMix('effects', 0.8);
-  let model = new StationModel(world),
+  let model = new StationModel(world, world.scenario.seed, true),
     active: Gameplay | undefined,
     started = false,
     lastSave = 0;
-  const save = new VersionedSave(definition.id, 1, (raw) =>
+  const save = new VersionedSave(definition.id, 2, (raw) =>
+    model.validateSave(raw),
+  );
+  const legacySave = new VersionedSave(definition.id, 1, (raw) =>
     model.validateSave(raw),
   );
   const persist = () => {
@@ -68,6 +64,7 @@ export function createStationRuntime(
     };
     private selection = '';
     private buildMode = false;
+    private project: BuildRequest | null = null;
     private hint = '';
     private maxAdvanceMs = 0;
     constructor() {
@@ -80,6 +77,7 @@ export function createStationRuntime(
       this.ended = false;
       this.selection = '';
       this.buildMode = false;
+      this.project = null;
       this.drag = undefined;
       this.hint = '';
       this.elapsed = 0;
@@ -112,6 +110,7 @@ export function createStationRuntime(
         this.game.canvas.focus({ preventScroll: true });
         if (p.rightButtonDown()) {
           this.buildMode = false;
+          this.project = null;
           this.selection = '';
           this.emit();
           return;
@@ -123,10 +122,30 @@ export function createStationRuntime(
           scrollY: c.scrollY,
           moved: false,
         };
+        if (this.project?.kind === 'road') {
+          const q = c.getWorldPoint(p.x, p.y);
+          this.project.point = {
+            x: Math.round(q.x / 16),
+            y: Math.round(q.y / 16),
+          };
+          this.project.to = { ...this.project.point };
+        }
       };
       const move = (p: Phaser.Input.Pointer) => {
         const d = this.drag;
         if (!d || !p.isDown) return;
+        if (this.project?.kind === 'road') {
+          const q = c.getWorldPoint(p.x, p.y),
+            a = this.project.point;
+          const x = Math.round(q.x / 16),
+            y = Math.round(q.y / 16);
+          this.project.to =
+            Math.abs(x - a.x) > Math.abs(y - a.y)
+              ? { x, y: a.y }
+              : { x: a.x, y };
+          this.emit();
+          return;
+        }
         d.moved ||=
           (Math.hypot(p.x - d.x, p.y - d.y) *
             this.game.canvas.getBoundingClientRect().width) /
@@ -146,6 +165,18 @@ export function createStationRuntime(
         const q = c.getWorldPoint(p.x, p.y),
           x = q.x / 16,
           y = q.y / 16;
+        if (this.project) {
+          if (this.project.kind !== 'road')
+            this.project.point = { x: Math.round(x), y: Math.round(y) };
+          if (this.project.kind === 'remove-road')
+            this.project.roadId = model.state.development?.roads.find((r) =>
+              roadLine(r.from, r.to).some(
+                (p) => Math.hypot(p.x - x, p.y - y) < 4,
+              ),
+            )?.id;
+          this.emit();
+          return;
+        }
         if (this.buildMode) {
           const plan = model.previewPump();
           if (Math.abs(x - 138) < 5 && Math.abs(y - 124) < 6)
@@ -157,7 +188,7 @@ export function createStationRuntime(
             Math.hypot(m.x / UNIT - x, m.y / UNIT - y) <
             (m.kind === 'person' ? 1.6 : 3),
         );
-        const pump = PUMPS.findIndex(
+        const pump = model.pumps.findIndex(
           (p) => Math.hypot(p.x - 3 - x, p.y - y) < 3,
         );
         this.selection =
@@ -278,7 +309,7 @@ export function createStationRuntime(
       } else if (action === 'cancel-delivery') {
         ok = typeof payload === 'string' && model.cancelDelivery(payload);
         mutation = true;
-      } else if (action === 'role-0' || action === 'role-1') {
+      } else if (/^role-[0-3]$/.test(action)) {
         ok =
           (payload === 'forecourt' || payload === 'checkout') &&
           model.assignWorker(Number(action.at(-1)), payload);
@@ -288,14 +319,91 @@ export function createStationRuntime(
         ok = model.setPump(i, !s.pumps[i]?.open);
         mutation = true;
       } else if (action === 'build-preview') {
+        this.project = null;
         this.buildMode = true;
         this.selection = '';
         this.focus(138 * 16, 124 * 16);
-      } else if (action === 'build-cancel') this.buildMode = false;
-      else if (action === 'build') {
+      } else if (action === 'build-cancel') {
+        this.buildMode = false;
+        this.project = null;
+      } else if (action === 'build') {
         ok = model.buildPump(Number(payload));
         mutation = true;
         if (ok) this.buildMode = false;
+      } else if (
+        action === 'project' &&
+        typeof payload === 'string' &&
+        [
+          'road',
+          'remove-road',
+          'pump',
+          'heavy-pump',
+          'parking',
+          'tank',
+        ].includes(payload) &&
+        s.development
+      ) {
+        this.buildMode = false;
+        this.selection = '';
+        this.project = {
+          kind: payload as BuildRequest['kind'],
+          point: { x: 84, y: 118 },
+          rotation: 0,
+          fuel: 'e95',
+        };
+        if (payload === 'heavy-pump') this.project.fuel = 'on';
+        this.focus(116 * 16, 115 * 16);
+      } else if (action === 'project-rotate' && this.project)
+        this.project.rotation = (this.project.rotation + 1) % 4;
+      else if (
+        action === 'project-fuel' &&
+        this.project &&
+        (payload === 'e95' || payload === 'on')
+      )
+        this.project.fuel = payload;
+      else if (action === 'project-cancel') this.project = null;
+      else if (action === 'project-commit' && this.project) {
+        ok = model.build(this.project, Number(payload));
+        mutation = true;
+        if (ok) this.project = null;
+        else this.hint = model.previewBuild(this.project).reason;
+      } else if (action === 'parcel' && typeof payload === 'string') {
+        ok = model.buyParcel(payload);
+        mutation = true;
+        const p = PARCELS.find((p) => p.id === payload);
+        if (ok && p)
+          this.focus((p.x + p.width / 2) * 16, (p.y + p.height / 2) * 16);
+      } else if (action === 'hire') {
+        ok = model.hire();
+        mutation = true;
+      } else if (action === 'second-checkout') {
+        ok = model.secondCheckout();
+        mutation = true;
+      } else if (
+        action === 'priority' &&
+        (payload === 'customers' || payload === 'deliveries')
+      ) {
+        ok = model.setPriority(payload);
+        mutation = true;
+      } else if (
+        action.startsWith('price-') &&
+        [...FUELS, ...GOODS].includes(action.slice(6) as keyof typeof prices)
+      ) {
+        ok = model.setPrice(
+          action.slice(6) as keyof typeof prices,
+          Number(payload),
+        );
+        mutation = true;
+      } else if (
+        action === 'lease' &&
+        (payload === 'fixed' || payload === 'share') &&
+        s.development
+      ) {
+        ok = model.lease.sign(payload);
+        mutation = true;
+      } else if (action === 'lease-end' && s.development) {
+        ok = model.lease.termination();
+        mutation = true;
       } else if (action === 'select' && typeof payload === 'string') {
         this.selection = payload;
         const body = bodies(s).find((m) => m.id === payload);
@@ -316,7 +424,7 @@ export function createStationRuntime(
           Number(payload),
         );
       else return;
-      if (!ok)
+      if (!ok && !this.hint)
         this.hint =
           action === 'build'
             ? model.previewPump().reason || 'Podgląd nieaktualny'
@@ -351,7 +459,7 @@ export function createStationRuntime(
         (Number(input.down('down')) - Number(input.down('up'))) * pan;
       this.clamp();
       this.terrain.update(cameraView(c));
-      this.art.draw(this.selection, this.buildMode);
+      this.art.draw(this.selection, this.buildMode, this.project);
       this.soundElapsed += delta;
       if (this.soundElapsed > 400 && !model.state.result) {
         this.soundElapsed = 0;
@@ -475,21 +583,23 @@ export function createStationRuntime(
         revenue: s.journal.revenue,
         costs: s.journal.revenue - model.profit,
         seconds: s.tick / 20,
+        duration: model.duration,
         speed: model.clock.speed,
         served: s.served,
-        goal: 12,
+        goal: model.goal,
         satisfaction: s.visits ? s.satisfaction / s.visits / 100 : 100,
         tanks: FUELS.map((f) => ({
           fuel: f,
+          capacity: tankCapacity(s, f),
           quantity: s.tanks[f].quantity,
           reserved: s.tanks[f].quantity - model.available(f),
           can200:
             !d &&
-            s.tanks[f].quantity + 2000 <= 10000 &&
+            s.tanks[f].quantity + 2000 <= tankCapacity(s, f) &&
             model.cash >= prices[f].buy * 200 + 8000,
           can400:
             !d &&
-            s.tanks[f].quantity + 4000 <= 10000 &&
+            s.tanks[f].quantity + 4000 <= tankCapacity(s, f) &&
             model.cash >= prices[f].buy * 400 + 8000,
         })),
         goods: GOODS.map((k) => ({
@@ -498,6 +608,7 @@ export function createStationRuntime(
         })),
         canGoods:
           !d &&
+          (!s.development || s.development.tenant.phase === 'owned') &&
           model.cash >= 13000 &&
           GOODS.reduce(
             (n, k) =>
@@ -514,7 +625,10 @@ export function createStationRuntime(
             : w.role === 'checkout'
               ? 'Kasa'
               : 'Podjazd',
-          busy: !!w.job || s.checkout?.worker === w.motion.id,
+          busy:
+            !!w.job ||
+            s.checkout?.worker === w.motion.id ||
+            s.development?.checkout?.worker === w.motion.id,
         })),
         pumps: s.pumps.map((p) => ({
           id: p.id,
@@ -580,6 +694,41 @@ export function createStationRuntime(
                 : '',
         hint: this.hint,
         ready: this.prepared,
+        ...(s.development
+          ? {
+              development: {
+                prices: { ...s.development.prices },
+                priority: s.development.priority,
+                owned: [...s.development.parcels],
+                canHire: s.workers.length < 4 && model.cash >= 10000,
+                secondCheckout: s.development.secondCheckout,
+                leaseOffer: model.lease.offer(),
+                shopMode: s.development.tenant.phase,
+                contract:
+                  s.development.tenant.contract?.type === 'fixed'
+                    ? 'Stała'
+                    : 'Partnerska',
+                termination: s.development.tenant.contract?.terminate ?? false,
+                turnover: model.lease.turnover,
+                leaseIncome: s.development.tenant.settlements.reduce(
+                  (n, e) => n + e.rent + e.share,
+                  0,
+                ),
+                tenantStock: GOODS.reduce(
+                  (n, k) => n + s.development!.tenant.stock[k],
+                  0,
+                ),
+                tenantDeliveries: s.development.tenant.deliveries,
+                build: this.project
+                  ? {
+                      ...model.previewBuild(this.project),
+                      kind: this.project.kind,
+                      rotation: this.project.rotation,
+                    }
+                  : null,
+              },
+            }
+          : {}),
       };
       context.state({
         mode: 'client',
@@ -588,14 +737,18 @@ export function createStationRuntime(
         paused: false,
         elapsed: s.tick / 20,
         collected: s.served,
-        total: 12,
+        total: model.goal,
         objectiveIcon: '⛽',
         x: center.x,
         y: center.y,
         resultTitle:
-          s.result === 'success' ? 'Dobry początek!' : 'Zmiana zamknięta',
+          s.result === 'success'
+            ? s.development
+              ? 'Stacja rośnie!'
+              : 'Dobry początek!'
+            : 'Zmiana zamknięta',
         results: [
-          { label: 'Obsłużeni klienci', value: `${s.served} / 12` },
+          { label: 'Obsłużeni klienci', value: `${s.served} / ${model.goal}` },
           { label: 'Zysk operacyjny', value: `${money(model.profit)} ◈` },
           { label: 'Przychód', value: `${money(s.journal.revenue)} ◈` },
           {
@@ -674,13 +827,24 @@ export function createStationRuntime(
           deliveries: s.deliveries,
           thirdPump: s.pumps[2].built,
           cash: model.cash,
-          saveVersion: 1,
+          saveVersion: 2,
           maxAdvanceMs: this.maxAdvanceMs,
           navRegions: model.navigator.stats.regions,
           navLocal: model.navigator.stats.maxLocalExpanded,
           terrain: JSON.stringify(this.terrain?.stats ?? {}),
           audioVoices: context.audio.activeVoices,
-          duration: DURATION,
+          duration: model.duration,
+          laneExpanded: model.topology.expanded,
+          shopMode: s.development?.tenant.phase ?? 'owned',
+          tenantTurnover: s.development ? model.lease.turnover : 0,
+          tenantDeliveries: s.development?.tenant.deliveries ?? 0,
+          leaseIncome:
+            s.development?.tenant.settlements.reduce(
+              (n, e) => n + e.rent + e.share,
+              0,
+            ) ?? 0,
+          sites: s.development?.sites.length ?? 0,
+          roads: s.development?.roads.length ?? 0,
         },
       });
     }
@@ -691,9 +855,10 @@ export function createStationRuntime(
       Gameplay,
     ],
     start(resume) {
-      model = new StationModel(world);
+      model = new StationModel(world, world.scenario.seed, true);
       if (resume) {
-        const result = save.inspect();
+        let result = save.inspect();
+        if (result.status === 'absent') result = legacySave.inspect();
         if (result.status === 'ready') model.restore(result.value);
         else if (result.status === 'invalid')
           context.message(

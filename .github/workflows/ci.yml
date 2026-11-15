@@ -50,7 +50,6 @@ jobs:
           assert actual == expected, 'Static build changed during the updater stage'
           print(f'{len(actual)} static files match the accepted 0.6.1 release byte for byte')
           PY
-      - run: npm run test:e2e
       - run: npm run test:updater:browser
       - run: npm run test:panel:browser
       - run: npm run package:release
@@ -69,9 +68,41 @@ jobs:
             playwright-report/
             downloads/pixelforge-updater-*.zip
             downloads/pixelforge-updater-*.sha256
-            downloads/pixelforge-0.12.0-full.zip
-            downloads/pixelforge-0.12.0-full.zip.sha256
+            downloads/pixelforge-0.13.0-full.zip
+            downloads/pixelforge-0.13.0-full.zip.sha256
             downloads/pixelforge-public-html-*.zip
             downloads/pixelforge-public-html-*.sha256
+          if-no-files-found: ignore
+          retention-days: 14
+  e2e:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [core, station]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Existing games and engine
+        if: matrix.suite == 'core'
+        run: npx playwright test --grep-invert 'S[1-4]:'
+      - name: Station campaigns and compatibility
+        if: matrix.suite == 'station'
+        run: npx playwright test tests/e2e/station*.spec.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pixelforge-e2e-${{ matrix.suite }}
+          path: |
+            test-results/
+            playwright-report/
           if-no-files-found: ignore
           retention-days: 14

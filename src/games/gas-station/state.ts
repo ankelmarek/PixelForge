@@ -1,17 +1,19 @@
 import { TransactionJournal, type CostStock } from '../../engine/api/economy';
 import { OccupancyReservations, SlotQueue } from '../../engine/api/mobility';
-import { motion, footprint, legal } from './traffic';
+import { motion, footprint } from './traffic';
 import {
   FUELS,
   GOODS,
   prices,
-  DURATION,
   UNIT,
   type StationWorld,
   type Fuel,
   type Product,
 } from './world';
 import type { StationState, Motion } from './types';
+import { duration, goal, tankCapacity, parkingPoints } from './development';
+import { validateDevelopment } from './development-save';
+import { StationTopology } from './placement';
 
 export const initialQuantities = {
   e95: 1800,
@@ -114,6 +116,10 @@ export function bodies(s: StationState): Motion[] {
       c.driver ? [c.vehicle, c.driver] : [c.vehicle],
     ),
     ...(s.delivery?.motion ? [s.delivery.motion] : []),
+    ...(s.development?.tenant.staff ?? []),
+    ...(s.development?.tenant.delivery?.motion
+      ? [s.development.tenant.delivery.motion]
+      : []),
   ];
 }
 export function occupancyOf(s: StationState) {
@@ -132,22 +138,25 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
   if (!raw || typeof raw !== 'object' || JSON.stringify(raw).length > 2_000_000)
     return fail();
   const s = structuredClone(raw) as StationState;
+  if (s.development) validateDevelopment(s);
+  const end = duration(s),
+    dev = !!s.development;
   if (
-    s.gameVersion !== '0.1.0' ||
+    s.gameVersion !== (dev ? '0.2.0' : '0.1.0') ||
     s.rulesRevision !== world.rulesRevision ||
     s.worldRevision !== world.terrain.revision ||
     !integer(s.seed, 0, 0xffffffff) ||
-    !integer(s.tick, 0, DURATION) ||
+    !integer(s.tick, 0, end) ||
     !integer(s.serial, 0, 1000) ||
     !integer(s.candidate, 0, 1000) ||
-    !integer(s.nextArrival, 0, DURATION + 400) ||
+    !integer(s.nextArrival, 0, end + 400) ||
     !s.clock ||
     ![1, 2, 4].includes(s.clock.speed) ||
     !Number.isFinite(s.clock.remainder) ||
     s.clock.remainder < 0 ||
     s.clock.remainder >= 50 ||
     ![null, 'success', 'partial'].includes(s.result) ||
-    (s.result !== null) !== (s.tick === DURATION) ||
+    (s.result !== null) !== (s.tick === end) ||
     !s.camera ||
     ![s.camera.x, s.camera.y, s.camera.zoom].every(Number.isFinite) ||
     s.camera.zoom < 0.5 ||
@@ -178,9 +187,15 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
     !Array.isArray(s.customers) ||
     s.customers.length > 14 ||
     !Array.isArray(s.workers) ||
-    s.workers.length !== 2 ||
+    (dev
+      ? s.workers.length < 2 || s.workers.length > 4
+      : s.workers.length !== 2) ||
     !Array.isArray(s.pumps) ||
-    s.pumps.length !== 3 ||
+    s.pumps.length !==
+      3 +
+        (s.development?.sites.filter(
+          (p) => p.kind === 'pump' || p.kind === 'heavy-pump',
+        ).length ?? 0) ||
     !Array.isArray(s.fuelQueue) ||
     !Array.isArray(s.checkoutQueue)
   )
@@ -194,23 +209,24 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
   new SlotQueue(s.fuelQueue, 3);
   new SlotQueue(s.checkoutQueue, 5);
   const ids = new Set<string>();
+  const topology = new StationTopology(s);
   for (const m of bodies(s)) {
     if (
       !m ||
       typeof m.id !== 'string' ||
       !/^[a-z0-9-]{1,40}$/.test(m.id) ||
       ids.has(m.id) ||
-      !['car', 'truck', 'person'].includes(m.kind) ||
+      !['car', 'van', 'truck', 'person'].includes(m.kind) ||
       !integer(m.x, 0, 256 * UNIT) ||
       !integer(m.y, 0, 256 * UNIT) ||
       !integer(m.heading, 0, 3) ||
       !integer(m.nextHeading, 0, 3) ||
       !integer(m.turn, 0, 16) ||
       !integer(m.remainder, 0, 19) ||
-      !integer(m.blocked, 0, DURATION) ||
+      !integer(m.blocked, 0, end) ||
       !Array.isArray(m.route) ||
       m.route.length > 800 ||
-      !legal(m, footprint(m))
+      !topology.legal(m, footprint(m))
     )
       return fail();
     ids.add(m.id);
@@ -237,7 +253,7 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
       typeof c.id !== 'string' ||
       c.id !== c.vehicle.id ||
       clients.has(c.id) ||
-      c.vehicle.kind !== 'car' ||
+      !(dev ? ['car', 'van', 'truck'] : ['car']).includes(c.vehicle.kind) ||
       (c.driver &&
         (c.driver.id !== `driver-${c.id}` || c.driver.kind !== 'person')) ||
       ![
@@ -248,13 +264,14 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
         'preparing',
         'fueling',
         'checkout',
+        'to-shop',
         'leaving',
       ].includes(c.phase) ||
       !['car', 'walking', 'queued', 'paying', 'returning'].includes(
         c.pedestrian,
       ) ||
       ![null, ...FUELS].includes(c.fuel) ||
-      !integer(c.requested, 0, 400) ||
+      !integer(c.requested, 0, dev ? 900 : 400) ||
       !integer(c.reserved, 0, c.requested) ||
       !integer(c.issued, 0, c.requested) ||
       c.reserved + c.issued > c.requested ||
@@ -262,16 +279,19 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
       !integer(c.bought, 0, 9) ||
       !integer(c.fuelBill) ||
       c.fuelBill !== Math.floor((c.issued * c.price + 5) / 10) ||
-      c.price !== (c.fuel ? prices[c.fuel].sell : 0) ||
+      (dev
+        ? !integer(c.price, 0, 900)
+        : c.price !== (c.fuel ? prices[c.fuel].sell : 0)) ||
       !integer(c.budget) ||
       !integer(c.paidTotal, 0, c.budget) ||
       !integer(c.serial, 0, s.serial) ||
       !integer(c.admitted, -1, s.tick) ||
-      !integer(c.wait, 0, DURATION) ||
-      !integer(c.patience, 1, DURATION) ||
+      !integer(c.wait, 0, end) ||
+      !integer(c.patience, 1, end) ||
       !integer(c.color, 0, 3) ||
-      ![null, 0, 1, 2].includes(c.pump) ||
-      ![null, 0, 1, 2, 3].includes(c.parking) ||
+      (c.pump !== null && !integer(c.pump, 0, s.pumps.length - 1)) ||
+      (c.parking !== null &&
+        !integer(c.parking, 0, parkingPoints(s).length - 1)) ||
       !['paid', 'checked', 'abandoned'].every(
         (k) => typeof c[k as 'paid'] === 'boolean',
       ) ||
@@ -281,8 +301,23 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
       return fail();
     clients.add(c.id);
     if (
+      dev &&
+      (!['owned', 'tenant', 'none'].includes(c.shopping!) ||
+        typeof c.tenantVisit !== 'boolean' ||
+        !integer(c.tenantBill) ||
+        GOODS.some(
+          (k) =>
+            !integer(
+              c.goodsPrices?.[k],
+              prices[k].buy + 50,
+              prices[k].sell + 300,
+            ),
+        ))
+    )
+      return fail();
+    if (
       (c.pedestrian === 'car') !== !c.driver ||
-      (c.paid && !c.checked) ||
+      (c.paid && !c.checked && !c.tenantVisit) ||
       (c.checked && !c.paid) ||
       (c.pump !== null && c.parking !== null)
     )
@@ -291,7 +326,9 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
       return fail();
     if (
       (c.pedestrian === 'walking' || c.pedestrian === 'queued') !==
-      s.checkoutQueue.some((e) => e.id === c.id)
+      (c.tenantVisit ? s.development!.tenant.queue : s.checkoutQueue).some(
+        (e) => e.id === c.id,
+      )
     )
       return fail();
     if (
@@ -300,12 +337,30 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
       !s.journal.cash.ids.includes(`issued-${c.id}`)
     )
       return fail();
-    if (c.paid && !s.journal.cash.ids.includes(`receipt-${c.id}`))
+    if (c.paid && c.fuel && !s.journal.cash.ids.includes(`receipt-${c.id}`))
       return fail();
+    if (dev && c.paid) {
+      const receipt = s.journal.entries.find((e) => e.id === `receipt-${c.id}`);
+      if (c.paidTotal && receipt?.cash !== c.paidTotal) return fail();
+      if (
+        c.tenantVisit &&
+        c.checked &&
+        s.development!.tenant.sales.find((e) => e.id === `tenant-${c.id}`)
+          ?.total !== c.tenantBill
+      )
+        return fail();
+    }
   }
   if ([...s.fuelQueue, ...s.checkoutQueue].some((e) => !clients.has(e.id)))
     return fail();
   for (const [i, p] of s.pumps.entries()) {
+    if (i >= 3) {
+      const site = s.development!.sites.filter(
+        (p) => p.kind === 'pump' || p.kind === 'heavy-pump',
+      )[i - 3];
+      if (p.built !== (site.progress === 0) || p.construction !== 0)
+        return fail();
+    }
     if (
       p.id !== `pump-${i}` ||
       typeof p.built !== 'boolean' ||
@@ -318,7 +373,7 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
       return fail();
     if (s.customers.filter((c) => c.pump === i).length > 1) return fail();
   }
-  for (let i = 0; i < 4; i++)
+  for (let i = 0; i < parkingPoints(s).length; i++)
     if (s.customers.filter((c) => c.parking === i).length > 1) return fail();
   if (
     s.checkout &&
@@ -340,7 +395,7 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
       (w.job &&
         (!['prepare', 'unload', 'restock', 'build'].includes(w.job.kind) ||
           typeof w.job.id !== 'string' ||
-          !integer(w.job.progress, 0, DURATION)))
+          !integer(w.job.progress, 0, end)))
     )
       return fail();
     if (
@@ -351,7 +406,8 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
     if (w.job?.kind === 'unload' && s.delivery?.id !== w.job.id) return fail();
     if (
       w.job?.kind === 'build' &&
-      (w.job.id !== 'pump-2' || !s.pumps[2].construction)
+      (w.job.id !== 'pump-2' || !s.pumps[2].construction) &&
+      !s.development?.sites.some((p) => p.id === w.job!.id && p.progress)
     )
       return fail();
   }
@@ -361,7 +417,7 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
       typeof d.id !== 'string' ||
       !s.journal.cash.ids.includes(`order-${d.id}`) ||
       !['ordered', 'travelling', 'unloading', 'departing'].includes(d.phase) ||
-      !integer(d.due, 0, DURATION + 600) ||
+      !integer(d.due, 0, end + 600) ||
       typeof d.cancelled !== 'boolean' ||
       ![null, ...FUELS].includes(d.fuel) ||
       !integer(d.total, 1, 10000) ||
@@ -387,7 +443,7 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
       [stock, pending, ...cargo].some(
         (v) =>
           !v ||
-          !integer(v.quantity, 0, 10000) ||
+          !integer(v.quantity, 0, 250000) ||
           !integer(v.cost) ||
           (!v.quantity && v.cost),
       )
@@ -424,7 +480,7 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
       return fail();
     if (
       fuel &&
-      (stock.quantity + pending.quantity > 10000 ||
+      (stock.quantity + pending.quantity > tankCapacity(s, k as Fuel) ||
         s.customers
           .filter((c) => c.fuel === k)
           .reduce((n, c) => n + c.reserved, 0) > stock.quantity)
@@ -445,15 +501,19 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
     s.articles !== GOODS.reduce((n, k) => n + s.totals[k].used, 0)
   )
     return fail();
-  const fuelRevenue = FUELS.reduce(
-    (n, k) => n + (s.totals[k].used * prices[k].sell) / 10,
-    0,
-  );
-  const goodsRevenue = GOODS.reduce(
-    (n, k) => n + s.totals[k].used * prices[k].sell,
-    0,
-  );
   const inProgress = s.customers.filter((c) => c.phase === 'fueling');
+  const fuelRevenue = dev
+    ? s.development!.fuelRevenue +
+      inProgress.reduce((n, c) => n + c.fuelBill, 0)
+    : FUELS.reduce((n, k) => n + (s.totals[k].used * prices[k].sell) / 10, 0);
+  const goodsRevenue = dev
+    ? s.development!.goodsRevenue
+    : GOODS.reduce((n, k) => n + s.totals[k].used * prices[k].sell, 0);
+  const leaseRevenue =
+    s.development?.tenant.settlements.reduce(
+      (n, e) => n + e.rent + e.share,
+      0,
+    ) ?? 0;
   const revenue =
     fuelRevenue + goodsRevenue - inProgress.reduce((n, c) => n + c.fuelBill, 0);
   const cost =
@@ -461,9 +521,14 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
     inProgress.reduce((n, c) => n + c.fuelCost, 0);
   const expense = s.journal.entries
     .filter((e) =>
-      ['staff', 'maintenance', 'transport', 'transport-refund'].includes(
-        e.category,
-      ),
+      [
+        'staff',
+        'maintenance',
+        'transport',
+        'transport-refund',
+        'recruitment',
+        'lease-penalty',
+      ].includes(e.category),
     )
     .reduce((n, e) => n + e.cash, 0);
   const receipts = s.journal.entries
@@ -473,19 +538,20 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
     .filter((c) => !c.paid)
     .reduce((n, c) => n + c.fuelBill, 0);
   if (
-    s.journal.revenue !== revenue ||
-    s.journal.profit !== revenue - cost + expense ||
+    s.journal.revenue !== revenue + leaseRevenue ||
+    s.journal.profit !== revenue + leaseRevenue - cost + expense ||
     receipts !== fuelRevenue + goodsRevenue - receivables ||
     s.journal.entries
       .filter((e) => e.category === 'staff' || e.category === 'maintenance')
       .reduce((n, e) => n + e.cash, 0) !==
-      -s.wagesUntil * 2 ||
+      -(s.development?.wageTotal ?? s.wagesUntil * 2) ||
     (!!s.pumps[2].construction || s.pumps[2].built) !==
       s.journal.cash.ids.includes('build-pump-2') ||
-    s.topology !== Number(!!s.pumps[2].construction || s.pumps[2].built)
+    (!dev &&
+      s.topology !== Number(!!s.pumps[2].construction || s.pumps[2].built))
   )
     return fail();
-  if (s.result === 'success' && (s.served < 12 || s.journal.profit <= 0))
+  if (s.result === 'success' && (s.served < goal(s) || s.journal.profit <= 0))
     return fail();
   return s;
 }
