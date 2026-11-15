@@ -294,3 +294,8 @@ S3: pełny test UI PASS (78 obsłużonych, 86%, 1380 monet zysku), myjnia
 z zapisem w połowie usługi PASS, 168 Vitest / 15 pakietów / 36 PHP/Python,
 lint, typecheck i build PASS. Paczki 0.14.0 zbudowane; pełna regresja CI
 oraz dystrybucja mają odrębne wyniki w PR i raporcie następnego etapu.
+
+CI #29: kod, paczki, instalator i pozostałe gry PASS. Weekend wykrył zator
+cysterny przy trzeciej pompie. Poprawka 0.14.1 zmienia wyjazd zapleczem i
+naprawia trasę przy wznowieniu; rzeczywisty zapis z CI ma test regresyjny.
+18 testów kampanii, transakcji i tej regresji PASS. Pełne CI ponowione.

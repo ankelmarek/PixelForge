@@ -1,7 +1,7 @@
 # PixelForge — specyfikacja techniczna i funkcjonalna
 
 > **Stacja na Trasie — S3 (15.11.2026):** pełna kampania 30 minut, myjnia,
-> zdarzenia i ekonomia pozostają w niezależnym kliencie. PixelForge 0.14.0
+> zdarzenia i ekonomia pozostają w niezależnym kliencie. PixelForge 0.14.1
 > używa zapisu Stacji v3, zachowując klucze i zasady S1/S2. [Raport S3](S3-REPORT.md).
 > Instalator 1.2.0 i formaty innych gier pozostają bez zmian.
 

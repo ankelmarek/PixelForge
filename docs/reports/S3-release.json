@@ -1,5 +1,5 @@
 {
-  "version": "0.14.0",
+  "version": "0.14.1",
   "clientVersion": "0.3.0",
   "updaterVersion": "1.2.0",
   "unchangedArchives": {
@@ -31,28 +31,25 @@
     "pixelforge-public-html-0.9.3-installer-1.2.0.zip": "e614a0001fd1b78d445e07c69506c21a46f0343971c5a35fca394825a3a01be3",
     "pixelforge-updater-u1-1.0.0.zip": "b2359d83576a1ec5ded63b0300cc4eaaf85f30bb4e5e5bc440cfc07c3040d60d",
     "pixelforge-updater-u2-1.1.0.zip": "7305e7de90abb02134c652c28e533816a615d60cacc023db3498db126c0d0e3b",
-    "pixelforge-updater-u2-1.2.0.zip": "70cfcd1e44de05c7ebd40da0051e799e2a27bd08b956c446004a2d647a184cb1"
+    "pixelforge-updater-u2-1.2.0.zip": "70cfcd1e44de05c7ebd40da0051e799e2a27bd08b956c446004a2d647a184cb1",
+    "pixelforge-0.14.0-full.zip": "a57e0bfa1346f53f1e3fe7581c5c3a90f7e8d435267d7a140ad7c6e54cf6331a",
+    "pixelforge-public-html-0.14.0-installer-1.2.0.zip": "14b0eedd5ab43a084cde1b91c2b04a4c3d2d008db3266527afe83466a221ea7b"
   },
   "archives": [
     {
-      "name": "pixelforge-0.14.0-full.zip",
-      "bytes": 13281514,
-      "sha256": "a57e0bfa1346f53f1e3fe7581c5c3a90f7e8d435267d7a140ad7c6e54cf6331a"
+      "name": "pixelforge-0.14.1-full.zip",
+      "bytes": 13281628,
+      "sha256": "5e96abe1c542cc5f737ebab5793ef944a35fd676324094c0e321319ff41e1f12"
     },
     {
-      "name": "pixelforge-public-html-0.14.0-installer-1.2.0.zip",
-      "bytes": 13377079,
-      "sha256": "14b0eedd5ab43a084cde1b91c2b04a4c3d2d008db3266527afe83466a221ea7b"
+      "name": "pixelforge-public-html-0.14.1-installer-1.2.0.zip",
+      "bytes": 13377186,
+      "sha256": "428cd4ce1a05961eaef9f0bb94415bc50b81a307e3c178ef1b8c66f59d45e785"
     }
   ],
   "assets": {
     "pngBytes": 70248,
     "decodedRgbaBytes": 5685248
   },
-  "runtimeChunks": [
-    {
-      "name": "runtime-OUeGd5MB.js",
-      "gzipBytes": 31595
-    }
-  ]
+  "runtimeChunks": []
 }
