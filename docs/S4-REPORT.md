@@ -140,3 +140,8 @@ badanie rozpoznawalności marki wśród ludzi ani odsłuch.
 `pixelforge-public-html-0.15.0-installer-1.2.0.zip` do pierwszej instalacji.
 Manifesty zweryfikowane; 33 wcześniejsze archiwa pozostają identyczne.
 Instrukcja znajduje się w README, downloads/README i INSTALACJA.txt paczki.
+
+Zasoby Stacji: 71921 bajtów PNG, 5886976
+bajtów RGBA po dekodowaniu, 12332 bajtów map JSON gzip.
+Dynamiczny chunk runtime: 33976 bajtów gzip;
+cały ZIP jest większy od 0.11.0 o 137183 bajtów.

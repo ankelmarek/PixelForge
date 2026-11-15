@@ -55,6 +55,11 @@
     "decodedRgbaBytes": 5886976,
     "jsonGzipBytes": 12332
   },
-  "runtimeChunks": [],
+  "runtimeChunks": [
+    {
+      "name": "runtime-D5Pca6gz.js",
+      "gzipBytes": 33976
+    }
+  ],
   "fullZipGrowthSince011": 137183
 }
