@@ -63,6 +63,23 @@ export function path(m: Motion, stops: Cell[]) {
   m.blocked = 0;
 }
 
+/** The rear service lane stays north of the cars leaving their pump islands. */
+export function deliveryExit(m: Motion, weekend: boolean) {
+  path(m, [
+    ...(weekend
+      ? [
+          { x: m.x / UNIT, y: 110 },
+          { x: 156, y: 110 },
+        ]
+      : [
+          { x: 144, y: 116 },
+          { x: 156, y: 116 },
+        ]),
+    { x: 156, y: 158 },
+    { x: 252, y: 158 },
+  ]);
+}
+
 /** Grid reservations include the complete turning square, never just a vehicle's centre. */
 export function move(
   m: Motion,

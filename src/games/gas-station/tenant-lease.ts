@@ -1,3 +1,4 @@
+import { deliveryExit } from './traffic';
 import { SlotQueue } from '../../engine/api/mobility';
 import { GOODS, prices, DOCK } from './world';
 import { TENANT_CASH, tenantPoint, type Tenant } from './development';
@@ -264,12 +265,7 @@ export class TenantLease {
         }
         t.deliveries++;
         d.progress = 1;
-        path(d.motion, [
-          { x: 144, y: 116 },
-          { x: 156, y: 116 },
-          { x: 156, y: 158 },
-          { x: 252, y: 158 },
-        ]);
+        deliveryExit(d.motion, !!s.campaign);
       } else if (d.phase === 'returning' && d.progress === 1) {
         this.model.occupancy.release(d.id);
         t.delivery = null;

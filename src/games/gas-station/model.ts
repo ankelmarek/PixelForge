@@ -1,3 +1,4 @@
+import { deliveryExit } from './traffic';
 import {
   RegionalNavigator,
   ScenarioClock,
@@ -1189,12 +1190,7 @@ export class StationModel {
   private departDelivery() {
     const d = this.state.delivery!;
     d.phase = 'departing';
-    path(d.motion!, [
-      { x: 144, y: 116 },
-      { x: 156, y: 116 },
-      { x: 156, y: 158 },
-      { x: 252, y: 158 },
-    ]);
+    deliveryExit(d.motion!, !!this.state.campaign);
   }
   setPump(index: number, open: boolean) {
     const p = this.state.pumps[index];
@@ -1452,6 +1448,23 @@ export class StationModel {
   }
   restore(raw: unknown) {
     const valid = this.validateSave(raw);
+    // v3 snapshots may still contain the old crossing through the pump exit.
+    // Reverse in the existing service bay, then use the northern lane; never teleport.
+    if (valid.campaign)
+      for (const m of [
+        valid.delivery?.motion,
+        valid.development?.tenant.delivery?.motion,
+      ]) {
+        if (
+          m &&
+          m.x === 144 * UNIT &&
+          m.y >= 110 * UNIT &&
+          m.y <= 116 * UNIT &&
+          m.route[0]?.x === 144 &&
+          m.route[0]?.y === 116
+        )
+          deliveryExit(m, true);
+      }
     this.state = valid;
     this.topology = new StationTopology(valid);
     this.navigator.invalidate({ x: 40, y: 48, width: 176, height: 112 }, 5);

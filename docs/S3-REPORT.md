@@ -3,8 +3,8 @@
 15 listopada 2026. Gałąź `feature/s3-stacja-weekend`, baza `767b164` /
 [PR #19](https://github.com/ankelmarek/PixelForge/pull/19), pełne CI #28 PASS.
 Zlecenie „ok, realizujj kolejne etapy” obejmuje kolejno S2, S3 i S4.
-Klient `gas-station` 0.3.0, wydanie PixelForge 0.14.0,
-instalator pozostaje 1.2.0. **REVIEW — implementacja i testy lokalne; pełne CI oraz dystrybucja w toku.**
+Klient `gas-station` 0.3.0, wydanie PixelForge 0.14.1,
+instalator pozostaje 1.2.0. **REVIEW — implementacja i testy lokalne; poprawka CI #29, pełna regresja ponowiona.**
 
 ## Kampania
 
@@ -107,3 +107,29 @@ również niezmieniony instalator 1.2.0 i służy tylko pierwszej instalacji.
 [Sumy, rozmiary i kontrola 29 poprzednich archiwów](reports/S3-release.json).
 Testy dystrybucji obejmują rzeczywiste bajty ZIP-a, rollback, ponowną
 instalację i zachowanie zapisów; końcowe wyniki zostaną dodane do PR.
+
+## Poprawka 0.14.1 po CI #29
+
+CI #29 potwierdziło wszystkie kontrole kodu, paczek i instalatora oraz E2E
+pozostałych gier. Pełny weekend ujawnił wzajemną blokadę cysterny opuszczającej
+zaplecze i auta przy trzeciej pompie (44 zakończone wizyty zamiast ≥60).
+Nie obniżono celu testu. Wyjazd dostaw prowadzi teraz wschodem przez zaplecze,
+przed skrętem na drogę wyjazdową. Przy wznowieniu istniejąca cysterna na
+starym zakręcie najpierw cofa wzdłuż własnego pasa; nie przenosimy pojazdów
+ani nie zmieniamy księgowości. Dotyczy kampanii S3 i późniejszych;
+stare scenariusze S1/S2 zachowują swoją trasę.
+
+Rzeczywisty zapis z CI jest fixture testu regresyjnego: oba pojazdy
+opuszczają skrzyżowanie przy rzeczywistej kontroli zajętości i niezmienionej
+historii finansów. Regresja wraz z kampaniami i transakcjami: 18/18 PASS.
+Wersja 0.14.0 pozostaje niezmienionym archiwum; do instalacji przeznaczona
+jest 0.14.1. Pełna regresja nowego wydania jest ponowiona.
+
+Lokalna dystrybucja 0.14.0: 12 testów Apache/PHP oraz 25 scenariuszy
+przeglądarkowych PASS (8 aktualizatora, 2 panelu, 10 statycznej paczki,
+2 rzeczywistej aktualizacji i rollbacku, 3 pierwszej instalacji).
+
+0.14.1: lint, typecheck, 169 Vitest, 15 testów pakietów, 36 PHP/Python
+oraz produkcyjny build PASS. Manifesty obu nowych ZIP-ów poprawne;
+31 wcześniejszych archiwów zachowuje bajty. Pełna macierz CI zostaje
+uruchomiona na poprawionym wydaniu. Aktualne sumy w S3-release.json.
