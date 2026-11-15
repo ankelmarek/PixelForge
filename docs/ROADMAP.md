@@ -317,3 +317,18 @@ jednostek: p95 16.8 ms; zwykła sesja nocna: 33.3 ms, powyżej celu 33 ms.
 Pełna regresja CI i dystrybucji jest raportowana w powiązanym PR. Gra pozostaje REVIEW, dopóki
 trzy nowe osoby nie potwierdzą przystępności i czasu zabawy. Nie rozpoczęto
 W4 Winobrania; bez automatycznego merge i wdrożenia na hosting.
+
+S4: lokalna dystrybucja 0.15.0 PASS — 12 Apache/PHP i 25 scenariuszy
+przeglądarkowych, rzeczywisty ZIP, instalacja, rollback, ponowna instalacja
+oraz zachowanie zapisów. [PR #21](https://github.com/ankelmarek/PixelForge/pull/21),
+[pełny raport](S4-REPORT.md). Odbiór Q1 i pomiar na sprzęcie graczy otwarte.
+
+Poprawka S4 0.15.1: komunikat błędnego numeru weekendu pozostaje wewnątrz
+formularza i nie zasłania startu na małych ekranach. Regresja 320×568 oraz
+844×390 na myszy/dotyku PASS; łącznie 6 nowych E2E S4. 0.15.0 zachowano
+jako niezmienione archiwum; bieżące paczki i instrukcje wskazują 0.15.1.
+
+Pełne CI #32 dla bazowego S4 0.15.0 PASS: verify, 14 E2E Stacji i 47 E2E
+pozostałych gier. Poprawka 0.15.1 dodatkowo: 6 E2E formularza/wznowienia i
+15 prób rzeczywistych ZIP-ów PASS; nowa macierz CI w PR #21. Aktualny zakres
+jest do odbioru, Q1 nadal otwarte; bez automatycznego następnego etapu.

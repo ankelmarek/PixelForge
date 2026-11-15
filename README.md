@@ -64,7 +64,7 @@ Warianty kampanii, pełny miks audio i badania z nowymi graczami pozostają W4.
 
 ## Gotowa paczka na hosting
 
-[Pobierz wszystko do public_html — gry 0.15.0 + instalator i aktualizator 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s4-stacja-warianty/downloads/pixelforge-public-html-0.15.0-installer-1.2.0.zip).
+[Pobierz wszystko do public_html — gry 0.15.1 + instalator i aktualizator 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s4-stacja-warianty/downloads/pixelforge-public-html-0.15.1-installer-1.2.0.zip).
 
 Rozpakuj **zawartość** w `public_html`, razem z ukrytymi `.htaccess`, i otwórz
 `https://twoja-domena.pl/setup.php`. Pobierz z instalatora plik konfiguracji,
@@ -79,8 +79,8 @@ to `/pixelforge.php`. Przy zastępowaniu starej gry wgraj nowy katalog `PixelFor
 w całości, bez pozostawiania starych assetów. Zachowaj wcześniejszą kopię.
 
 **Do kolejnych aktualizacji gry albo samego hostingu statycznego:**
-[Pobierz PixelForge 0.15.0 — Stacja S4 + Winobranie RTS W3 + Dżdżownica + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s4-stacja-warianty/downloads/pixelforge-0.15.0-full.zip).
-W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.15.0**.
+[Pobierz PixelForge 0.15.1 — Stacja S4 + Winobranie RTS W3 + Dżdżownica + Atlas](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/s4-stacja-warianty/downloads/pixelforge-0.15.1-full.zip).
+W panelu U2 wybierz ten ZIP → **Sprawdź pakiet** → **Zainstaluj wydanie 0.15.1**.
 Po instalacji otwórz stronę gry i wybierz **Otwórz stację**, a następnie **Nowa gra**.
 Panel trzeba wcześniej jednorazowo skonfigurować; jest osobnym narzędziem PHP.
 Możliwe jest również ręczne wgranie na hosting statyczny:
@@ -145,7 +145,7 @@ aktualizatora.
 
 ```bash
 npm run package:release
-npm run package:validate -- downloads/pixelforge-0.15.0-full.zip
+npm run package:validate -- downloads/pixelforge-0.15.1-full.zip
 npm run test:packages
 ```
 
@@ -159,7 +159,7 @@ w Pythonie/PHP (biblioteka standardowa, bez pip). [Format, limity i polecenia](d
 
 [Osobny ZIP narzędzia PHP 1.2.0](https://github.com/ankelmarek/PixelForge/raw/refs/heads/feature/p3-soil-adventure/downloads/pixelforge-updater-u2-1.2.0.zip)
 rozpakowuje się poza katalogiem publicznym. Nie jest paczką gry do wgrania
-do PixelForge. Aktualizacja gry 0.15.0 zachowuje zapisy Atlasu i starej Dżdżownicy. Nowy pionowy świat ma osobny zapis v3; mapa z widokiem z góry pozostaje dostępna po rollbacku do 0.7.0.
+do PixelForge. Aktualizacja gry 0.15.1 zachowuje zapisy Atlasu i starej Dżdżownicy. Nowy pionowy świat ma osobny zapis v3; mapa z widokiem z góry pozostaje dostępna po rollbacku do 0.7.0.
 
 ```bash
 npm run test:updater
@@ -185,7 +185,7 @@ Testy `hosting` wymagają dodatkowo Apache i modułu PHP (`apache2`,
 `libapache2-mod-php` na Debianie/Ubuntu). Sprawdzają prawdziwe `.htaccess`,
 konfigurację przez WWW, odrzucenie braku ochrony/TLS, SIGKILL, instalację
 i rollback. Zmienne dla niestandardowych binarek opisuje [raport](docs/PUBLIC-HTML-REPORT.md).
-`test:release:browser` używa rzeczywistego ZIP-a 0.15.0: instaluje go nad 0.6.1,
+`test:release:browser` używa rzeczywistego ZIP-a 0.15.1: instaluje go nad 0.6.1,
 uruchamia Dżdżownicę, Winobranie RTS i Stację, cofa wydanie, instaluje ponownie i wznawia zachowane zapisy.
 `npm run assets:earthworm` odtwarza mapę JSON Dżdżownicy; nie nadpisuje ilustracji.
 U1 używa dwóch rename katalogów z krótkim oknem HTTP 404; po zabiciu procesu

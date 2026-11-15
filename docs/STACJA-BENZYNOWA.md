@@ -401,8 +401,8 @@ Odhaczenie projektu nie oznacza zaimplementowania poniższych funkcji S1–S4.
 - [x] Oryginalny branding ORLAR (orzeł) i Skoczka (żabka), własne generatory i audio; przegląd źródeł i sprite'ów w raporcie S4.
 - [ ] Playtesty z co najmniej 3 osobami, pomiar czasu i problemów z odkrywalnością.
 - [ ] Regresja wcześniejszych gier, pełna kampania na kilku seedach, testy wydajności i rozmiaru builda.
-- [x] Wydanie `full ZIP` 0.15.0 dla istniejącego aktualizatora U2, bez aktualizacji jego kodu.
-- [ ] PR i raport; nie scalać ani nie wdrażać bez zgody użytkownika.
+- [x] Wydanie `full ZIP` 0.15.1 dla istniejącego aktualizatora U2, bez aktualizacji jego kodu.
+- [x] PR #21 i raport S4; bez automatycznego merge lub wdrożenia.
 
 ## 17. Testy i definicja ukończenia
 

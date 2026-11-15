@@ -46,6 +46,7 @@ export function mountGame(
     running = false;
   const diagnostic = new URLSearchParams(location.search).has('diagnostics');
   let controls: ClientControls | undefined;
+  let setupError: HTMLParagraphElement | undefined;
   let setup:
     ReturnType<NonNullable<ClientDefinition['createSetup']>> | undefined;
   const drawMap = (s: Snapshot) => {
@@ -217,6 +218,14 @@ export function mountGame(
   if (definition.createSetup) {
     const options = document.createElement('div');
     get('start').before(options);
+    setupError = document.createElement('p');
+    setupError.id = 'setup-error';
+    setupError.className = 'setup-error';
+    setupError.setAttribute('role', 'alert');
+    options.after(setupError);
+    options.addEventListener('input', () => {
+      setupError!.textContent = '';
+    });
     setup = definition.createSetup({ root: options });
   }
   const start = (resume: boolean) => {
@@ -225,7 +234,7 @@ export function mountGame(
     try {
       options = resume ? undefined : setup?.value();
     } catch (error) {
-      get('error').textContent =
+      (setupError ?? get('error')).textContent =
         error instanceof Error
           ? error.message
           : 'Nieprawidłowe ustawienia gry.';
@@ -234,6 +243,7 @@ export function mountGame(
     get('menu').hidden = true;
     get('session-menu').hidden = true;
     get('error').textContent = '';
+    if (setupError) setupError.textContent = '';
     running = true;
     const panel = root.querySelector<HTMLElement>('.client-controls');
     if (panel) panel.hidden = false;

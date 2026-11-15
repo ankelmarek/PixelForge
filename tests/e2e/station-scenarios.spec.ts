@@ -94,3 +94,48 @@ test('S4: migracja v3 do v4 zachowuje stary weekend i oryginalny klucz', async (
   expect(current.state.campaign.scenario).toBeUndefined();
   expect(current.state.tick).toBeGreaterThanOrEqual(800);
 });
+
+test('S4: błędny numer weekendu nie blokuje startu na małym ekranie', async ({
+  page,
+  isMobile,
+}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  const press = async (q: string) =>
+    isMobile ? page.locator(q).tap() : page.locator(q).click();
+  const state = () =>
+    page
+      .locator('#diagnostics')
+      .evaluate((e) => JSON.parse((e as HTMLElement).dataset.state!));
+  for (const viewport of [
+    { width: 320, height: 568 },
+    { width: 844, height: 390 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto('/?diagnostics=1');
+    await press('[data-game="gas-station"]');
+    await page.locator('[data-st-seed]').fill('-1');
+    await press('#start');
+    await expect(page.locator('#menu')).toBeVisible();
+    await expect(page.locator('#setup-error')).toContainText('Numer weekendu');
+    await expect(page.locator('#error')).toBeEmpty();
+    await page.locator('[data-st-seed]').fill('731');
+    await expect(page.locator('#setup-error')).toBeEmpty();
+    await press('[data-scenario="highway"]');
+    await press('#start');
+    await expect.poll(async () => (await state()).stats?.ready).toBe(true);
+    expect((await state()).client.campaign.variant).toBe(
+      'Autostradowy weekend',
+    );
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth),
+    ).toBeLessThanOrEqual(viewport.width);
+    await press('.station-tabs [data-st-tab="weekend"]');
+    await press('[data-lights]');
+    await expect
+      .poll(async () => (await state()).client.campaign.lights)
+      .toBe(false);
+    await press('[data-st-close]');
+  }
+  expect(errors).toEqual([]);
+});

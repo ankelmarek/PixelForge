@@ -1,0 +1,464 @@
+{
+  "release": "0.15.0",
+  "sourceCommit": "08780f07615f82adb64aa26425af0590ad9a222c",
+  "hostingUnitTests": 12,
+  "browserScenarios": 25,
+  "results": {
+    "updater": [
+      {
+        "device": "desktop",
+        "path": "/",
+        "size": 4096,
+        "install": "0.6.1 -> 0.6.2",
+        "rollback": "0.6.2 -> 0.6.1",
+        "savedCameraRestored": true,
+        "errors": []
+      },
+      {
+        "device": "desktop",
+        "path": "/",
+        "size": 8192,
+        "install": "0.6.1 -> 0.6.2",
+        "rollback": "0.6.2 -> 0.6.1",
+        "savedCameraRestored": true,
+        "errors": []
+      },
+      {
+        "device": "desktop",
+        "path": "/PixelForge/",
+        "size": 4096,
+        "install": "0.6.1 -> 0.6.2",
+        "rollback": "0.6.2 -> 0.6.1",
+        "savedCameraRestored": true,
+        "errors": []
+      },
+      {
+        "device": "desktop",
+        "path": "/PixelForge/",
+        "size": 8192,
+        "install": "0.6.1 -> 0.6.2",
+        "rollback": "0.6.2 -> 0.6.1",
+        "savedCameraRestored": true,
+        "errors": []
+      },
+      {
+        "device": "mobile",
+        "path": "/",
+        "size": 4096,
+        "install": "0.6.1 -> 0.6.2",
+        "rollback": "0.6.2 -> 0.6.1",
+        "savedCameraRestored": true,
+        "errors": []
+      },
+      {
+        "device": "mobile",
+        "path": "/",
+        "size": 8192,
+        "install": "0.6.1 -> 0.6.2",
+        "rollback": "0.6.2 -> 0.6.1",
+        "savedCameraRestored": true,
+        "errors": []
+      },
+      {
+        "device": "mobile",
+        "path": "/PixelForge/",
+        "size": 4096,
+        "install": "0.6.1 -> 0.6.2",
+        "rollback": "0.6.2 -> 0.6.1",
+        "savedCameraRestored": true,
+        "errors": []
+      },
+      {
+        "device": "mobile",
+        "path": "/PixelForge/",
+        "size": 8192,
+        "install": "0.6.1 -> 0.6.2",
+        "rollback": "0.6.2 -> 0.6.1",
+        "savedCameraRestored": true,
+        "errors": []
+      }
+    ],
+    "panel": [
+      {
+        "device": "desktop",
+        "httpsVerified": true,
+        "uploadOnlyPrepares": true,
+        "install": "0.6.1 -> 0.6.2",
+        "rollback": "0.6.2 -> 0.6.1",
+        "gameReinstalledAndResumed": false,
+        "wineryReinstalledAndResumed": false,
+        "stationReinstalledAndResumed": false,
+        "savedCameraRestored": true,
+        "savesPreserved": true,
+        "errors": []
+      },
+      {
+        "device": "mobile",
+        "httpsVerified": true,
+        "uploadOnlyPrepares": true,
+        "install": "0.6.1 -> 0.6.2",
+        "rollback": "0.6.2 -> 0.6.1",
+        "gameReinstalledAndResumed": false,
+        "wineryReinstalledAndResumed": false,
+        "stationReinstalledAndResumed": false,
+        "savedCameraRestored": true,
+        "savesPreserved": true,
+        "errors": []
+      }
+    ],
+    "release": [
+      {
+        "device": "desktop",
+        "httpsVerified": true,
+        "uploadOnlyPrepares": true,
+        "install": "0.6.1 -> 0.15.0",
+        "rollback": "0.15.0 -> 0.6.1",
+        "gameReinstalledAndResumed": true,
+        "wineryReinstalledAndResumed": true,
+        "stationReinstalledAndResumed": true,
+        "savedCameraRestored": true,
+        "savesPreserved": true,
+        "errors": []
+      },
+      {
+        "device": "mobile",
+        "httpsVerified": true,
+        "uploadOnlyPrepares": true,
+        "install": "0.6.1 -> 0.15.0",
+        "rollback": "0.15.0 -> 0.6.1",
+        "gameReinstalledAndResumed": true,
+        "wineryReinstalledAndResumed": false,
+        "stationReinstalledAndResumed": true,
+        "savedCameraRestored": true,
+        "savesPreserved": true,
+        "errors": []
+      }
+    ],
+    "hosting": [
+      {
+        "device": "desktop",
+        "tlsVerified": true,
+        "setup": true,
+        "installAndRollback": true,
+        "privateHttp403": true,
+        "wormSaveResumed": true,
+        "stationSaveResumed": true,
+        "errors": []
+      },
+      {
+        "device": "mobile",
+        "tlsVerified": true,
+        "setup": true,
+        "installAndRollback": true,
+        "privateHttp403": true,
+        "wormSaveResumed": true,
+        "stationSaveResumed": true,
+        "errors": []
+      },
+      {
+        "device": "no-js",
+        "tlsVerified": true,
+        "setup": true,
+        "installAndRollback": true,
+        "privateHttp403": true,
+        "wormSaveResumed": false,
+        "stationSaveResumed": false,
+        "errors": []
+      }
+    ],
+    "game": [
+      {
+        "device": "desktop",
+        "base": "/",
+        "chromium": "158.0.8127.18",
+        "firstRoot": true,
+        "resume": true,
+        "minZoom": 0.5,
+        "meanFps": 59.8,
+        "p95FrameMs": 16.799999999999727,
+        "retainedHeapBytes": 7747656,
+        "textureBytes": 2097152,
+        "sectors": 8,
+        "errors": []
+      },
+      {
+        "game": "winobranie-rts",
+        "device": "desktop",
+        "base": "/",
+        "installedFromArchive": true,
+        "constructed": true,
+        "growthAndWeather": true,
+        "resumed": true,
+        "errors": []
+      },
+      {
+        "game": "gas-station",
+        "device": "desktop",
+        "base": "/",
+        "installedFromArchive": true,
+        "ordered": true,
+        "resumed": true,
+        "errors": []
+      },
+      {
+        "device": "desktop",
+        "base": "/PixelForge/",
+        "chromium": "158.0.8127.18",
+        "firstRoot": true,
+        "resume": true,
+        "minZoom": 0.5,
+        "meanFps": 59.8,
+        "p95FrameMs": 16.700000000000728,
+        "retainedHeapBytes": 9733156,
+        "textureBytes": 2097152,
+        "sectors": 8,
+        "errors": []
+      },
+      {
+        "game": "winobranie-rts",
+        "device": "desktop",
+        "base": "/PixelForge/",
+        "installedFromArchive": true,
+        "constructed": true,
+        "growthAndWeather": true,
+        "resumed": true,
+        "errors": []
+      },
+      {
+        "game": "gas-station",
+        "device": "desktop",
+        "base": "/PixelForge/",
+        "installedFromArchive": true,
+        "ordered": true,
+        "resumed": true,
+        "errors": []
+      },
+      {
+        "device": "mobile",
+        "base": "/",
+        "chromium": "158.0.8127.18",
+        "firstRoot": true,
+        "resume": true,
+        "minZoom": 0.5,
+        "meanFps": 59.8,
+        "p95FrameMs": 16.799999999999727,
+        "retainedHeapBytes": 8369296,
+        "textureBytes": 7340032,
+        "sectors": 28,
+        "errors": []
+      },
+      {
+        "game": "gas-station",
+        "device": "mobile",
+        "base": "/",
+        "installedFromArchive": true,
+        "ordered": true,
+        "resumed": true,
+        "errors": []
+      },
+      {
+        "device": "mobile",
+        "base": "/PixelForge/",
+        "chromium": "158.0.8127.18",
+        "firstRoot": true,
+        "resume": true,
+        "minZoom": 0.5,
+        "meanFps": 59.8,
+        "p95FrameMs": 16.800000000000182,
+        "retainedHeapBytes": 8639476,
+        "textureBytes": 7340032,
+        "sectors": 28,
+        "errors": []
+      },
+      {
+        "game": "gas-station",
+        "device": "mobile",
+        "base": "/PixelForge/",
+        "installedFromArchive": true,
+        "ordered": true,
+        "resumed": true,
+        "errors": []
+      }
+    ]
+  },
+  "followup0151": {
+    "release": "0.15.1",
+    "browserScenarios": 15,
+    "results": {
+      "game": [
+        {
+          "device": "desktop",
+          "base": "/",
+          "chromium": "158.0.8127.18",
+          "firstRoot": true,
+          "resume": true,
+          "minZoom": 0.5,
+          "meanFps": 59.7,
+          "p95FrameMs": 16.700000000000728,
+          "retainedHeapBytes": 8111232,
+          "textureBytes": 2097152,
+          "sectors": 8,
+          "errors": []
+        },
+        {
+          "game": "winobranie-rts",
+          "device": "desktop",
+          "base": "/",
+          "installedFromArchive": true,
+          "constructed": true,
+          "growthAndWeather": true,
+          "resumed": true,
+          "errors": []
+        },
+        {
+          "game": "gas-station",
+          "device": "desktop",
+          "base": "/",
+          "installedFromArchive": true,
+          "ordered": true,
+          "resumed": true,
+          "errors": []
+        },
+        {
+          "device": "desktop",
+          "base": "/PixelForge/",
+          "chromium": "158.0.8127.18",
+          "firstRoot": true,
+          "resume": true,
+          "minZoom": 0.5,
+          "meanFps": 59.8,
+          "p95FrameMs": 16.700000000000728,
+          "retainedHeapBytes": 9678380,
+          "textureBytes": 2097152,
+          "sectors": 8,
+          "errors": []
+        },
+        {
+          "game": "winobranie-rts",
+          "device": "desktop",
+          "base": "/PixelForge/",
+          "installedFromArchive": true,
+          "constructed": true,
+          "growthAndWeather": true,
+          "resumed": true,
+          "errors": []
+        },
+        {
+          "game": "gas-station",
+          "device": "desktop",
+          "base": "/PixelForge/",
+          "installedFromArchive": true,
+          "ordered": true,
+          "resumed": true,
+          "errors": []
+        },
+        {
+          "device": "mobile",
+          "base": "/",
+          "chromium": "158.0.8127.18",
+          "firstRoot": true,
+          "resume": true,
+          "minZoom": 0.5,
+          "meanFps": 59.8,
+          "p95FrameMs": 16.700000000000728,
+          "retainedHeapBytes": 9472812,
+          "textureBytes": 7340032,
+          "sectors": 28,
+          "errors": []
+        },
+        {
+          "game": "gas-station",
+          "device": "mobile",
+          "base": "/",
+          "installedFromArchive": true,
+          "ordered": true,
+          "resumed": true,
+          "errors": []
+        },
+        {
+          "device": "mobile",
+          "base": "/PixelForge/",
+          "chromium": "158.0.8127.18",
+          "firstRoot": true,
+          "resume": true,
+          "minZoom": 0.5,
+          "meanFps": 59.8,
+          "p95FrameMs": 16.799999999999272,
+          "retainedHeapBytes": 8756012,
+          "textureBytes": 7340032,
+          "sectors": 28,
+          "errors": []
+        },
+        {
+          "game": "gas-station",
+          "device": "mobile",
+          "base": "/PixelForge/",
+          "installedFromArchive": true,
+          "ordered": true,
+          "resumed": true,
+          "errors": []
+        }
+      ],
+      "release": [
+        {
+          "device": "desktop",
+          "httpsVerified": true,
+          "uploadOnlyPrepares": true,
+          "install": "0.6.1 -> 0.15.1",
+          "rollback": "0.15.1 -> 0.6.1",
+          "gameReinstalledAndResumed": true,
+          "wineryReinstalledAndResumed": true,
+          "stationReinstalledAndResumed": true,
+          "savedCameraRestored": true,
+          "savesPreserved": true,
+          "errors": []
+        },
+        {
+          "device": "mobile",
+          "httpsVerified": true,
+          "uploadOnlyPrepares": true,
+          "install": "0.6.1 -> 0.15.1",
+          "rollback": "0.15.1 -> 0.6.1",
+          "gameReinstalledAndResumed": true,
+          "wineryReinstalledAndResumed": false,
+          "stationReinstalledAndResumed": true,
+          "savedCameraRestored": true,
+          "savesPreserved": true,
+          "errors": []
+        }
+      ],
+      "hosting": [
+        {
+          "device": "desktop",
+          "tlsVerified": true,
+          "setup": true,
+          "installAndRollback": true,
+          "privateHttp403": true,
+          "wormSaveResumed": true,
+          "stationSaveResumed": true,
+          "errors": []
+        },
+        {
+          "device": "mobile",
+          "tlsVerified": true,
+          "setup": true,
+          "installAndRollback": true,
+          "privateHttp403": true,
+          "wormSaveResumed": true,
+          "stationSaveResumed": true,
+          "errors": []
+        },
+        {
+          "device": "no-js",
+          "tlsVerified": true,
+          "setup": true,
+          "installAndRollback": true,
+          "privateHttp403": true,
+          "wormSaveResumed": false,
+          "stationSaveResumed": false,
+          "errors": []
+        }
+      ]
+    }
+  }
+}

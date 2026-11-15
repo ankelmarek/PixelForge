@@ -1,7 +1,7 @@
 # S4 — trzy warianty i oprawa Stacji na Trasie
 
-15 listopada 2026. Gałąź `feature/s4-stacja-warianty`; kontynuacja S3,
-zlecona razem z S2/S3. Klient 0.4.0, zapis v4. Status: **REVIEW — lokalne testy PASS; pełna regresja CI w PR; odbiór Q1 otwarty**.
+15 listopada 2026. Gałąź `feature/s4-stacja-warianty`, [PR #21](https://github.com/ankelmarek/PixelForge/pull/21); kontynuacja S3,
+zlecona razem z S2/S3. Klient 0.4.0, zapis v4, bieżące wydanie 0.15.1. Status: **REVIEW — lokalne testy PASS; pełna regresja CI w PR; odbiór Q1 otwarty**.
 
 ## Warianty i balans
 
@@ -124,8 +124,7 @@ Nie zwiększono limitu ani nie zmniejszono liczby jednostek.
 
 [Zwykła sesja nocna](reports/S4-performance.json) z ekonomią, UI i audio:
 60 s, ×4, zoom 0.5, do 14 jednostek, średnio 56.0 kl./s i **p95 33.3 ms**.
-Ten drugi wynik pozostaje nieco powyżej celu 33 ms i jest ograniczeniem
-pomiaru na programowym rendererze, a nie zaliczonym wynikiem tego progu.
+Ten drugi wynik pozostaje nieco powyżej celu 33 ms i nie zalicza tego progu w zwykłej sesji na tej konfiguracji.
 Zapis 14066 bajtów, maksymalnie 5 głosów, 705600 bajtów PCM przy 44.1 kHz,
 48 sektorów, około 25 MiB ich tekstur, bez błędów. Nie zastępuje pomiarów
 na fizycznym telefonie/komputerze nowych graczy.
@@ -135,13 +134,57 @@ na fizycznym telefonie/komputerze nowych graczy.
 widoczność świata nocą oraz oryginalne sprite'y ORLAR/Skoczka. Nie jest to
 badanie rozpoznawalności marki wśród ludzi ani odsłuch.
 
-[Metryki wydania i SHA-256](reports/S4-release.json):
-`pixelforge-0.15.0-full.zip` do istniejącego panelu; osobno
-`pixelforge-public-html-0.15.0-installer-1.2.0.zip` do pierwszej instalacji.
-Manifesty zweryfikowane; 33 wcześniejsze archiwa pozostają identyczne.
+[Aktualne metryki wydania i SHA-256](reports/S4-release.json):
+`pixelforge-0.15.1-full.zip` do istniejącego panelu; osobno
+`pixelforge-public-html-0.15.1-installer-1.2.0.zip` do pierwszej instalacji.
+Manifesty zweryfikowane; 35 wcześniejszych archiwów pozostaje identycznych.
 Instrukcja znajduje się w README, downloads/README i INSTALACJA.txt paczki.
 
 Zasoby Stacji: 71921 bajtów PNG, 5886976
 bajtów RGBA po dekodowaniu, 12332 bajtów map JSON gzip.
 Dynamiczny chunk runtime: 33976 bajtów gzip;
-cały ZIP jest większy od 0.11.0 o 137183 bajtów.
+ZIP 0.15.0 jest większy od 0.11.0 o 137183 bajtów.
+
+## Dystrybucja sprawdzona lokalnie
+
+[Wyniki](reports/S4-distribution.json): 12 testów Apache/PHP oraz 25
+scenariuszy przeglądarkowych PASS — 8 aktualizatora, 2 panelu, 10 statycznego
+ZIP-a, 2 aktualizacji rzeczywistym wydaniem i 3 pierwszej instalacji.
+Testy uruchamiają grę pod `/` oraz `/PixelForge/` na komputerze i emulowanym
+Pixel 7. Instalacja przez HTTPS zachowuje zapisy; rollback i powtórna
+instalacja odtwarzają Stację i Dżdżownicę, a na desktopie także Winobranie.
+Nowa instalacja `public_html` przechodzi również bez JavaScript w panelu;
+prywatny katalog zwraca rzeczywiste HTTP 403. Kod aktualizatora pozostaje
+identyczny z 1.2.0. Nie instalowano niczego na hostingu użytkownika.
+
+## Poprawka 0.15.1 — formularz na małym ekranie
+
+Dodatkowy test 320×568 wykrył, że po wpisaniu numeru weekendu −1 globalny
+komunikat błędu zasłaniał przycisk startu także po poprawieniu numeru.
+Wspólny formularz wyświetla teraz walidację we własnym układzie i czyści
+komunikat po edycji pola. Nie przechwytuje kliknięć ponad przyciskami.
+Sześć scenariuszy S4 PASS na desktopie i emulacji dotyku, w tym odtworzenie
+błędu oraz poprawienie numeru i start przy 320×568 i 844×390.
+
+Aktualna paczka to **0.15.1**. Archiwum 0.15.0 pozostaje bez zmiany bajtów.
+Mechanika, grafika aktywnej sesji i parametry renderowania są takie same;
+pomiary powyżej pochodzą z 0.15.0. Wydanie 0.15.1 ma osobne manifesty,
+SHA-256 i kontrolę rzeczywistych paczek. Aktualne sumy w S4-release.json.
+
+## Pełne CI bazowego S4 i kontrola poprawki
+
+[CI #32](https://github.com/ankelmarek/PixelForge/actions/runs/43714179789)
+na `08780f07615f82adb64aa26425af0590ad9a222c` / 0.15.0 zakończyło wszystkie
+trzy zadania sukcesem. `verify`: lint, typecheck, 187 Vitest, pakiety,
+PHP/Apache, dystrybucja i odtworzenie identycznych archiwów. `e2e (station)`:
+14 PASS / 4 pominięte długie próby mobilne, w tym pełna kampania S4 z UI,
+myjnia i zgodność starszych scenariuszy. `e2e (core)`: 47 PASS / 7 pominiętych.
+Także końcowy commit dokumentacji S3 przeszedł pełne CI #31.
+
+0.15.1: lint, typecheck/build, sześć celowanych E2E i 15 ponownych prób ZIP-a
+PASS — uruchomienie statycznej paczki, instalacja/rollback/wznowienie i
+pierwsza instalacja pod HTTPS. [Zestawienie](reports/S4-distribution.json)
+odróżnia 25 prób 0.15.0 od 15 powtórzonych dla poprawki. Pełna macierz CI
+nowego commitu jest ponowiona i ma bieżący wynik w [PR #21](https://github.com/ankelmarek/PixelForge/pull/21).
+Paczka 0.15.1 zawiera wyłącznie poprawkę formularza względem 0.15.0;
+35 wcześniejszych ZIP-ów pozostaje niezmienionych.

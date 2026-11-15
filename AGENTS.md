@@ -66,7 +66,7 @@ podaje aktualne wyniki kontroli. Następny zlecony etap to S4; pełne ukończeni
 gry wymaga nadal badania z trzema nowymi graczami. Bez W4, merge i hostingu.
 
 **Stan S4 (15.11.2026):** `feature/s4-stacja-warianty`, klient 0.4.0,
-PixelForge 0.15.0. Trzy warianty, seed, nocna ekonomia, światło i audio,
+PixelForge 0.15.1. Trzy warianty, seed, nocna ekonomia, światło i audio,
 zapis v4 z zachowaniem v1/v2/v3. [Raport S4](docs/S4-REPORT.md) podaje
 wyniki techniczne; [odbiór Q1](docs/S4-PLAYTEST.md) nadal wymaga trzech
 nowych graczy. Poprawki pozostają na tej gałęzi. Nie oznaczać gry DONE
