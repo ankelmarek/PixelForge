@@ -5,6 +5,7 @@ import type { BuildRequest } from '../../src/games/gas-station/placement';
 import { bodies } from '../../src/games/gas-station/state';
 import { tankCapacity } from '../../src/games/gas-station/development';
 import browserSave from '../fixtures/station-s2-resume.json';
+import ciSave from '../fixtures/station-s2-ci-resume.json';
 const create = (seed = 731) => new StationModel(stationWorld, seed, true);
 function route(m: StationModel) {
   expect(m.buyParcel('west')).toBe(true);
@@ -198,47 +199,56 @@ describe('Stacja S2', () => {
     for (let i = 0; i < 400; i++) m.tick();
     m.validateSave(m.snapshot());
   });
-  it('odtwarza zatłoczony układ z przeglądarki i obie kolejki ruszają bez teleportacji', () => {
-    const m = create();
-    m.restore(browserSave);
-    let restored: StationModel | undefined,
-      maxBlocked = 0;
-    while (!m.state.result) {
-      for (const a of [m, ...(restored ? [restored] : [])]) {
-        const tick = a.state.tick;
-        if (tick % 52 === 0) {
-          if (a.lease.offer()) a.lease.sign('share');
-          if (!a.state.delivery && tick < a.duration - 2400) {
-            if (a.state.tanks.e95.quantity < 1600) a.orderFuel('e95', 400);
-            else if (a.state.tanks.on.quantity < 1600) a.orderFuel('on', 400);
-            else if (
-              Object.values(a.state.goods).reduce((n, g) => n + g.quantity, 0) <
-              18
-            )
-              a.orderGoods();
+  it.each([
+    { label: 'lokalnie', state: browserSave },
+    { label: 'CI', state: ciSave },
+  ])(
+    'odtwarza zatłoczony układ $label i obie kolejki ruszają bez teleportacji',
+    ({ state }) => {
+      const m = create();
+      m.restore(state);
+      let restored: StationModel | undefined,
+        maxBlocked = 0;
+      while (!m.state.result) {
+        for (const a of [m, ...(restored ? [restored] : [])]) {
+          const tick = a.state.tick;
+          if (tick % 52 === 0) {
+            if (a.lease.offer()) a.lease.sign('share');
+            if (!a.state.delivery && tick < a.duration - 2400) {
+              if (a.state.tanks.e95.quantity < 1600) a.orderFuel('e95', 400);
+              else if (a.state.tanks.on.quantity < 1600) a.orderFuel('on', 400);
+              else if (
+                Object.values(a.state.goods).reduce(
+                  (n, g) => n + g.quantity,
+                  0,
+                ) < 18
+              )
+                a.orderGoods();
+            }
           }
+          a.tick();
         }
-        a.tick();
+        maxBlocked = Math.max(
+          maxBlocked,
+          ...bodies(m.state).map((m) => m.blocked),
+        );
+        expect(bodies(m.state).length).toBeLessThanOrEqual(32);
+        if (m.state.tick % 500 === 0) m.validateSave(m.snapshot());
+        if (!restored && m.state.development!.tenant.sales.length) {
+          restored = create();
+          restored.restore(m.snapshot());
+        }
       }
-      maxBlocked = Math.max(
-        maxBlocked,
-        ...bodies(m.state).map((m) => m.blocked),
-      );
-      expect(bodies(m.state).length).toBeLessThanOrEqual(32);
-      if (m.state.tick % 500 === 0) m.validateSave(m.snapshot());
-      if (!restored && m.state.development!.tenant.sales.length) {
-        restored = create();
-        restored.restore(m.snapshot());
-      }
-    }
-    expect(m.state.development!.tenant.sales.length).toBeGreaterThan(0);
-    expect(maxBlocked).toBeLessThan(1200);
-    expect(restored?.snapshot()).toEqual(m.snapshot());
-    m.validateSave(m.snapshot());
-    const bad = m.snapshot();
-    bad.development!.tenant.supplied.coffee++;
-    expect(() => m.validateSave(bad)).toThrow();
-  }, 30000);
+      expect(m.state.development!.tenant.sales.length).toBeGreaterThan(0);
+      expect(maxBlocked).toBeLessThan(1200);
+      expect(restored?.snapshot()).toEqual(m.snapshot());
+      m.validateSave(m.snapshot());
+      const bad = m.snapshot();
+      bad.development!.tenant.supplied.coffee++;
+      expect(() => m.validateSave(bad)).toThrow();
+    },
+    30000,
+  );
   it('buduje skierowane dojazdy, odrzuca odcięcie i obsługuje ciężarówkę', () => {
     const m = create();
     route(m);

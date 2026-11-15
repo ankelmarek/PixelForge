@@ -47,6 +47,15 @@ automatycznego merge ani instalacji na hostingu. S2 powstaje z `6dafa75`
 graczami należy odróżnić od automatycznych testów; bez takiego badania nie
 oznaczać całej gry jako ukończonej.
 
+**Stan S2 (15.11.2026):** implementacja i paczki PixelForge 0.13.0 są na
+`feature/s2-stacja-rozbudowa` / [PR #19](https://github.com/ankelmarek/PixelForge/pull/19).
+[Raport S2](docs/S2-REPORT.md) opisuje swobodną rozbudowę, personel, ceny,
+najem Skoczki i zapis v2. Lokalnie przeszły scenariusze Stacji, pakiety,
+instalacja, rollback oraz zachowanie zapisów. Zadanie `verify` CI #25 przeszło;
+E2E otrzymało poprawkę obsługi wygasłej oferty i checkpoint z CI. Końcową
+regresję należy sprawdzić przed oznaczeniem PR jako gotowy. Kolejno zlecone
+S3 i S4 pozostają autoryzowane; nie wymagają kolejnego pytania o rozpoczęcie.
+
 **Uzupełnienie dla Stacji na Trasie (14.11.2026):** robocze marki to **ORLAR** (stacja z orłem) oraz **Skoczka** (fikcyjna sieć niewielkich sklepów z motywem żabki). Gracz ma móc **prowadzić sklep sam lub oddać lokal w najem Skoczce**. W najmie przychód stacji to czynsz oraz umówiony udział, a nie pełny obrót sklepu; najemca zapewnia swoich pracowników i towary. Zadbaj o parking, oddzielne kolejki, realną animację dostaw i wpływ sklepu na ruch. Mechanikę implementować w S2 po S0 i S1, zgodnie z sekcją 8.1 `docs/STACJA-BENZYNOWA.md`. Nazwy i znaki są robocze, nie kopiuj oznaczeń ORLEN ani Żabka, sprawdź odróżnialność przed publikacją.
 
 ## Gałęzie i pull requesty

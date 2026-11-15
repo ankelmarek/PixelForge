@@ -4,7 +4,7 @@ Data: 2026-11-15. Gałąź `feature/s2-stacja-rozbudowa`, baza `6dafa75`
 / [PR #18](https://github.com/ankelmarek/PixelForge/pull/18), którego pełne
 CI #24 przeszło. Zlecenie: „ok, realizujj kolejne etapy”, kolejno S2–S4.
 Klient `gas-station` 0.2.0; przygotowywane wydanie PixelForge 0.13.0,
-instalator bez zmiany: 1.2.0. Status: **weryfikacja w toku**.
+instalator bez zmiany: 1.2.0. Status: **implementacja do odbioru; końcowa regresja CI w toku**.
 
 ## Zakres
 
@@ -90,8 +90,47 @@ Nie ma obowiązkowego tutorialu; etykiety kosztów, umów i blokad służą decy
 
 ## Weryfikacja
 
-Wyniki pełnych kontroli, pomiarów i dystrybucji zostaną uzupełnione po ich
-zakończeniu. Nie uznajemy częściowego testu za odbiór całego etapu.
+Lokalnie przeszły lint, typecheck, build, pełne 148 testów Vitest,
+15 testów pakietów i 36 PHP/Python. Następnie regresja numerów parkingów
+zwiększyła zestaw Stacji do 28 testów; wszystkie przeszły. Bieżący zestaw
+zawiera 150 różnych testów logiki po dodaniu odtworzenia zapisu z CI. Sześć E2E Stacji PASS, dwa pominięcia
+pełnych kampanii na mobile: dotyk ma osobny scenariusz. Pełna regresja
+pozostałych klientów jest w toku; wyniki CI zostaną dopisane.
+
+[CI #25](https://github.com/ankelmarek/PixelForge/actions/runs/43696884646)
+zaliczyło zadanie `verify`: lint, typy, 149 Vitest, 15 testów pakietów,
+36 PHP/Python, 12 Apache/PHP oraz wszystkie 25 przypadków dystrybucji.
+Odtworzyło identyczne archiwa. Scenariusz S2 nie przeszedł, bo po kliknięciu
+umowy nie uwzględniał jej wygaśnięcia podczas zamykania starych koszyków.
+Zapis z CI potwierdził brak aktywnego najmu, nie błąd naliczania dostawy.
+Test reaguje teraz na ponownie dostępną ofertę i nadal wymaga aktywnego
+najmu, fizycznej dostawy, sprzedaży oraz przychodu właściciela. Nowy test
+modelu odtwarza dokładnie checkpoint CI. Nie zmieniono zasad gry,
+limitu czasu ani kryteriów sukcesu. Ślad zachowuje DOM, zdarzenia i zapis,
+bez zapisywania każdej renderowanej klatki długiej kampanii.
+Odtworzenie obu zapisów i ponowny pełny E2E S2 przeszły lokalnie.
+Zadanie `e2e (core)` CI #25 również zakończyło się sukcesem: **47 PASS,
+7 uzasadnionych pominięć**. Z lokalnym zestawem Stacji daje to 53 PASS
+oraz 9 pominięć według platformy; następne CI powtórzy cały zestaw
+z poprawionym scenariuszem najmu.
+
+Lokalnie także 12 testów Apache/PHP i 25 przypadków dystrybucji PASS:
+8 aktualizatora, 2 panelu, 10 rzeczywistych gier z ZIP-a, 2 aktualizacji
+pełnego wydania i 3 instalacji public_html. HTTPS pozostaje włączony.
+Instalacja 0.6.1 → 0.13.0, rollback i ponowna instalacja zachowują zapisy
+Atlasu, Dżdżownicy, Winobrania i Stacji; osobne próby obejmują `/` oraz
+`/PixelForge/`, emulację telefonu, HTTP 403 prywatnego katalogu i setup bez JS.
+[Wyniki dystrybucji](reports/S2-distribution.json).
+
+[Dodatkowy balans](reports/S2-balance.json): seedy 731 i 9021, własny sklep,
+obie umowy i wariant ciężarowy. Wszystkie próby kończą się sukcesem, przy
+20–23 jednostkach w bardziej zatłoczonych przypadkach. Polityka zamawia
+400 L przy zapasie poniżej 160 L, towary poniżej 18 sztuk, buduje trzecią
+pompę po 5 s i zatrudnia trzecią osobę po 10 s. Na seedzie 9021 pojedyncza
+oferta najmu wygasa z powodu starych koszyków; ponawianie dostępnej oferty
+co sekundę daje rzeczywiste przejęcie od ticka 9076, dostawy, sprzedaż
+i dwa rozliczenia. Ta próba osiąga 29 obsłużonych, zysk 857.53 / 758.01 monet
+dla umowy stałej / partnerskiej. W obu wariantach obrót najemcy to 50 monet.
 
 Testy S2 obejmują cztery orientacje pompy, fizyczną budowę zbiornika,
 dwie równoległe kasy, zmianę cennika, budowę ciężarowego stanowiska,
@@ -115,10 +154,38 @@ zadanie. Nie usuwa to testów ani nie zwiększa limitów kampanii.
 
 ## Dostarczenie
 
-Po weryfikacji `pixelforge-0.13.0-full.zip` będzie paczką do istniejącego
+`pixelforge-0.13.0-full.zip` jest sprawdzoną lokalnie paczką do istniejącego
 aktualizatora. `pixelforge-public-html-0.13.0-installer-1.2.0.zip` jest tylko
 do pierwszej instalacji. Archiwa 0.12.0 i starsze mają pozostać niezmienione.
 Bez automatycznego merge i instalacji na hostingu.
+
+Paczki są zbudowane: full **13 266 008 B**, SHA-256
+`c73ca8fe817436b4520fe8a49f4dc103fc440916fe4c83994fdbfc71853eeecd`;
+public_html **13 361 439 B**, SHA-256
+`e8bbbca6c40b50d3e6b22cbba79a2706b75bb7ab088b8de0cc5af7f89b01deaa`.
+[Metryki i sumy poprzednich archiwów](reports/S2-release.json).
+Pobranie obu paczek z GitHuba potwierdziło te same SHA-256. Poprzednie
+0.12.0 oraz instalator 1.2.0 zachowały rozmiary i sumy. Generator odtworzył
+wszystkie assety Stacji identycznie bajt w bajt. Runtime klienta zajmuje
+około 26 kB gzip, bez kodu współdzielonego silnika.
+
+[Budowa myszą](reports/S2-development.png),
+[emulowany telefon](reports/S2-mobile.png),
+[ekran 320 px](reports/S2-mobile-narrow.png).
+[Zasoby](reports/S2-assets.json): PNG 61 738 B, 4 898 816 B RGBA,
+sektory JSON 11 476 B po gzip.
+
+[Próba 32 jednostek](reports/S2-stress-performance.json): 60 s, ×4,
+zoom 0.5, pięć pozycji kamery, około **56.9 FPS**, p95 **16.8 ms**,
+48 sektorów, maksimum lokalnego wyszukiwania 189 pól, brak błędów.
+[Wcześniejszy pomiar](reports/S2-stress-before-isolation.json) miał p95
+33.3 ms i nie zaliczył progu 33 ms. Powtórzenie wykonano bez równoległych
+testów; nie usuwamy pierwszego wyniku ani nie zmieniamy progu.
+[Zwykły scenariusz na buildzie](reports/S2-performance.json): 56.4 FPS,
+p95 33.3 ms, do 15 jednostek, zapis 12 320 B i maks. trzy głosy audio.
+Jego p95 jest nieco powyżej celu; stabilność wydajności pozostaje przedmiotem
+pomiarów i dopracowania S4. To wyniki programowego renderowania Chromium
+na opisanym w JSON procesorze, nie deklaracja wydajności fizycznego telefonu.
 
 Następny zlecony etap: S3. W4 Winobrania pozostaje poza tym zadaniem.
 S4 wymaga później także trzech nowych graczy; automatyzacja nie zastępuje

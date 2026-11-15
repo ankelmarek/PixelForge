@@ -2,7 +2,7 @@
 
 **Decyzja:** 14 listopada 2026. **Stan:** W0 nowej gry **Winobranie RTS: Trzy sezony** wykonane — inwentaryzacja, kontrakty i plan. W1 i W2 są bazą kolejnych zleceń. Po poleceniu „Rób nowy zakres” zaimplementowano W3: trzyletnią kampanię, rozbudowę, ekonomię i produkcję wina. W3 jest do odbioru; W4 nie rozpoczęto. **Główny dokument produkcyjny:** [WINOBRANIE-RTS.md](./WINOBRANIE-RTS.md).
 
-**Stacja na Trasie:** S0 zaakceptowane kolejnym poleceniem. **S2 w weryfikacji** — rozbudowa i najem Skoczki; [raport S2](S2-REPORT.md), [projekt wdrożenia](STACJA-BENZYNOWA-IMPLEMENTATION.md). S2 trwa; S3–S4 zlecone do kolejnej realizacji.
+**Stacja na Trasie:** S0 zaakceptowane kolejnym poleceniem. **S2 do odbioru** — rozbudowa i najem Skoczki; [raport S2](S2-REPORT.md), [projekt wdrożenia](STACJA-BENZYNOWA-IMPLEMENTATION.md). S2 zaimplementowane; S3–S4 zlecone do kolejnej realizacji.
 
 Poprzednie roadmapy zostały zachowane w [archiwum 0.2](./ROADMAP-ARCHIVE-0.2.md) oraz [archiwum historycznym](./ROADMAP-ARCHIVE-2026-11.md). Oba mają status historyczny. Jeżeli ich zapis przeczy temu dokumentowi lub `docs/WINOBRANIE-RTS.md`, obowiązuje aktualna decyzja z 14 listopada.
 
@@ -59,7 +59,7 @@ nowy tytuł nie jest jeszcze dostępny w launcherze ani ZIP-ie.
 ## 4. Kolejka pozostałych gier
 
 - **Miodobranie:** zaakceptowana koncepcja, osobny etap w przyszłości.
-- **Stacja na Trasie: Wielki Weekend:** [pełna specyfikacja RTS](./STACJA-BENZYNOWA.md), osobna gra ekonomiczna z ruchem pojazdów, usługami, 3 zmianami i końcem po około 30 minutach. **S2 w weryfikacji**: rozbudowa na 12 minut; S3–S4 zlecone do kolejnej realizacji. Nie wstrzymuje prac nad Winobraniem RTS.
+- **Stacja na Trasie: Wielki Weekend:** [pełna specyfikacja RTS](./STACJA-BENZYNOWA.md), osobna gra ekonomiczna z ruchem pojazdów, usługami, 3 zmianami i końcem po około 30 minutach. **S2 do odbioru**: rozbudowa na 12 minut; S3–S4 zlecone do kolejnej realizacji. Nie wstrzymuje prac nad Winobraniem RTS.
 - **Życie Dżdżownicy:** istniejąca produkcja; zachować kompatybilność.
 - Pozostałe koncepcje pozostają propozycjami, nie aktywnymi zadaniami.
 
@@ -71,7 +71,7 @@ Specyfikacja: [STACJA-BENZYNOWA.md](./STACJA-BENZYNOWA.md). Status: S0 zaprojekt
 | ---- | ----------------------------------------------------------------------------------------------------- | ------------------------------ |
 | S0   | Inwentaryzacja aktualnego PixelForge, architektura symulacji ruchu i kolejek, projekt ekonomii        | DONE — baza zleconego S1       |
 | S1   | Grywalna stacja, dwa dystrybutory, sklep, pracownicy, cysterna, pierwsza sprzedaż i podstawowy dźwięk | REVIEW — implementacja i testy |
-| S2   | Swobodna rozbudowa, ruch samochodów, pracownicy, ceny oraz **najem sklepu fikcyjnej sieci Skoczka**   | IN PROGRESS                    |
+| S2   | Swobodna rozbudowa, ruch samochodów, pracownicy, ceny oraz **najem sklepu fikcyjnej sieci Skoczka**   | REVIEW                         |
 | S3   | Myjnia, ekonomia, zdarzenia i 3 zmiany kończące się wynikiem                                          | TODO                           |
 | S4   | Warianty, pixel art, dźwięki, balans, testy, pełny ZIP dla istniejącego panelu                        | TODO                           |
 
@@ -263,4 +263,10 @@ S2 pozostaje osobnym wycinkiem 12 minut (6 + 3 + 3), cel ≥20 wizyt
 zakończonych i opłaconych oraz zysk operacyjny >0. Nie zastępuje kampanii S3
 8/12/10 minut ani jej celu ≥60 aut / ≥70% satysfakcji / wartość netto >0.
 Zapis v2 zachowuje v1 i wznawia scenariusz S1 w trybie zgodności.
-Weryfikacja i paczki w toku; wyniki zostaną uzupełnione po sprawdzeniu.
+Paczki 0.13.0 są zbudowane i sprawdzone w istniejącym aktualizatorze.
+[PR #19](https://github.com/ankelmarek/PixelForge/pull/19) pozostaje szkicem
+na czas pełnej regresji CI. Lokalnie lint, typecheck, build, logika, zapis
+S1/S2, desktop i emulacja dotyku, 12 testów hostingu oraz 25 prób dystrybucji
+przeszły. Raport zachowuje również pomiar p95 33.3 ms powyżej celu.
+Najem ma test wygasłej i ponowionej oferty z checkpointu CI.
+Bez automatycznego merge i wdrożenia; następny zlecony etap to S3.

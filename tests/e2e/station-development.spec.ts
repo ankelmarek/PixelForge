@@ -1,6 +1,15 @@
 import { test, expect, type Page } from '@playwright/test';
 import type { Snapshot } from '../../src/engine/api';
 import type { StationUI } from '../../src/games/gas-station/controls';
+// Preserve DOM/events and saves without recording every rendered campaign frame.
+test.use({
+  trace: {
+    mode: 'retain-on-failure',
+    screenshots: false,
+    snapshots: true,
+    sources: true,
+  },
+});
 const state = (page: Page): Promise<Snapshot> =>
   page
     .locator('#diagnostics')
@@ -111,7 +120,7 @@ test('S2: własna droga i stanowisko, cennik, personel, zapis v2 oraz obie kolej
   let signed = false;
   while (!(await state(page)).completed && !(await state(page)).failed) {
     const v = await ui(page);
-    if (v.development!.leaseOffer && !signed) {
+    if (v.development!.leaseOffer) {
       await tab(page, 'shop');
       await page.locator('[data-lease="share"]').click();
       signed = true;
@@ -134,6 +143,7 @@ test('S2: własna droga i stanowisko, cennik, personel, zapis v2 oraz obie kolej
   }
   const final = await ui(page);
   expect(signed).toBe(true);
+  expect(final.development!.shopMode).toBe('leased');
   expect(final.development!.tenantDeliveries).toBeGreaterThan(0);
   expect(final.development!.turnover).toBeGreaterThan(0);
   expect(final.development!.leaseIncome).toBeGreaterThan(0);
