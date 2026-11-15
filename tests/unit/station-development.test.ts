@@ -39,6 +39,32 @@ function operate(m: StationModel) {
   }
 }
 describe('Stacja S2', () => {
+  it('zachowuje numer parkingu, gdy później zlecona budowa skończy się pierwsza', () => {
+    const m = create();
+    route(m);
+    m.hire();
+    for (const y of [100, 118])
+      expect(
+        m.build(
+          { kind: 'parking', point: { x: 84, y }, rotation: 0, fuel: 'e95' },
+          m.state.topology,
+        ),
+      ).toBe(true);
+    let savedIndex = -1;
+    for (let i = 0; i < 2500; i++) {
+      m.tick();
+      const sites = m.state.development!.sites;
+      if (!sites[1].progress && sites[0].progress)
+        savedIndex = m.parking.findIndex((p) => p.y === 118);
+      for (const c of m.state.customers)
+        if (c.parking !== null && c.parking >= 4)
+          expect(sites[c.parking - 4].progress).toBe(0);
+    }
+    expect(savedIndex).toBe(5);
+    expect(m.state.development!.sites.map((p) => p.progress)).toEqual([0, 0]);
+    expect(m.parking[savedIndex]).toEqual({ x: 84, y: 118 });
+    m.validateSave(m.snapshot());
+  });
   it.each([0, 1, 2, 3])(
     'pracownik dociera do pompy obróconej o %s ćwierćobrotów',
     (rotation) => {

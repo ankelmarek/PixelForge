@@ -98,6 +98,8 @@ dwie równoległe kasy, zmianę cennika, budowę ciężarowego stanowiska,
 bezpłatny podgląd i powtórzony commit, zakaz odcięcia drogi, obie umowy,
 rozwiązanie, pełne rozliczenia i zgodność wznowienia zatłoczonego układu.
 Osobny scenariusz Playwright wykonuje projekt myszą, zapis/reload i najem.
+Test parkingów sprawdza też odwróconą kolejność ukończenia dwóch budów: numer
+oddanego miejsca pozostaje stabilny, a budowa nie przyjmuje pojazdów.
 Poprzednia zmiana S1 ma rzeczywisty zapis v1 jako wejście testu zgodności.
 
 Syntetyczny benchmark 32 jednostek używa produkcyjnej nawigacji, rezerwacji,

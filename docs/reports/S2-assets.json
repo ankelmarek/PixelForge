@@ -1,0 +1,84 @@
+{
+  "images": [
+    {
+      "file": "cars.png",
+      "width": 1024,
+      "height": 256,
+      "bytes": 15914,
+      "decodedBytes": 1048576
+    },
+    {
+      "file": "cover.png",
+      "width": 640,
+      "height": 360,
+      "bytes": 11970,
+      "decodedBytes": 921600
+    },
+    {
+      "file": "freight.png",
+      "width": 1024,
+      "height": 128,
+      "bytes": 5103,
+      "decodedBytes": 524288
+    },
+    {
+      "file": "people.png",
+      "width": 512,
+      "height": 128,
+      "bytes": 2037,
+      "decodedBytes": 262144
+    },
+    {
+      "file": "pump.png",
+      "width": 256,
+      "height": 64,
+      "bytes": 568,
+      "decodedBytes": 65536
+    },
+    {
+      "file": "shop.png",
+      "width": 352,
+      "height": 160,
+      "bytes": 1406,
+      "decodedBytes": 225280
+    },
+    {
+      "file": "skoczka.png",
+      "width": 352,
+      "height": 160,
+      "bytes": 1553,
+      "decodedBytes": 225280
+    },
+    {
+      "file": "tiles.png",
+      "width": 256,
+      "height": 16,
+      "bytes": 1050,
+      "decodedBytes": 16384
+    },
+    {
+      "file": "tree.png",
+      "width": 96,
+      "height": 96,
+      "bytes": 853,
+      "decodedBytes": 36864
+    },
+    {
+      "file": "truck.png",
+      "width": 1024,
+      "height": 128,
+      "bytes": 6439,
+      "decodedBytes": 524288
+    },
+    {
+      "file": "van.png",
+      "width": 1024,
+      "height": 256,
+      "bytes": 14845,
+      "decodedBytes": 1048576
+    }
+  ],
+  "pngBytes": 61738,
+  "rgbaBytes": 4898816,
+  "sectorsGzipBytes": 11476
+}

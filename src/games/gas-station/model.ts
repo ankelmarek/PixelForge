@@ -38,6 +38,7 @@ import {
   createDevelopment,
   pumpPoints,
   parkingPoints,
+  parkingReady,
   extraPump,
   duration,
   goal,
@@ -376,6 +377,7 @@ export class StationModel {
       if (!c.fuel) {
         const slot = this.parking.findIndex(
           (_, i) =>
+            parkingReady(s, i) &&
             !s.customers.some((a) => a.parking === i) &&
             (i < 4 || !this.extensionBusy()),
         );

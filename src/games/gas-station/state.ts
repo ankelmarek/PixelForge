@@ -11,7 +11,13 @@ import {
   type Product,
 } from './world';
 import type { StationState, Motion } from './types';
-import { duration, goal, tankCapacity, parkingPoints } from './development';
+import {
+  duration,
+  goal,
+  tankCapacity,
+  parkingPoints,
+  parkingReady,
+} from './development';
 import { validateDevelopment } from './development-save';
 import { StationTopology } from './placement';
 
@@ -291,7 +297,8 @@ export function validateState(world: StationWorld, raw: unknown): StationState {
       !integer(c.color, 0, 3) ||
       (c.pump !== null && !integer(c.pump, 0, s.pumps.length - 1)) ||
       (c.parking !== null &&
-        !integer(c.parking, 0, parkingPoints(s).length - 1)) ||
+        (!integer(c.parking, 0, parkingPoints(s).length - 1) ||
+          !parkingReady(s, c.parking))) ||
       !['paid', 'checked', 'abandoned'].every(
         (k) => typeof c[k as 'paid'] === 'boolean',
       ) ||

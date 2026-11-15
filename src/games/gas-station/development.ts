@@ -146,9 +146,15 @@ export const pumpPoints = (s: StationState): Cell[] => [
 export const parkingPoints = (s: StationState): Cell[] => [
   ...PARKING,
   ...(s.development?.sites
-    .filter((p) => p.kind === 'parking' && p.progress === 0)
+    .filter((p) => p.kind === 'parking')
     .map((p) => p.point) ?? []),
 ];
+/** Indices are assigned at placement; finishing another site cannot move an occupied bay. */
+export const parkingReady = (s: StationState, index: number) =>
+  index < PARKING.length ||
+  s.development?.sites.filter((p) => p.kind === 'parking')[
+    index - PARKING.length
+  ]?.progress === 0;
 export const extraPump = (s: StationState, i: number) =>
   i < 3
     ? undefined
