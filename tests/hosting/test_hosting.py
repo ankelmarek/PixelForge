@@ -197,7 +197,7 @@ class HostingTests(unittest.TestCase):
         with self.server() as server:
             self.assertEqual(server.setup()[0], 303)
             server.login()
-            plan = server.plan(package("0.13.1", extra=True))
+            plan = server.plan(package("0.13.2", extra=True))
             process = subprocess.Popen(
                 [
                     PHP,
@@ -269,7 +269,7 @@ class HostingTests(unittest.TestCase):
                     server.request(path="/_pixelforge/" + path)[0], 403, path
                 )
             self.assertEqual(server.upload(self.bundle)[0], 409)
-            plan = server.plan(package("0.13.1", extra=True))
+            plan = server.plan(package("0.13.2", extra=True))
             self.assertIn("0.13.1", server.request()[2])
             staged = f"/_pixelforge/data/staging/{plan['id']}/"
             self.assertEqual(server.request(path=staged + "plan.json")[0], 403)
@@ -281,7 +281,7 @@ class HostingTests(unittest.TestCase):
             )
             server.request()
             state = json.loads((server.site.private / "state.json").read_text())
-            self.assertEqual(state["active"]["version"], "0.13.1")
+            self.assertEqual(state["active"]["version"], "0.13.2")
             backup = f"/_pixelforge/data/releases/{state['previous']['id']}/index.html"
             self.assertEqual(server.request(path=backup)[0], 403)
             self.assertEqual(

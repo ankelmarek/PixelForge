@@ -27,11 +27,11 @@ with tempfile.TemporaryDirectory(
             for name in archive.namelist()
             if name != "manifest.json"
         }
-    release = root / "fixture-0.13.1-full.zip"
+    release = root / "fixture-0.13.2-full.zip"
     release.write_bytes(
         fixture(
             files=files,
-            change=lambda value: value.update(releaseVersion="0.13.1"),
+            change=lambda value: value.update(releaseVersion="0.13.2"),
             compression=zipfile.ZIP_DEFLATED,
         )
     )
